@@ -11,8 +11,8 @@
 
 #include "RssSensor.generated.h"
 
-/// RSS sensor representation
-/// The actual calculation is done one client side
+/// RSS传感器表示
+/// 实际计算在客户端完成
 UCLASS()
 class CARLA_API ARssSensor : public ASensor
 {

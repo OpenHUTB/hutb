@@ -68,7 +68,7 @@ enum class EVehicleDoor : uint8 {
   All = 6
 };
 
-/// Base class for CARLA wheeled vehicles.
+/// CARLA轮式车辆的基类.
 UCLASS()
 class CARLA_API ACarlaWheeledVehicle : public AWheeledVehicle
 {

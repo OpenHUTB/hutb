@@ -69,7 +69,7 @@ struct CARLA_API FActorVariation
   bool bRestrictToRecommended = false;  // 是否限制为只能使用推荐值
 };
 
-/// An actor attribute, may be an intrinsic (non-modifiable) attribute of the
+/// 角色属性，可以是角色的固有（不可修改）属性，也可以是用户自定义的角色变体。
 /// actor or an user-defined actor variation.
 /// 上面的代码意思为角色属性，可以是角色的固有（不可修改）属性或用户定义的角色变体
 

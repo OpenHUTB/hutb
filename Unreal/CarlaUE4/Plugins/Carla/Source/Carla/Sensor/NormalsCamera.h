@@ -12,7 +12,7 @@
 
 #include "NormalsCamera.generated.h"
 
-/// Sensor that produces "normals" images.
+/// 生成‘法线’图像的传感器.
 UCLASS()
 class CARLA_API ANormalsCamera : public AShaderBasedSensor
 {

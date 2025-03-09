@@ -13,7 +13,7 @@
 
 // 使用 USTRUCT(Blueprintable) 宏定义，这是虚幻引擎中用于标记一个结构体可以被引擎的蓝图系统使用的宏，
 // 意味着该结构体可以在蓝图中进行实例化、访问其成员等操作，方便在虚幻引擎的可视化编程（蓝图）环境中使用
-/// A definition of a Carla Mesh.
+/// Carla 网格的定义。
 // 这里是一个简单的注释说明，表明这个结构体是对 Carla 网格（Mesh）的一种定义，后续结构体中的成员变量大概率是用于描述网格的各种属性
 USTRUCT(Blueprintable)
 struct CARLA_API FProceduralCustomMesh

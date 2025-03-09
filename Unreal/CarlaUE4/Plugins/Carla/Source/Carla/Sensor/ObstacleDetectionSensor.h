@@ -13,7 +13,7 @@
 
 class UCarlaEpisode;
 
-/// A sensor to register collisions.
+/// 用于记录碰撞的传感器.
 UCLASS()
 class CARLA_API AObstacleDetectionSensor : public ASensor
 {

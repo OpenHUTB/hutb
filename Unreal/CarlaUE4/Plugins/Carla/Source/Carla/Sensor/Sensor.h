@@ -18,7 +18,7 @@
 
 struct FActorDescription;
 
-/// Base class for sensors.
+/// 传感器的基类
 UCLASS(Abstract, hidecategories = (Collision, Attachment, Actor))
 class CARLA_API ASensor : public AActor
 {

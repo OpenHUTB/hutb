@@ -40,7 +40,7 @@ struct CARLA_API FSensorShader
   float Weight = 1.0f;
 };
 
-/// A sensor that produces data by applying post-process materials (shaders) to
+/// 通过应用后处理材质（着色器）来生成数据的传感器。
 /// a scene capture image.
 ///
 /// @warning Shaders must be added before BeginPlay.

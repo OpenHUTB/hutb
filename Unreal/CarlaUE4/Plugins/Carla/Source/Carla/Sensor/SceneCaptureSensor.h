@@ -114,7 +114,7 @@ struct FCameraGBufferFloat
 
 
 
-/// Base class for sensors using a USceneCaptureComponent2D for rendering the
+/// 使用USceneCaptureComponent2D进行场景渲染的传感器基类
 /// scene. This class does not capture data, use
 /// `FPixelReader::SendPixelsInRenderThread(*this)` in derived classes.
 ///

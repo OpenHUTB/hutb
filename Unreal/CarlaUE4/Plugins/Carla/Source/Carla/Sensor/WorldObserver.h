@@ -10,7 +10,7 @@
 
 class UCarlaEpisode;
 
-/// Serializes and sends all the actors in the current UCarlaEpisode.
+/// 序列化并发送当前 UCarlaEpisode 中的所有 Actor。
 class FWorldObserver
 {
 public:

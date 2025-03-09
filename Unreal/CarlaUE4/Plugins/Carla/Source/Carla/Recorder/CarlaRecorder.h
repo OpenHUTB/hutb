@@ -74,7 +74,7 @@ enum class CarlaRecorderPacketId : uint8_t
   AnimBiker
 };
 
-/// Recorder for the simulation
+/// 仿真记录器
 UCLASS()
 class CARLA_API ACarlaRecorder : public AActor
 {

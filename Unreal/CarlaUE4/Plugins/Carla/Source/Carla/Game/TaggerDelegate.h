@@ -14,7 +14,7 @@
 #include "TaggerDelegate.generated.h" 
 
 // UTaggerDelegate类的注释说明，表明这个类的作用是用于给在世界中生成的每个角色（Actor）添加标签（从语义上理解，可能是做一些标识或者分类相关操作）
-/// Used to tag every actor that is spawned into the world.
+/// 用于给生成到世界中的每个 Actor 添加标签。
 // 定义一个名为UTaggerDelegate的类，它继承自UObject，所在的命名空间为CARLA_API（可能是特定项目或模块定义的命名空间）
 UCLASS()
 class CARLA_API UTaggerDelegate : public UObject

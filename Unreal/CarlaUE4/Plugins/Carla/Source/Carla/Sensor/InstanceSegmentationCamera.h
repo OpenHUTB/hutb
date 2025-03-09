@@ -12,7 +12,7 @@
 
 #include "InstanceSegmentationCamera.generated.h"
 
-/// Sensor that produces "Instance segmentation" images.
+/// 生成‘实例分割’图像的传感器.
 UCLASS()
 class CARLA_API AInstanceSegmentationCamera : public AShaderBasedSensor
 {

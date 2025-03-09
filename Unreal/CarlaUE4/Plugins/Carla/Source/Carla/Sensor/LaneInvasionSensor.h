@@ -11,8 +11,8 @@
 
 #include "LaneInvasionSensor.generated.h"
 
-/// LaneInvasion sensor representation
-/// The actual position calculation is done one client side
+/// LaneInvasion传感器表示
+/// 实际位置计算在客户端完成
 UCLASS()
 class CARLA_API ALaneInvasionSensor : public ASensor
 {

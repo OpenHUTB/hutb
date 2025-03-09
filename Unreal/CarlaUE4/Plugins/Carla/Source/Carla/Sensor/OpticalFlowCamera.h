@@ -6,7 +6,7 @@
 
 #include "OpticalFlowCamera.generated.h"
 
-/// Sensor that produces "optical flow" images.
+/// 生成‘光流’图像的传感器.
 UCLASS()
 class CARLA_API AOpticalFlowCamera : public AShaderBasedSensor
 {

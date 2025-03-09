@@ -12,7 +12,7 @@
 #include "VehicleSpawnPoint.generated.h"
 // 包含 "VehicleSpawnPoint.generated.h" 头文件，通常在使用虚幻引擎的反射系统等相关特性时，会有这样一个自动生成代码的头文件，用于配合引擎生成必要的代码辅助类实现各种功能，比如序列化、蓝图相关功能等。
 
-/// Base class for spawner locations for walkers.
+/// 行人生成位置的基类。
 // 这是一个 Doxygen 风格的注释（一种常用的代码文档注释规范），用于简要说明下面定义的类的作用，这里表明这个类是用于行人（walkers）生成位置的基类。
 
 UCLASS()

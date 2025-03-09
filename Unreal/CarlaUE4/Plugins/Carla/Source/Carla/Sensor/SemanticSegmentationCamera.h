@@ -12,7 +12,7 @@
 
 #include "SemanticSegmentationCamera.generated.h"
 
-/// Sensor that produces "semantic segmentation" images.
+/// 生成‘语义分割’图像的传感器
 UCLASS()
 class CARLA_API ASemanticSegmentationCamera : public AShaderBasedSensor
 {

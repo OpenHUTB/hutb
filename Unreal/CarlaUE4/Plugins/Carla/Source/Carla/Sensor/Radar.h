@@ -16,7 +16,7 @@
 
 #include "Radar.generated.h"
 
-/// A ray-cast based Radar sensor.
+/// 基于射线投射的雷达传感器.
 UCLASS()
 class CARLA_API ARadar : public ASensor
 {

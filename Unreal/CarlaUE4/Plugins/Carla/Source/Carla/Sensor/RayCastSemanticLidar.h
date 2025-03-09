@@ -20,7 +20,7 @@
 
 #include "RayCastSemanticLidar.generated.h"
 
-/// A ray-cast based Lidar sensor.
+/// 基于射线投射的激光雷达传感器
 UCLASS()
 class CARLA_API ARayCastSemanticLidar : public ASensor
 {
