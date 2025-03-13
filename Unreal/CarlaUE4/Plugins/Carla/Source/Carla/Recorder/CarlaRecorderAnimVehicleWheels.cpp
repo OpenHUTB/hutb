@@ -8,22 +8,11 @@
 #include "CarlaRecorderHelpers.h"
 #include "CarlaRecorderAnimVehicleWheels.h"
 
-
-// 功能: 将 WheelInfo 对象的数据写入到指定的输出流中
 void WheelInfo::Write(std::ostream &OutFile) const
 {
-    // 写入车辆车轮的位置信息
-    // WriteValue 是一个模板函数，用于将指定类型的值写入输出流
-    // EVehicleWheelLocation 是车轮位置的枚举类型
-    WriteValue<EVehicleWheelLocation>(OutFile, Location);
-
-    // 写入车轮的转向角度
-    // SteeringAngle 是一个浮点数，表示车轮的转向角度
-    WriteValue<float>(OutFile, SteeringAngle);
-
-    // 写入轮胎的旋转角度
-    // TireRotation 是一个浮点数，表示轮胎的旋转角度
-    WriteValue<float>(OutFile, TireRotation);
+  WriteValue<EVehicleWheelLocation>(OutFile, Location);
+  WriteValue<float>(OutFile, SteeringAngle);
+  WriteValue<float>(OutFile, TireRotation);
 }
 
 void WheelInfo::Read(std::istream &InFile)
