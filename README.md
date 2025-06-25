@@ -30,16 +30,6 @@ python manual_control.py
 Linux版本需要一个UE补丁来解决有关Vulkan的一些可视化问题。
 那些已经使用Linux构建的用户应该安装补丁，并使用以下命令重新构建UE。
 
-```sh
-# 下载并安装虚幻引擎补丁  
-cd ~/UnrealEngine_4.24
-wget https://carla-releases.s3.eu-west-3.amazonaws.com/Linux/UE_Patch/430667-13636743-patch.txt ~/430667-13636743-patch.txt
-patch --strip=4 < ~/430667-13636743-patch.txt
-# 构建虚幻引擎
-./Setup.sh && ./GenerateProjectFiles.sh && make
-```
-
-
 [buildlinuxlink]: https://openhutb.github.io/doc/build_linux/
 [buildwindowslink]: https://openhutb.github.io/doc/build_windows/
 
