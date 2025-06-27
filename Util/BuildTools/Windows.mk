@@ -22,6 +22,10 @@ CarlaUE4Editor: LibCarla osm2odr
 launch: CarlaUE4Editor
 	@"${CARLA_BUILD_TOOLS_FOLDER}/BuildCarlaUE4.bat" --launch $(ARGS)
 
+# 将包含Carla插件的虚幻编辑器打包到 Build/UE4Carla/hutb_editor.zip
+editor: CarlaUE4Editor
+	@"${CARLA_BUILD_TOOLS_FOLDER}/PackageEditor.bat" --launch $(ARGS)
+
 launch-only:
 	@"${CARLA_BUILD_TOOLS_FOLDER}/BuildCarlaUE4.bat" --launch $(ARGS)
 
