@@ -1,7 +1,7 @@
 @echo off
 setlocal enabledelayedexpansion
 
-rem BAT script that creates the binaries for Carla (carla.org).
+rem 打包带hutb插件的虚幻编辑器
 rem Run it through a cmd with the x64 Visual C++ Toolset enabled.
 
 set LOCAL_PATH=%~dp0
@@ -16,6 +16,8 @@ rem ============================================================================
 
 set BUILD_UE4_EDITOR=false
 set LAUNCH_UE4_EDITOR=false
+:: 是否打包UE4编辑器
+set PACKAGE_UE4_EDITOR=false
 set REMOVE_INTERMEDIATE=false
 set USE_CARSIM=false
 set USE_CHRONO=false
@@ -40,6 +42,10 @@ if not "%1"=="" (
     )
     if "%1"=="--launch" (
         set LAUNCH_UE4_EDITOR=true
+    )
+    if "%1"=="--package" (
+        set PACKAGE_UE4_EDITOR=true
+        goto package_editor
     )
     if "%1"=="--clean" (
         set REMOVE_INTERMEDIATE=true
@@ -191,14 +197,30 @@ if %BUILD_UE4_EDITOR% == true (
     if errorlevel 1 goto bad_exit
 )
 
-rem Launch Carla Editor
-rem
 if %LAUNCH_UE4_EDITOR% == true (
     echo %FILE_N% Launching Unreal Editor...
     call "%UE4_ROOT%\Engine\Binaries\Win64\UE4Editor.exe"^
         "%UE4_PROJECT_FOLDER%CarlaUE4.uproject" %EDITOR_FLAGS%
     if %errorlevel% neq 0 goto error_build
 )
+
+
+:package_editor
+    echo Package UE4 editor...
+
+:: 打包：开发资产的版本 使用每个仓库的dev分支，当仓库干净时同步最新的修改
+:: （都是覆盖性）
+:: 如果 Build\UE4Carla\hutb_editor 目录不存在则创建
+:: 拷贝 launch_carla_editor.bat
+:: 解压 software.zip 中的 4 个依赖软件：cmake、dotnet、make、python3_7 到 hutb_editor 目录下
+:: 拷贝虚幻引擎（不需要git记录、测试打包版的虚幻引擎）
+:: /E 复制目录和子目录，包括空的。/Y 取消提示以确认要覆盖现有目标文件 。/H 也复制隐藏和系统文件。/R 改写只读文件。 /Q 复制时不显示文件名。
+echo copy unreal engine
+xcopy %UE4_ROOT% %INSTALLATION_DIR%UE4Carla\hutb_editor\unreal /e /y /h /r /q
+:: 拷贝 carla
+:: 压缩成 hutb_editor.zip（可以加上虚幻引擎文档、hutb文档）
+:: 7zip\7z.exe x vs2019.7z -o.
+
 
 goto good_exit
 
