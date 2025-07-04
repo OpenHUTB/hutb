@@ -15,7 +15,6 @@ pipeline {
             stages
             {
 
-                /*
                 stage('windows setup')
                 {
                     steps
@@ -92,7 +91,6 @@ pipeline {
                         }
                     }
                 }
-                */
 
 
                 stage('windows test')
