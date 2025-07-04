@@ -14,7 +14,8 @@ pipeline {
             }
             stages
             {
-              
+
+                /*
                 stage('windows setup')
                 {
                     steps
@@ -91,6 +92,7 @@ pipeline {
                         }
                     }
                 }
+                */
 
 
                 stage('windows test')
@@ -100,7 +102,7 @@ pipeline {
                     {
                         bat """
                             call setEnv64.bat
-                            Build/UE4Carla/CarlaUE4.exe -RenderOffscreen
+                            call Build/UE4Carla/CarlaUE4.exe -RenderOffscreen
                         """
                         bat """
                             call setEnv64.bat
