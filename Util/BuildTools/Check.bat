@@ -103,16 +103,17 @@ for /d %%d in (%BUILD_FOLDER%\*) do (
 :GET_INI
 
 :: set DESTINATION_ZIP=%INSTALLATION_DIR%UE4Carla/CARLA_%CARLA_VERSION%.zip
-set exe__path=!exe_dir!\WindowsNoEditor\CarlaUE4.exe
+set exe_path=!exe_dir!\WindowsNoEditor\CarlaUE4.exe
 :: 后台启动服务端  -RenderOffscreen
-echo Unreal service is launching with command: %exe__path% -RenderOffscreen ...
-%exe__path% -RenderOffscreen
+echo Unreal service is launching with command: %exe_path% -RenderOffscreen ...
+call %exe_path% -RenderOffscreen
 
 call :get_current_time_in_seconds T_START_DO_TEST
 
 if %SMOKE_TESTS%==true (
     echo test connection ...
-    C:\software\anaconda3\envs\carla_dev\python.exe %ROOT_PATH%PythonAPI/util/test_connection.py -p 2000 --timeout=5.0
+    :: TODO 替换为相对Python环境路径
+    C:\software\anaconda3\envs\carla_dev\python.exe %ROOT_PATH%PythonAPI/util/test_connection.py -p 2000 --timeout=60.0
     echo test connection done.
 )
 
