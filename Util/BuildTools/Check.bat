@@ -94,7 +94,7 @@ rem ============================================================================
 :: 查找目录下的第一个文件夹名称
 set BUILD_FOLDER=%INSTALLATION_DIR%UE4Carla
 echo BUILD_FOLDER: %BUILD_FOLDER%
-for /d %%d in (%folder%\*) do (
+for /d %%d in (%BUILD_FOLDER%\*) do (
     echo %%d
     set exe_dir=%%d
     echo exe_dir: %exe_dir%
@@ -112,7 +112,7 @@ call :get_current_time_in_seconds T_START_DO_TEST
 
 if %SMOKE_TESTS%==true (
     echo test connection ...
-    C:\software\anaconda3\envs\carla_dev\python.exe %ROOT_PATH%PythonAPI/util/test_connection.py -p 2000 --timeout=60.0
+    C:\software\anaconda3\envs\carla_dev\python.exe %ROOT_PATH%PythonAPI/util/test_connection.py -p 2000 --timeout=5.0
     echo test connection done.
 )
 
