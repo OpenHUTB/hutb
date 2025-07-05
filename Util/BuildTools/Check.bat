@@ -94,12 +94,13 @@ set BUILD_FOLDER=%INSTALLATION_DIR%UE4Carla/%CARLA_VERSION%/
 set DESTINATION_ZIP=%INSTALLATION_DIR%UE4Carla/CARLA_%CARLA_VERSION%.zip
 set exe__path=!BUILD_FOLDER!WindowsNoEditor/CarlaUE4.exe
 :: 后台启动服务端  -RenderOffscreen
-"%exe__path% -RenderOffscreen"
+%exe__path% -RenderOffscreen
 
 call :get_current_time_in_seconds T_START_DO_TEST
 
 if %SMOKE_TESTS%==true (
     echo test connection ...
+    where python
     python %ROOT_PATH%PythonAPI/util/test_connection.py -p 2000 --timeout=60.0
     echo test connection done.
 )
