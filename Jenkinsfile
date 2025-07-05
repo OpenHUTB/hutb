@@ -102,7 +102,7 @@ pipeline {
                     {
                         bat """
                             call setEnv64.bat
-                            call Build/UE4Carla/CarlaUE4.exe -RenderOffscreen
+                            Build/UE4Carla/CarlaUE4.exe -RenderOffscreen
                         """
                         bat """
                             call setEnv64.bat
