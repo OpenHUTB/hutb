@@ -86,13 +86,22 @@ rem -- Run smoke tests ---------------------------------------------------------
 rem ============================================================================
 
 :: 获取CarlaUE4所在的目录（参考Package.bat）
-for /f %%i in ('git describe --tags --dirty --always') do set CARLA_VERSION=%%i
-if not defined CARLA_VERSION goto error_carla_version
+:: for /f %%i in ('git describe --tags --dirty --always') do set CARLA_VERSION=%%i
+:: if not defined CARLA_VERSION goto error_carla_version
 
-set BUILD_FOLDER=%INSTALLATION_DIR%UE4Carla/%CARLA_VERSION%/
+:: set BUILD_FOLDER=%INSTALLATION_DIR%UE4Carla/%CARLA_VERSION%/
 
-set DESTINATION_ZIP=%INSTALLATION_DIR%UE4Carla/CARLA_%CARLA_VERSION%.zip
-set exe__path=!BUILD_FOLDER!WindowsNoEditor/CarlaUE4.exe
+:: 查找目录下的第一个文件夹名称
+set BUILD_FOLDER=%INSTALLATION_DIR%UE4Carla
+for /d %%d in (%folder%\*) do (
+    echo %%d
+    set exe_dir=%%d
+    GOTO GET_INI
+)
+:GET_INI
+
+:: set DESTINATION_ZIP=%INSTALLATION_DIR%UE4Carla/CARLA_%CARLA_VERSION%.zip
+set exe__path=!exe_dir!WindowsNoEditor/CarlaUE4.exe
 :: 后台启动服务端  -RenderOffscreen
 echo Unreal service is launching with command: %exe__path% -RenderOffscreen ...
 %exe__path% -RenderOffscreen
