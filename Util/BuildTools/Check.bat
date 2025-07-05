@@ -100,6 +100,7 @@ call :get_current_time_in_seconds T_START_DO_TEST
 
 if %SMOKE_TESTS%==true (
     echo test connection ...
+    %WINDIR%\System32\cmd.exe "/K" C:\software\anaconda3\Scripts\activate.bat carla_dev
     where python
     python %ROOT_PATH%PythonAPI/util/test_connection.py -p 2000 --timeout=60.0
     echo test connection done.
