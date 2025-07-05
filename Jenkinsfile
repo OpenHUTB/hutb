@@ -15,7 +15,6 @@ pipeline {
             stages
             {
 
-                /*
                 stage('windows setup')
                 {
                     steps
@@ -92,7 +91,6 @@ pipeline {
                         }
                     }
                 }
-                */
 
 
                 stage('windows test')
@@ -102,15 +100,7 @@ pipeline {
                     {
                         bat """
                             call setEnv64.bat
-                            Build/UE4Carla/CarlaUE4.exe -RenderOffscreen
-                        """
-                        bat """
-                            call setEnv64.bat
                             make smoke_tests
-                        """
-                        bat """
-                            call setEnv64.bat
-                            for /f "tokens=5" %%a in ('netstat -ano ^| findstr :2000') do taskkill /F /PID %%a
                         """
                     }
                 }

@@ -85,6 +85,17 @@ rem ============================================================================
 rem -- Run smoke tests ---------------------------------------------------------
 rem ============================================================================
 
+:: 获取CarlaUE4所在的目录（参考Package.bat）
+for /f %%i in ('git describe --tags --dirty --always') do set CARLA_VERSION=%%i
+if not defined CARLA_VERSION goto error_carla_version
+
+set BUILD_FOLDER=%INSTALLATION_DIR%UE4Carla/%CARLA_VERSION%/
+
+set DESTINATION_ZIP=%INSTALLATION_DIR%UE4Carla/CARLA_%CARLA_VERSION%.zip
+set exe__path=!BUILD_FOLDER!WindowsNoEditor/CarlaUE4.exe
+:: 后台启动服务端  -RenderOffscreen
+exe__path -RenderOffscreen
+
 call :get_current_time_in_seconds T_START_DO_TEST
 
 if %SMOKE_TESTS%==true (
@@ -99,6 +110,9 @@ if %MEASURE_TIME%==true if %SMOKE_TESTS%==true echo %FILE_N% [TIME]: Running smo
 
 
 rem ============================================================================
+:: 杀死服务端
+for /f "tokens=5" %%a in ('netstat -ano ^| findstr :2000') do taskkill /F /PID %%a
+
 
 call :get_current_time_in_seconds T_END_OVERALL
 set /A ELAPSED_TIME=!T_END_OVERALL! - !T_START_OVERALL!
