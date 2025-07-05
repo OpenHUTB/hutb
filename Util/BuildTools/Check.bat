@@ -106,7 +106,7 @@ for /d %%d in (%BUILD_FOLDER%\*) do (
 set exe_path=!exe_dir!\WindowsNoEditor\CarlaUE4.exe
 :: 后台启动服务端  -RenderOffscreen
 echo Unreal service is launching with command: %exe_path% -RenderOffscreen ...
-call %exe_path% -RenderOffscreen
+call %exe_path% -RenderOffscreen || exit /b
 
 call :get_current_time_in_seconds T_START_DO_TEST
 
