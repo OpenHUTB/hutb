@@ -103,7 +103,7 @@ for /d %%d in (%BUILD_FOLDER%\*) do (
 :GET_INI
 
 :: set DESTINATION_ZIP=%INSTALLATION_DIR%UE4Carla/CARLA_%CARLA_VERSION%.zip
-set exe__path=!exe_dir!WindowsNoEditor/CarlaUE4.exe
+set exe__path=!exe_dir!\WindowsNoEditor\CarlaUE4.exe
 :: 后台启动服务端  -RenderOffscreen
 echo Unreal service is launching with command: %exe__path% -RenderOffscreen ...
 %exe__path% -RenderOffscreen
