@@ -127,6 +127,7 @@ pipeline {
 
             }
 
+            /*
             post
             {
                 always
@@ -134,6 +135,7 @@ pipeline {
                     deleteDir()
                 }
             }
+            */
 
         }
     }

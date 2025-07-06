@@ -86,27 +86,34 @@ rem -- Run smoke tests ---------------------------------------------------------
 rem ============================================================================
 
 :: 获取CarlaUE4所在的目录（参考Package.bat）
-:: for /f %%i in ('git describe --tags --dirty --always') do set CARLA_VERSION=%%i
+for /f %%i in ('git describe --tags --dirty --always') do set CARLA_VERSION=%%i
 :: if not defined CARLA_VERSION goto error_carla_version
 
-:: set BUILD_FOLDER=%INSTALLATION_DIR%UE4Carla/%CARLA_VERSION%/
+set BUILD_FOLDER=%INSTALLATION_DIR%UE4Carla/%CARLA_VERSION%/
 
 :: 查找目录下的第一个文件夹名称
-set BUILD_FOLDER=%INSTALLATION_DIR%UE4Carla
-echo BUILD_FOLDER: %BUILD_FOLDER%
-for /d %%d in (%BUILD_FOLDER%\*) do (
-    echo %%d
-    set exe_dir=%%d
-    echo exe_dir: %exe_dir%
-    GOTO GET_INI
-)
-:GET_INI
+:: set BUILD_FOLDER=%INSTALLATION_DIR%UE4Carla
+:: echo BUILD_FOLDER: %BUILD_FOLDER%
+:: for /d %%d in (%BUILD_FOLDER%\*) do (
+::     echo %%d
+::     set exe_dir=%%d
+::     echo exe_dir: %exe_dir%
+::     GOTO GET_INI
+:: )
+:: :GET_INI
 
-:: set DESTINATION_ZIP=%INSTALLATION_DIR%UE4Carla/CARLA_%CARLA_VERSION%.zip
-set exe_path=!exe_dir!\WindowsNoEditor\CarlaUE4.exe
+:: set exe_path=!exe_dir!\WindowsNoEditor\CarlaUE4.exe
+set exe_path=!BUILD_FOLDER!\WindowsNoEditor\CarlaUE4.exe
 :: 必须使用start来启动一个新的服务进程，否则会卡死  -RenderOffscreen
 echo Unreal service is launching with command: start %exe_path% -RenderOffscreen ...
-start %exe_path% -RenderOffscreen
+:: 如果exe文件不存在，会卡在这里
+if exist %exe_path% (
+    start %exe_path% -RenderOffscreen
+) else (
+    echo Error: %exe_path% not exitst.
+    goto bad_exit
+)
+
 
 call :get_current_time_in_seconds T_START_DO_TEST
 
