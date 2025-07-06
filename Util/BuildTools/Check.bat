@@ -87,20 +87,9 @@ rem ============================================================================
 
 :: 获取CarlaUE4所在的目录（参考Package.bat）
 for /f %%i in ('git describe --tags --dirty --always') do set CARLA_VERSION=%%i
-:: if not defined CARLA_VERSION goto error_carla_version
+if not defined CARLA_VERSION goto bad_exit
 
 set BUILD_FOLDER=%INSTALLATION_DIR%UE4Carla/%CARLA_VERSION%/
-
-:: 查找目录下的第一个文件夹名称
-:: set BUILD_FOLDER=%INSTALLATION_DIR%UE4Carla
-:: echo BUILD_FOLDER: %BUILD_FOLDER%
-:: for /d %%d in (%BUILD_FOLDER%\*) do (
-::     echo %%d
-::     set exe_dir=%%d
-::     echo exe_dir: %exe_dir%
-::     GOTO GET_INI
-:: )
-:: :GET_INI
 
 :: set exe_path=!exe_dir!\WindowsNoEditor\CarlaUE4.exe
 set exe_path=!BUILD_FOLDER!\WindowsNoEditor\CarlaUE4.exe
