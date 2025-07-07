@@ -101,8 +101,8 @@ set BUILD_FOLDER=%INSTALLATION_DIR%UE4Carla/%CARLA_VERSION%/
 
 set exe_path=!BUILD_FOLDER!\WindowsNoEditor\CarlaUE4.exe
 :: 仅用于调试
-set exe_path=C:\ProgramData\Jenkins\.jenkins\workspace\carla\Build\UE4Carla\c245059b\WindowsNoEditor\CarlaUE4.exe
-:: 必须使用start来启动一个新的服务进程，否则会卡死  -RenderOffscreen
+set exe_path=C:\ProgramData\Jenkins\.jenkins\workspace\carla\Build\UE4Carla\8617b519\WindowsNoEditor\CarlaUE4.exe
+:: 必须使用start来启动一个新的服务进程，否则会卡死 -RenderOffscreen
 echo Unreal service is launching with command: start %exe_path% -RenderOffscreen ...
 :: 如果exe文件不存在，会卡在这里
 if exist %exe_path% (

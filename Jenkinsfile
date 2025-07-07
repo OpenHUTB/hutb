@@ -100,11 +100,11 @@ pipeline {
                     // 后台启动服务（不弹出界面，用于测试）
                     steps
                     {
-                        // 和前面的打包测试重复，仅用于保证生成的文件和测试PythonAPI的一致
-                        bat """
-                            call setEnv64.bat
-                            make package ARGS="--chrono"
-                        """
+                        // // 和前面的打包测试重复，仅用于保证生成的文件和测试PythonAPI的一致
+                        // bat """
+                        //     call setEnv64.bat
+                        //     make package ARGS="--chrono"
+                        // """
                         bat """
                             call setEnv64.bat
                             make check.PythonAPI
