@@ -126,6 +126,7 @@ rem ============================================================================
 rem -- Run Python API unit tests -----------------------------------------------
 rem ============================================================================
 
+echo pushd %CARLA_PYTHONAPI_ROOT_FOLDER%/test/unit
 pushd %CARLA_PYTHONAPI_ROOT_FOLDER%/test/unit
 
 if %XML_OUTPUT%==true (
