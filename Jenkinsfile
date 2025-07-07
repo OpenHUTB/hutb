@@ -101,6 +101,10 @@ pipeline {
                     steps
                     {
                         bat """
+                            call setEnv64.batcc
+                        """
+                        error("构建停止")
+                        bat """
                             call setEnv64.bat
                             make check
                         """

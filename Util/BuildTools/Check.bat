@@ -118,7 +118,7 @@ pushd %ROOT_PATH%PythonAPI\carla\dist
 :: pip install --force-reinstall C:\ProgramData\Jenkins\.jenkins\workspace\carla\PythonAPI\carla\dist\hutb-1.0.0-cp37-cp37m-win_amd64.whl
 echo %pip_path% install --force-reinstall  %ROOT_PATH%PythonAPI\carla\dist\hutb-1.0.0-cp312-cp312-win_amd64.whl
 %pip_path% install --force-reinstall  %ROOT_PATH%PythonAPI\carla\dist\hutb-1.0.0-cp312-cp312-win_amd64.whl
-where %pip_path%
+where pip
 popd
 
 
