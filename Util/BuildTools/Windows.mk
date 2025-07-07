@@ -57,7 +57,7 @@ rebuild: setup
 
 # PythonAPI
 # 完整命令：check.PythonAPI: PythonAPI
-check.PythonAPI
+check_PythonAPI
 	@"${CARLA_BUILD_TOOLS_FOLDER}/Check.bat" --python-api
 
 check:
