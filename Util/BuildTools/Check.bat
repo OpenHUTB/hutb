@@ -138,8 +138,8 @@ if %PYTHON_API%==true (
     echo Running Python API for Python ${PY_VERSION} unit tests.
     :: TODO pip install nose2 -i http://mirrors.aliyun.com/pypi/simple --trusted-host mirrors.aliyun.com
     echo Current directory: %cd%
-    echo Test command: %python_path% -m nose2 %EXTRA_ARGS%
-    %python_path% -m nose2 %EXTRA_ARGS%
+    echo Test command: %python_path% -m nose2
+    %python_path% -m nose2
 
     if %XML_OUTPUT%==true (
         move test-results.xml ${CARLA_TEST_RESULTS_FOLDER}/python-api-3.xml
