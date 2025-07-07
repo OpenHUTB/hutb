@@ -99,7 +99,7 @@ if not defined CARLA_VERSION goto bad_exit
 
 set BUILD_FOLDER=%INSTALLATION_DIR%UE4Carla/%CARLA_VERSION%/
 :: 仅用于调试
-set BUILD_FOLDER=C:\ProgramData\Jenkins\.jenkins\workspace\carla\Build\UE4Carla\8617b519\
+:: set BUILD_FOLDER=C:\ProgramData\Jenkins\.jenkins\workspace\carla\Build\UE4Carla\8617b519\
 
 set exe_path=!BUILD_FOLDER!\WindowsNoEditor\CarlaUE4.exe
 
@@ -153,7 +153,6 @@ if %PYTHON_API%==true (
 
 popd %ROOT_PATH%PythonAPI\test\unit
 
-exit /b
 
 
 rem ============================================================================
@@ -165,7 +164,7 @@ call :get_current_time_in_seconds T_START_DO_TEST
 if %SMOKE_TESTS%==true (
     echo test connection ...
     :: TODO 替换为相对Python环境路径
-    C:\software\anaconda3\envs\carla_dev\python.exe %ROOT_PATH%PythonAPI/util/test_connection.py -p 2000 --timeout=60.0
+    %python_path%  %ROOT_PATH%PythonAPI/util/test_connection.py -p 2000 --timeout=60.0
     echo test connection done.
 )
 

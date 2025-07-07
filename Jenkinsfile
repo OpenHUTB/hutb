@@ -109,10 +109,10 @@ pipeline {
                             call setEnv64.bat
                             make check.PythonAPI
                         """
-                        // bat """
-                        //     call setEnv64.bat
-                        //     make smoke_tests
-                        // """
+                        bat """
+                            call setEnv64.bat
+                            make smoke_tests
+                        """
                     }
                 }
 
