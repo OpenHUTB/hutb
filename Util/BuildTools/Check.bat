@@ -46,7 +46,7 @@ set RUN_BENCHMARK=false
 set MEASURE_TIME=true
 set python_dir=C:\software\anaconda3\envs\carla_dev\
 set python_path=%python_dir%python.exe
-set pip_path=%python_dir%pip.exe
+set pip_path=%python_dir%Scripts\pip.exe
 
 :arg-parse
 if not "%1"=="" (
@@ -140,6 +140,7 @@ if %PYTHON_API%==true (
     if %XML_OUTPUT%==true (
         move test-results.xml ${CARLA_TEST_RESULTS_FOLDER}/python-api-3.xml
     )
+    exit /b
 )
 
 popd
