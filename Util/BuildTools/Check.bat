@@ -119,7 +119,7 @@ pushd %ROOT_PATH%PythonAPI\carla\dist
 echo %pip_path% install --force-reinstall  %ROOT_PATH%PythonAPI\carla\dist\hutb-1.0.0-cp37-cp37m-win_amd64.whl
 %pip_path% install --force-reinstall  %ROOT_PATH%PythonAPI\carla\dist\hutb-1.0.0-cp37-cp37m-win_amd64.whl
 where pip
-popd
+popd %ROOT_PATH%PythonAPI\carla\dist
 
 
 rem ============================================================================
@@ -134,6 +134,7 @@ if %XML_OUTPUT%==true (
     set EXTRA_ARGS=""
 )
 
+echo PYTHON_API: %PYTHON_API%
 if %PYTHON_API%==true (
     log "Running Python API for Python ${PY_VERSION} unit tests."
     :: TODO pip install nose2 -i http://mirrors.aliyun.com/pypi/simple --trusted-host mirrors.aliyun.com
@@ -144,7 +145,7 @@ if %PYTHON_API%==true (
     )
 )
 
-popd
+popd %CARLA_PYTHONAPI_ROOT_FOLDER%/test/unit
 
 exit /b
 
