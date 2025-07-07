@@ -15,7 +15,6 @@ pipeline {
             stages
             {
 
-                /*
                 stage('windows setup')
                 {
                     steps
@@ -52,14 +51,14 @@ pipeline {
                             make plugins
                         """
                     }
-                    post
-                    {
-                        always
-                        {
-                            archiveArtifacts 'PythonAPI/carla/dist/*.egg'
-                            archiveArtifacts 'PythonAPI/carla/dist/*.whl'
-                        }
-                    }
+                    // post
+                    // {
+                    //     always
+                    //     {
+                    //         archiveArtifacts 'PythonAPI/carla/dist/*.egg'
+                    //         archiveArtifacts 'PythonAPI/carla/dist/*.whl'
+                    //     }
+                    // }
                 }
 
                 stage('windows retrieve content')
@@ -86,18 +85,16 @@ pipeline {
                             make package ARGS="--packages=AdditionalMaps,Town06_Opt,Town07_Opt,Town11,Town12,Town13,Town15 --target-archive=AdditionalMaps"
                         """
                     }
-                    post {
-                        always {
-                            archiveArtifacts 'Build/UE4Carla/*.zip'
-                        }
-                    }
+                    // post {
+                    //     always {
+                    //         archiveArtifacts 'Build/UE4Carla/*.zip'
+                    //     }
+                    // }
                 }
-                */
 
 
                 stage('windows test')
                 {
-                    // 后台启动服务（不弹出界面，用于测试）
                     steps
                     {
                         // // 和前面的打包测试重复，仅用于保证生成的文件和测试PythonAPI的一致
