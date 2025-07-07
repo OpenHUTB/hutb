@@ -57,7 +57,7 @@ rebuild: setup
 
 # PythonAPI
 check:
-    @"${CARLA_BUILD_TOOLS_FOLDER}/Check.bat" --python-api $(ARGS)
+    @"${CARLA_BUILD_TOOLS_FOLDER}/Check.bat" --python-api
 
 # somke test
 smoke_tests:
