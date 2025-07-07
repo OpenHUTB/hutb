@@ -60,10 +60,12 @@ check:
 	@"${CARLA_BUILD_TOOLS_FOLDER}/Check.bat" --all
 
 
-check.PythonAPI: PythonAPI
+# check.PythonAPI: PythonAPI
+# 仅用于调试
+check.PythonAPI:
 	@"${CARLA_BUILD_TOOLS_FOLDER}/Check.bat" --python-api
 
-# somke test
+# somke testc
 smoke_tests:
 	@"${CARLA_BUILD_TOOLS_FOLDER}/Check.bat" --smoke
 
