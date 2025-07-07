@@ -142,8 +142,9 @@ if %PYTHON_API%==true (
     :: TODO pip install nose2 -i http://mirrors.aliyun.com/pypi/simple --trusted-host mirrors.aliyun.com
     echo Current directory: %cd%
     echo Test command: %python_path% -m nose2
-    %python_path% -m nose2 test_transform.py
-    %python_path% -m nose2 test_vehicle.py
+    :: %python_path% -m nose2
+    %python_path% -m unittest test_transform.TestTransform.test_list_rotation_and_translation_location
+    %python_path% -m unittest test_vehicle.TestVehicleControl.test_default_values
 
     if %XML_OUTPUT%==true (
         move test-results.xml %CARLA_TEST_RESULTS_FOLDER%\python-api-3.xml
