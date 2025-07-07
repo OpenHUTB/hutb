@@ -102,6 +102,10 @@ pipeline {
                     {
                         bat """
                             call setEnv64.bat
+                            make check
+                        """
+                        bat """
+                            call setEnv64.bat
                             make smoke_tests
                         """
                     }
