@@ -60,7 +60,7 @@ check:
 	@"${CARLA_BUILD_TOOLS_FOLDER}/Check.bat" --all
 
 
-check.PythonAPI:
+check.PythonAPI: PythonAPI
 	@"${CARLA_BUILD_TOOLS_FOLDER}/Check.bat" --python-api
 
 # somke test
