@@ -98,10 +98,11 @@ for /f %%i in ('git describe --tags --dirty --always') do set CARLA_VERSION=%%i
 if not defined CARLA_VERSION goto bad_exit
 
 set BUILD_FOLDER=%INSTALLATION_DIR%UE4Carla/%CARLA_VERSION%/
+:: 仅用于调试
+set BUILD_FOLDER=C:\ProgramData\Jenkins\.jenkins\workspace\carla\Build\UE4Carla\8617b519\
 
 set exe_path=!BUILD_FOLDER!\WindowsNoEditor\CarlaUE4.exe
-:: 仅用于调试
-set exe_path=C:\ProgramData\Jenkins\.jenkins\workspace\carla\Build\UE4Carla\8617b519\WindowsNoEditor\CarlaUE4.exe
+
 :: 必须使用start来启动一个新的服务进程，否则会卡死 -RenderOffscreen
 echo Unreal service is launching with command: start %exe_path% -RenderOffscreen ...
 :: 如果exe文件不存在，会卡在这里
