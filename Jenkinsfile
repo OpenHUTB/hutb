@@ -102,11 +102,7 @@ pipeline {
                     {
                         bat """
                             call setEnv64.bat
-                        """
-                        error("构建停止")
-                        bat """
-                            call setEnv64.bat
-                            make check
+                            make check.PythonAPI
                         """
                         bat """
                             call setEnv64.bat
