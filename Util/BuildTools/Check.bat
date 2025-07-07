@@ -128,6 +128,7 @@ rem ============================================================================
 
 echo pushd %ROOT_PATH%PythonAPI\test\unit
 pushd %ROOT_PATH%PythonAPI\test\unit
+cd %ROOT_PATH%PythonAPI\test\unit
 
 if %XML_OUTPUT%==true (
     set EXTRA_ARGS="-X"
@@ -136,7 +137,7 @@ if %XML_OUTPUT%==true (
 )
 
 if %PYTHON_API%==true (
-    echo Running Python API for Python ${PY_VERSION} unit tests.
+    echo Running Python API for Python %PY_VERSION% unit tests.
     :: TODO pip install nose2 -i http://mirrors.aliyun.com/pypi/simple --trusted-host mirrors.aliyun.com
     echo Current directory: %cd%
     echo Test command: %python_path% -m nose2
