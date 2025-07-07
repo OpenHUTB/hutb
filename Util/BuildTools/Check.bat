@@ -172,7 +172,6 @@ if %MEASURE_TIME%==true if %SMOKE_TESTS%==true echo %FILE_N% [TIME]: Running smo
 
 
 
-
 rem ============================================================================
 :: 杀死服务端
 for /f "tokens=5" %%a in ('netstat -ano ^| findstr :2000') do taskkill /F /PID %%a
