@@ -44,7 +44,7 @@ set SMOKE_TESTS=false
 set PYTHON_API=false
 set RUN_BENCHMARK=false
 set MEASURE_TIME=true
-set python_dir="C:\software\anaconda3\envs\carla_dev\"
+set python_dir=C:\software\anaconda3\envs\carla_dev\
 set python_path=%python_dir%python.exe
 set pip_path=%python_dir%pip.exe
 
@@ -64,6 +64,11 @@ if not "%1"=="" (
 
     if "%1"=="--smoke" (
         set SMOKE_TESTS=true
+        shift
+    )
+
+    if "%1"=="--python-api" (
+        set PYTHON_API=true
         shift
     )
 

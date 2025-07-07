@@ -102,7 +102,7 @@ pipeline {
                     {
                         bat """
                             call setEnv64.bat
-                            make check
+                            make check.PythonAPI
                         """
                         bat """
                             call setEnv64.bat
