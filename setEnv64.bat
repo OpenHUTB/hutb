@@ -25,8 +25,8 @@ call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Auxiliary
 :: C:\software\anaconda3\envs\carla_dev
 call cmd.exe \k "C:\software\anaconda3\Scripts\activate.bat carla_dev && python --version"
 :: conda activate carla_dev
-python --version
-exit /b
+call python --version
+call exit /b
 
 
 cd C:\ProgramData\Jenkins\.jenkins\workspace\carla
