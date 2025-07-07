@@ -144,11 +144,11 @@ if %PYTHON_API%==true (
     %python_path% -m nose2
 
     if %XML_OUTPUT%==true (
-        move test-results.xml ${CARLA_TEST_RESULTS_FOLDER}/python-api-3.xml
+        move test-results.xml %CARLA_TEST_RESULTS_FOLDER%\python-api-3.xml
     )
 )
 
-popd %CARLA_PYTHONAPI_ROOT_FOLDER%/test/unit
+popd %ROOT_PATH%PythonAPI\test\unit
 
 exit /b
 
