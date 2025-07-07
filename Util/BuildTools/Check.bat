@@ -113,10 +113,10 @@ if exist %exe_path% (
 )
 
 :: 安装最新编译的PythonAPI
-pushd %CARLA_PYTHONAPI_ROOT_FOLDER%/carla/dist/
+pushd %ROOT_PATH%PythonAPI\carla\dist
 :: TODO python 使用指定版本编译hutb；
 :: pip install --force-reinstall C:\ProgramData\Jenkins\.jenkins\workspace\carla\PythonAPI\carla\dist\hutb-1.0.0-cp37-cp37m-win_amd64.whl
-%pip_path% install --force-reinstall %CARLA_PYTHONAPI_ROOT_FOLDER%\carla\dist\hutb-1.0.0-cp312-cp312-win_amd64.whl
+%pip_path% install --force-reinstall  %ROOT_PATH%PythonAPI\carla\dist\hutb-1.0.0-cp312-cp312-win_amd64.whl
 where %pip_path%
 popd
 
