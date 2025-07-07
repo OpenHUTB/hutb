@@ -136,7 +136,7 @@ if %XML_OUTPUT%==true (
 
 echo PYTHON_API: %PYTHON_API%
 if %PYTHON_API%==true (
-    log "Running Python API for Python ${PY_VERSION} unit tests."
+    echo "Running Python API for Python ${PY_VERSION} unit tests."
     :: TODO pip install nose2 -i http://mirrors.aliyun.com/pypi/simple --trusted-host mirrors.aliyun.com
     %python_path% -m nose2 ${EXTRA_ARGS}
 
