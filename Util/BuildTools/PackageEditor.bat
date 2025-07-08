@@ -210,16 +210,69 @@ if %LAUNCH_UE4_EDITOR% == true (
 
 :: 打包：开发资产的版本 使用每个仓库的dev分支，当仓库干净时同步最新的修改
 :: （都是覆盖性）
-:: 如果 Build\UE4Carla\hutb_editor 目录不存在则创建
+:: 如果 Build\UE4Carla\hutb_editor 目录不存在则创建。:/=\ 表示使用\代替/
+:: TODO: 如果存在则删除
+set package_root=%INSTALLATION_DIR:/=\%UE4Carla\
+set editor_dir=%package_root%hutb_editor\
+if not exist "%package_root%" (
+    echo Create package directory %package_root%
+    mkdir %package_root%
+)
+
 :: 拷贝 launch_carla_editor.bat
+xcopy %ROOT_PATH:/=\%Util\BuildTools\launch_hutb_editor.bat %editor_dir% /e /y /h /r /q
 :: 解压 software.zip 中的 4 个依赖软件：cmake、dotnet、make、python3_7 到 hutb_editor 目录下
-:: 拷贝虚幻引擎（不需要git记录、测试打包版的虚幻引擎）
-:: /E 复制目录和子目录，包括空的。/Y 取消提示以确认要覆盖现有目标文件 。/H 也复制隐藏和系统文件。/R 改写只读文件。 /Q 复制时不显示文件名。
-echo copy unreal engine
-xcopy %UE4_ROOT% %INSTALLATION_DIR%UE4Carla\hutb_editor\unreal /e /y /h /r /q
-:: 拷贝 carla
+if exist "C:\jenkins\software\" (
+    xcopy C:\jenkins\software\  %editor_dir%  /e /y /h /r /q
+) else (
+    echo TODO: online install 7zip, CMake, dotnet, GnuWin32, Python37
+)
+
+
+
+:: 拷贝虚幻引擎源代码
+:: 目的目录需要是自定义的文件名
+xcopy C:\jenkins\UnrealEngine\  D:\work\workspace\carla\Build\UE4Carla\hutb_editor\unreal\  /e /y /h /r /q
+
+
+:: 拷贝hutb源代码
+xcopy C:\jenkins\hutb\  D:\work\workspace\carla\Build\UE4Carla\hutb_editor\carla1\  /e /y /h /r /q
+:: 解压并拷贝Content.zip和Installation.zip
+
+
+
+
+:: :: 拷贝虚幻引擎（不需要git记录、测试打包版的虚幻引擎）
+:: :: /E 复制目录和子目录，包括空的。/Y 取消提示以确认要覆盖现有目标文件 。/H 也复制隐藏和系统文件。/R 改写只读文件。 /Q 复制时不显示文件名。
+:: pause
+:: echo Copy unreal engine
+:: xcopy %UE4_ROOT% %editor_dir%unreal\  /e /y /h /r /q
+:: :: TODO: 使用 /EXCLUDE: 排除.git文件夹
+:: :: 删除unreal的的提交记录文件（不包括文件夹）
+:: del /f /s /q  D:\work\workspace\carla\Build\UE4Carla\hutb_editor\unreal\.git\*.*
+:: pushd  D:\work\workspace\carla\Build\UE4Carla\hutb_editor\unreal\.git\
+:: :: 删除.git下的所有空文件夹
+:: rd /s /q  D:\work\workspace\carla\Build\UE4Carla\hutb_editor\unreal\.git\
+:: :: 用popd命令将目录切回执行pushd命令之前的目录
+:: popd  D:\work\workspace\carla\Build\UE4Carla\hutb_editor\unreal\.git\
+:: 
+:: 
+:: :: 生成排除的列表
+:: :: 拷贝 carla （TODO：需要排除carla\Build\UE4Carla\下的所有文件）
+:: xcopy %ROOT_PATH% %editor_dir%carla1\  /e /y /h /r /q
+:: :: 删除carla中的.git 文件夹
+:: del /f /s /q  D:\work\workspace\carla\Build\UE4Carla\hutb_editor\carla1\.git\*.*
+:: pushd  D:\work\workspace\carla\Build\UE4Carla\hutb_editor\carla1\.git\
+:: :: 删除.git下的所有空文件夹
+:: rd /s /q  D:\work\workspace\carla\Build\UE4Carla\hutb_editor\carla1\.git\
+:: :: 用popd命令将目录切回执行pushd命令之前的目录
+:: popd  D:\work\workspace\carla\Build\UE4Carla\hutb_editor\carla1\.git\
+
+
 :: 压缩成 hutb_editor.zip（可以加上虚幻引擎文档、hutb文档）
 :: 7zip\7z.exe x vs2019.7z -o.
+7z.exe a D:\work\workspace\carla\Build\UE4Carla\hutb_editor.zip  D:\work\workspace\carla\Build\UE4Carla\hutb_editor\*
+
 
 
 goto good_exit

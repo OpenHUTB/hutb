@@ -37,7 +37,7 @@ if exist "%ProgramFiles%\Microsoft Visual Studio\2022\" (
     vs_community.exe --add %visual_studio_components% --passive --wait --norestart || exit /b
 )
 
-    
+
 REM 获取当前脚本的完整路径    
 set scriptPath=%~dp0
 echo %scriptPath%
@@ -52,6 +52,24 @@ echo %UE4_ROOT%
     
 REM 显示设置的环境变量    
 :: echo 环境变量UE4_ROOT已设置为：!UE4_ROOT!    
+
+
+exist
+
+:: 编译虚幻引擎源代码
+:: TODO：如果存在 UnrealEditor.exe，则跳过虚幻引擎的从头编译
+if not exist %UE4_ROOT:/=\%\Engine\Binaries\Win64\UE4Editor.exe (
+    cd unreal
+    :: /t:Build                                 指定构建目标
+    :: /p:Configuration="Development Editor"    构建配置（调试用 DebugGame Editor，发布用 Shipping）
+    :: /p:Platform="Win64"                      目标平台
+    :: /m                                       启用多核编译（加快速度）
+    "%PROGRAMFILES%\Microsoft Visual Studio\2022\Community\MSBuild\Current\Bin\MSBuild.exe" UE4.sln /t:Build /p:Configuration="Development Editor" /p:Platform="Win64" /m
+    cd ..
+)
+
+
+
     
 REM 定义相对路径列表    
 set "RelativePaths=CMake\bin;dotnet;GnuWin32\bin;Python37;Python37\Scripts"    
@@ -96,6 +114,11 @@ cd !scriptDir!\carla1
   
 REM 启动UE4Editor.exe并传递uprojectPath的完整路径  
 :: start "" "UE4Editor.exe" "!FulluprojectPath!"  
+
+
+
+
+:: 编译hutb源代码
 make launch ARGS="--chrono"
  
 

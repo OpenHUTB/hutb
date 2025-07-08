@@ -24,7 +24,7 @@ rem ============================================================================
 rem -- Parse arguments ---------------------------------------------------------
 rem ============================================================================
 
-set BOOST_VERSION=1.80.0
+set BOOST_VERSION=1.86.0
 set INSTALLERS_DIR=%ROOT_PATH:/=\%Util\InstallersWin\
 set VERSION_FILE=%ROOT_PATH:/=\%Util\ContentVersions.txt
 set Carla_ROOT_DIR=%ROOT_PATH:/=\%\

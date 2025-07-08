@@ -87,11 +87,7 @@ LibCarla: setup
 	@"${CARLA_BUILD_TOOLS_FOLDER}/BuildLibCarla.bat" --server --client --generator "$(GENERATOR)"
 
 setup: downloadplugin
-	@if [ ! -d "C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Auxiliary\Build"]; then \
-		@"${CARLA_BUILD_TOOLS_FOLDER}/Setup.bat" --boost-toolset msvc-14.3 --generator "$(GENERATOR)" $(ARGS) \
-	else
-		@"${CARLA_BUILD_TOOLS_FOLDER}/Setup.bat" --boost-toolset msvc-14.2 --generator "$(GENERATOR)" $(ARGS) \
-	fi
+	@"${CARLA_BUILD_TOOLS_FOLDER}/Setup.bat" --boost-toolset msvc-14.3 --generator "$(GENERATOR)" $(ARGS)
 
 
 .PHONY: Plugins
