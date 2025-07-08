@@ -74,7 +74,7 @@ if not exist "%LUNASVG_VSPROJECT_PATH%" mkdir "%LUNASVG_VSPROJECT_PATH%"
 cd "%LUNASVG_VSPROJECT_PATH%"
 
 if exist "%programfiles%\Microsoft Visual Studio\2022\Community\VC\Auxiliary\Build\vcvars64.bat" (
-    cmake -G "Visual Studio 17 202" -A x64^
+    cmake -G "Visual Studio 17 2022" -A x64^
         -DCMAKE_INSTALL_PREFIX="%DEPENDENCIES_INSTALLATION_PATH:\=/%"^
         "%LUNASVG_SOURCE_PATH%"
 ) else (
