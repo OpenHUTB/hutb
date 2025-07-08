@@ -69,11 +69,20 @@ if not exist "%FASTDDS_SRC_DIR%/thirdparty/fastcdr/build" (
 cd "%FASTDDS_SRC_DIR%/thirdparty/fastcdr/build"
 echo %FILE_N% Generating build...
 
-cmake .. -G "Visual Studio 16 2019" -A x64^
-    -DCMAKE_BUILD_TYPE=Release^
-    -DCMAKE_CXX_FLAGS_RELEASE="/MD /MP"^
-    -DCMAKE_INSTALL_PREFIX="%FASTDDS_INSTALL_DIR:\=/%"^
-    -DCMAKE_CXX_FLAGS=/D_SILENCE_TR1_NAMESPACE_DEPRECATION_WARNING
+if exist "%programfiles%\Microsoft Visual Studio\2022\Community\VC\Auxiliary\Build\vcvars64.bat" (
+    cmake .. -G "Visual Studio 17 2022" -A x64^
+        -DCMAKE_BUILD_TYPE=Release^
+        -DCMAKE_CXX_FLAGS_RELEASE="/MD /MP"^
+        -DCMAKE_INSTALL_PREFIX="%FASTDDS_INSTALL_DIR:\=/%"^
+        -DCMAKE_CXX_FLAGS=/D_SILENCE_TR1_NAMESPACE_DEPRECATION_WARNING
+) else (
+    cmake .. -G "Visual Studio 16 2019" -A x64^
+        -DCMAKE_BUILD_TYPE=Release^
+        -DCMAKE_CXX_FLAGS_RELEASE="/MD /MP"^
+        -DCMAKE_INSTALL_PREFIX="%FASTDDS_INSTALL_DIR:\=/%"^
+        -DCMAKE_CXX_FLAGS=/D_SILENCE_TR1_NAMESPACE_DEPRECATION_WARNING
+)
+
 if %errorlevel%  neq 0 goto error_cmake
 
 echo %FILE_N% Building...
@@ -117,12 +126,22 @@ if not exist "%FASTDDS_BUILD_DIR%" (
 cd "%FASTDDS_BUILD_DIR%"
 echo %FILE_N% Generating build...
 
-cmake .. -G "Visual Studio 16 2019" -A x64^
-    -DCMAKE_BUILD_TYPE=Release^
-    -DCMAKE_CXX_FLAGS_RELEASE="/MD /MP"^
-    -DCMAKE_INSTALL_PREFIX="%FASTDDS_INSTALL_DIR:\=/%"^
-    -DCMAKE_CXX_FLAGS=/D_SILENCE_TR1_NAMESPACE_DEPRECATION_WARNING^
-    "%FASTDDS_SRC_DIR%"
+if exist "%programfiles%\Microsoft Visual Studio\2022\Community\VC\Auxiliary\Build\vcvars64.bat" (
+    cmake .. -G "Visual Studio 17 2022" -A x64^
+        -DCMAKE_BUILD_TYPE=Release^
+        -DCMAKE_CXX_FLAGS_RELEASE="/MD /MP"^
+        -DCMAKE_INSTALL_PREFIX="%FASTDDS_INSTALL_DIR:\=/%"^
+        -DCMAKE_CXX_FLAGS=/D_SILENCE_TR1_NAMESPACE_DEPRECATION_WARNING^
+        "%FASTDDS_SRC_DIR%"
+) else (
+    cmake .. -G "Visual Studio 16 2019" -A x64^
+        -DCMAKE_BUILD_TYPE=Release^
+        -DCMAKE_CXX_FLAGS_RELEASE="/MD /MP"^
+        -DCMAKE_INSTALL_PREFIX="%FASTDDS_INSTALL_DIR:\=/%"^
+        -DCMAKE_CXX_FLAGS=/D_SILENCE_TR1_NAMESPACE_DEPRECATION_WARNING^
+        "%FASTDDS_SRC_DIR%"
+)
+
 if %errorlevel%  neq 0 goto error_cmake
 
 echo %FILE_N% Building...
@@ -169,7 +188,7 @@ rem ============================================================================
 
 :error_install
     echo.
-    echo %FILE_N% [Visual Studio 16 2019 Win64 ERROR] An error ocurred while installing using Visual Studio 16 2019 Win64.
+    echo %FILE_N% [Visual Studio 17 2022 (or 16 2019) Win64 ERROR] An error ocurred while installing using Visual Studio 17 2022 (or 16 2019) Win64.
     echo %FILE_N% [Visual Studio 16 2019 Win64 ERROR] Possible causes:
     echo %FILE_N%                - Make sure you have Visual Studio installed.
     echo %FILE_N%                - Make sure you have the "x64 Visual C++ Toolset" in your path.

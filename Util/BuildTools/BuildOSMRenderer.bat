@@ -38,14 +38,27 @@ if not exist "%LIBOSMSCOUT_SOURCE_PATH%" git clone %LIBOSMSCOUT_REPO% %LIBOSMSCO
 if not exist "%LIBOSMSCOUT_VSPROJECT_PATH%" mkdir "%LIBOSMSCOUT_VSPROJECT_PATH%"
 cd "%LIBOSMSCOUT_VSPROJECT_PATH%"
 
-cmake -G "Visual Studio 16 2019"^
-    -DCMAKE_INSTALL_PREFIX="%DEPENDENCIES_INSTALLATION_PATH:\=/%"^
-    -DOSMSCOUT_BUILD_TOOL_STYLEEDITOR=OFF^
-    -DOSMSCOUT_BUILD_TOOL_OSMSCOUT2=OFF^
-    -DOSMSCOUT_BUILD_TESTS=OFF^
-    -DOSMSCOUT_BUILD_CLIENT_QT=OFF^
-    -DOSMSCOUT_BUILD_DEMOS=OFF^
-    "%LIBOSMSCOUT_SOURCE_PATH%"
+if exist "%programfiles%\Microsoft Visual Studio\2022\Community\VC\Auxiliary\Build\vcvars64.bat" (
+    cmake -G "Visual Studio 17 2022"^
+        -DCMAKE_INSTALL_PREFIX="%DEPENDENCIES_INSTALLATION_PATH:\=/%"^
+        -DOSMSCOUT_BUILD_TOOL_STYLEEDITOR=OFF^
+        -DOSMSCOUT_BUILD_TOOL_OSMSCOUT2=OFF^
+        -DOSMSCOUT_BUILD_TESTS=OFF^
+        -DOSMSCOUT_BUILD_CLIENT_QT=OFF^
+        -DOSMSCOUT_BUILD_DEMOS=OFF^
+        "%LIBOSMSCOUT_SOURCE_PATH%"
+) else (
+    cmake -G "Visual Studio 16 2019"^
+        -DCMAKE_INSTALL_PREFIX="%DEPENDENCIES_INSTALLATION_PATH:\=/%"^
+        -DOSMSCOUT_BUILD_TOOL_STYLEEDITOR=OFF^
+        -DOSMSCOUT_BUILD_TOOL_OSMSCOUT2=OFF^
+        -DOSMSCOUT_BUILD_TESTS=OFF^
+        -DOSMSCOUT_BUILD_CLIENT_QT=OFF^
+        -DOSMSCOUT_BUILD_DEMOS=OFF^
+        "%LIBOSMSCOUT_SOURCE_PATH%"
+)
+
+
 
 rem -DCMAKE_CXX_FLAGS_RELEASE="/DM_PI=3.14159265358979323846"^
 
@@ -60,9 +73,17 @@ if not exist "%LUNASVG_SOURCE_PATH%" git clone %LUNASVG_REPO% %LUNASVG_SOURCE_PA
 if not exist "%LUNASVG_VSPROJECT_PATH%" mkdir "%LUNASVG_VSPROJECT_PATH%"
 cd "%LUNASVG_VSPROJECT_PATH%"
 
-cmake -G "Visual Studio 16 2019" -A x64^
-    -DCMAKE_INSTALL_PREFIX="%DEPENDENCIES_INSTALLATION_PATH:\=/%"^
-    "%LUNASVG_SOURCE_PATH%"
+if exist "%programfiles%\Microsoft Visual Studio\2022\Community\VC\Auxiliary\Build\vcvars64.bat" (
+    cmake -G "Visual Studio 17 202" -A x64^
+        -DCMAKE_INSTALL_PREFIX="%DEPENDENCIES_INSTALLATION_PATH:\=/%"^
+        "%LUNASVG_SOURCE_PATH%"
+) else (
+    cmake -G "Visual Studio 16 2019" -A x64^
+        -DCMAKE_INSTALL_PREFIX="%DEPENDENCIES_INSTALLATION_PATH:\=/%"^
+        "%LUNASVG_SOURCE_PATH%"
+)
+
+
 
 cmake --build . --config Release --target install
 
@@ -74,9 +95,17 @@ rem ===========================================================================
 if not exist "%OSM_RENDERER_VSPROJECT_PATH%" mkdir "%OSM_RENDERER_VSPROJECT_PATH%"
 cd "%OSM_RENDERER_VSPROJECT_PATH%"
 
-cmake -G "Visual Studio 16 2019" -A x64^
-    -DCMAKE_CXX_FLAGS_RELEASE="/std:c++17 /wd4251 /I%INSTALLATION_DIR:/=\%boost-1.84.0-install\include"^
-    "%OSM_RENDERER_SOURCE%"
+if exist "%programfiles%\Microsoft Visual Studio\2022\Community\VC\Auxiliary\Build\vcvars64.bat" (
+    cmake -G "Visual Studio 17 2022" -A x64^
+        -DCMAKE_CXX_FLAGS_RELEASE="/std:c++17 /wd4251 /I%INSTALLATION_DIR:/=\%boost-1.84.0-install\include"^
+        "%OSM_RENDERER_SOURCE%"
+) else (
+    cmake -G "Visual Studio 16 2019" -A x64^
+        -DCMAKE_CXX_FLAGS_RELEASE="/std:c++17 /wd4251 /I%INSTALLATION_DIR:/=\%boost-1.84.0-install\include"^
+        "%OSM_RENDERER_SOURCE%"
+)
+
+
 
 cmake --build . --config Release
 rem cmake --build . --config Release
