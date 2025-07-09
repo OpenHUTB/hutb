@@ -230,13 +230,13 @@ if exist "C:\jenkins\software\" (
 
 
 
-:: 拷贝虚幻引擎源代码
+:: 拷贝虚幻引擎源代码（包括依赖）
 :: 目的目录需要是自定义的文件名
-xcopy C:\jenkins\UnrealEngine\  D:\work\workspace\carla\Build\UE4Carla\hutb_editor\unreal\  /e /y /h /r /q
+xcopy C:\jenkins\UnrealEngine\  %ROOT_PATH:/=\%Build\UE4Carla\hutb_editor\unreal\  /e /y /h /r /q
 
 
 :: 拷贝hutb源代码
-xcopy C:\jenkins\hutb\  D:\work\workspace\carla\Build\UE4Carla\hutb_editor\carla1\  /e /y /h /r /q
+xcopy C:\jenkins\hutb\  %ROOT_PATH:/=\%Build\UE4Carla\hutb_editor\carla1\  /e /y /h /r /q
 :: 解压并拷贝Content.zip和Installation.zip
 
 :: 还需要拷贝拷贝依赖包和资产（即到hutb_editor/carla1目录下执行make setup前面的下载资产部分，不编译）
@@ -248,7 +248,8 @@ if exist "%programfiles%\Microsoft Visual Studio\2022\Community\VC\Auxiliary\Bui
 
 set cur_dir=%CD%
 echo Current directory: %CD%
-cd D:\work\workspace\carla\Build\UE4Carla\hutb_editor\carla1
+:: cd D:\work\workspace\carla\Build\UE4Carla\hutb_editor\carla1
+cd %ROOT_PATH:/=\%Build\UE4Carla\hutb_editor\carla1
 make setup ARGS="--download_only"
 :: 返回原来目录
 cd %cur_dir%
@@ -257,7 +258,7 @@ echo Return to previous directory: %CD%
 
 :: 压缩成 hutb_editor.zip（可以加上虚幻引擎文档、hutb文档）
 :: 7zip\7z.exe x vs2019.7z -o.
-7z.exe a D:\work\workspace\carla\Build\UE4Carla\hutb_editor.zip  D:\work\workspace\carla\Build\UE4Carla\hutb_editor\*
+7z.exe a %ROOT_PATH:/=\%Build\UE4Carla\hutb_editor.zip  %ROOT_PATH:/=\%Build\UE4Carla\hutb_editor\*
 
 
 

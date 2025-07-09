@@ -134,6 +134,7 @@ echo.%GENERATOR% | findstr /C:"Visual Studio" >nul && (
 cmake .. -G %GENERATOR% %PLATFORM%^
   -DCMAKE_INSTALL_PREFIX="%XERCESC_INSTALL_DIR:\=/%"^
   -DBUILD_SHARED_LIBS=OFF^
+  -Dtranscoder=windows^
   "%BUILD_DIR%%XERCESC_BASENAME%-%XERCESC_VERSION%-source"
 if %errorlevel% neq 0 goto error_cmake
 
