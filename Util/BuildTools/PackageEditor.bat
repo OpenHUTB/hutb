@@ -239,34 +239,20 @@ xcopy C:\jenkins\UnrealEngine\  D:\work\workspace\carla\Build\UE4Carla\hutb_edit
 xcopy C:\jenkins\hutb\  D:\work\workspace\carla\Build\UE4Carla\hutb_editor\carla1\  /e /y /h /r /q
 :: 解压并拷贝Content.zip和Installation.zip
 
+:: 还需要拷贝拷贝依赖包和资产（即到hutb_editor/carla1目录下执行make setup前面的下载资产部分，不编译）
+if exist "%programfiles%\Microsoft Visual Studio\2022\Community\VC\Auxiliary\Build\vcvars64.bat" (
+    call "%programfiles%\Microsoft Visual Studio\2022\Community\VC\Auxiliary\Build\vcvars64.bat"
+) else (
+    call "%programfiles%\Microsoft Visual Studio\2022\Community\VC\Auxiliary\Build\vcvars64.bat"
+)
 
-
-
-:: :: 拷贝虚幻引擎（不需要git记录、测试打包版的虚幻引擎）
-:: :: /E 复制目录和子目录，包括空的。/Y 取消提示以确认要覆盖现有目标文件 。/H 也复制隐藏和系统文件。/R 改写只读文件。 /Q 复制时不显示文件名。
-:: pause
-:: echo Copy unreal engine
-:: xcopy %UE4_ROOT% %editor_dir%unreal\  /e /y /h /r /q
-:: :: TODO: 使用 /EXCLUDE: 排除.git文件夹
-:: :: 删除unreal的的提交记录文件（不包括文件夹）
-:: del /f /s /q  D:\work\workspace\carla\Build\UE4Carla\hutb_editor\unreal\.git\*.*
-:: pushd  D:\work\workspace\carla\Build\UE4Carla\hutb_editor\unreal\.git\
-:: :: 删除.git下的所有空文件夹
-:: rd /s /q  D:\work\workspace\carla\Build\UE4Carla\hutb_editor\unreal\.git\
-:: :: 用popd命令将目录切回执行pushd命令之前的目录
-:: popd  D:\work\workspace\carla\Build\UE4Carla\hutb_editor\unreal\.git\
-:: 
-:: 
-:: :: 生成排除的列表
-:: :: 拷贝 carla （TODO：需要排除carla\Build\UE4Carla\下的所有文件）
-:: xcopy %ROOT_PATH% %editor_dir%carla1\  /e /y /h /r /q
-:: :: 删除carla中的.git 文件夹
-:: del /f /s /q  D:\work\workspace\carla\Build\UE4Carla\hutb_editor\carla1\.git\*.*
-:: pushd  D:\work\workspace\carla\Build\UE4Carla\hutb_editor\carla1\.git\
-:: :: 删除.git下的所有空文件夹
-:: rd /s /q  D:\work\workspace\carla\Build\UE4Carla\hutb_editor\carla1\.git\
-:: :: 用popd命令将目录切回执行pushd命令之前的目录
-:: popd  D:\work\workspace\carla\Build\UE4Carla\hutb_editor\carla1\.git\
+set cur_dir=%CD%
+echo Current directory: %CD%
+cd D:\work\workspace\carla\Build\UE4Carla\hutb_editor\carla1
+make setup ARGS="--download_only"
+:: 返回原来目录
+cd %cur_dir%
+echo Return to previous directory: %CD%
 
 
 :: 压缩成 hutb_editor.zip（可以加上虚幻引擎文档、hutb文档）

@@ -40,6 +40,8 @@ set CONTENT_ZIP=C:\jenkins\Content.zip
 set INSTALLATION_ZIP=C:\jenkins\Installation.zip
 set USE_CHRONO=false
 set USE_ROS2=false
+:: 仅下载依赖和资产，不进行编译（用于打包编辑器 make editor）
+set DOWNLOAD_ONLY=false
 
 :arg-parse
 if not "%1"=="" (
@@ -54,6 +56,9 @@ if not "%1"=="" (
     )
     if "%1"=="--ros2" (
         set USE_ROS2=true
+    )
+    if "%1"=="--download_only" (
+        set DOWNLOAD_ONLY=true
     )
     if "%1" == "--generator" (
         set GENERATOR=%2
@@ -123,6 +128,11 @@ if not exist "%CONTENT_DIR%" (
             powershell -Command "Expand-Archive '%CONTENT_ZIP%' -DestinationPath '%CarlaUE4_DIR%' -Force"
         )
     )
+)
+
+:: 仅下载不安装
+if %DOWNLOAD_ONLY%==true (
+    goto success
 )
 
 
