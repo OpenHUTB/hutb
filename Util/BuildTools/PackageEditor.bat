@@ -200,7 +200,8 @@ echo Return to previous directory: %CD%
 
 
 pause
-:: compress to hutb_editor.zip（可以加上虚幻引擎文档、hutb文档）
+:: compress to hutb_editor.zip
+:: TODO: add UnrealEngine doc and hutb doc
 :: 7zip\7z.exe x vs2019.7z -o.
 7z.exe a %ROOT_PATH:/=\%Build\UE4Carla\hutb_editor.zip  %ROOT_PATH:/=\%Build\UE4Carla\hutb_editor\*
 
