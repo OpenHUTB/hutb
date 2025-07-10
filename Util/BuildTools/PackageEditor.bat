@@ -14,6 +14,9 @@ rem ============================================================================
 rem -- Parse arguments ---------------------------------------------------------
 rem ============================================================================
 
+:: TODO: custom through command parameter
+set offline_dir=C:\jenkins\
+
 set BUILD_UE4_EDITOR=false
 set LAUNCH_UE4_EDITOR=false
 :: 是否打包UE4编辑器
@@ -137,129 +140,71 @@ if %REMOVE_INTERMEDIATE% == true (
 )
 
 
-rem Build Carla Editor
-rem
-set OMNIVERSE_PATCH_FOLDER=%ROOT_PATH%Util\Patches\omniverse_4.26\
-set OMNIVERSE_PLUGIN_FOLDER=%UE4_ROOT%Engine\Plugins\Marketplace\NVIDIA\Omniverse\
-if exist %OMNIVERSE_PLUGIN_FOLDER% (
-    set OMNIVERSE_PLUGIN_INSTALLED="Omniverse ON"
-    xcopy /Y /S /I "%OMNIVERSE_PATCH_FOLDER%USDCARLAInterface.h" "%OMNIVERSE_PLUGIN_FOLDER%Source\OmniverseUSD\Public\" > NUL
-    xcopy /Y /S /I "%OMNIVERSE_PATCH_FOLDER%USDCARLAInterface.cpp" "%OMNIVERSE_PLUGIN_FOLDER%Source\OmniverseUSD\Private\" > NUL
-) else (
-    set OMNIVERSE_PLUGIN_INSTALLED="Omniverse OFF"
-)
-
-if %USE_CARSIM% == true (
-    python %ROOT_PATH%Util/BuildTools/enable_carsim_to_uproject.py -f="%ROOT_PATH%Unreal/CarlaUE4/CarlaUE4.uproject" -e
-    set CARSIM_STATE="CarSim ON"
-) else (
-    python %ROOT_PATH%Util/BuildTools/enable_carsim_to_uproject.py -f="%ROOT_PATH%Unreal/CarlaUE4/CarlaUE4.uproject"
-    set CARSIM_STATE="CarSim OFF"
-)
-if %USE_CHRONO% == true (
-    set CHRONO_STATE="Chrono ON"
-) else (
-    set CHRONO_STATE="Chrono OFF"
-)
-if %USE_ROS2% == true (
-    set ROS2_STATE="Ros2 ON"
-) else (
-    set ROS2_STATE="Ros2 OFF"
-)
-if %USE_UNITY% == true (
-    set UNITY_STATE="Unity ON"
-) else (
-    set UNITY_STATE="Unity OFF"
-)
-set OPTIONAL_MODULES_TEXT=%CARSIM_STATE% %CHRONO_STATE% %ROS2_STATE% %OMNIVERSE_PLUGIN_INSTALLED% %UNITY_STATE%
-echo %OPTIONAL_MODULES_TEXT% > "%ROOT_PATH%Unreal/CarlaUE4/Config/OptionalModules.ini"
-
-
-if %BUILD_UE4_EDITOR% == true (
-    echo %FILE_N% Building Unreal Editor...
-
-    call "%UE4_ROOT%Engine\Build\BatchFiles\Build.bat"^
-        CarlaUE4Editor^
-        Win64^
-        Development^
-        -WaitMutex^
-        -FromMsBuild^
-        "%ROOT_PATH%Unreal/CarlaUE4/CarlaUE4.uproject"
-    if errorlevel 1 goto bad_exit
-
-    call "%UE4_ROOT%Engine\Build\BatchFiles\Build.bat"^
-        CarlaUE4^
-        Win64^
-        Development^
-        -WaitMutex^
-        -FromMsBuild^
-        "%ROOT_PATH%Unreal/CarlaUE4/CarlaUE4.uproject"
-    if errorlevel 1 goto bad_exit
-)
-
-if %LAUNCH_UE4_EDITOR% == true (
-    echo %FILE_N% Launching Unreal Editor...
-    call "%UE4_ROOT%\Engine\Binaries\Win64\UE4Editor.exe"^
-        "%UE4_PROJECT_FOLDER%CarlaUE4.uproject" %EDITOR_FLAGS%
-    if %errorlevel% neq 0 goto error_build
-)
-
-
 :package_editor
     echo Package UE4 editor...
 
 :: 打包：开发资产的版本 使用每个仓库的dev分支，当仓库干净时同步最新的修改
 :: （都是覆盖性）
 :: 如果 Build\UE4Carla\hutb_editor 目录不存在则创建。:/=\ 表示使用\代替/
-:: TODO: 如果存在则删除
 set package_root=%INSTALLATION_DIR:/=\%UE4Carla\
 set editor_dir=%package_root%hutb_editor\
-if not exist "%package_root%" (
-    echo Create package directory %package_root%
-    mkdir %package_root%
+:: 如果存在则删除
+if exist "%package_root%" (
+    :: delete all files (exclude directory)
+    del /f /s /q %package_root%\hutb_editor\*
+    :: remove empty directory
+    rd /s /q %package_root%\hutb_editor\
 )
+echo Create package directory: mkdir %editor_dir%
+mkdir %editor_dir%
 
-:: 拷贝 launch_carla_editor.bat
+
+:: copy launch_carla_editor.bat
 xcopy %ROOT_PATH:/=\%Util\BuildTools\launch_hutb_editor.bat %editor_dir% /e /y /h /r /q
 :: 解压 software.zip 中的 4 个依赖软件：cmake、dotnet、make、python3_7 到 hutb_editor 目录下
-if exist "C:\jenkins\software\" (
-    xcopy C:\jenkins\software\  %editor_dir%  /e /y /h /r /q
+if exist "%offline_dir%software\" (
+    echo xcopy %offline_dir%software\  %editor_dir%  /e /y /h /r /q
+    xcopy %offline_dir%software\  %editor_dir%  /e /y /h /r /q
 ) else (
     echo TODO: online install 7zip, CMake, dotnet, GnuWin32, Python37
 )
 
 
+:: copy UnrealEngine source code (including dependency)
+:: if exist "%offline_dir%software\" (
+::     xcopy %offline_dir%UnrealEngine\  %ROOT_PATH:/=\%Build\UE4Carla\hutb_editor\unreal\  /e /y /h /r /q
+:: ) else (
+::     echo TODO: download UnrealEngine source code and execute Setup.bat, GenerateProjectFiles.bat
+:: )
 
-:: 拷贝虚幻引擎源代码（包括依赖）
-:: 目的目录需要是自定义的文件名
-xcopy C:\jenkins\UnrealEngine\  %ROOT_PATH:/=\%Build\UE4Carla\hutb_editor\unreal\  /e /y /h /r /q
+
+:: copy hutb source code
+echo xcopy %offline_dir%hutb\  %ROOT_PATH:/=\%Build\UE4Carla\hutb_editor\carla1\  /e /y /h /r /q
+xcopy %offline_dir%hutb\  %ROOT_PATH:/=\%Build\UE4Carla\hutb_editor\carla1\  /e /y /h /r /q
 
 
-:: 拷贝hutb源代码
-xcopy C:\jenkins\hutb\  %ROOT_PATH:/=\%Build\UE4Carla\hutb_editor\carla1\  /e /y /h /r /q
-:: 解压并拷贝Content.zip和Installation.zip
-
-:: 还需要拷贝拷贝依赖包和资产（即到hutb_editor/carla1目录下执行make setup前面的下载资产部分，不编译）
 if exist "%programfiles%\Microsoft Visual Studio\2022\Community\VC\Auxiliary\Build\vcvars64.bat" (
     call "%programfiles%\Microsoft Visual Studio\2022\Community\VC\Auxiliary\Build\vcvars64.bat"
 ) else (
     call "%programfiles%\Microsoft Visual Studio\2022\Community\VC\Auxiliary\Build\vcvars64.bat"
 )
-
+:: copy required dependency and assert (download only, not compile)
 set cur_dir=%CD%
 echo Current directory: %CD%
 :: cd D:\work\workspace\carla\Build\UE4Carla\hutb_editor\carla1
 cd %ROOT_PATH:/=\%Build\UE4Carla\hutb_editor\carla1
 make setup ARGS="--download_only"
-:: 返回原来目录
+:: return to previous directory
 cd %cur_dir%
 echo Return to previous directory: %CD%
 
 
-:: 压缩成 hutb_editor.zip（可以加上虚幻引擎文档、hutb文档）
+pause
+:: compress to hutb_editor.zip（可以加上虚幻引擎文档、hutb文档）
 :: 7zip\7z.exe x vs2019.7z -o.
 7z.exe a %ROOT_PATH:/=\%Build\UE4Carla\hutb_editor.zip  %ROOT_PATH:/=\%Build\UE4Carla\hutb_editor\*
 
+pause
 
 
 goto good_exit

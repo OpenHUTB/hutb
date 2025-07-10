@@ -23,7 +23,9 @@ launch: CarlaUE4Editor
 	@"${CARLA_BUILD_TOOLS_FOLDER}/BuildCarlaUE4.bat" --launch $(ARGS)
 
 # 将包含Carla插件的虚幻编辑器打包到 Build/UE4Carla/hutb_editor.zip
-editor: CarlaUE4Editor
+# editor: CarlaUE4Editor
+# for debug
+editor:
 	@"${CARLA_BUILD_TOOLS_FOLDER}/PackageEditor.bat" --build $(ARGS)
 
 launch-only:

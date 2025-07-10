@@ -65,8 +65,8 @@ rem Build STREETMAP
 if  %GIT_PULL% == true (
     if not exist "%CARLA_STREETMAP_PLUGINS_PATH%" git clone -b %STREETMAP_BRANCH% %STREETMAP_REPO% %CARLA_STREETMAP_PLUGINS_PATH%
     cd "%CARLA_STREETMAP_PLUGINS_PATH%"
-    git fetch
-    git checkout %CURRENT_STREETMAP_COMMIT%
+    :: git fetch
+    :: git checkout %CURRENT_STREETMAP_COMMIT%
 )
 
 
