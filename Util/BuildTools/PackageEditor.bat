@@ -149,7 +149,6 @@ if %REMOVE_INTERMEDIATE% == true (
 set package_root=%INSTALLATION_DIR:/=\%UE4Carla\
 set editor_dir=%package_root%hutb_editor\
 :: 如果存在则删除
-
 if exist "%package_root%" (
     :: delete all files (exclude directory)
     del /f /s /q %package_root%\hutb_editor\*
