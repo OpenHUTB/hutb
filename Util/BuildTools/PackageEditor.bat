@@ -149,14 +149,15 @@ if %REMOVE_INTERMEDIATE% == true (
 set package_root=%INSTALLATION_DIR:/=\%UE4Carla\
 set editor_dir=%package_root%hutb_editor\
 :: 如果存在则删除
-if exist "%package_root%" (
-    :: delete all files (exclude directory)
-    del /f /s /q %package_root%\hutb_editor\*
-    :: remove empty directory
-    rd /s /q %package_root%\hutb_editor\
-)
-echo Create package directory: mkdir %editor_dir%
-mkdir %editor_dir%
+
+:: if exist "%package_root%" (
+::     :: delete all files (exclude directory)
+::     del /f /s /q %package_root%\hutb_editor\*
+::     :: remove empty directory
+::     rd /s /q %package_root%\hutb_editor\
+:: )
+:: echo Create package directory: mkdir %editor_dir%
+:: mkdir %editor_dir%
 
 
 :: copy launch_carla_editor.bat
@@ -171,16 +172,26 @@ if exist "%offline_dir%software\" (
 
 
 :: copy UnrealEngine source code (including dependency)
-:: if exist "%offline_dir%software\" (
-::     xcopy %offline_dir%UnrealEngine\  %ROOT_PATH:/=\%Build\UE4Carla\hutb_editor\unreal\  /e /y /h /r /q
-:: ) else (
-::     echo TODO: download UnrealEngine source code and execute Setup.bat, GenerateProjectFiles.bat
-:: )
+if exist "%offline_dir%software\" (
+    if not exist "%ROOT_PATH:/=\%Build\UE4Carla\hutb_editor\unreal\" (
+        xcopy %offline_dir%UnrealEngine\  %ROOT_PATH:/=\%Build\UE4Carla\hutb_editor\unreal\  /e /y /h /r /q
+    ) else (
+        echo Exist UnrealEngine code, skip copy it.
+    )
+) else (
+    echo TODO: download UnrealEngine source code and execute Setup.bat, GenerateProjectFiles.bat
+)
 
 
 :: copy hutb source code
-echo xcopy %offline_dir%hutb\  %ROOT_PATH:/=\%Build\UE4Carla\hutb_editor\carla1\  /e /y /h /r /q
-xcopy %offline_dir%hutb\  %ROOT_PATH:/=\%Build\UE4Carla\hutb_editor\carla1\  /e /y /h /r /q
+if not exist "%ROOT_PATH:/=\%Build\UE4Carla\hutb_editor\carla1\" (
+    xcopy %offline_dir%hutb\  %ROOT_PATH:/=\%Build\UE4Carla\hutb_editor\carla1\  /e /y /h /r /q
+    :: copy Unreal plugin
+    xcopy %offline_dir%StreetMap\  %ROOT_PATH:/=\%Build\UE4Carla\hutb_editor\carla1\Unreal\CarlaUE4\Plugins\StreetMap  /e /y /h /r /q
+) else (
+    echo Exist hutb source code, skip copy it.
+)
+
 
 
 if exist "%programfiles%\Microsoft Visual Studio\2022\Community\VC\Auxiliary\Build\vcvars64.bat" (
@@ -188,7 +199,7 @@ if exist "%programfiles%\Microsoft Visual Studio\2022\Community\VC\Auxiliary\Bui
 ) else (
     call "%programfiles%\Microsoft Visual Studio\2022\Community\VC\Auxiliary\Build\vcvars64.bat"
 )
-:: copy required dependency and assert (download only, not compile)
+:: copy required dependency and asset (download only, not compile)
 set cur_dir=%CD%
 echo Current directory: %CD%
 :: cd D:\work\workspace\carla\Build\UE4Carla\hutb_editor\carla1
@@ -199,13 +210,10 @@ cd %cur_dir%
 echo Return to previous directory: %CD%
 
 
-pause
 :: compress to hutb_editor.zip
 :: TODO: add UnrealEngine doc and hutb doc
 :: 7zip\7z.exe x vs2019.7z -o.
-7z.exe a %ROOT_PATH:/=\%Build\UE4Carla\hutb_editor.zip  %ROOT_PATH:/=\%Build\UE4Carla\hutb_editor\*
-
-pause
+call %ROOT_PATH:/=\%Build\UE4Carla\hutb_editor\7zip\7z.exe  a  %ROOT_PATH:/=\%Build\UE4Carla\hutb_editor.zip  %ROOT_PATH:/=\%Build\UE4Carla\hutb_editor\*
 
 
 goto good_exit
