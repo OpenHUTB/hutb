@@ -150,18 +150,20 @@ set package_root=%INSTALLATION_DIR:/=\%UE4Carla\
 set editor_dir=%package_root%hutb_editor\
 :: 如果存在则删除
 
-:: if exist "%package_root%" (
-::     :: delete all files (exclude directory)
-::     del /f /s /q %package_root%\hutb_editor\*
-::     :: remove empty directory
-::     rd /s /q %package_root%\hutb_editor\
-:: )
-:: echo Create package directory: mkdir %editor_dir%
-:: mkdir %editor_dir%
+if exist "%package_root%" (
+    :: delete all files (exclude directory)
+    del /f /s /q %package_root%\hutb_editor\*
+    :: remove empty directory
+    rd /s /q %package_root%\hutb_editor\
+)
+echo Create package directory: mkdir %editor_dir%
+mkdir %editor_dir%
 
 
 :: copy launch_carla_editor.bat
 xcopy %ROOT_PATH:/=\%Util\BuildTools\launch_hutb_editor.bat %editor_dir% /e /y /h /r /q
+:: copy Visual Studio 2022 Installer
+xcopy %offline_dir:/=\%vs_community.exe  %editor_dir% /e /y /h /r /q
 :: 解压 software.zip 中的 4 个依赖软件：cmake、dotnet、make、python3_7 到 hutb_editor 目录下
 if exist "%offline_dir%software\" (
     echo xcopy %offline_dir%software\  %editor_dir%  /e /y /h /r /q
