@@ -110,7 +110,12 @@ rem
 if %BUILD_FOR_PYTHON3%==true (
     echo Building Python API for Python 3.
     python setup.py bdist_egg bdist_wheel
-    if %errorlevel% neq 0 goto error_build_wheel
+    echo errorlevel: %errorlevel%
+    if not exist "%PYTHON_LIB_PATH%dist\" (
+        goto error_build_wheel
+    )
+    :: Even if no .whl file is generated, errorlevel will be equal to 0
+    :: if %errorlevel% neq 0 goto error_build_wheel
 )
 
 goto success
