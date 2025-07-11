@@ -98,10 +98,21 @@ rem Build OSM2ODR
 if %BUILD_OSM2ODR% == true (
     cd "%INSTALLATION_DIR%"
     if not exist "%OSM2ODR_SOURCE_PATH%" (
-        curl --retry 5 --retry-max-time 120 -L -o OSM2ODR.zip https://github.com/carla-simulator/sumo/archive/%CURRENT_OSM2ODR_COMMIT%.zip
-        tar -xf OSM2ODR.zip
-        del OSM2ODR.zip
-        ren sumo-%CURRENT_OSM2ODR_COMMIT% osm2odr-source
+        if exist "%CACHE_DIR:/=\%Installation.zip" (
+            powershell -Command "Expand-Archive '%CACHE_DIR:/=\%Installation.zip' -DestinationPath '%ROOT_PATH%'" -Force
+            :: tar: Cannot connect to C: resolve failed
+            :: tar -xf %CACHE_DIR:/=\%Installation.zip  -C %ROOT_PATH%
+        ) else (
+            curl --retry 5 --retry-max-time 120 -L -o OSM2ODR.zip https://github.com/carla-simulator/sumo/archive/%CURRENT_OSM2ODR_COMMIT%.zip
+            tar -xf OSM2ODR.zip
+            del OSM2ODR.zip
+            ren sumo-%CURRENT_OSM2ODR_COMMIT% osm2odr-source
+        )
+
+    )
+
+    if not exist "%OSM2ODR_SOURCE_PATH%" (
+        goto error_download
     )
     
     cd ..
@@ -143,9 +154,18 @@ rem ============================================================================
     echo           [ERROR]  - CMake 3.9.0 or higher is required.
     goto bad_exit
 
-:error_install
+:error_download
     echo.
     echo %FILE_N% [ERROR] An error ocurred while installing using %GENERATOR% Win64.
+    echo           [ERROR] Possible causes:
+    echo           [ERROR]  - Make sure you have a network connection to https://github.com/carla-simulator/sumo/archive/%CURRENT_OSM2ODR_COMMIT%.zip .
+    echo           [ERROR]  - Or make sure you have osm2odr-source in your cache file Installation.zip.
+    echo           [ERROR]    For example "C:\jenkins\Installation.zip"
+    goto bad_exit
+
+:error_install
+    echo.
+    echo %FILE_N% [ERROR] An error ocurred while download osm2odr source code.
     echo           [ERROR] Possible causes:
     echo           [ERROR]  - Make sure you have Visual Studio installed.
     echo           [ERROR]  - Make sure you have the "x64 Visual C++ Toolset" in your path.

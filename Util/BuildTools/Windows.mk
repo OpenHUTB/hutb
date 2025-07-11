@@ -8,6 +8,9 @@ export ROOT_PATH=$(CURDIR)/
 # dependecy install/build directory (rpclib, gtest, boost)
 export INSTALLATION_DIR=$(ROOT_PATH)Build/
 
+# Cache package directory
+export CACHE_DIR=C:/jenkins/
+
 help:
 	@type "${CARLA_BUILD_TOOLS_FOLDER}\Windows.mk.help"
 
