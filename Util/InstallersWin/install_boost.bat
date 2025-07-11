@@ -92,6 +92,10 @@ if exist "%BOOST_INSTALL_DIR%" (
 set _checksum=""
 
 if not exist "%BOOST_SRC_DIR%" (
+    if exist "%CACHE_DIR:/=\%Installation.zip" (
+        powershell -Command "Expand-Archive '%CACHE_DIR:/=\%Installation.zip' -DestinationPath '%ROOT_PATH%'" -Force
+    )
+
     if not exist "%BOOST_TEMP_FILE_DIR%" (
         echo %FILE_N% Retrieving boost from %BOOST_REPO% ...
         powershell -Command "(New-Object System.Net.WebClient).DownloadFile('%BOOST_REPO%', '%BOOST_TEMP_FILE_DIR%')"
