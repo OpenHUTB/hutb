@@ -126,7 +126,7 @@ if not exist "b2.exe" (
     if exist "%programfiles%\Microsoft Visual Studio\2022\Community\VC\Auxiliary\Build\vcvars64.bat" (
         call bootstrap.bat vc143
     ) else (
-        call bootstrap.bat vc141
+        call bootstrap.bat vc142
     )
 )
 
