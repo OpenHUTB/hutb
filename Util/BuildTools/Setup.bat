@@ -77,11 +77,11 @@ if not "%1"=="" (
 
 rem If not defined, use Visual Studio 2022 or 2019 as tool set
 if exist "%programfiles%\Microsoft Visual Studio\2022\Community\VC\Auxiliary\Build\vcvars64.bat" (
-    if "%TOOLSET%" == "" set TOOLSET=msvc-14.3
-    if %GENERATOR% == "" set GENERATOR="Visual Studio 17 2022"
+    set TOOLSET=msvc-14.3
+    set GENERATOR="Visual Studio 17 2022"
 ) else (
-    if "%TOOLSET%" == "" set TOOLSET=msvc-14.2
-    if %GENERATOR% == "" set GENERATOR="Visual Studio 16 2019"
+    set TOOLSET=msvc-14.2
+    set GENERATOR="Visual Studio 16 2019"
 )
 
 
