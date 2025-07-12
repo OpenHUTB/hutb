@@ -99,7 +99,11 @@ set CHRONO_BUILD_DIR=%CHRONO_SRC_DIR%\build
 
 if not exist %CHRONO_INSTALL_DIR% (
     echo %FILE_N% Retrieving Chrono.
-    call git clone --depth 1 --branch %CHRONO_VERSION% %CHRONO_REPO% %CHRONO_SRC_DIR%
+    if exist "%CACHE_DIR:/=\%Installation.zip" (
+        powershell -Command "Expand-Archive '%CACHE_DIR:/=\%Installation.zip' -DestinationPath '%ROOT_PATH%'" -Force
+    ) else (
+        call git clone --depth 1 --branch %CHRONO_VERSION% %CHRONO_REPO% %CHRONO_SRC_DIR%
+    )
 
     mkdir %CHRONO_BUILD_DIR%
     mkdir %CHRONO_INSTALL_DIR%
