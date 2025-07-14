@@ -113,12 +113,43 @@ if exist %exe_path% (
     goto bad_exit
 )
 
+
+:: TODO: Need adapt with different python version
+:: Execute `python --version` command and assign the output to a variable cmd_result
+for /f "delims=" %%i in ('python --version') do set cmd_result=%%i
+
+echo 'python --version' output: %cmd_result%
+
+echo %cmd_result%| findstr "3.7" >nul && (
+    set py_version_str=37
+)
+echo %cmd_result%| findstr "3.8" >nul && (
+    set py_version_str=38
+)
+echo %cmd_result%| findstr "3.9" >nul && (
+    set py_version_str=39
+)
+echo %cmd_result%| findstr "3.10" >nul && (
+    set py_version_str=310
+)
+echo %cmd_result%| findstr "3.11" >nul && (
+    set py_version_str=311
+)
+echo %cmd_result%| findstr "3.12" >nul && (
+    set py_version_str=312
+)
+echo %cmd_result%| findstr "3.13" >nul && (
+    set py_version_str=313
+)
+
+
 :: 安装最新编译的PythonAPI
 pushd %ROOT_PATH%PythonAPI\carla\dist
 :: TODO python 使用指定版本编译hutb；
 :: pip install --force-reinstall C:\ProgramData\Jenkins\.jenkins\workspace\carla\PythonAPI\carla\dist\hutb-1.0.0-cp37-cp37m-win_amd64.whl
-echo %pip_path% install --force-reinstall  %BUILD_FOLDER:/=\%WindowsNoEditor\PythonAPI\carla\dist\hutb-1.0.0-cp37-cp37m-win_amd64.whl
-%pip_path% install --force-reinstall  %BUILD_FOLDER:/=\%WindowsNoEditor\PythonAPI\carla\dist\hutb-1.0.0-cp37-cp37m-win_amd64.whl
+:: extract python version
+echo %pip_path% install --force-reinstall  %BUILD_FOLDER:/=\%WindowsNoEditor\PythonAPI\carla\dist\hutb-1.0.0-cp%py_version_str%-cp%py_version_str%m-win_amd64.whl
+%pip_path% install --force-reinstall  %BUILD_FOLDER:/=\%WindowsNoEditor\PythonAPI\carla\dist\hutb-1.0.0-cp%py_version_str%-cp%py_version_str%m-win_amd64.whl
 where pip
 popd %ROOT_PATH%PythonAPI\carla\dist
 
