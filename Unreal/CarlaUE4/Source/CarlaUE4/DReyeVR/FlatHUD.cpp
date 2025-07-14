@@ -22,6 +22,7 @@ void ADReyeVRHUD::DrawHUD()
 {
     Super::DrawHUD();
 
+    /*
     double Now = FPlatformTime::Seconds();
     int i = 0;
     while (i < StaticTextList.Num())
@@ -105,6 +106,7 @@ void ADReyeVRHUD::DrawHUD()
             DrawLine(C.Center.X - Radius, C.Center.Y, C.Center.X + Radius, C.Center.Y, C.Colour, C.Thickness);
         }
     }
+    */
     DynamicCrosshairList.Empty(); // clear to reuse on next DrawHUD
 }
 
