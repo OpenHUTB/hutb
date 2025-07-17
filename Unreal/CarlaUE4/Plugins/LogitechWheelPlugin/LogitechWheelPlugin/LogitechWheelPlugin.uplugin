@@ -1,0 +1,28 @@
+{
+	"FileVersion": 1,
+	"Version": 1,
+	"VersionName": "1.0",
+	"FriendlyName": "LogitechWheelPlugin",
+	"Description": "Input Device Plugin for Logitech Wheels",
+	"Category": "Input",
+	"CreatedBy": "Daniel Beaty",
+	"CreatedByURL": "https://danielbeatyportfolio.wordpress.com/",
+	"DocsURL": "http://gaming.logitech.com/en-us/developers",
+	"MarketplaceURL": "",
+	"SupportURL": "",
+	"CanContainContent": false,
+	"IsBetaVersion": false,
+	"Installed": true,
+	"Modules": [
+		{
+			"Name": "LogitechWheelPlugin",
+			"Type": "Runtime",
+      "LoadingPhase": "Default",
+      "WhitelistPlatforms" :
+			[
+				"Win32",
+				"Win64",	
+			]
+		}
+	]
+}

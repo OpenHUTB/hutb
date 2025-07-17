@@ -52,7 +52,7 @@ public class CarlaUE4 : ModuleRules
         ////////////////////////////////////////////////////////////////////////////////////
         // Edit these variables to enable/disable features of DReyeVR
         bool UseSRanipalPlugin = false;
-        bool UseLogitechPlugin = false;
+        bool UseLogitechPlugin = true;
         bool UseFoveatedRender = false; // currently only supported in editor
         ////////////////////////////////////////////////////////////////////////////////////
 
