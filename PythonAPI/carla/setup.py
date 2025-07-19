@@ -165,7 +165,7 @@ with open("README.md") as f:
 
 setup(
     name='hutb',
-    version='1.0.0',
+    version='2.9.16',
     package_dir={'': 'source'},
     packages=['carla'],
     ext_modules=get_libcarla_extensions(),
