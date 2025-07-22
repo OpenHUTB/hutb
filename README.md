@@ -9,7 +9,7 @@
 
 
 ## 使用示例
-1. 下载 [链接](https://pan.baidu.com/s/1n2fJvWff4pbtMe97GOqtvQ?pwd=hutb) 中的`software/car/DReyeVR`中的`hutb_*.zip`文件并解压；然后运行`WindowsNoEditor`文件夹下的`CarlaUE4.exe`，使用键盘`W`、`A`、`S`、`D`等进行控制；
+1. 下载 [链接](https://pan.baidu.com/s/1n2fJvWff4pbtMe97GOqtvQ?pwd=hutb) 中的`software/hutb/`中的`hutb_*.zip`文件并解压；然后运行`WindowsNoEditor`文件夹下的`CarlaUE4.exe`，使用键盘`W`、`A`、`S`、`D`等进行控制，`Z`为倒档；
 2. 使用`pip install hutb`安装Python工具包，运行以下脚本在场景中 [生成车辆和行人](https://github.com/OpenHUTB/doc/blob/master/src/examples/generate_traffic.py) ：
 	```shell
 	python PythonAPI/examples/generate_traffic.py
@@ -27,7 +27,7 @@
 
 
 >[!NOTE]
-> 艺术创作人员可以不编译，先 [安装 vs2019社区版](https://openhutb.github.io/doc/build_windows/#visual-studio-2019) ，然后下载 [链接](https://pan.baidu.com/s/1n2fJvWff4pbtMe97GOqtvQ?pwd=hutb) 中的`software/car/carla_unreal_*.zip`文件并解压，双击`launch_carla_editor.bat`即可启动带插件的虚幻编辑器。
+> 艺术创作人员可以不编译，直接下载 [链接](https://pan.baidu.com/s/1n2fJvWff4pbtMe97GOqtvQ?pwd=hutb) 中的`software/hutb/hutb_editor.zip`文件并解压，双击`launch_hutb_editor.bat`即可启动带插件的虚幻编辑器。
 
 
 ### 软硬件要求
