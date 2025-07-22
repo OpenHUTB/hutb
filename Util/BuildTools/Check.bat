@@ -148,8 +148,8 @@ pushd %ROOT_PATH%PythonAPI\carla\dist
 :: TODO python 使用指定版本编译hutb；
 :: pip install --force-reinstall C:\ProgramData\Jenkins\.jenkins\workspace\carla\PythonAPI\carla\dist\hutb-1.0.0-cp37-cp37m-win_amd64.whl
 :: extract python version
-echo %pip_path% install --force-reinstall  %BUILD_FOLDER:/=\%WindowsNoEditor\PythonAPI\carla\dist\hutb-2.9.6-cp%py_version_str%-cp%py_version_str%m-win_amd64.whl
-%pip_path% install --force-reinstall  %BUILD_FOLDER:/=\%WindowsNoEditor\PythonAPI\carla\dist\hutb-2.9.6-cp%py_version_str%-cp%py_version_str%m-win_amd64.whl
+echo %pip_path% install --force-reinstall  %BUILD_FOLDER:/=\%WindowsNoEditor\PythonAPI\carla\dist\hutb-2.9.16-cp%py_version_str%-cp%py_version_str%m-win_amd64.whl
+%pip_path% install --force-reinstall  %BUILD_FOLDER:/=\%WindowsNoEditor\PythonAPI\carla\dist\hutb-2.9.16-cp%py_version_str%-cp%py_version_str%m-win_amd64.whl
 where pip
 popd %ROOT_PATH%PythonAPI\carla\dist
 
