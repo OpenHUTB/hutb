@@ -115,160 +115,33 @@ if %BUILD_FOR_PYTHON3%==true (
         echo TODO: Installing anaconda with silent mode
     )
 
-    rem remove boost build before
-    echo BOOST_VERSION: %BOOST_VERSION%
-    echo BOOST_INSTALL_FOLDER: %BOOST_INSTALL_FOLDER%
-    if exist "%BOOST_INSTALL_FOLDER%" (
-        rem delete all files (exclude directory)
-        del /f /s /q %BOOST_INSTALL_FOLDER:/=\%\*
-        rem remove empty directory
-        rd /s /q %BOOST_INSTALL_FOLDER:/=\%\
-    )
-    cd "%ROOT_PATH%"
-    make LibCarla
-    make osm2odr
-    cd "%PYTHON_LIB_PATH%"
-    echo Building Python API Python 3.13
-    REM conda create --name hutb_3.13 python=3.13 --yes
-    call conda activate hutb_3.13
-    echo Current Python path: 
-    where python
-    python setup.py bdist_egg bdist_wheel
-    echo errorlevel: %errorlevel%
-    if not exist "%PYTHON_LIB_PATH%dist\" (
-        goto error_build_wheel
-    )
-
-    rem remove boost build before
-    if exist "%BOOST_INSTALL_FOLDER%" (
-        rem delete all files (exclude directory)
-        del /f /s /q %BOOST_INSTALL_FOLDER:/=\%\*
-        rem remove empty directory
-        rd /s /q %BOOST_INSTALL_FOLDER:/=\%\
-    )
-    cd "%ROOT_PATH%"
-    make LibCarla
-    make osm2odr
-    cd "%PYTHON_LIB_PATH%"
-    echo Building Python API Python 3.12
-    REM conda create --name hutb_3.12 python=3.12 --yes
-    call conda activate hutb_3.12
-    echo Current Python path: 
-    where python
-    python setup.py bdist_egg bdist_wheel
-    echo errorlevel: %errorlevel%
-    if not exist "%PYTHON_LIB_PATH%dist\" (
-        goto error_build_wheel
-    )
-
-    rem remove boost build before
-    if exist "%BOOST_INSTALL_FOLDER%" (
-        rem delete all files (exclude directory)
-        del /f /s /q %BOOST_INSTALL_FOLDER:/=\%\*
-        rem remove empty directory
-        rd /s /q %BOOST_INSTALL_FOLDER:/=\%\
-    )
-    cd "%ROOT_PATH%"
-    make LibCarla
-    make osm2odr
-    cd "%PYTHON_LIB_PATH%"
-    echo Building Python API Python 3.11
-    REM conda create --name hutb_3.11 python=3.11 --yes
-    call conda activate hutb_3.11
-    echo Current Python path: 
-    where python
-    python setup.py bdist_egg bdist_wheel
-    echo errorlevel: %errorlevel%
-    if not exist "%PYTHON_LIB_PATH%dist\" (
-        goto error_build_wheel
-    )
-
-    rem remove boost build before
-    if exist "%BOOST_INSTALL_FOLDER%" (
-        rem delete all files (exclude directory)
-        del /f /s /q %BOOST_INSTALL_FOLDER:/=\%\*
-        rem remove empty directory
-        rd /s /q %BOOST_INSTALL_FOLDER:/=\%\
-    )
-    cd "%ROOT_PATH%"
-    make LibCarla
-    make osm2odr
-    cd "%PYTHON_LIB_PATH%"
-    echo Building Python API Python 3.10
-    REM conda create --name hutb_3.10 python=3.10 --yes
-    call conda activate hutb_3.10
-    echo Current Python path: 
-    where python
-    python setup.py bdist_egg bdist_wheel
-    echo errorlevel: %errorlevel%
-    if not exist "%PYTHON_LIB_PATH%dist\" (
-        goto error_build_wheel
-    )
-
-    rem remove boost build before
-    if exist "%BOOST_INSTALL_FOLDER%" (
-        rem delete all files (exclude directory)
-        del /f /s /q %BOOST_INSTALL_FOLDER:/=\%\*
-        rem remove empty directory
-        rd /s /q %BOOST_INSTALL_FOLDER:/=\%\
-    )
-    cd "%ROOT_PATH%"
-    make LibCarla
-    make osm2odr
-    cd "%PYTHON_LIB_PATH%"
-    echo Building Python API Python 3.9
-    REM conda create --name hutb_3.9 python=3.9 --yes
-    call conda activate hutb_3.9
-    echo Current Python path: 
-    where python
-    python setup.py bdist_egg bdist_wheel
-    echo errorlevel: %errorlevel%
-    if not exist "%PYTHON_LIB_PATH%dist\" (
-        goto error_build_wheel
-    )
-
-    rem remove boost build before
-    if exist "%BOOST_INSTALL_FOLDER%" (
-        rem delete all files (exclude directory)
-        del /f /s /q %BOOST_INSTALL_FOLDER:/=\%\*
-        rem remove empty directory
-        rd /s /q %BOOST_INSTALL_FOLDER:/=\%\
-    )
-    cd "%ROOT_PATH%"
-    make LibCarla
-    make osm2odr
-    cd "%PYTHON_LIB_PATH%"
-    echo Building Python API Python 3.8
-    REM conda create --name hutb_3.8 python=3.8 --yes
-    call conda activate hutb_3.8
-    echo Current Python path: 
-    where python
-    python setup.py bdist_egg bdist_wheel
-    echo errorlevel: %errorlevel%
-    if not exist "%PYTHON_LIB_PATH%dist\" (
-        goto error_build_wheel
-    )
-
-    rem remove boost build before
-    if exist "%BOOST_INSTALL_FOLDER%" (
-        rem delete all files (exclude directory)
-        del /f /s /q %BOOST_INSTALL_FOLDER:/=\%\*
-        rem remove empty directory
-        rd /s /q %BOOST_INSTALL_FOLDER:/=\%\
-    )
-    cd "%ROOT_PATH%"
-    make LibCarla
-    make osm2odr
-    cd "%PYTHON_LIB_PATH%"
-    echo Building Python API Python 3.7
-    REM conda create --name hutb_3.7 python=3.7 --yes
-    call conda activate hutb_3.7
-    echo Current Python path: 
-    where python
-    python setup.py bdist_egg bdist_wheel
-    echo errorlevel: %errorlevel%
-    if not exist "%PYTHON_LIB_PATH%dist\" (
-        goto error_build_wheel
+    for /l %%i in (13,-1,7) do (
+        rem remove boost build before
+        echo BOOST_VERSION: %BOOST_VERSION%
+        echo BOOST_INSTALL_FOLDER: %BOOST_INSTALL_FOLDER%
+        if exist "%BOOST_INSTALL_FOLDER%" (
+            rem delete all files (exclude directory)
+            del /f /s /q %BOOST_INSTALL_FOLDER:/=\%\*
+            rem remove empty directory
+            rd /s /q %BOOST_INSTALL_FOLDER:/=\%\
+            rem delete boost source code
+            del /f /s /q %BOOST_SOURCE_FOLDER:/=\%\*
+            rd /s /q %BOOST_SOURCE_FOLDER:/=\%\
+        )
+        cd "%ROOT_PATH%"
+        make LibCarla
+        make osm2odr
+        cd "%PYTHON_LIB_PATH%"
+        echo Building Python API Python 3.%%i
+        REM conda create --name hutb_3.%%i python=3.%%i --yes
+        call conda activate hutb_3.%%i
+        echo Current Python path: 
+        where python
+        python setup.py bdist_egg bdist_wheel
+        echo errorlevel: %errorlevel%
+        if not exist "%PYTHON_LIB_PATH%dist\" (
+            goto error_build_wheel
+        )
     )
 
     :: Even if no .whl file is generated, errorlevel will be equal to 0
