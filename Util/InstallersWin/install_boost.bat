@@ -93,7 +93,7 @@ set _checksum=""
 
 if not exist "%BOOST_SRC_DIR%" (
     if exist "%CACHE_DIR:/=\%Installation.zip" (
-        powershell -Command "Expand-Archive '%CACHE_DIR:/=\%Installation.zip' -DestinationPath '%ROOT_PATH%'" -Force
+        "%ProgramW6432%/7-Zip/7z.exe" x "%CACHE_DIR:/=\%Installation.zip" -o"%ROOT_PATH%" -y
     )
 
     if not exist "%BOOST_TEMP_FILE_DIR%" (

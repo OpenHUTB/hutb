@@ -100,7 +100,7 @@ if %BUILD_OSM2ODR% == true (
     cd "%INSTALLATION_DIR%"
     if not exist "%OSM2ODR_SOURCE_PATH%" (
         if exist "%CACHE_DIR:/=\%Installation.zip" (
-            powershell -Command "Expand-Archive '%CACHE_DIR:/=\%Installation.zip' -DestinationPath '%ROOT_PATH%'" -Force
+            "%ProgramW6432%/7-Zip/7z.exe" x "%CACHE_DIR:/=\%Installation.zip" -o"%ROOT_PATH%" -y
             :: tar: Cannot connect to C: resolve failed
             :: tar -xf %CACHE_DIR:/=\%Installation.zip  -C %ROOT_PATH%
         ) else (
