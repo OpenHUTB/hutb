@@ -25,7 +25,7 @@ rem -- Parse arguments ---------------------------------------------------------
 rem ============================================================================
 
 set GENERATOR=""
-set BOOST_VERSION=1.86.0
+set BOOST_VERSION=%BOOST_VERSION%
 set INSTALLERS_DIR=%ROOT_PATH:/=\%Util\InstallersWin\
 set VERSION_FILE=%ROOT_PATH:/=\%Util\ContentVersions.txt
 set Carla_ROOT_DIR=%ROOT_PATH:/=\%\
