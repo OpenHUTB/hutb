@@ -30,4 +30,4 @@ call python --version
 :: call exit /b
 
 
-cd C:\ProgramData\Jenkins\.jenkins\workspace\carla
+cd C:\jenkins\workspace\carla
