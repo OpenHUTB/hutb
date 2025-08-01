@@ -253,6 +253,12 @@ call "%INSTALLERS_DIR%install_boost.bat"^
  --build-dir "%INSTALLATION_DIR%"^
  --toolset %TOOLSET%^
  --version %BOOST_VERSION%^
+ -j %NUMBER_OF_ASYNC_JOBS%^
+ --build-all true
+call "%INSTALLERS_DIR%install_boost.bat"^
+ --build-dir "%INSTALLATION_DIR%"^
+ --toolset %TOOLSET%^
+ --version %BOOST_VERSION%^
  -j %NUMBER_OF_ASYNC_JOBS%
 
 if %errorlevel% neq 0 goto failed

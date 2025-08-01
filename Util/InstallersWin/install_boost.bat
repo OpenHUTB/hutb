@@ -36,6 +36,10 @@ if not "%1"=="" (
         set BOOST_VERSION=%~2
         shift
     )
+    if "%1"=="--build-all" (
+        set BUILD_ALL=%~2
+        shift
+    )
     if "%1"=="-h" (
         goto help
     )
@@ -81,6 +85,8 @@ set BOOST_SRC_DIR=%BUILD_DIR%%BOOST_BASENAME%-source\
 set BOOST_INSTALL_DIR=%BUILD_DIR%%BOOST_BASENAME%-install\
 set BOOST_LIB_DIR=%BOOST_INSTALL_DIR%lib\
 
+set BUILD_ALL=false
+
 rem ============================================================================
 rem -- Get Boost ---------------------------------------------------------------
 rem ============================================================================
@@ -93,7 +99,9 @@ set _checksum=""
 
 if not exist "%BOOST_SRC_DIR%" (
     if exist "%CACHE_DIR:/=\%Installation.zip" (
-        "%ProgramW6432%/7-Zip/7z.exe" x "%CACHE_DIR:/=\%Installation.zip" -o"%ROOT_PATH%" -y
+        if not exist "%BOOST_TEMP_FILE_DIR%" (
+            "%ProgramW6432%/7-Zip/7z.exe" x "%CACHE_DIR:/=\%Installation.zip" -o"%ROOT_PATH%" -y
+        )
     )
 
     if not exist "%BOOST_TEMP_FILE_DIR%" (
@@ -137,6 +145,19 @@ rem echo %FILE_N% Packing headers...
 rem b2 headers link=static
 
 echo %FILE_N% Building...
+if %BUILD_ALL%==true (
+    echo Build all...
+    b2 install address-model=64 architecture=x86
+    rem Delete boost source directory, and build againj, https://zhuanlan.zhihu.com/p/666616256
+    del /f /s /q %BOOST_SRC_DIR:/=\%\* >nul
+    rem Go back to the previous directory for delete source directory without locking
+    cd ..
+    rd /s /q %BOOST_SRC_DIR:/=\% >nul
+    goto eof
+)
+
+echo Install boost...
+
 b2 -j%NUMBER_OF_ASYNC_JOBS%^
     headers^
     --layout=versioned^
@@ -152,8 +173,6 @@ b2 -j%NUMBER_OF_ASYNC_JOBS%^
     link=static^
     runtime-link=shared^
     threading=multi^
-    address-model=64^
-    architecture=x86^
     --prefix="%BOOST_INSTALL_DIR:~0,-1%"^
     --libdir="%BOOST_LIB_DIR:~0,-1%"^
     --includedir="%BOOST_INSTALL_DIR:~0,-1%"^
@@ -162,6 +181,7 @@ if %errorlevel% neq 0 goto error_install
 
 for /d %%i in ("%BOOST_INSTALL_DIR%boost*") do rename "%%i" include
 goto success
+
 
 rem ============================================================================
 rem -- Messages and Errors -----------------------------------------------------
