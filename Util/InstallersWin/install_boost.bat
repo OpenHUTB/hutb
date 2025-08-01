@@ -114,7 +114,7 @@ if not exist "%BOOST_SRC_DIR%" (
         powershell -Command "Expand-Archive '%BOOST_TEMP_FILE_DIR%' -DestinationPath '%BUILD_DIR%' -Force"
     )
     echo %FILE_N% Removing "%BOOST_TEMP_FILE%"
-    del "%BOOST_TEMP_FILE_DIR%"
+    rem del "%BOOST_TEMP_FILE_DIR%"
     rename "%BUILD_DIR%%BOOST_TEMP_FOLDER%" "%BOOST_BASENAME%-source"
 ) else (
     echo %FILE_N% Not downloading boost because already exists the folder "%BOOST_SRC_DIR%".
