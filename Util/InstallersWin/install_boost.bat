@@ -152,6 +152,8 @@ b2 -j%NUMBER_OF_ASYNC_JOBS%^
     link=static^
     runtime-link=shared^
     threading=multi^
+    address-model=64^
+    architecture=x86^
     --prefix="%BOOST_INSTALL_DIR:~0,-1%"^
     --libdir="%BOOST_LIB_DIR:~0,-1%"^
     --includedir="%BOOST_INSTALL_DIR:~0,-1%"^
