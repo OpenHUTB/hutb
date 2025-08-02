@@ -7,6 +7,8 @@ rem boost build for CARLA (carla.org).
 set LOCAL_PATH=%~dp0
 set FILE_N=    -[%~n0]:
 
+set BUILD_ALL=false
+
 rem Print batch params (debug purpose)
 echo %FILE_N% [Batch params]: %*
 
@@ -85,8 +87,6 @@ set BOOST_SRC_DIR=%BUILD_DIR%%BOOST_BASENAME%-source\
 set BOOST_INSTALL_DIR=%BUILD_DIR%%BOOST_BASENAME%-install\
 set BOOST_LIB_DIR=%BOOST_INSTALL_DIR%lib\
 
-set BUILD_ALL=false
-
 rem ============================================================================
 rem -- Get Boost ---------------------------------------------------------------
 rem ============================================================================
@@ -148,7 +148,7 @@ echo %FILE_N% Building...
 if %BUILD_ALL%==true (
     echo Build all...
     b2 install address-model=64 architecture=x86
-    rem Delete boost source directory, and build againj, https://zhuanlan.zhihu.com/p/666616256
+    rem Delete boost source directory, and build again, https://zhuanlan.zhihu.com/p/666616256
     del /f /s /q %BOOST_SRC_DIR:/=\%\* >nul
     rem Go back to the previous directory for delete source directory without locking
     cd ..
