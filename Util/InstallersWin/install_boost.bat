@@ -156,6 +156,7 @@ if %BUILD_ALL%==true (
     goto eof
 )
 
+where python
 echo Install boost...
 cd "%BOOST_SRC_DIR%"
 
