@@ -147,7 +147,7 @@ rem b2 headers link=static
 echo %FILE_N% Building...
 if %BUILD_ALL%==true (
     echo Build all...
-    b2 install address-model=64 architecture=x86
+    b2 address-model=64 architecture=x86
     rem Delete boost source directory, and build again, https://zhuanlan.zhihu.com/p/666616256
     del /f /s /q %BOOST_SRC_DIR:/=\%\* >nul
     rem Go back to the previous directory for delete source directory without locking
@@ -157,6 +157,7 @@ if %BUILD_ALL%==true (
 )
 
 echo Install boost...
+cd "%BOOST_SRC_DIR%"
 
 b2 -j%NUMBER_OF_ASYNC_JOBS%^
     headers^
