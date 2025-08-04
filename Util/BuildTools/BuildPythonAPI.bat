@@ -120,13 +120,13 @@ if %BUILD_FOR_PYTHON3%==true (
         echo BOOST_VERSION: %BOOST_VERSION%
         echo BOOST_INSTALL_FOLDER: %BOOST_INSTALL_FOLDER%
         if exist "%BOOST_INSTALL_FOLDER%" (
-            echo Delete all boost files: %BOOST_INSTALL_FOLDER:/=\%\*
-            del /f /s /q %BOOST_INSTALL_FOLDER:/=\%\* >nul
+            echo Delete all boost files: %BOOST_INSTALL_FOLDER:/=\%*
+            del /f /s /q %BOOST_INSTALL_FOLDER:/=\%*
             rem remove empty directory
-            rd /s /q %BOOST_INSTALL_FOLDER:/=\%\ >nul
-            echo Delete boost source code: %BOOST_SOURCE_FOLDER:/=\%\*
-            del /f /s /q %BOOST_SOURCE_FOLDER:/=\%\* >nul
-            rd /s /q %BOOST_SOURCE_FOLDER:/=\%\ >nul
+            rd /s /q %BOOST_INSTALL_FOLDER:/=\%
+            echo Delete boost source code: %BOOST_SOURCE_FOLDER:/=\%*
+            del /f /s /q %BOOST_SOURCE_FOLDER:/=\%*
+            rd /s /q %BOOST_SOURCE_FOLDER:/=\%
         )
         cd "%ROOT_PATH%"
         make LibCarla
