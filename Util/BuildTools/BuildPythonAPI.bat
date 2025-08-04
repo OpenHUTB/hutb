@@ -128,15 +128,17 @@ if %BUILD_FOR_PYTHON3%==true (
             del /f /s /q %BOOST_SOURCE_FOLDER:/=\%*
             rd /s /q %BOOST_SOURCE_FOLDER:/=\%
         )
+        
         cd "%ROOT_PATH%"
-        make LibCarla
-        make osm2odr
-        cd "%PYTHON_LIB_PATH%"
-        echo Building Python API Python 3.%%i
         REM conda create --name hutb_3.%%i python=3.%%i --yes
         call conda activate hutb_3.%%i
         echo Current Python path: 
         where python
+        make LibCarla
+        make osm2odr
+
+        cd "%PYTHON_LIB_PATH%"
+        echo Building Python API Python 3.%%i
         python setup.py bdist_egg bdist_wheel
         echo errorlevel: %errorlevel%
         if not exist "%PYTHON_LIB_PATH%dist\" (
