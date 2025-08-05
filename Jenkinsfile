@@ -34,14 +34,14 @@ pipeline {
                 {
                     steps
                     {
-                        bat """
-                            call setEnv64.bat
-                            make LibCarla
-                        """
-                        bat """
-                            call setEnv64.bat
-                            make PythonAPI
-                        """
+                        // bat """
+                        //     call setEnv64.bat
+                        //     make LibCarla
+                        // """
+                        // bat """
+                        //     call setEnv64.bat
+                        //     make PythonAPI
+                        // """
                         bat """
                             call setEnv64.bat
                             make CarlaUE4Editor ARGS="--chrono"
