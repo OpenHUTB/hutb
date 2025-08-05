@@ -63,7 +63,13 @@ set CARLA_STREETMAP_PLUGINS_PATH=%ROOT_PATH:/=\%Unreal\CarlaUE4\Plugins\StreetMa
 rem Build STREETMAP
 
 if  %GIT_PULL% == true (
-    if not exist "%CARLA_STREETMAP_PLUGINS_PATH%" git clone -b %STREETMAP_BRANCH% %STREETMAP_REPO% %CARLA_STREETMAP_PLUGINS_PATH%
+    if not exist "%CARLA_STREETMAP_PLUGINS_PATH%" (
+        if exist "%CACHE_DIR:/=\%StreetMap\" (
+            xcopy /q /Y /S /I "%CACHE_DIR:/=\%StreetMap\"  %CARLA_STREETMAP_PLUGINS_PATH%
+        ) else (
+            git clone -b %STREETMAP_BRANCH% %STREETMAP_REPO% %CARLA_STREETMAP_PLUGINS_PATH%
+        )
+    )
     cd "%CARLA_STREETMAP_PLUGINS_PATH%"
     :: git fetch
     :: git checkout %CURRENT_STREETMAP_COMMIT%
