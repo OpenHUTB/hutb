@@ -8,7 +8,7 @@ export ROOT_PATH=$(CURDIR)/
 # dependecy install/build directory (rpclib, gtest, boost)
 export INSTALLATION_DIR=$(ROOT_PATH)Build/
 
-export BOOST_VERSION=1.84.0
+export BOOST_VERSION=1.86.0
 export BOOST_INSTALL_FOLDER=${INSTALLATION_DIR}boost-${BOOST_VERSION}-install/
 export BOOST_SOURCE_FOLDER=${INSTALLATION_DIR}boost-${BOOST_VERSION}-source/
 
