@@ -64,6 +64,7 @@ rem Build STREETMAP
 
 if  %GIT_PULL% == true (
     if not exist "%CARLA_STREETMAP_PLUGINS_PATH%" (
+        echo StreetMap cache directory: "%CACHE_DIR:/=\%StreetMap\"
         if exist "%CACHE_DIR:/=\%StreetMap\" (
             xcopy /q /Y /S /I "%CACHE_DIR:/=\%StreetMap\"  %CARLA_STREETMAP_PLUGINS_PATH%
         ) else (
