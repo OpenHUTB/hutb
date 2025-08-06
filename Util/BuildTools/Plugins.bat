@@ -31,13 +31,19 @@ rem -- Parse arguments ---------------------------------------------------------
 rem ============================================================================
 
 if not exist "%ROOT_PATH%Plugins" (
-    if %RELEASE% == true (
-        echo Cloning for release...
-        call git clone --depth=1 --recursive https://github.com/carla-simulator/carla-plugins.git "%ROOT_PATH%Plugins"
+    if exist "%CACHE_DIR:/=\%carla-plugins\" (
+        echo xcopy /q /Y /S /I "%CACHE_DIR:/=\%carla-plugins\"  %ROOT_PATH:/=\%Plugins
+        xcopy /q /Y /S /I "%CACHE_DIR:/=\%carla-plugins\"  %ROOT_PATH:/=\%Plugins
     ) else (
-        echo Cloning for build...
-        call git clone --recursive https://github.com/carla-simulator/carla-plugins.git "%ROOT_PATH%Plugins"
+        if %RELEASE% == true (
+            echo Cloning for release...
+            call git clone --depth=1 --recursive https://github.com/carla-simulator/carla-plugins.git "%ROOT_PATH%Plugins"
+        ) else (
+            echo Cloning for build...
+            call git clone --recursive https://github.com/carla-simulator/carla-plugins.git "%ROOT_PATH%Plugins"
+        )
     )
+
     if %errorlevel% neq 0 goto error_git
 ) else (
     goto already
