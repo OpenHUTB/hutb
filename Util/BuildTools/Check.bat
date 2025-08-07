@@ -38,6 +38,7 @@ rem ============================================================================
 set DOC_STRING="Run unit tests."
 set USAGE_STRING="Usage: %FILE_N% [-h|--help] [--gdb] [--xml] [--gtest_args=ARGS] [--python-version=VERSION]"
 
+set IS_DEBUG=false
 set XML_OUTPUT=false
 set LIBCARLA_RELEASE=false
 set LIBCARLA_DEBUG=false
@@ -100,7 +101,9 @@ if not defined CARLA_VERSION goto bad_exit
 
 set BUILD_FOLDER=%INSTALLATION_DIR%UE4Carla/%CARLA_VERSION%/
 :: 仅用于调试
-:: set BUILD_FOLDER=C:\ProgramData\Jenkins\.jenkins\workspace\carla\Build\UE4Carla\8617b519\
+if %IS_DEBUG%==true (
+    set BUILD_FOLDER=D:\hutb\Build\UE4Carla\bb2366fe9-dirty\
+)
 
 set exe_path=%BUILD_FOLDER:/=\%WindowsNoEditor\CarlaUE4.exe
 
@@ -146,11 +149,8 @@ echo %cmd_result%| findstr "3.13" >nul && (
 
 :: 安装最新编译的PythonAPI
 pushd %ROOT_PATH%PythonAPI\carla\dist
-:: TODO python 使用指定版本编译hutb；
 :: pip install --force-reinstall C:\ProgramData\Jenkins\.jenkins\workspace\carla\PythonAPI\carla\dist\hutb-1.0.0-cp37-cp37m-win_amd64.whl
 :: extract python version
-echo %pip_path% install --force-reinstall  %BUILD_FOLDER:/=\%WindowsNoEditor\PythonAPI\carla\dist\hutb-2.9.16-cp%py_version_str%-cp%py_version_str%m-win_amd64.whl
-%pip_path% install --force-reinstall  %BUILD_FOLDER:/=\%WindowsNoEditor\PythonAPI\carla\dist\hutb-2.9.16-cp%py_version_str%-cp%py_version_str%m-win_amd64.whl
 where pip
 popd %ROOT_PATH%PythonAPI\carla\dist
 
@@ -161,7 +161,6 @@ rem ============================================================================
 
 echo pushd %ROOT_PATH%PythonAPI\test\unit
 pushd %ROOT_PATH%PythonAPI\test\unit
-cd %ROOT_PATH%PythonAPI\test\unit
 
 if %XML_OUTPUT%==true (
     set EXTRA_ARGS="-X"
@@ -171,12 +170,27 @@ if %XML_OUTPUT%==true (
 
 if %PYTHON_API%==true (
     echo Running Python API for Python %PY_VERSION% unit tests.
-    :: TODO pip install nose2 -i http://mirrors.aliyun.com/pypi/simple --trusted-host mirrors.aliyun.com
     echo Current directory: %cd%
-    echo Test command: %python_path% -m nose2
+    for /l %%i in (13,-1,7) do (
+        call conda activate hutb_3.%%i
+        echo Current Python path: 
+        where python
+        pip install nose2 -i http://mirrors.aliyun.com/pypi/simple --trusted-host mirrors.aliyun.com
+        if %%i==7 (
+            echo pip install --force-reinstall  %BUILD_FOLDER:\=/%WindowsNoEditor/PythonAPI/carla/dist/hutb-2.9.16-cp3%%i-cp3%%im-win_amd64.whl
+            pip install --force-reinstall  %BUILD_FOLDER:\=/%WindowsNoEditor/PythonAPI/carla/dist/hutb-2.9.16-cp3%%i-cp3%%im-win_amd64.whl
+        ) else (
+            echo pip install --force-reinstall  %BUILD_FOLDER:\=/%WindowsNoEditor/PythonAPI/carla/dist/hutb-2.9.16-cp3%%i-cp3%%i-win_amd64.whl
+            pip install --force-reinstall  %BUILD_FOLDER:\=/%WindowsNoEditor/PythonAPI/carla/dist/hutb-2.9.16-cp3%%i-cp3%%i-win_amd64.whl
+        )
+        cd %ROOT_PATH%PythonAPI\test\unit\
+        :: PythonAPI client version == git rev-parse --short HEAD
+        python -m nose2
+    )
+    :: echo Test command: %python_path% -m nose2
     :: %python_path% -m nose2
-    %python_path% -m unittest test_transform.TestTransform.test_list_rotation_and_translation_location
-    %python_path% -m unittest test_vehicle.TestVehicleControl.test_default_values
+    :: %python_path% -m unittest test_transform.TestTransform.test_list_rotation_and_translation_location
+    :: %python_path% -m unittest test_vehicle.TestVehicleControl.test_default_values
 
     if %XML_OUTPUT%==true (
         move test-results.xml %CARLA_TEST_RESULTS_FOLDER%\python-api-3.xml
@@ -184,6 +198,7 @@ if %PYTHON_API%==true (
 )
 
 popd %ROOT_PATH%PythonAPI\test\unit
+cd  %ROOT_PATH%
 
 
 
@@ -195,8 +210,21 @@ call :get_current_time_in_seconds T_START_DO_TEST
 
 if %SMOKE_TESTS%==true (
     echo test connection ...
-    :: TODO 替换为相对Python环境路径
-    %python_path%  %ROOT_PATH%PythonAPI/util/test_connection.py -p 2000 --timeout=60.0
+    for /l %%i in (13,-1,7) do (
+        call conda activate hutb_3.%%i
+        echo Current Python path: 
+        where python
+        pip install nose2 -i http://mirrors.aliyun.com/pypi/simple --trusted-host mirrors.aliyun.com
+        if %%i==7 (
+            echo pip install --force-reinstall  %BUILD_FOLDER:\=/%WindowsNoEditor/PythonAPI/carla/dist/hutb-2.9.16-cp3%%i-cp3%%im-win_amd64.whl
+            pip install --force-reinstall  %BUILD_FOLDER:\=/%WindowsNoEditor/PythonAPI/carla/dist/hutb-2.9.16-cp3%%i-cp3%%im-win_amd64.whl
+        ) else (
+            echo pip install --force-reinstall  %BUILD_FOLDER:\=/%WindowsNoEditor/PythonAPI/carla/dist/hutb-2.9.16-cp3%%i-cp3%%i-win_amd64.whl
+            pip install --force-reinstall  %BUILD_FOLDER:\=/%WindowsNoEditor/PythonAPI/carla/dist/hutb-2.9.16-cp3%%i-cp3%%i-win_amd64.whl
+        )
+        cd %ROOT_PATH%PythonAPI\util\
+        python test_connection.py -p 2000 --timeout=60.0
+    )
     echo test connection done.
 )
 
