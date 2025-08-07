@@ -71,7 +71,7 @@ check:
 
 # 仅用于调试
 # check.PythonAPI:
-check.PythonAPI: PythonAPI
+check.PythonAPI:
 	@"${CARLA_BUILD_TOOLS_FOLDER}/Check.bat" --python-api
 
 # somke testc
