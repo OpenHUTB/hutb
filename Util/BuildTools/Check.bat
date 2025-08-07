@@ -118,35 +118,6 @@ if exist %exe_path% (
 )
 
 
-:: TODO: Need adapt with different python version
-:: Execute `python --version` command and assign the output to a variable cmd_result
-for /f "delims=" %%i in ('python --version') do set cmd_result=%%i
-
-echo 'python --version' output: %cmd_result%
-
-echo %cmd_result%| findstr "3.7" >nul && (
-    set py_version_str=37
-)
-echo %cmd_result%| findstr "3.8" >nul && (
-    set py_version_str=38
-)
-echo %cmd_result%| findstr "3.9" >nul && (
-    set py_version_str=39
-)
-echo %cmd_result%| findstr "3.10" >nul && (
-    set py_version_str=310
-)
-echo %cmd_result%| findstr "3.11" >nul && (
-    set py_version_str=311
-)
-echo %cmd_result%| findstr "3.12" >nul && (
-    set py_version_str=312
-)
-echo %cmd_result%| findstr "3.13" >nul && (
-    set py_version_str=313
-)
-
-
 :: 安装最新编译的PythonAPI
 pushd %ROOT_PATH%PythonAPI\carla\dist
 :: pip install --force-reinstall C:\ProgramData\Jenkins\.jenkins\workspace\carla\PythonAPI\carla\dist\hutb-1.0.0-cp37-cp37m-win_amd64.whl
@@ -177,11 +148,11 @@ if %PYTHON_API%==true (
         where python
         pip install nose2 -i http://mirrors.aliyun.com/pypi/simple --trusted-host mirrors.aliyun.com
         if %%i==7 (
-            echo pip install --force-reinstall  %BUILD_FOLDER:\=/%WindowsNoEditor/PythonAPI/carla/dist/hutb-2.9.16-cp3%%i-cp3%%im-win_amd64.whl
-            pip install --force-reinstall  %BUILD_FOLDER:\=/%WindowsNoEditor/PythonAPI/carla/dist/hutb-2.9.16-cp3%%i-cp3%%im-win_amd64.whl
+            echo pip install --force-reinstall  %BUILD_FOLDER:\=/%WindowsNoEditor/PythonAPI/carla/dist/hutb-%API_VERSION%-cp3%%i-cp3%%im-win_amd64.whl
+            pip install --force-reinstall  %BUILD_FOLDER:\=/%WindowsNoEditor/PythonAPI/carla/dist/hutb-%API_VERSION%-cp3%%i-cp3%%im-win_amd64.whl
         ) else (
-            echo pip install --force-reinstall  %BUILD_FOLDER:\=/%WindowsNoEditor/PythonAPI/carla/dist/hutb-2.9.16-cp3%%i-cp3%%i-win_amd64.whl
-            pip install --force-reinstall  %BUILD_FOLDER:\=/%WindowsNoEditor/PythonAPI/carla/dist/hutb-2.9.16-cp3%%i-cp3%%i-win_amd64.whl
+            echo pip install --force-reinstall  %BUILD_FOLDER:\=/%WindowsNoEditor/PythonAPI/carla/dist/hutb-%API_VERSION%-cp3%%i-cp3%%i-win_amd64.whl
+            pip install --force-reinstall  %BUILD_FOLDER:\=/%WindowsNoEditor/PythonAPI/carla/dist/hutb-%API_VERSION%-cp3%%i-cp3%%i-win_amd64.whl
         )
         cd %ROOT_PATH%PythonAPI\test\unit\
         :: PythonAPI client version == git rev-parse --short HEAD
@@ -216,11 +187,11 @@ if %SMOKE_TESTS%==true (
         where python
         pip install nose2 -i http://mirrors.aliyun.com/pypi/simple --trusted-host mirrors.aliyun.com
         if %%i==7 (
-            echo pip install --force-reinstall  %BUILD_FOLDER:\=/%WindowsNoEditor/PythonAPI/carla/dist/hutb-2.9.16-cp3%%i-cp3%%im-win_amd64.whl
-            pip install --force-reinstall  %BUILD_FOLDER:\=/%WindowsNoEditor/PythonAPI/carla/dist/hutb-2.9.16-cp3%%i-cp3%%im-win_amd64.whl
+            echo pip install --force-reinstall  %BUILD_FOLDER:\=/%WindowsNoEditor/PythonAPI/carla/dist/hutb-%API_VERSION%-cp3%%i-cp3%%im-win_amd64.whl
+            pip install --force-reinstall  %BUILD_FOLDER:\=/%WindowsNoEditor/PythonAPI/carla/dist/hutb-%API_VERSION%-cp3%%i-cp3%%im-win_amd64.whl
         ) else (
-            echo pip install --force-reinstall  %BUILD_FOLDER:\=/%WindowsNoEditor/PythonAPI/carla/dist/hutb-2.9.16-cp3%%i-cp3%%i-win_amd64.whl
-            pip install --force-reinstall  %BUILD_FOLDER:\=/%WindowsNoEditor/PythonAPI/carla/dist/hutb-2.9.16-cp3%%i-cp3%%i-win_amd64.whl
+            echo pip install --force-reinstall  %BUILD_FOLDER:\=/%WindowsNoEditor/PythonAPI/carla/dist/hutb-%API_VERSION%-cp3%%i-cp3%%i-win_amd64.whl
+            pip install --force-reinstall  %BUILD_FOLDER:\=/%WindowsNoEditor/PythonAPI/carla/dist/hutb-%API_VERSION%-cp3%%i-cp3%%i-win_amd64.whl
         )
         cd %ROOT_PATH%PythonAPI\util\
         python test_connection.py -p 2000 --timeout=60.0
