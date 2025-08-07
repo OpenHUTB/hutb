@@ -1,6 +1,7 @@
-chcp 65001
 @echo off
 setlocal enabledelayedexpansion
+chcp 65001
+
 :: Modified from Package.bat
 
 rem don't remove next two empty lines after next

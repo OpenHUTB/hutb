@@ -1,5 +1,6 @@
 @echo off
 setlocal enabledelayedexpansion 
+chcp 65001
 
 set LIBOSMSCOUT_REPO=https://github.com/Framstag/libosmscout
 set LUNASVG_REPO=https://github.com/sammycage/lunasvg

@@ -1,5 +1,6 @@
 @echo off
 setlocal enabledelayedexpansion
+chcp 65001
 
 rem BAT script that creates the library for conversion from OSM to OpenDRIVE (carla.org).
 rem Run it through a cmd with the x64 Visual C++ Toolset enabled.

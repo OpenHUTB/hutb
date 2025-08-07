@@ -1,5 +1,6 @@
 @echo off
 setlocal enabledelayedexpansion
+chcp 65001
 
 rem BAT script containing utility functions for reuse across other scripts.
 

@@ -1,5 +1,6 @@
 @echo off
 setlocal
+chcp 65001
 
 rem BAT script that downloads and installs all Plugins
 rem Run it through a cmd with the x64 Visual C++ Toolset enabled.

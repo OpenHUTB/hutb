@@ -1,5 +1,6 @@
 @echo off
 setlocal enabledelayedexpansion
+chcp 65001
 
 rem don't remove next two empty lines after next
 set LF=^

@@ -1,5 +1,6 @@
 @echo off
 setlocal
+chcp 65001
 
 rem BAT script that creates the client and the server of LibCarla (carla.org).
 rem Run it through a cmd with the x64 Visual C++ Toolset enabled.
