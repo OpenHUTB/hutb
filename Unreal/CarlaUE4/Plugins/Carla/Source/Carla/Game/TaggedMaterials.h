@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Carla/Actor/ActorData.h"
+
 #include "CoreMinimal.h"
 
 #include "TaggedMaterials.generated.h"
