@@ -23,10 +23,10 @@ pipeline {
                             call setEnv64.bat
                             git update-index --skip-worktree Unreal/CarlaUE4/CarlaUE4.uproject
                         """
-                        // bat """
-                        //     call setEnv64.bat
-                        //     make setup ARGS="--chrono"
-                        // """
+                        bat """
+                            call setEnv64.bat
+                            make setup ARGS="--chrono"
+                        """
                     }
                 }
 
