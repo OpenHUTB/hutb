@@ -19,6 +19,7 @@
 #include "Engine/TextureRenderTargetCube.h"
 #include "Runtime/ImageWriteQueue/Public/ImagePixelData.h"
 #include "CubemapUnwrapUtils.h"
+#include "Kismet/KismetSystemLibrary.h"
 
 #include <compiler/disable-ue4-macros.h>
 #include <carla/Buffer.h>
