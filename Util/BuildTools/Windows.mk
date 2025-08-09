@@ -5,6 +5,9 @@ default: help
 # root of the project (makefile directory)
 export ROOT_PATH=$(CURDIR)/
 
+# for debug (modify to false when commit)
+export IS_DEBUG=false
+
 # dependecy install/build directory (rpclib, gtest, boost)
 export INSTALLATION_DIR=$(ROOT_PATH)Build/
 
@@ -76,8 +79,11 @@ check.PythonAPI:
 	@"${CARLA_BUILD_TOOLS_FOLDER}/Check.bat" --python-api
 
 # somke testc
-smoke_tests:
+check.smoke:
 	@"${CARLA_BUILD_TOOLS_FOLDER}/Check.bat" --smoke
+
+run-examples:
+	@for D in ${CARLA_EXAMPLES_FOLDER}/*; do [ -d "$${D}" ] && make -C $${D} run.only; done
 
 benchmark: LibCarla
 	@echo "Not implemented!"

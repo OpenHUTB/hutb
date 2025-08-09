@@ -38,7 +38,6 @@ rem ============================================================================
 set DOC_STRING="Run unit tests."
 set USAGE_STRING="Usage: %FILE_N% [-h|--help] [--gdb] [--xml] [--gtest_args=ARGS] [--python-version=VERSION]"
 
-set IS_DEBUG=false
 set XML_OUTPUT=false
 set LIBCARLA_RELEASE=false
 set LIBCARLA_DEBUG=false
@@ -100,38 +99,37 @@ for /f %%i in ('git rev-parse --short HEAD') do set CARLA_VERSION=%%i
 if not defined CARLA_VERSION goto bad_exit
 
 set BUILD_FOLDER=%INSTALLATION_DIR%UE4Carla/%CARLA_VERSION%/
-:: 仅用于调试
+:: debug only (rename with no dirty)
 if %IS_DEBUG%==true (
-    set BUILD_FOLDER=D:\hutb\Build\UE4Carla\bb2366fe9-dirty\
+    set BUILD_FOLDER=D:\hutb\Build\UE4Carla\844a85a57\
 )
 
 set exe_path=%BUILD_FOLDER:/=\%WindowsNoEditor\CarlaUE4.exe
 
-:: 必须使用start来启动一个新的服务进程，否则会卡死 -RenderOffscreen
-echo Unreal service is launching with command: start %exe_path% -RenderOffscreen ...
-:: 如果exe文件不存在，会卡在这里
+:: If exist CarlaUE4.exe process, kill it
+for /f "tokens=5" %%a in ('netstat -ano ^| findstr :3654') do taskkill /F /PID %%a
+:: use command "start" to launch a new service process. Otherwise stuck
+echo Unreal service is launching with command: start %exe_path% -RenderOffscreen --carla-rpc-port=3654 --carla-streaming-port=0 -nosound
 if exist %exe_path% (
-    start %exe_path% -RenderOffscreen
+    start %exe_path% -RenderOffscreen --carla-rpc-port=3654 --carla-streaming-port=0 -nosound
 ) else (
     echo Error: %exe_path% not exitst.
     goto bad_exit
 )
 
 
-:: 安装最新编译的PythonAPI
-pushd %ROOT_PATH%PythonAPI\carla\dist
-:: pip install --force-reinstall C:\ProgramData\Jenkins\.jenkins\workspace\carla\PythonAPI\carla\dist\hutb-1.0.0-cp37-cp37m-win_amd64.whl
-:: extract python version
+:: Reinstall all supported Python environment
+:: TODO: move to Setup.bat
+:: conda env remove --name hutb_3.13
+:: conda create -n hutb_3.13 python=3.13 --yes
 where pip
-popd %ROOT_PATH%PythonAPI\carla\dist
+
 
 
 rem ============================================================================
 rem -- Run Python API unit tests -----------------------------------------------
 rem ============================================================================
 
-echo pushd %ROOT_PATH%PythonAPI\test\unit
-pushd %ROOT_PATH%PythonAPI\test\unit
 
 if %XML_OUTPUT%==true (
     set EXTRA_ARGS="-X"
@@ -149,27 +147,33 @@ if %PYTHON_API%==true (
         pip install nose2 -i http://mirrors.aliyun.com/pypi/simple --trusted-host mirrors.aliyun.com
         if %%i==7 (
             echo pip install --force-reinstall  %BUILD_FOLDER:\=/%WindowsNoEditor/PythonAPI/carla/dist/hutb-%API_VERSION%-cp3%%i-cp3%%im-win_amd64.whl
-            pip install --force-reinstall  %BUILD_FOLDER:\=/%WindowsNoEditor/PythonAPI/carla/dist/hutb-%API_VERSION%-cp3%%i-cp3%%im-win_amd64.whl
+            pip uninstall --yes hutb
+            pip install  %BUILD_FOLDER:\=/%WindowsNoEditor/PythonAPI/carla/dist/hutb-%API_VERSION%-cp3%%i-cp3%%im-win_amd64.whl
         ) else (
             echo pip install --force-reinstall  %BUILD_FOLDER:\=/%WindowsNoEditor/PythonAPI/carla/dist/hutb-%API_VERSION%-cp3%%i-cp3%%i-win_amd64.whl
-            pip install --force-reinstall  %BUILD_FOLDER:\=/%WindowsNoEditor/PythonAPI/carla/dist/hutb-%API_VERSION%-cp3%%i-cp3%%i-win_amd64.whl
+            pip uninstall --yes hutb
+            pip install  %BUILD_FOLDER:\=/%WindowsNoEditor/PythonAPI/carla/dist/hutb-%API_VERSION%-cp3%%i-cp3%%i-win_amd64.whl
         )
         cd %ROOT_PATH%PythonAPI\test\unit\
-        :: PythonAPI client version == git rev-parse --short HEAD
-        python -m nose2
+        if %IS_DEBUG%==true (
+            :: skip test client
+            python -m nose2 test_transform
+            python -m nose2 test_vehicle
+        ) else (
+            :: PythonAPI client version == git rev-parse --short HEAD
+            :: python -m nose2
+            python -m nose2 test_transform
+            python -m nose2 test_vehicle
+        )
     )
-    :: echo Test command: %python_path% -m nose2
-    :: %python_path% -m nose2
-    :: %python_path% -m unittest test_transform.TestTransform.test_list_rotation_and_translation_location
-    :: %python_path% -m unittest test_vehicle.TestVehicleControl.test_default_values
 
     if %XML_OUTPUT%==true (
         move test-results.xml %CARLA_TEST_RESULTS_FOLDER%\python-api-3.xml
     )
 )
 
-popd %ROOT_PATH%PythonAPI\test\unit
-cd  %ROOT_PATH%
+
+cd %ROOT_PATH:/=\%PythonAPI\test\
 
 
 
@@ -178,6 +182,36 @@ rem -- Run smoke tests ---------------------------------------------------------
 rem ============================================================================
 
 call :get_current_time_in_seconds T_START_DO_TEST
+
+
+if %SMOKE_TESTS%==true (
+    echo Current directory: %cd%
+    for /f "delims=*" %%a in (smoke_test_list.txt) do (
+        set smoke_list=%%a
+        goto :read_done
+    )
+    :read_done
+    echo Smoke list: %smoke_list%
+    for /l %%i in (13,-1,7) do (
+        echo Running smoke tests for Python 3.%%i
+        call conda activate hutb_3.%%i
+        echo Current Python path: 
+        where python
+        pip install nose2 -i http://mirrors.aliyun.com/pypi/simple --trusted-host mirrors.aliyun.com
+        if %%i==7 (
+            echo pip install --force-reinstall  %BUILD_FOLDER:\=/%WindowsNoEditor/PythonAPI/carla/dist/hutb-%API_VERSION%-cp3%%i-cp3%%im-win_amd64.whl
+            pip install --force-reinstall  %BUILD_FOLDER:\=/%WindowsNoEditor/PythonAPI/carla/dist/hutb-%API_VERSION%-cp3%%i-cp3%%im-win_amd64.whl
+        ) else (
+            echo pip install --force-reinstall  %BUILD_FOLDER:\=/%WindowsNoEditor/PythonAPI/carla/dist/hutb-%API_VERSION%-cp3%%i-cp3%%i-win_amd64.whl
+            pip uninstall --yes hutb
+            pip install  %BUILD_FOLDER:\=/%WindowsNoEditor/PythonAPI/carla/dist/hutb-%API_VERSION%-cp3%%i-cp3%%i-win_amd64.whl
+        )
+        pip install -r requirements.txt -i http://mirrors.aliyun.com/pypi/simple --trusted-host mirrors.aliyun.com
+        echo python -m nose2 -v %smoke_list%
+        python -m nose2 -v %smoke_list%
+    )
+)
+
 
 if %SMOKE_TESTS%==true (
     echo test connection ...
@@ -194,10 +228,12 @@ if %SMOKE_TESTS%==true (
             pip install --force-reinstall  %BUILD_FOLDER:\=/%WindowsNoEditor/PythonAPI/carla/dist/hutb-%API_VERSION%-cp3%%i-cp3%%i-win_amd64.whl
         )
         cd %ROOT_PATH%PythonAPI\util\
-        python test_connection.py -p 2000 --timeout=60.0
+        python test_connection.py -p 3654 --timeout=60.0
     )
     echo test connection done.
 )
+
+
 
 call :get_current_time_in_seconds T_END_DO_TEST
 set /A ELAPSED_TIME=!T_END_DO_TEST! - !T_START_DO_TEST!
@@ -207,7 +243,7 @@ if %MEASURE_TIME%==true if %SMOKE_TESTS%==true echo %FILE_N% [TIME]: Running smo
 
 rem ============================================================================
 :: 杀死服务端
-for /f "tokens=5" %%a in ('netstat -ano ^| findstr :2000') do taskkill /F /PID %%a
+for /f "tokens=5" %%a in ('netstat -ano ^| findstr :3654') do taskkill /F /PID %%a
 
 
 call :get_current_time_in_seconds T_END_OVERALL

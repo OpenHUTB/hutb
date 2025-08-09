@@ -108,7 +108,7 @@ pipeline {
                         """
                         bat """
                             call setEnv64.bat
-                            make smoke_tests
+                            make check.smoke
                         """
                     }
                 }
