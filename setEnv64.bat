@@ -30,4 +30,4 @@ call python --version
 :: call exit /b
 
 
-cd C:\carla
+cd %~dp0
