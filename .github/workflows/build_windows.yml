@@ -7,12 +7,43 @@ on:
 jobs:
   windows-dev:
     name: Windows CI/CD
-    uses: ./.github/workflows/_ci-windows.yml
-    secrets:
-      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-      AWS_ACCESS_KEY: ${{ secrets.AWS_ACCESS_KEY }}
-    with:
-      python-versions: "3.10,3.11,3.12"
-      additional-maps: true
-      upload-package: true
-      upload-replace-latest: true
+    runs-on: self-hosted:windows
+    env:
+      UE4_ROOT: C:\workspace\UnrealEngine
+      VCVARS: C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Auxiliary\Build\vcvars64.bat
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: setup
+        run: |
+          call setEnv64.bat
+          git update-index --skip-worktree Unreal/CarlaUE4/CarlaUE4.uproject
+          make setup ARGS="--chrono"
+        shell: cmd
+
+      - name: build
+        run: |
+          call setEnv64.bat
+          make plugins
+        shell: cmd
+
+      - name: retrieve content
+        run: |
+          call setEnv64.bat
+          call Update.bat
+        shell: cmd
+
+      - name: package
+        run: |
+          call setEnv64.bat
+          make package ARGS="--chrono"
+        shell: cmd
+
+      - name: test
+        run: |
+          call setEnv64.bat
+          make check.PythonAPI
+          make check.smoke
+        shell: cmd
