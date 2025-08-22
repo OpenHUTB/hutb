@@ -8,7 +8,12 @@ jobs:
 
   windows-dev:
     name: Windows CI/CD
-    runs-on: self-hosted
-    steps:
-      - name: Set up Git repository
-        uses: actions/checkout@v3
+    uses: ./.github/workflows/_ci-windows.yml
+    secrets:
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_ACCESS_KEY: ${{ secrets.AWS_ACCESS_KEY }}
+    with:
+      python-versions: "3.10,3.11,3.12"
+      additional-maps: true
+      upload-package: true
+      upload-replace-latest: true
