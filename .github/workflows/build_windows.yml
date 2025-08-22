@@ -1,0 +1,14 @@
+name: hutb Windows CI/CD
+
+on:
+  push:
+
+
+jobs:
+
+  windows-dev:
+    name: Windows CI/CD
+    runs-on: self-hosted
+    steps:
+      - name: Set up Git repository
+        uses: actions/checkout@v3
