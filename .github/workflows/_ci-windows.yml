@@ -30,6 +30,7 @@ on:
 
 jobs:
   windows:
+    timeout-minutes: 1440
     name: Windows CI/CD
     runs-on: self-hosted:windows
     env:
