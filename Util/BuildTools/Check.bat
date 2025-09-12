@@ -118,13 +118,6 @@ if exist %exe_path% (
 )
 
 
-:: Reinstall all supported Python environment
-:: TODO: move to Setup.bat
-:: conda env remove --name hutb_3.13
-:: conda create -n hutb_3.13 python=3.13 --yes
-where pip
-
-
 
 rem ============================================================================
 rem -- Run Python API unit tests -----------------------------------------------
@@ -138,12 +131,16 @@ if %XML_OUTPUT%==true (
 )
 
 if %PYTHON_API%==true (
-    echo Running Python API for Python %PY_VERSION% unit tests.
     echo Current directory: %cd%
     for /l %%i in (13,-1,7) do (
+        echo Running Python API for Python Python.%%i unit tests.
+        where conda
+        :: call D:\software\anaconda3\Scripts\activate.bat hutb_3.%%i && python --version
         call conda activate hutb_3.%%i
         echo Current Python path: 
         where python
+        echo Current Pip path:
+        where pip
         pip install nose2 -i http://mirrors.aliyun.com/pypi/simple --trusted-host mirrors.aliyun.com
         if %%i==7 (
             echo pip install --force-reinstall  %BUILD_FOLDER:\=/%WindowsNoEditor/PythonAPI/carla/dist/hutb-%API_VERSION%-cp3%%i-cp3%%im-win_amd64.whl
