@@ -109,7 +109,8 @@ class TestApplyVehiclePhysics(SyncSmokeTest):
             self.world.tick()
 
     def check_single_physics_control(self, bp_vehicle):
-        veh_tranf = self.world.get_map().get_spawn_points()[0]
+        spawn_points = self.world.get_map().get_spawn_points()
+        veh_tranf = spawn_points[len(spawn_points)-1]
 
         vehicle = self.world.spawn_actor(bp_vehicle, veh_tranf)
 
