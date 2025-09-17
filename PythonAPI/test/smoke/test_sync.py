@@ -69,7 +69,9 @@ class TestSynchronousMode(SyncSmokeTest):
         self.assertNotEqual(len(spawn_points), 0)
 
         car_bp = bp_lib.find('vehicle.ford.mustang')
-        car = self.world.spawn_actor(car_bp, spawn_points[0])
+        # Use last spawn point instead of the first one (VR model spawn one car here) to fix: 
+        # RuntimeError: Spawn failed because of collision at spawn position
+        car = self.world.spawn_actor(car_bp, spawn_points[len(spawn_points)-1])
         # List of sensors that are not events, these are retrieved every frame
         sensor_ids = [
             "sensor.lidar.ray_cast",
