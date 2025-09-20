@@ -12,7 +12,8 @@
 				"Engine",
 				"PhysXVehicles",
 				"Carla",
-				"CoreUObject"
+				"CoreUObject",
+				"AirSim"
 			]
 		}
 	],
@@ -150,7 +151,7 @@
 		},
 		{
 			"Name": "AirSim",
-			"Enabled": false
+			"Enabled": true
 		}
 	]
 }
