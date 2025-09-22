@@ -1,4 +1,4 @@
-@REM @echo off
+@echo off
 setlocal enabledelayedexpansion
 chcp 65001
 
@@ -22,6 +22,12 @@ set GIT_PULL=true
 set CURRENT_STREETMAP_COMMIT=260273d6b7c3f28988cda31fd33441de7e272958
 set STREETMAP_BRANCH=master
 set STREETMAP_REPO=https://github.com/carla-simulator/StreetMap.git
+
+:: build air plugin
+set BUILD_AIR=true
+set GIT_PULL=true
+set AIR_BRANCH=main
+set AIR_REPO=https://github.com/OpenHUTB/air.git
 
 :arg-parse
 if not "%1"=="" (
@@ -61,6 +67,9 @@ rem
 set CARLA_PLUGINS_PATH=%ROOT_PATH:/=\%Unreal\CarlaUE4\Plugins\
 set CARLA_STREETMAP_PLUGINS_PATH=%ROOT_PATH:/=\%Unreal\CarlaUE4\Plugins\StreetMap\
 
+set AIR_PLUGIN_PATH=%ROOT_PATH:/=\%Unreal\CarlaUE4\Plugins\AirSim\
+set AIR_BUILD_PATH=%ROOT_PATH:/=\%Build\AirSim\
+
 rem Build STREETMAP
 
 if  %GIT_PULL% == true (
@@ -72,9 +81,31 @@ if  %GIT_PULL% == true (
             git clone -b %STREETMAP_BRANCH% %STREETMAP_REPO% %CARLA_STREETMAP_PLUGINS_PATH%
         )
     )
-    cd "%CARLA_STREETMAP_PLUGINS_PATH%"
+    cd /d "%AIR_BUILD_PATH%"
     :: git fetch
     :: git checkout %CURRENT_STREETMAP_COMMIT%
+)
+
+
+:: Build AIR
+if %BUILD_AIR% == true (
+    if exist "%AIR_BUILD_PATH%" (
+        cd "%AIR_BUILD_PATH%"
+        git fetch --all
+        git reset --hard origin/%AIR_BRANCH%
+        git pull
+    ) else (
+        echo Air cache directory: "%CACHE_DIR:/=\%AirSim\"
+        if exist "%CACHE_DIR:/=\%AirSim\" (
+            xcopy /q /Y /S /I "%CACHE_DIR:/=\%AirSim\"  %AIR_BUILD_PATH%
+        ) else (
+            git clone -b %AIR_BRANCH% %AIR_REPO% %AIR_BUILD_PATH%
+        )
+    )
+    echo %cd%
+    :: Build AirSim
+    CALL build.cmd
+    xcopy /q /Y /S /I "%AIR_BUILD_PATH:/=\%Unreal\Plugins\AirSim\"  %AIR_PLUGIN_PATH%
 )
 
 
