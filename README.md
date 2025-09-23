@@ -1,7 +1,6 @@
 # 人车模拟器
 
-
-该项目是一个用于研究人和车的高保真开源模拟器。
+该项目是一个用于研究人、自动驾驶、无人机的高保真开源模拟器。
 基于 [Carla-DReyeVR](https://openhutb.github.io/doc/interbehavior/) 和 [OpenSim](https://openhutb.github.io/doc/pedestrian/tuto_content_chrono_opensim/) 开发，旨在支持人车系统的开发、训练和验证。
 除了开源代码外，还提供了为此目的创建的可自由使用的开放数字资产（[城镇布局](https://openhutb.github.io/doc/core_map/#non-layered-maps) 、[建筑](https://openhutb.github.io/doc/catalogue/) 、[车辆](https://openhutb.github.io/doc/catalogue_vehicles/) 、[行人](https://openhutb.github.io/doc/catalogue_pedestrians/) 、[道具](https://openhutb.github.io/doc/catalogue_props/) 等）。
 该模拟平台支持 [传感器](https://openhutb.github.io/doc/ref_sensors/) 、[数据合成](https://openhutb.github.io/doc/tuto_G_retrieve_data/) 、[交通管理器](https://openhutb.github.io/doc/adv_traffic_manager/) 、[多物理场仿真](https://openhutb.github.io/doc/tuto_G_chrono/) 、[行人导航](https://openhutb.github.io/doc/tuto_G_pedestrian_navigation/) 、[Python接口](https://openhutb.github.io/doc/python_api/) 等的标准规范。
