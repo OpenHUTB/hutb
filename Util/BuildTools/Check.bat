@@ -101,7 +101,7 @@ if not defined CARLA_VERSION goto bad_exit
 set BUILD_FOLDER=%INSTALLATION_DIR%UE4Carla/%CARLA_VERSION%/
 :: debug only (rename with no dirty)
 if %IS_DEBUG%==true (
-    set BUILD_FOLDER=D:\hutb\Build\UE4Carla\844a85a57\
+    set BUILD_FOLDER=D:\hutb\Build\UE4Carla\e392521d5-dirty_Carla\
 )
 
 set exe_path=%BUILD_FOLDER:/=\%WindowsNoEditor\CarlaUE4.exe
@@ -132,7 +132,7 @@ if %XML_OUTPUT%==true (
 
 if %PYTHON_API%==true (
     echo Current directory: %cd%
-    for /l %%i in (13,-1,7) do (
+    for /l %%i in (7,-1,7) do (
         echo Running Python API for Python Python.%%i unit tests.
         where conda
         :: call D:\software\anaconda3\Scripts\activate.bat hutb_3.%%i && python --version
@@ -189,7 +189,7 @@ if %SMOKE_TESTS%==true (
     )
     :read_done
     echo Smoke list: %smoke_list%
-    for /l %%i in (13,-1,7) do (
+    for /l %%i in (7,-1,7) do (
         echo Running smoke tests for Python 3.%%i
         call conda activate hutb_3.%%i
         echo Current Python path: 
