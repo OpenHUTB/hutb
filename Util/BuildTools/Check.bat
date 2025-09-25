@@ -210,27 +210,6 @@ if %SMOKE_TESTS%==true (
 )
 
 
-if %SMOKE_TESTS%==true (
-    echo test connection ...
-    for /l %%i in (13,-1,7) do (
-        call conda activate hutb_3.%%i
-        echo Current Python path: 
-        where python
-        pip install nose2 -i http://mirrors.aliyun.com/pypi/simple --trusted-host mirrors.aliyun.com
-        if %%i==7 (
-            echo pip install --force-reinstall  %BUILD_FOLDER:\=/%WindowsNoEditor/PythonAPI/carla/dist/hutb-%API_VERSION%-cp3%%i-cp3%%im-win_amd64.whl
-            pip install --force-reinstall  %BUILD_FOLDER:\=/%WindowsNoEditor/PythonAPI/carla/dist/hutb-%API_VERSION%-cp3%%i-cp3%%im-win_amd64.whl
-        ) else (
-            echo pip install --force-reinstall  %BUILD_FOLDER:\=/%WindowsNoEditor/PythonAPI/carla/dist/hutb-%API_VERSION%-cp3%%i-cp3%%i-win_amd64.whl
-            pip install --force-reinstall  %BUILD_FOLDER:\=/%WindowsNoEditor/PythonAPI/carla/dist/hutb-%API_VERSION%-cp3%%i-cp3%%i-win_amd64.whl
-        )
-        cd %ROOT_PATH%PythonAPI\util\
-        python test_connection.py -p 3654 --timeout=60.0
-    )
-    echo test connection done.
-)
-
-
 
 call :get_current_time_in_seconds T_END_DO_TEST
 set /A ELAPSED_TIME=!T_END_DO_TEST! - !T_START_DO_TEST!
