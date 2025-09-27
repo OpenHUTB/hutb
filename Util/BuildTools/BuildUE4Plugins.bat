@@ -102,6 +102,7 @@ if %BUILD_AIR% == true (
             git clone -b %AIR_BRANCH% %AIR_REPO% %AIR_BUILD_PATH%
         )
     )
+    cd "%AIR_BUILD_PATH%"
     echo %cd%
     :: Build AirSim
     CALL build.cmd
