@@ -105,8 +105,8 @@ if %BUILD_AIR% == true (
     cd "%AIR_BUILD_PATH%"
     echo %cd%
     :: Build AirSim
-    CALL build.cmd
     CALL clean_rebuild.bat
+    CALL build.cmd
     xcopy /q /Y /S /I "%AIR_BUILD_PATH:/=\%Unreal\Plugins\AirSim\"  %AIR_PLUGIN_PATH%
 )
 
