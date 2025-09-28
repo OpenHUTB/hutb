@@ -89,7 +89,7 @@ if  %GIT_PULL% == true (
 
 :: Build AIR
 if %BUILD_AIR% == true (
-    if exist "%AIR_BUILD_PATH%" (
+    if exist "%AIR_BUILD_PATH%\Unreal\Plugins\AirSim" (
         cd "%AIR_BUILD_PATH%"
         git fetch --all
         git reset --hard origin/%AIR_BRANCH%
@@ -97,7 +97,8 @@ if %BUILD_AIR% == true (
     ) else (
         echo Air cache directory: "%CACHE_DIR:/=\%AirSim\"
         if exist "%CACHE_DIR:/=\%AirSim\" (
-            xcopy /q /Y /S /I "%CACHE_DIR:/=\%AirSim\"  %AIR_BUILD_PATH%
+            :: /H:  copy hidden .git directory
+            xcopy /q /Y /S /I /H "%CACHE_DIR:/=\%AirSim\"  %AIR_BUILD_PATH%
         ) else (
             git clone -b %AIR_BRANCH% %AIR_REPO% %AIR_BUILD_PATH%
         )
@@ -105,7 +106,7 @@ if %BUILD_AIR% == true (
     cd "%AIR_BUILD_PATH%"
     echo %cd%
     :: Build AirSim
-    CALL clean_rebuild.bat
+    :: CALL clean_rebuild.bat
     CALL build.cmd
     xcopy /q /Y /S /I "%AIR_BUILD_PATH:/=\%Unreal\Plugins\AirSim\"  %AIR_PLUGIN_PATH%
 )
