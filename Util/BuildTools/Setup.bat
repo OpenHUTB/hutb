@@ -44,6 +44,7 @@ set USE_CHRONO=false
 set USE_ROS2=false
 :: 仅下载依赖和资产，不进行编译（用于打包编辑器 make editor）
 set DOWNLOAD_ONLY=false
+set CHRONO_PATH=
 
 :arg-parse
 if not "%1"=="" (
@@ -55,6 +56,11 @@ if not "%1"=="" (
     )
     if "%1"=="--chrono" (
         set USE_CHRONO=true
+    )
+    if "%1"=="--chrono-path" (
+        set CHRONO_PATH=%2
+        set USE_CHRONO=true
+        shift
     )
     if "%1"=="--ros2" (
         set USE_ROS2=true
@@ -315,9 +321,16 @@ rem ============================================================================
 
 if %USE_CHRONO% == true (
     echo %FILE_N% Installing Chrono...
-    call "%INSTALLERS_DIR%install_chrono.bat"^
-     --build-dir "%INSTALLATION_DIR%" ^
-     --generator %GENERATOR%
+    if not "%CHRONO_PATH%"=="" (
+        call "%INSTALLERS_DIR%install_chrono.bat"^
+         --build-dir "%INSTALLATION_DIR%" ^
+         --generator %GENERATOR% ^
+         --chrono-path "%CHRONO_PATH%"
+    ) else (
+        call "%INSTALLERS_DIR%install_chrono.bat"^
+         --build-dir "%INSTALLATION_DIR%" ^
+         --generator %GENERATOR%
+    )
 
     if not exist "%CARLA_DEPENDENCIES_FOLDER%" (
         mkdir "%CARLA_DEPENDENCIES_FOLDER%"
@@ -524,8 +537,10 @@ rem ============================================================================
     echo                               Visual Studio 2013 -^> msvc-12.0
     echo                               Visual Studio 2015 -^> msvc-14.0
     echo                               Visual Studio 2017 -^> msvc-14.1
-    echo                               Visual Studio 2019 -^> msvc-14.2 
+    echo                               Visual Studio 2019 -^> msvc-14.2
     echo                               Visual Studio 2022 -^> msvc-14.3 *
+    echo     --chrono            -^> Enable Chrono library support.
+    echo     --chrono-path [P]   -^> Use existing Chrono source at path P instead of downloading.
     goto good_exit
 
 :error_cl
