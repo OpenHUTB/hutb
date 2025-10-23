@@ -166,15 +166,19 @@ with open("README.md") as f:
 
 setup(
     name='hutb',
-    version='2.9.16',
+    version='2.2',
+    author='OpenHUTB',
     package_dir={'': 'source'},
-    packages=['carla'],
+    packages=['carla', 'airsim'],
     ext_modules=get_libcarla_extensions(),
     license=get_license(),
-    description='Python API for communicating with the CARLA server.',
+    description='Python API for communicating with the HUTB simulator.',
     long_description=long_description,
     long_description_content_type='text/markdown',
-    url='https://github.com/OpenHUTB/carla',
-    author='The OpenHUTB team',
-    author_email='2929@hutb.edu.cn',
-    include_package_data=True)
+    url='https://github.com/OpenHUTB/hutb',
+    author_email='whd@hutb.edu.cn',
+    include_package_data=True,
+    install_requires=[
+          'msgpack-rpc-python', 'numpy', 'opencv-contrib-python'
+    ]
+)

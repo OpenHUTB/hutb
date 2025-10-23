@@ -142,6 +142,7 @@ if %BUILD_FOR_PYTHON3%==true (
         cd "%ROOT_PATH%"
         REM conda create --name hutb_3.%%i python=3.%%i --yes
         call conda activate hutb_3.%%i
+        pip install setuptools wheel
         echo Current Python path: 
         where python
         make LibCarla
