@@ -161,12 +161,12 @@ def get_license():
         return 'LGPL-v2.1-only License'
     return 'MIT License'
 
-with open("README.md") as f:
+with open("README.md", 'r', encoding='utf-8') as f:
     long_description = f.read()
 
 setup(
     name='hutb',
-    version='2.2',
+    version='2.2.1',
     author='OpenHUTB',
     package_dir={'': 'source'},
     packages=['carla', 'airsim'],
