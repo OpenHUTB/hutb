@@ -166,7 +166,7 @@ with open("README.md", 'r', encoding='utf-8') as f:
 
 setup(
     name='hutb',
-    version='2.2.1',
+    version='2.9.16',
     author='OpenHUTB',
     package_dir={'': 'source'},
     packages=['carla', 'airsim'],
