@@ -100,7 +100,7 @@ rem ============================================================================
 where python 1>nul
 if %errorlevel% neq 0 goto error_py
 
-for /l %%i in (13,-1,7) do (
+for /l %%i in (14,-1,7) do (
     :: offline resource: https://repo.anaconda.com/pkgs/main/win-64/
     echo "If conda viural environment hutb_3.%%i already exists, delete it"
     call conda remove -n hutb_3.%%i --all --yes
@@ -125,7 +125,7 @@ if %BUILD_FOR_PYTHON3%==true (
         echo TODO: Installing anaconda with silent mode
     )
 
-    for /l %%i in (13,-1,7) do (
+    for /l %%i in (14,-1,7) do (
         rem remove boost build before
         echo BOOST_VERSION: %BOOST_VERSION%
         echo BOOST_INSTALL_FOLDER: %BOOST_INSTALL_FOLDER%

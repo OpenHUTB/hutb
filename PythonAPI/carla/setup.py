@@ -164,6 +164,7 @@ def get_license():
 with open("README.md", 'r', encoding='utf-8') as f:
     long_description = f.read()
 
+# also increase version number API_VERSION in Uitl/BuildTools/Windows.mk
 setup(
     name='hutb',
     version='2.9.16',
