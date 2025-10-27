@@ -581,59 +581,58 @@ fi
 mkdir -p ${LIBCARLA_INSTALL_SERVER_FOLDER}/include/
 cp -p -r ${EIGEN_INCLUDE}/* ${LIBCARLA_INSTALL_SERVER_FOLDER}/include/
 
-
 if ${USE_CHRONO} ; then
   # ==============================================================================
   # -- Get Eigen headers (Chrono dependency) -------------------------------------
   # ==============================================================================
   CHRONO_INSTALL_DIR=chrono-install
-
-  if [[ -n "${CHRONO_PATH}" ]] ; then
-    log "Using user-provided Chrono at: ${CHRONO_PATH}"
-    CHRONO_SRC_DIR="${CHRONO_PATH}"
+  if [[ -d ${CHRONO_INSTALL_DIR} ]] ; then
+    log "chrono library already installed."
   else
-    # ==============================================================================
-    # -- Get Chrono and compile it with libc++ -------------------------------------
-    # ==============================================================================
-    CHRONO_TAG=6.0.0
-    # CHRONO_TAG=develop
-    CHRONO_REPO=https://github.com/projectchrono/chrono.git
-
-    CHRONO_SRC_DIR=chrono-source
-
-    if [[ -d ${CHRONO_INSTALL_DIR} ]] ; then
-        log "chrono library already installed."
+    if [[ -n "${CHRONO_PATH}" ]] ; then
+      log "Using user-provided Chrono at: ${CHRONO_PATH}"
+      CHRONO_SRC_DIR="${CHRONO_PATH}"
     else
+      # ==============================================================================
+      # -- Get Chrono and compile it with libc++ -------------------------------------
+      # ==============================================================================
+      CHRONO_TAG=6.0.0
+      CHRONO_REPO=https://github.com/projectchrono/chrono.git
+      CHRONO_SRC_DIR=chrono-source
+      if [[ -d ${CHRONO_INSTALL_DIR} ]] ; then
+        log "chrono library already installed."
+      else
         log "Retrieving chrono library."
         start=$(date +%s)
         git clone --depth 1 --branch ${CHRONO_TAG} ${CHRONO_REPO} ${CHRONO_SRC_DIR}
         end=$(date +%s)
         echo "Elapsed Time dowloading chrono: $(($end-$start)) seconds"
+      fi
     fi
-  fi
     EIGEN_INCLUDE=$(realpath "${EIGEN_INSTALL_DIR}/include")
-
     mkdir -p ${CHRONO_SRC_DIR}/build
     pushd ${CHRONO_SRC_DIR}/build >/dev/null
     cmake -G "Ninja" \
-        -DCMAKE_CXX_FLAGS="-fPIC -std=c++14 -stdlib=libc++ -I${LLVM_INCLUDE} -L${LLVM_LIBPATH} -Wno-unused-command-line-argument ${UNREAL_HOSTED_CFLAGS}" \
-        -DEIGEN3_INCLUDE_DIR="${EIGEN_INCLUDE}" \
-        -DCMAKE_INSTALL_PREFIX="${CARLA_BUILD_FOLDER}/${CHRONO_INSTALL_DIR}" \
-        -DCMAKE_BUILD_TYPE=Release \
-        -DENABLE_MODULE_VEHICLE=ON \
-        ..
+      -DCMAKE_CXX_FLAGS="-fPIC -std=c++14 -stdlib=libc++ -I${LLVM_INCLUDE} -L${LLVM_LIBPATH} -Wno-unused-command-line-argument ${UNREAL_HOSTED_CFLAGS}" \
+      -DEIGEN3_INCLUDE_DIR="${EIGEN_INCLUDE}" \
+      -DCMAKE_INSTALL_PREFIX="${CARLA_BUILD_FOLDER}/${CHRONO_INSTALL_DIR}" \
+      -DCMAKE_BUILD_TYPE=Release \
+      -DBUILD_DEMOS=OFF \
+      -DENABLE_MODULE_VEHICLE=ON \
+      ..
     ninja
     ninja install
     popd >/dev/null
-  if [[ -n "${CHRONO_PATH}" ]] ; then
-    log "nothing to delete from chrono."
-  else
-    rm -Rf ${CHRONO_SRC_DIR}
-  fi
+    if [[ -n "${CHRONO_PATH}" ]] ; then
+      log "Skipping src removal."
+    else
+      rm -Rf ${CHRONO_SRC_DIR}
+    fi
     mkdir -p ${LIBCARLA_INSTALL_SERVER_FOLDER}/lib/
     mkdir -p ${LIBCARLA_INSTALL_SERVER_FOLDER}/include/
     cp -p ${CHRONO_INSTALL_DIR}/lib/*.so ${LIBCARLA_INSTALL_SERVER_FOLDER}/lib/
     cp -p -r ${CHRONO_INSTALL_DIR}/include/* ${LIBCARLA_INSTALL_SERVER_FOLDER}/include/
+  fi
 fi
 
 # ==============================================================================
