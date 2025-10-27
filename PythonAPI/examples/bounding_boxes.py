@@ -8,17 +8,21 @@
 
 # Generates 2D and 3D bounding boxes for a simulation and can save them as JSON
 # Instructions:
-# Press "r" to start recording images and bounding boxes
-# Press "3" to visualize bounding boxes in 3D
-# Press "2" to vizualize bounding boxes in 2D
+
+"""
+Welcome to CARLA bounding boxes.
+    R       : toggle recording images and bounding boxes
+    3       : visualize bounding boxes in 3D
+    2       : vizualize bounding boxes in 2D
+    ESC     : quit
+"""
 
 import carla
-import math
 import json
 import random
-import time
 import queue
 import pygame
+import argparse
 import numpy as np
 from math import radians
 
@@ -253,6 +257,34 @@ def vehicle_light_state_to_dict(vehicle: carla.Vehicle):
 
 def main():
 
+    argparser = argparse.ArgumentParser(
+        description='CARLA bounding boxes')
+    argparser.add_argument(
+        '--host',
+        metavar='H',
+        default='127.0.0.1',
+        help='IP of the host server (default: 127.0.0.1)')
+    argparser.add_argument(
+        '-p', '--port',
+        metavar='P',
+        default=2000,
+        type=int,
+        help='TCP port to listen to (default: 2000)')
+    argparser.add_argument(
+        '-d', '--distance',
+        metavar='D',
+        default=50,
+        type=int,
+        help='Actor distance threshold')
+    argparser.add_argument(
+        '--res',
+        metavar='WIDTHxHEIGHT',
+        default='1280x720',
+        help='window resolution (default: 1280x720)')
+    args = argparser.parse_args()
+
+    args.width, args.height = [int(x) for x in args.res.split('x')]
+
     pygame.init()
 
     # State variables
@@ -263,13 +295,13 @@ def main():
     clock = pygame.time.Clock()
     pygame.display.set_caption("Bounding Box Visualization")
     display = pygame.display.set_mode(
-            (1280, 720),
+            (args.width, args.height),
             pygame.HWSURFACE | pygame.DOUBLEBUF)
     display.fill((0,0,0))
     pygame.display.flip()
 
     # Connect to the CARLA server and get the world object
-    client = carla.Client('localhost', 2000)
+    client = carla.Client(args.host, args.port)
     world  = client.get_world()
 
     # Set up the simulator in synchronous mode
@@ -293,15 +325,15 @@ def main():
 
     # spawn RGB camera
     camera_bp = bp_lib.find('sensor.camera.rgb')
-    camera_bp.set_attribute('image_size_x', '1280')
-    camera_bp.set_attribute('image_size_y', '720')
+    camera_bp.set_attribute('image_size_x', str(args.width))
+    camera_bp.set_attribute('image_size_y', str(args.height))
     camera_init_trans = carla.Transform(carla.Location(z=2))
     camera = world.spawn_actor(camera_bp, camera_init_trans, attach_to=ego_vehicle)
 
     # spawn instance segmentation camera
     inst_camera_bp = bp_lib.find('sensor.camera.instance_segmentation')
-    inst_camera_bp.set_attribute('image_size_x', '1280')
-    inst_camera_bp.set_attribute('image_size_y', '720')
+    inst_camera_bp.set_attribute('image_size_x', str(args.width))
+    inst_camera_bp.set_attribute('image_size_y', str(args.height))
     camera_init_trans = carla.Transform(carla.Location(z=2))
     inst_camera = world.spawn_actor(inst_camera_bp, camera_init_trans, attach_to=ego_vehicle)
 
@@ -356,6 +388,9 @@ def main():
             inst_seg_image = inst_queue.get()
             inst_seg = np.reshape(np.copy(inst_seg_image.raw_data), (inst_seg_image.height, inst_seg_image.width, 4))
 
+            # Decode instance segmentation image
+            semantic_labels, actor_ids = decode_instance_segmentation(inst_seg)
+
             # Empty list to collect bounding boxes for this frame
             frame_bboxes = []
 
@@ -368,8 +403,8 @@ def main():
                     npc_bbox = npc.bounding_box
                     dist = npc.get_transform().location.distance(ego_vehicle.get_transform().location)
 
-                    # Filter for the vehicles within 100m
-                    if dist < 50:
+                    # Filter for the vehicles within 50m
+                    if dist < args.distance:
 
                         # Limit to vehicles in front of the camera
                         forward_vec = camera.get_transform().get_forward_vector()
@@ -378,7 +413,6 @@ def main():
                         if forward_vec.dot(inter_vehicle_vec) > 0:
                             
                             # Generate 2D and 2D bounding boxes for each actor
-                            semantic_labels, actor_ids = decode_instance_segmentation(inst_seg)
                             npc_bbox_2d = bbox_2d_for_actor(npc, actor_ids, semantic_labels)
                             npc_bbox_3d = bbox_3d_for_actor(npc, ego_vehicle, camera_bp, camera)
 
@@ -443,7 +477,8 @@ def main():
 
 if __name__ == '__main__':
     print('Bounding boxes script instructions:')
-    print('Press "r" to start recording images as PNG and bounding boxes as JSON')
-    print('Press "3" to see the bounding boxes in 3D')
-    print('Press "2" to see the bounding boxes in 2D')
+    print('R    : toggle recording images as PNG and bounding boxes as JSON')
+    print('3    : view the bounding boxes in 3D')
+    print('2    : view the bounding boxes in 2D')
+    print('ESC  : quit')
     main()
