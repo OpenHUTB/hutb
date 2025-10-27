@@ -175,7 +175,9 @@ for PY_VERSION in ${PY_VERSION_LIST[@]} ; do
     BOOST_CFLAGS="-fPIC -std=c++14 -DBOOST_ERROR_CODE_HEADER_ONLY"
 
     py3="/usr/bin/env python${PY_VERSION}"
-    py3_root=`${py3} -c "import sys; print(sys.prefix)"`
+    py3_root=`${py3} -c "import sysconfig; print(sysconfig.get_config_var('prefix'))"`
+    py3_include=$(${py3} -c "from sysconfig import get_paths as gp; print(gp()['include'])")
+    py3_lib=$(${py3} -c "from sysconfig import get_paths as gp; print(gp()['stdlib'])")
     pyv=`$py3 -c "import sys;x='{v[0]}.{v[1]}'.format(v=list(sys.version_info[:2]));sys.stdout.write(x)";`
     ./bootstrap.sh \
         --with-toolset=clang \
@@ -184,9 +186,11 @@ for PY_VERSION in ${PY_VERSION_LIST[@]} ; do
         --with-python=${py3} --with-python-root=${py3_root}
 
     if ${TRAVIS} ; then
-      echo "using python : ${pyv} : ${py3_root}/bin/python${PY_VERSION} ;" > ${HOME}/user-config.jam
+        echo "using python : ${pyv} : ${py3_root}/bin/python${PY_VERSION} : \
+        ${py3_include} : ${py3_lib} ;" > ${HOME}/user-config.jam
     else
-      echo "using python : ${pyv} : ${py3_root}/bin/python${PY_VERSION} ;" > project-config.jam
+        echo "using python : ${pyv} : ${py3_root}/bin/python${PY_VERSION} : \
+        ${py3_include} : ${py3_lib} ;" > project-config.jam
     fi
 
     ./b2 toolset="${BOOST_TOOLSET}" cxxflags="${BOOST_CFLAGS}" --prefix="../${BOOST_BASENAME}-install" -j ${CARLA_BUILD_CONCURRENCY} stage release
