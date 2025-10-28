@@ -19,6 +19,9 @@ next release, but also some experimental changes. Use at your own risk!
 
 <p><a id="last-run-link" href='https://github.com/carla-simulator/carla/actions'>Last successful build</a>: <span id="last-run-time" class="loading">Loading...</span></p>
 
+!!! note
+    If you are looking for the nightly build of the Unreal Engine 5.5 version of CARLA, please visit the [downloads page](https://carla-ue5.readthedocs.io/en/latest/download/) of the [CARLA UE5 documentation](https://carla-ue5.readthedocs.io/en/latest/).
+
 ### Versions 0.9.x
 
 Here are the previous versions of CARLA with links to the specific documentation for each version:
