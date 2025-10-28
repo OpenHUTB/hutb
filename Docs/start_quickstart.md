@@ -26,7 +26,7 @@ The following requirements should be fulfilled before installing CARLA:
 * __Pip.__ Some installation methods of the CARLA client library require __pip__ or __pip3__ (depending on your Python version) version 20.3 or higher. To check your __pip__ version:
 
 >>      # For Python 3
->>      pip3 -V
+>>      python3 -m pip -V
 
 >>      # For Python 2
 >>      pip -V
@@ -34,7 +34,7 @@ The following requirements should be fulfilled before installing CARLA:
 >If you need to upgrade:
 
 >>      # For Python 3
->>      pip3 install --upgrade pip
+>>      python3 -m pip install --upgrade pip
 
 >>      # For Python 2
 >>      pip install --upgrade pip
@@ -45,14 +45,14 @@ The following requirements should be fulfilled before installing CARLA:
 ### Windows
 
 ```sh
-pip3 install --user pygame numpy
+python3 -m pip install --user pygame numpy
 ```
 
 ### Linux
 
 ```sh
 pip install --user pygame numpy &&
-pip3 install --user pygame numpy
+python3 -m pip install --user pygame numpy
 ```
 
 ---
@@ -159,10 +159,7 @@ Read more below about the requirements and limitations of each method before dec
 >>To install the CARLA client library, run the following command, choosing the file appropriate to your desired Python version. You will need __pip/pip3__ version 20.3 or above. See the [__Before you begin__](#before-you-begin) section for how to check the version and upgrade __pip/pip3__:
 
 >>      # Python 3
->>      pip3 install <wheel-file-name>.whl 
-
->>      # Python 2
->>      pip install <wheel-file-name>.whl
+>>      python3 -m pip install <wheel-file-name>.whl 
 
 >>If you previously installed the client library, you should [uninstall](build_faq.md#how-do-i-uninstall-the-carla-client-library) the old one before installing the new one.
 
@@ -175,10 +172,7 @@ Read more below about the requirements and limitations of each method before dec
 >>To install the client library from PyPi, run the following command:
 
 >>      # Python 3
->>      pip3 install carla
-
->>      # Python 2
->>      pip install carla
+>>      python3 -m pip install carla
 
 >>The PyPi download is suitable for use with CARLA packages only (i.e., not with a version built from source). Since the PyPi download __only contains the client library__, it is most useful in situations where you will be communicating with a remote CARLA server where you do not require downloading a full CARLA package.
 
@@ -265,10 +259,7 @@ If you installed the client library using __pip/pip3__, you should uninstall it 
 
 ```sh
 # Python 3
-pip3 uninstall carla
-
-# Python 2
-pip uninstall carla
+python3 -m pip uninstall carla
 ```
 
 ---

@@ -50,23 +50,23 @@ In this section you will find details of system requirements, minor and major so
     Be sure that the above programs are added to the [environment path](https://www.java.com/en/download/help/path.xml). Remember that the path added should correspond to the progam's `bin` directory.  
 #### Python dependencies
 
-Starting with CARLA 0.9.12, users have the option to install the CARLA Python API using `pip3`. Version 20.3 or higher is required. To check if you have a suitable version, run the following command:
+Starting with CARLA 0.9.12, users have the option to install the CARLA Python API using `pip`. Version 20.3 or higher is required. To check if you have a suitable version, run the following command:
 
 ```sh
-pip3 -V
+python3 -m pip -V
 ```
 
 If you need to upgrade:
 
 ```sh
-pip3 install --upgrade pip
+python3 -m pip install --upgrade pip
 ```
 
 You must install the following Python dependencies:
 
 ```sh
-pip3 install --user setuptools
-pip3 install --user wheel
+python3 -m pip install --user setuptools
+python3 -m pip install --user wheel
 ```
 
 #### Major installations
@@ -206,10 +206,10 @@ __A. `.egg` file__
 
 __B. `.whl` file__
 
->The `.whl` file should be installed using `pip3`:
+>The `.whl` file should be installed using `pip`:
 
 ```sh
-pip3 install <path/to/wheel>.whl
+python3 -m pip install <path/to/wheel>.whl
 ```
 
 >This `.whl` file cannot be distributed as it is built specifically for your OS.
@@ -236,7 +236,7 @@ Test the simulator using the example scripts inside `PythonAPI\examples`.  With 
 ```sh
         # Terminal A 
         cd PythonAPI\examples
-        pip3 install -r requirements.txt
+        python3 -m pip install -r requirements.txt
         python3 generate_traffic.py  
 
         # Terminal B

@@ -34,11 +34,11 @@ Make sure you have installed **Python 3.6 or newer**, check that is in the path,
 
 ## Dependencies
 
-As mentioned before, in order to use Unreal Engine inside Docker we use [ue4-docker](https://github.com/adamrehn/ue4-docker). You can install it using `pip3`.  
+As mentioned before, in order to use Unreal Engine inside Docker we use [ue4-docker](https://github.com/adamrehn/ue4-docker). You can install it using `pip`.  
 Further information on installing ue4-docker on Linux can be found [here](https://adamrehn.com/docs/ue4-docker/configuration/configuring-linux).
 
 ```
-pip3 install ue4-docker
+python3 -m pip install ue4-docker
 ```
 
 You can use ue4-docker to automatically configure your Linux firewall:

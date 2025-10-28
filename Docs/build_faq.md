@@ -122,7 +122,7 @@ CARLA forum</a>
 > Run the following command.
 > 
 > 
->       pip3 install -Iv setuptools==47.3.1
+>       python3 -m pip install -Iv setuptools==47.3.1
 >  
 >
 > And build the PythonAPI again. 
@@ -418,14 +418,10 @@ CARLA forum</a>
 <!-- ======================================================================= -->
 ###### How do I uninstall the CARLA client library?
 
->If you installed the client library using __pip/pip3__, you should uninstall it by running:
+>If you installed the client library using __pip__, you should uninstall it by running:
 
 ```sh
-# Python 3
-pip3 uninstall carla
-
-# Python 2
-pip uninstall carla
+python3 -m pip uninstall carla
 ```
 
 ---
