@@ -1,0 +1,11 @@
+#OpenSim Creator & OpenSim 初试
+##一.软件介绍
+是生物力学建模工具，能可视化构建人体运动模型
+适合研究肌肉发力、关节运动等场景
+两者区别， Creator更适于新手，更易操作，可以先从此入手
+##二.如何下载
+-OpenSim4.5 下载 下载 链接 中的softwaOpenSim-4.5-win64.exe，可以不用下载全部
+-OpenSim Creator 下载 可以在github上搜这个0penSim creator 点第一个结果，然后点右边那个释放，如果是Windows系统，时间点第四个带有Windows-amd64.exe下载即可
+##三.试行
+-(以OpenSim Creator为例)打开0penSim Creator软件，先试行一下现有的模型，点开左上角的File-open-opensim-4.5-Models-Gait2392_Simbody-gait2392_Simbody.osim，然后点打开(open)，若是想让它运行起来，可以点，左上角Tools，点simulate
+-注意，开文件的时候有可能会出现运行时模型加载失败，那可能是因为0penSim所在路径不能出现文字，比如说C:\美\OpenSim，可以直接将0penSim放在D盘中，不发到任何一个其他文件中
