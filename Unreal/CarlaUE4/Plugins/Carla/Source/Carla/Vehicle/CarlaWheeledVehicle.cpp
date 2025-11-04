@@ -1078,7 +1078,7 @@ void ACarlaWheeledVehicle::SetWheelSteerDirection(EVehicleWheelLocation WheelLoc
   }
   else
   {
-    UE_LOG(LogTemp, Warning, TEXT("Cannot set wheel steer direction. Physics are enabled."))
+    UE_LOG(LogCarla, Warning, TEXT("Cannot set wheel steer direction. Physics are enabled."));
   }
 }
 
@@ -1110,7 +1110,7 @@ void ACarlaWheeledVehicle::SetWheelPitchAngle(EVehicleWheelLocation WheelLocatio
   }
   else
   {
-    UE_LOG(LogTemp, Warning, TEXT("Cannot set wheel pitch angle. Physics are enabled."))
+    UE_LOG(LogCarla, Warning, TEXT("Cannot set wheel pitch angle. Physics are enabled."))
   }
 }
 
@@ -1199,7 +1199,7 @@ void ACarlaWheeledVehicle::EndPlay(const EEndPlayReason::Type EndPlayReason)
 
 void ACarlaWheeledVehicle::OpenDoor(const EVehicleDoor DoorIdx) {
   if (int(DoorIdx) >= ConstraintsComponents.Num() && DoorIdx != EVehicleDoor::All) {
-    UE_LOG(LogTemp, Warning, TEXT("This door is not configured for this car."));
+    UE_LOG(LogCarla, Warning, TEXT("This door is not configured for this car."));
     return;
   }
 
@@ -1216,7 +1216,7 @@ void ACarlaWheeledVehicle::OpenDoor(const EVehicleDoor DoorIdx) {
 
 void ACarlaWheeledVehicle::CloseDoor(const EVehicleDoor DoorIdx) {
   if (int(DoorIdx) >= ConstraintsComponents.Num() && DoorIdx != EVehicleDoor::All) {
-    UE_LOG(LogTemp, Warning, TEXT("This door is not configured for this car."));
+    UE_LOG(LogCarla, Warning, TEXT("This door is not configured for this car."));
     return;
   }
 
