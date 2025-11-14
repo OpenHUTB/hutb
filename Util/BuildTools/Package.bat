@@ -2,6 +2,9 @@
 setlocal enabledelayedexpansion
 chcp 65001
 
+:: 设置UE4使用的核心数（在开发机上使用make package的命令行中运行，以避免开发时操作因为打包而卡顿）
+:: set UE4_NUM_CookWorkers=8
+
 rem don't remove next two empty lines after next
 set LF=^
 
@@ -237,7 +240,20 @@ if %DO_COPY_FILES%==true (
     if exist "!XCOPY_FROM!Plugins" (
         echo d | xcopy /y /s "!XCOPY_FROM!Plugins"                                  "!XCOPY_TO!Plugins"
     )
-    :: 拷贝 mujoco
+    :: 下载 Mujoco
+    set Mujoco_FILE_NAME=mujoco-3.3.5-windows-x86_64.zip
+    :: !! 为延迟变量，执行时才扩展，需要 setlocal enabledelayedexpansion
+    set Mujoco_TEMP_FILE_DIR="!XCOPY_FROM!Build\%Mujoco_FILE_NAME%"
+    set Mujoco_REPO=https://github.com/google-deepmind/mujoco/releases/download/3.3.5/%Mujoco_FILE_NAME%
+
+    if exist "%CACHE_DIR:/=\%software\%Mujoco_FILE_NAME%" (
+        "%ProgramW6432%/7-Zip/7z.exe" x "%CACHE_DIR:/=\%software\%Mujoco_FILE_NAME%" -o"!XCOPY_FROM!Build\mujoco\" -y
+    ) else (
+        echo %FILE_N% Retrieving Mujoco from %Mujoco_REPO% to %Mujoco_TEMP_FILE_DIR% ...
+        powershell -Command "(New-Object System.Net.WebClient).DownloadFile('%Mujoco_REPO%', '%Mujoco_TEMP_FILE_DIR%')"
+        "%ProgramW6432%/7-Zip/7z.exe" x "!XCOPY_FROM!Build\%Mujoco_FILE_NAME%" -o"!XCOPY_FROM!Build\mujoco\" -y
+    )
+    :: 拷贝 mujoco 到打包目录
     if exist "!XCOPY_FROM!Build\mujoco" (
         echo d | xcopy /y /s "!XCOPY_FROM!Build\mujoco"                             "!XCOPY_TO!mujoco"
     )
