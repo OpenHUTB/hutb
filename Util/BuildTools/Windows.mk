@@ -90,7 +90,10 @@ benchmark: LibCarla
 
 .PHONY: PythonAPI
 PythonAPI: LibCarla osm2odr
-	@"${CARLA_BUILD_TOOLS_FOLDER}/BuildPythonAPI.bat" --py3 $(ARGS)
+	@"${CARLA_BUILD_TOOLS_FOLDER}/BuildPythonAPI.bat"
+
+PythonAPI.wheel: LibCarla osm2odr
+	@"${CARLA_BUILD_TOOLS_FOLDER}/BuildPythonAPI.bat" --build-wheel
 
 server: setup
 	@"${CARLA_BUILD_TOOLS_FOLDER}/BuildLibCarla.bat" --server --generator "$(GENERATOR)"
