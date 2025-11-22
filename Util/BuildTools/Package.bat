@@ -35,6 +35,8 @@ set DO_TARBALL=true
 set DO_CLEAN=false
 set PACKAGES=Carla
 set PACKAGE_CONFIG=Shipping
+:: 指定游戏模式，默认空为car模式，可选vr或air
+set GAME_MODE=car
 set USE_CARSIM=false
 set SINGLE_PACKAGE=false
 set MEASURE_TIME=true
@@ -51,6 +53,11 @@ if not "%1"=="" (
 
     if "%1"=="--config" (
         set PACKAGE_CONFIG=%2
+        shift
+    )
+
+    if "%1"=="--game-mode" (
+        set GAME_MODE=%2
         shift
     )
 
@@ -99,6 +106,18 @@ if not "%1"=="" (
     goto :arg-parse
 )
 
+:: 默认car模式不需要切换，否则切换到指定模式
+if not "%GAME_MODE%"=="car" (
+    where conda
+    conda env list
+    conda activate carla_cpp
+    echo python %ROOT_PATH%Scripts/switch_game_mode.py -m=%GAME_MODE%
+    python %ROOT_PATH%Scripts/switch_game_mode.py -m=%GAME_MODE%
+)
+:: 用于调试游戏模式切换
+:: pause
+:: goto good_exit
+
 rem Get Unreal Engine root path
 if not defined UE4_ROOT (
     set KEY_NAME="HKEY_LOCAL_MACHINE\SOFTWARE\EpicGames\Unreal Engine"
@@ -118,7 +137,7 @@ set CARLA_VERSION=!REPOSITORY_TAG!
 
 set BUILD_FOLDER=%INSTALLATION_DIR%UE4Carla/%CARLA_VERSION%/
 
-set DESTINATION_ZIP=%INSTALLATION_DIR%UE4Carla/CARLA_%CARLA_VERSION%.zip
+set DESTINATION_ZIP=%INSTALLATION_DIR%UE4Carla/hutb_%GAME_MODE%_%CARLA_VERSION%.zip
 set SOURCE=!BUILD_FOLDER!WindowsNoEditor/
 
 rem ============================================================================
