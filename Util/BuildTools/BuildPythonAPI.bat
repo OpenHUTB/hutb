@@ -1,5 +1,5 @@
 @echo off
-setlocal
+setlocal enabledelayedexpansion
 chcp 65001
 
 rem BAT script that creates the client python api of LibCarla (carla.org).
