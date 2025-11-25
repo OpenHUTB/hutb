@@ -45,6 +45,8 @@ launch-only:
 package: PythonAPI
 	@"${CARLA_BUILD_TOOLS_FOLDER}/BuildCarlaUE4.bat" --at-least-write-optionalmodules $(ARGS)
 	@"${CARLA_BUILD_TOOLS_FOLDER}/Package.bat" --ue-version 4.26 $(ARGS)
+	@"${CARLA_BUILD_TOOLS_FOLDER}/Package.bat" --ue-version 4.26 --game-mode vr $(ARGS)
+	@"${CARLA_BUILD_TOOLS_FOLDER}/Package.bat" --ue-version 4.26 --game-mode air $(ARGS)
 
 .PHONY: docs
 docs:

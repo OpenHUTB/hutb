@@ -1,5 +1,5 @@
 @echo off
-setlocal
+setlocal enabledelayedexpansion
 chcp 65001
 
 rem BAT script that creates the client python api of LibCarla (carla.org).
@@ -150,7 +150,7 @@ if %BUILD_FOR_PYTHON3%==true (
 
         cd "%PYTHON_LIB_PATH%"
         echo Building Python API Python 3.%%i
-        python setup.py bdist_egg bdist_wheel
+        python setup.py bdist_wheel
         echo errorlevel: %errorlevel%
         if not exist "%PYTHON_LIB_PATH%dist\" (
             goto error_build_wheel
