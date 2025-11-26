@@ -98,6 +98,12 @@ rem ============================================================================
 for /f %%i in ('git rev-parse --short HEAD') do set CARLA_VERSION=%%i
 if not defined CARLA_VERSION goto bad_exit
 
+:: 如果存在dirty后缀，则表示是多个版本切换后编译的包，测试时也使用该包
+:: （解决测试时候找不到dirty目录中的可执行文件的问题）
+if exist %INSTALLATION_DIR%UE4Carla/%CARLA_VERSION%-dirty/ (
+    set CARLA_VERSION=%CARLA_VERSION%-dirty
+)
+
 set BUILD_FOLDER=%INSTALLATION_DIR%UE4Carla/%CARLA_VERSION%/
 :: debug only (rename with no dirty)
 if %IS_DEBUG%==true (
