@@ -70,6 +70,40 @@ set CARLA_STREETMAP_PLUGINS_PATH=%ROOT_PATH:/=\%Unreal\CarlaUE4\Plugins\StreetMa
 set AIR_PLUGIN_PATH=%ROOT_PATH:/=\%Unreal\CarlaUE4\Plugins\AirSim\
 set AIR_BUILD_PATH=%ROOT_PATH:/=\%Build\AirSim\
 
+set ENGINE_PATH=%ROOT_PATH:/=\%Build\engine\
+
+set CONTENT_PATH=%ROOT_PATH:/=\%Unreal\CarlaUE4\Content\
+
+
+:: 下载并构建引擎
+if not exist "%ENGINE_PATH%" (
+    echo %FILE_N% Engine directory: "%ENGINE_PATH%"
+    if exist "%CACHE_DIR:/=\%engine\" (
+        xcopy /q /Y /S /I "%CACHE_DIR:/=\%engine\"  %ENGINE_PATH%
+    ) else (
+        git clone -b hutb https://github.com/OpenHUTB/engine.git %ENGINE_PATH%
+    )
+    cd "%ENGINE_PATH%"
+    echo %cd%
+    CALL Build.bat
+
+    echo Build engine completed.
+    :: 设置用户的 UE4_ROOT 环境变量
+    setx UE4_ROOT "%ENGINE_PATH%"
+    echo New UE4_ROOT set to "%ENGINE_PATH%"
+)
+
+:: 下载资产
+if not exist "%CONTENT_PATH%" (
+    echo %FILE_N% Content directory: "%CONTENT_PATH%"
+    if exist "%CACHE_DIR:/=\%Content\" (
+        xcopy /q /Y /S /I "%CACHE_DIR:/=\%Content\"  %CONTENT_PATH%
+    ) else (
+        git clone https://OpenHUTB:T8w6TYB_r71gGTP3A02B@git.code.tencent.com/OpenHUTB/Content.git %CONTENT_PATH%  &&  cd %CONTENT_PATH%  && git lfs pull
+    )
+)
+
+
 rem Build STREETMAP
 
 if  %GIT_PULL% == true (
