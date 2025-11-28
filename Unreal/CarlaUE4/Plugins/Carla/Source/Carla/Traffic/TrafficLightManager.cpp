@@ -571,8 +571,7 @@ void ATrafficLightManager::SpawnTrafficLights()
     // Remove road inclination
     SpawnRotation.Roll = 0;
     SpawnRotation.Pitch = 0;
-
-    AdjustSignHeightToGround(SpawnLocation);
+    bool bPositionAdjusted = AdjustSignHeightToGround(SpawnLocation);
 
     FActorSpawnParameters SpawnParams;
     SpawnParams.Owner = this;
@@ -591,7 +590,7 @@ void ATrafficLightManager::SpawnTrafficLights()
 
     UTrafficLightComponent *TrafficLightComponent = TrafficLight->GetTrafficLightComponent();
     TrafficLightComponent->SetSignId(SignalId.c_str());
-
+    IgnoredActorsForHeightAdjustment.Add(TrafficLight);
     if (ClosestWaypointToSignal)
     {
       auto SignalDistanceToRoad =
@@ -612,7 +611,21 @@ void ATrafficLightManager::SpawnTrafficLights()
         }
       }
     }
-
+    if(!bPositionAdjusted)
+    {
+      FString CurrentActorName;
+      #if WITH_EDITOR
+        CurrentActorName = TrafficLight->GetActorLabel();
+      #else
+        CurrentActorName = TrafficLight->GetName();
+      #endif
+      carla::log_warning("Could not adjust traffic light position to ground",
+          TCHAR_TO_UTF8(*TrafficLightComponent->GetSignId()));
+      UE_LOG(LogCarla, Warning, TEXT("Could not adjust traffic light position to ground %s , ActorName: %s "),
+          *TrafficLightComponent->GetSignId(), 
+          *CurrentActorName
+          );
+    }
     RegisterLightComponentFromOpenDRIVE(TrafficLightComponent);
     TrafficLightComponent->InitializeSign(GetMap().get());
   }
@@ -623,6 +636,22 @@ void ATrafficLightManager::SpawnSignals()
   ACarlaGameModeBase *GM = UCarlaStatics::GetGameMode(GetWorld());
   check(GM);
 
+  for (TActorIterator<AActor> It(GetWorld()); It; ++It)
+  {
+      AActor* Actor = *It;
+      if (!Actor) continue;
+
+      TArray<UInstancedStaticMeshComponent*> ISMComps;
+      Actor->GetComponents<UInstancedStaticMeshComponent>(ISMComps);
+      for (UInstancedStaticMeshComponent* Comp : ISMComps)
+      {
+          if (Comp && Comp->GetWorld() == GetWorld())
+          {
+            IgnoredComponentsForHeightAdjustment.Add(Comp);
+          }
+      }
+  }
+
   const auto &Signals = GetMap()->GetSignals();
   for (auto& SignalPair : Signals)
   {
@@ -630,6 +659,7 @@ void ATrafficLightManager::SpawnSignals()
     FString SignalType = Signal->GetType().c_str();
 
     ATrafficSignBase * ClosestTrafficSign = GetClosestTrafficSignActor(*Signal.get(), GetWorld());
+    IgnoredActorsForHeightAdjustment.Add(ClosestTrafficSign);
     if (ClosestTrafficSign)
     {
       USignComponent *SignComponent;
@@ -669,7 +699,7 @@ void ATrafficLightManager::SpawnSignals()
       SpawnRotation.Roll = 0;
       SpawnRotation.Pitch = 0;
 
-      AdjustSignHeightToGround(SpawnLocation);
+      bool bPositionAdjusted = AdjustSignHeightToGround(SpawnLocation);
 
       FActorSpawnParameters SpawnParams;
       SpawnParams.Owner = this;
@@ -681,6 +711,9 @@ void ATrafficLightManager::SpawnSignals()
           SpawnLocation,
           SpawnRotation,
           SpawnParams);
+
+
+      IgnoredActorsForHeightAdjustment.Add(TrafficSign);
 
       USignComponent *SignComponent =
           NewObject<USignComponent>(TrafficSign, SignComponentModels[SignalType]);
@@ -713,6 +746,21 @@ void ATrafficLightManager::SpawnSignals()
           }
         }
       }
+      if(!bPositionAdjusted)
+      {
+        FString CurrentActorName;
+        #if WITH_EDITOR
+          CurrentActorName = TrafficSign->GetActorLabel();
+        #else
+          CurrentActorName = TrafficSign->GetName();
+        #endif
+        carla::log_warning("Could not adjust sign position to ground",
+            TCHAR_TO_UTF8(*SignComponent->GetSignId()));
+        UE_LOG(LogCarla, Warning, TEXT("Could not adjust sign position to ground %s , ActorName: %s "),
+            *SignComponent->GetSignId(), 
+            *CurrentActorName
+            );
+      }
       TrafficSignComponents.Add(SignComponent->GetSignId(), SignComponent);
       TrafficSigns.Add(TrafficSign);
     }
@@ -728,7 +776,7 @@ void ATrafficLightManager::SpawnSignals()
       SpawnRotation.Roll = 0;
       SpawnRotation.Pitch = 0;
 
-      AdjustSignHeightToGround(SpawnLocation);
+      bool bPositionAdjusted = AdjustSignHeightToGround(SpawnLocation);
 
       FActorSpawnParameters SpawnParams;
       SpawnParams.Owner = this;
@@ -740,6 +788,8 @@ void ATrafficLightManager::SpawnSignals()
           SpawnLocation,
           SpawnRotation,
           SpawnParams);
+      IgnoredActorsForHeightAdjustment.Add(TrafficSign);
+
 
       USpeedLimitComponent *SignComponent =
           NewObject<USpeedLimitComponent>(TrafficSign);
@@ -772,6 +822,21 @@ void ATrafficLightManager::SpawnSignals()
             Primitive->SetCollisionProfileName(TEXT("NoCollision"));
           }
         }
+      }
+      if(!bPositionAdjusted)
+      {
+        FString CurrentActorName;
+        #if WITH_EDITOR
+          CurrentActorName = TrafficSign->GetActorLabel();
+        #else
+          CurrentActorName = TrafficSign->GetName();
+        #endif
+        carla::log_warning("Could not adjust speed limit sign position to ground",
+            TCHAR_TO_UTF8(*SignComponent->GetSignId()));
+        UE_LOG(LogCarla, Warning, TEXT("Could not adjust speed limit sign position to ground %s , ActorName: %s "),
+            *SignComponent->GetSignId(), 
+            *CurrentActorName 
+            );
       }
       TrafficSignComponents.Add(SignComponent->GetSignId(), SignComponent);
       TrafficSigns.Add(TrafficSign);
@@ -870,15 +935,17 @@ void ATrafficLightManager::RemoveAttachedProps(TArray<AActor*> Actors) const
   }
 }
 
-void ATrafficLightManager::AdjustSignHeightToGround(FVector& SpawnLocation) const
+bool ATrafficLightManager::AdjustSignHeightToGround(FVector& SpawnLocation) const
 {
-  const FVector Start = SpawnLocation + FVector(0, 0, 10000.0f);
+  const FVector Start = SpawnLocation + FVector(0, 0, 10.0f);
   const FVector End = SpawnLocation - FVector(0, 0, 10000.0f);
 
   FHitResult HitResult;
   FCollisionQueryParams CollisionParams;
   CollisionParams.bTraceComplex = true;
   CollisionParams.bReturnPhysicalMaterial = false;
+  CollisionParams.AddIgnoredComponents(IgnoredComponentsForHeightAdjustment);
+  CollisionParams.AddIgnoredActors(IgnoredActorsForHeightAdjustment);
 
   constexpr float ZOffsetSignToGround = 0.5f;
   if (GetWorld()->LineTraceSingleByChannel(
@@ -889,10 +956,14 @@ void ATrafficLightManager::AdjustSignHeightToGround(FVector& SpawnLocation) cons
       CollisionParams))
   {
     SpawnLocation.Z = HitResult.Location.Z + ZOffsetSignToGround;
+    return true;
   }
   else
   {
     carla::log_warning("Could not find ground for traffic sign placement at location",
         TCHAR_TO_UTF8(*SpawnLocation.ToString()));
+    UE_LOG(LogCarla, Warning, TEXT("Could not find ground for traffic sign placement at location %s"),
+        *SpawnLocation.ToString());
+    return false;
   }
 }

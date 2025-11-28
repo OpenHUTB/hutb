@@ -134,12 +134,62 @@ void ALargeMapManager::PostWorldOriginOffset(UWorld* InWorld, FIntVector InSrcOr
 #endif // WITH_EDITOR
 }
 
+
+void ALargeMapManager::AdjustSignHeightToGround(FVector& SpawnLocation, const FString& ActorName, const TArray<AActor*>& ActorsToIgnore) const
+{
+  const FVector Start = SpawnLocation + FVector(0, 0, 10000.0f);
+  const FVector End = SpawnLocation - FVector(0, 0, 10000.0f);
+
+  FHitResult HitResult;
+  FCollisionQueryParams CollisionParams;
+  CollisionParams.bTraceComplex = true;
+  CollisionParams.bReturnPhysicalMaterial = false;
+  CollisionParams.AddIgnoredActors(ActorsToIgnore);
+  
+  constexpr float ZOffsetSignToGround = 0.5f;
+  if (GetWorld()->LineTraceSingleByChannel(
+      HitResult,
+      Start,
+      End,
+      ECC_WorldStatic,
+      CollisionParams))
+  {
+    SpawnLocation.Z = HitResult.Location.Z + ZOffsetSignToGround;
+  }
+  else
+  {
+    LM_LOG(Warning, "Could not find ground for traffic sign %s placement at location %s", *ActorName, *SpawnLocation.ToString());
+  }
+}
+
 void ALargeMapManager::OnLevelAddedToWorld(ULevel* InLevel, UWorld* InWorld)
 {
   LM_LOG(Warning, "OnLevelAddedToWorld");
   UCarlaEpisode* CarlaEpisode = UCarlaStatics::GetCurrentEpisode(InWorld);
   ATagger::TagActorsInLevel(*InLevel, *CarlaEpisode, true);
-
+  TArray<AActor*> ActorsToIgnore;
+  TArray<AActor*> ActorsToAdjustHeight;
+  UGameplayStatics::GetAllActorsOfClass(GetWorld(), ATrafficSignBase::StaticClass(), ActorsToAdjustHeight);
+  ActorsToIgnore.Append(ActorsToAdjustHeight);
+  for (AActor* Actor : ActorsToAdjustHeight)
+  {
+    FVector SpawnLocation = Actor->GetActorLocation();
+    Actor->GetRootComponent()->SetMobility(EComponentMobility::Movable);
+    AdjustSignHeightToGround(SpawnLocation, Actor->GetName(), ActorsToIgnore);
+    Actor->SetActorLocation(SpawnLocation);
+    Actor->GetRootComponent()->SetMobility(EComponentMobility::Static);
+  }
+  UGameplayStatics::GetAllActorsOfClass(GetWorld(), ATrafficLightBase::StaticClass(), ActorsToAdjustHeight);
+  ActorsToIgnore.Append(ActorsToAdjustHeight);
+  for (AActor* Actor : ActorsToAdjustHeight)
+  {
+    FVector SpawnLocation = Actor->GetActorLocation();
+    Actor->GetRootComponent()->SetMobility(EComponentMobility::Movable);
+    AdjustSignHeightToGround(SpawnLocation, Actor->GetName(), ActorsToIgnore);
+    Actor->SetActorLocation(SpawnLocation);
+    Actor->GetRootComponent()->SetMobility(EComponentMobility::Static);
+  }
+  
 
   //FDebug::DumpStackTraceToLog(ELogVerbosity::Log);
 }

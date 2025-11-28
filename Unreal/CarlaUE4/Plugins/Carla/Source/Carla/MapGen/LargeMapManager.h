@@ -252,6 +252,8 @@ protected:
     const TSet<TileID>& InTilesToBeVisible,
     const TSet<TileID>& InTilesToHidde);
 
+  void AdjustSignHeightToGround(FVector& SpawnLocation, const FString& ActorName, const TArray<AActor*>& ActorsToIgnore) const;
+
   UPROPERTY(VisibleAnywhere, Category = "Large Map Manager")
   TMap<uint64, FCarlaMapTile> MapTiles;
 
