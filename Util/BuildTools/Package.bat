@@ -155,7 +155,14 @@ if %DO_PACKAGE%==true (
 
     if not exist "!BUILD_FOLDER!" mkdir "!BUILD_FOLDER!"
 
-    call "%UE4_ROOT%\Engine\Build\BatchFiles\Build.bat" CarlaUE4Editor Win64 Development  -WaitMutex -FromMsBuild  "%ROOT_PATH%Unreal/CarlaUE4/CarlaUE4.uproject"
+    :: 编译 Development 版本
+    echo "%UE4_ROOT%\Engine\Build\BatchFiles\Build.bat"^
+        CarlaUE4Editor^
+        Win64^
+        Development^
+        -WaitMutex^
+        -FromMsBuild^
+        "%ROOT_PATH%Unreal/CarlaUE4/CarlaUE4.uproject"
     call "%UE4_ROOT%\Engine\Build\BatchFiles\Build.bat"^
         CarlaUE4Editor^
         Win64^
@@ -166,6 +173,7 @@ if %DO_PACKAGE%==true (
 
     if errorlevel 1 goto error_build_editor
 
+    :: 编译 Packagge 版本
     echo "%UE4_ROOT%\Engine\Build\BatchFiles\Build.bat"^
         CarlaUE4^
         Win64^
