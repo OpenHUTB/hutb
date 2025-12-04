@@ -139,7 +139,7 @@ set DESTINATION_ZIP=%INSTALLATION_DIR%UE4Carla/hutb_%GAME_MODE%_%CARLA_VERSION%.
 set SOURCE=!BUILD_FOLDER!WindowsNoEditor/
 
 :: 临时设置引擎根目录，解决测试时UE4_ROOT变量为之前设置值的问题
-set UE4_ROOT=%%ROOT_PATH:/=\%Build\engine\
+set UE4_ROOT=%ROOT_PATH:/=\%Build\engine
 
 rem ============================================================================
 rem -- Create Carla package ----------------------------------------------------
