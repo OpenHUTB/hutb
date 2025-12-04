@@ -155,6 +155,7 @@ if %DO_PACKAGE%==true (
 
     if not exist "!BUILD_FOLDER!" mkdir "!BUILD_FOLDER!"
 
+    call "%UE4_ROOT%\Engine\Build\BatchFiles\Build.bat" CarlaUE4Editor Win64 Development  -WaitMutex -FromMsBuild  "%ROOT_PATH%Unreal/CarlaUE4/CarlaUE4.uproject"
     call "%UE4_ROOT%\Engine\Build\BatchFiles\Build.bat"^
         CarlaUE4Editor^
         Win64^
