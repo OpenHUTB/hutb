@@ -8,7 +8,7 @@
 
 
 ## 使用示例
-1. 下载 [链接](https://pan.baidu.com/s/1n2fJvWff4pbtMe97GOqtvQ?pwd=hutb) 中的`software/hutb/`中的`hutb_*.zip`文件并解压；然后运行`WindowsNoEditor`文件夹下的`CarlaUE4.exe`，使用键盘`W`、`A`、`S`、`D`等进行控制，`Z`为倒档；
+1. 下载 [发布页面](https://github.com/OpenHUTB/hutb/releases) 中的对应的文件并解压；然后运行`WindowsNoEditor`文件夹下的`CarlaUE4.exe`，使用键盘`W`、`A`、`S`、`D`等进行控制，`Z`为倒档；
 2. 使用`pip install hutb`安装Python工具包，运行以下脚本在场景中 [生成车辆和行人](https://github.com/OpenHUTB/doc/blob/master/src/examples/generate_traffic.py) ：
 	```shell
 	python PythonAPI/examples/generate_traffic.py

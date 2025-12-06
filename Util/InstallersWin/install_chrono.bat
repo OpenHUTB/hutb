@@ -84,7 +84,6 @@ set CHRONO_REPO=https://github.com/projectchrono/chrono.git
 set CHRONO_BASENAME=chrono
 
 set CHRONO_INSTALL_DIR=%BUILD_DIR%chrono-install
-set CHRONO_BUILD_DIR=%CHRONO_SRC_DIR%\build
 
 if not "%CHRONO_PATH%"=="" (
     echo %FILE_N% Using user-provided Chrono at: %CHRONO_PATH%
@@ -92,6 +91,8 @@ if not "%CHRONO_PATH%"=="" (
 ) else (
     set CHRONO_SRC_DIR=%BUILD_DIR%%CHRONO_BASENAME%-src
 )
+
+set CHRONO_BUILD_DIR=%CHRONO_SRC_DIR%\build
 
 if not exist %CHRONO_INSTALL_DIR% (
     if "%CHRONO_PATH%"=="" (

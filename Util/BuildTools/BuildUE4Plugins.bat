@@ -89,8 +89,8 @@ if not exist "%ENGINE_PATH%" (
 
     echo Build engine completed.
     :: 设置用户的 UE4_ROOT 环境变量
-    setx UE4_ROOT "%ENGINE_PATH%"
-    echo New UE4_ROOT set to "%ENGINE_PATH%"
+    setx UE4_ROOT %ENGINE_PATH%
+    echo New UE4_ROOT set to %ENGINE_PATH%
 )
 
 :: 下载资产

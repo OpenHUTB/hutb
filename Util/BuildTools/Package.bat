@@ -138,6 +138,9 @@ set BUILD_FOLDER=%INSTALLATION_DIR%UE4Carla/%CARLA_VERSION%/
 set DESTINATION_ZIP=%INSTALLATION_DIR%UE4Carla/hutb_%GAME_MODE%_%CARLA_VERSION%.zip
 set SOURCE=!BUILD_FOLDER!WindowsNoEditor/
 
+:: 临时设置引擎根目录，解决测试时UE4_ROOT变量为之前设置值的问题
+set UE4_ROOT=%ROOT_PATH:/=\%Build\engine
+
 rem ============================================================================
 rem -- Create Carla package ----------------------------------------------------
 rem ============================================================================
@@ -155,6 +158,14 @@ if %DO_PACKAGE%==true (
 
     if not exist "!BUILD_FOLDER!" mkdir "!BUILD_FOLDER!"
 
+    :: 编译 Development 版本
+    echo "%UE4_ROOT%\Engine\Build\BatchFiles\Build.bat"^
+        CarlaUE4Editor^
+        Win64^
+        Development^
+        -WaitMutex^
+        -FromMsBuild^
+        "%ROOT_PATH%Unreal/CarlaUE4/CarlaUE4.uproject"
     call "%UE4_ROOT%\Engine\Build\BatchFiles\Build.bat"^
         CarlaUE4Editor^
         Win64^
@@ -165,6 +176,7 @@ if %DO_PACKAGE%==true (
 
     if errorlevel 1 goto error_build_editor
 
+    :: 编译 Packagge 版本
     echo "%UE4_ROOT%\Engine\Build\BatchFiles\Build.bat"^
         CarlaUE4^
         Win64^
