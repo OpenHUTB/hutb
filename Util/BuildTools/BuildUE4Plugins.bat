@@ -28,6 +28,7 @@ set BUILD_AIR=true
 set GIT_PULL=true
 set AIR_BRANCH=main
 set AIR_REPO=https://github.com/OpenHUTB/air.git
+set ENGINE_BRANCH=hutb
 
 :arg-parse
 if not "%1"=="" (
@@ -91,6 +92,12 @@ if not exist "%ENGINE_PATH%" (
     :: 设置用户的 UE4_ROOT 环境变量
     setx UE4_ROOT %ENGINE_PATH%
     echo New UE4_ROOT set to %ENGINE_PATH%
+) else (
+    echo %FILE_N% Engine directory already exists: "%ENGINE_PATH%", executing git pull.
+    cd /d "%ENGINE_PATH%"
+    git fetch --all
+    git reset --hard origin/%ENGINE_BRANCH%
+    git pull
 )
 
 :: 下载资产
