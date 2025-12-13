@@ -925,10 +925,6 @@ bool ATrafficLightManager::AdjustSignHeightToGround(FVector& SpawnLocation) cons
   }
   else
   {
-    carla::log_warning("Could not find ground for traffic sign placement at location",
-        TCHAR_TO_UTF8(*SpawnLocation.ToString()));
-    UE_LOG(LogCarla, Warning, TEXT("Could not find ground for traffic sign placement at location %s"),
-        *SpawnLocation.ToString());
     return false;
   }
 }
