@@ -140,8 +140,14 @@ void CarlaReplayer::GetFrameStartTimes()
   File.seekg(Current, std::ios::beg); // return to original position
 }
 
-std::string CarlaReplayer::ReplayFile(std::string Filename, double TimeStart, double Duration,
-    uint32_t ThisFollowId, const FTransform Offset, bool ReplaySensors)
+std::string CarlaReplayer::ReplayFile(
+  std::string Filename,
+  double TimeStart,
+  double Duration,
+  uint32_t ThisFollowId,
+  const FTransform Offset,
+  bool ReplaySensors,
+  std::string MapOverride)
 {
   std::stringstream Info;
   std::string s;
@@ -175,6 +181,9 @@ std::string CarlaReplayer::ReplayFile(std::string Filename, double TimeStart, do
   // from start
   Rewind();
 
+  if (!MapOverride.empty())
+    RecInfo.Mapfile = UTF8_TO_TCHAR(MapOverride.c_str());
+  
   // check to load map if different
   if (Episode->GetMapName() != RecInfo.Mapfile)
   {
@@ -186,7 +195,7 @@ std::string CarlaReplayer::ReplayFile(std::string Filename, double TimeStart, do
     }
     Info << "Loading map " << TCHAR_TO_UTF8(*RecInfo.Mapfile) << std::endl;
     Info << "Replayer will start after map is loaded..." << std::endl;
-
+  
     // prepare autoplay after map is loaded
     Autoplay.Enabled = true;
     Autoplay.Filename = Filename2;
