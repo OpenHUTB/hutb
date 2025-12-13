@@ -71,6 +71,8 @@ private:
 
   bool AdjustSignHeightToGround(FVector& SpawnLocation) const;
 
+  void AdjustAllSignsToHeightGround();
+  
   // Mapped references to ATrafficLightGroup (junction)
   UPROPERTY()
   TMap<int, ATrafficLightGroup *> TrafficGroups;
@@ -128,4 +130,7 @@ private:
   TArray<UPrimitiveComponent*> IgnoredComponentsForHeightAdjustment;
   UPROPERTY()
   TArray<AActor*> IgnoredActorsForHeightAdjustment;
+
+  UPROPERTY()
+  FTimerHandle TimerHandle;
 };
