@@ -252,6 +252,7 @@ protected:
     const TSet<TileID>& InTilesToBeVisible,
     const TSet<TileID>& InTilesToHidde);
 
+
   bool AdjustSignHeightToGround(FVector& SpawnLocation, const FString& ActorName, const TArray<AActor*>& ActorsToIgnore) const;
 
   void AdjustAllSignsToHeightGround();
