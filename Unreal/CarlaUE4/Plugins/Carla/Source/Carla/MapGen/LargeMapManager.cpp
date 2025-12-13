@@ -158,7 +158,7 @@ void ALargeMapManager::AdjustSignHeightToGround(FVector& SpawnLocation, const FS
   }
   else
   {
-    LM_LOG(Warning, "Could not find ground for traffic sign %s placement at location %s", *ActorName, *SpawnLocation.ToString());
+
   }
 }
 
