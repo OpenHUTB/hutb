@@ -290,8 +290,6 @@ void ATrafficLightManager::GenerateSignalsAndTrafficLights()
     SpawnSignals();
 
     TrafficLightsGenerated = true;
-
-    AdjustAllSignsToHeightGround();
   }
 }
 
