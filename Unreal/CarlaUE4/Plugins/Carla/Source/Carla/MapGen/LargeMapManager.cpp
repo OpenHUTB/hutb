@@ -258,8 +258,8 @@ void ALargeMapManager::OnActorSpawned(
       // Wait until the pending levels changes are finished to avoid spawning
       // the car without ground underneath
       World->FlushLevelStreaming();
-
       IsHeroVehicle = true;
+      AdjustAllSignsToHeightGround();
     }
   }
 
