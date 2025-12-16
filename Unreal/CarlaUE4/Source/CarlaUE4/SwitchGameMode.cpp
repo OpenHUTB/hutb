@@ -26,8 +26,8 @@ void ASwitchGameMode::SwitchGameModeAction()
 {
 	if (GEngine)
 	{
-		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Switching Game Mode..."));
 		UGameplayStatics::OpenLevel(this, FName("/Game/Carla/Maps/Town10HD"), false, "/Game/Carla/Maps/Town10HD?GAME=AIR");
+		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Switched to air mode."));
 	}
 }
 

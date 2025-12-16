@@ -82,12 +82,22 @@ bool UCarlaEpisode::LoadNewEpisode(const FString &MapString, bool ResetSettings)
 {
   bool bIsFileFound = false;
   FString MapToLoad;
+
+  FString LeftPath, GameModeName;
   if (MapString.IsEmpty()) {
     MapToLoad = UGameplayStatics::GetCurrentLevelName(GetWorld(), true);
   }
   else 
   {
-    MapToLoad = MapString;
+      if (MapString.Contains(TEXT("?GAME=")))
+      {
+          MapString.Split(TEXT("?GAME="), &LeftPath, &GameModeName);
+          MapToLoad = LeftPath;
+      } 
+      else
+      {
+          MapToLoad = MapString;
+      }
   }
    
   FString FinalPath = UCarlaStatics::FindMapPath(MapToLoad);
@@ -101,7 +111,16 @@ bool UCarlaEpisode::LoadNewEpisode(const FString &MapString, bool ResetSettings)
   if (bIsFileFound)
   {
     UE_LOG(LogCarla, Warning, TEXT("Loading a new episode: %s"), *FinalPath);
-    UGameplayStatics::OpenLevel(GetWorld(), *FinalPath, true);
+    // 判断传入的地图名是否包含游戏模式后缀，比如：/Game/Carla/Maps/Town10HD?GAME=AIR
+    if (MapString.Contains(TEXT("?GAME=")))
+    {
+      UGameplayStatics::OpenLevel(this, *LeftPath, false, *MapString);
+      // UGameplayStatics::OpenLevel(this, FName("/Game/Carla/Maps/Town10HD"), false, "/Game/Carla/Maps/Town10HD?GAME=AIR");
+    }
+    else
+    {
+        UGameplayStatics::OpenLevel(GetWorld(), *FinalPath, true);
+    }
     if (ResetSettings)
       ApplySettings(FEpisodeSettings{});
     
