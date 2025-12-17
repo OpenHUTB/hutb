@@ -107,11 +107,15 @@ if not "%1"=="" (
 )
 
 :: 切换到指定模式（需要使用call运行，否则会跳过，不会执行后面的打包过程）
-where conda
-call conda env list
-call conda activate carla_cpp
-echo python %ROOT_PATH%Scripts/switch_game_mode.py -m=%GAME_MODE%
-call python %ROOT_PATH%Scripts/switch_game_mode.py -m=%GAME_MODE%
+:: 如果游戏模式不为carla，则切换到对应模式
+if not "%GAME_MODE%"=="car" (
+    echo Switching to game mode: %GAME_MODE%
+    where conda
+    call conda env list
+    call conda activate carla_cpp
+    echo python %ROOT_PATH%Scripts/switch_game_mode.py -m=%GAME_MODE%
+    call python %ROOT_PATH%Scripts/switch_game_mode.py -m=%GAME_MODE%
+)
 :: 用于调试游戏模式切换
 :: pause
 :: goto good_exit
