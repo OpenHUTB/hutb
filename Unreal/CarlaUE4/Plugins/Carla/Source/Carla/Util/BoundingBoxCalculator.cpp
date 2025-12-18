@@ -5,6 +5,7 @@
 // For a copy, see <https://opensource.org/licenses/MIT>.
 
 #include "Carla.h"
+#include "Carla/Actor/CarlaActor.h"
 #include "Carla/Game/CarlaEpisode.h"
 #include "Carla/Game/Tagger.h"
 #include "Carla/Util/BoundingBoxCalculator.h"

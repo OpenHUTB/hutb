@@ -10,6 +10,9 @@
 #include "YieldSignComponent.h"
 #include "SpeedLimitComponent.h"
 #include "Components/BoxComponent.h"
+#include "EngineUtils.h" // for TActorIterator / TActorRange
+#include "GameFramework/Actor.h"
+#include "Engine/World.h"
 #include "Runtime/CoreUObject/Public/UObject/ConstructorHelpers.h"
 
 #include "UObject/ConstructorHelpers.h"

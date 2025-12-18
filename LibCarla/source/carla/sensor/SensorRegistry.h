@@ -52,6 +52,10 @@ class AInstanceSegmentationCamera;
 class ARssSensor;
 class FWorldObserver;
 class ADReyeVRSensor; // DReyeVR forward declaration
+class ASceneCaptureCamera_WideAngleLens;
+class ADepthCamera_WideAngleLens;
+class AInstanceSegmentationCamera_WideAngleLens;
+class ASemanticSegmentationCamera_WideAngleLens;
 class AFisheyeSensor;
 struct FCameraGBufferUint8;
 struct FCameraGBufferFloat;
@@ -86,6 +90,10 @@ namespace sensor {
     std::pair<ASemanticSegmentationCamera *, s11n::ImageSerializer>,
     std::pair<AInstanceSegmentationCamera *, s11n::ImageSerializer>,
     std::pair<FWorldObserver *, s11n::EpisodeStateSerializer>,
+    std::pair<ASceneCaptureCamera_WideAngleLens *, s11n::ImageSerializer>,
+    std::pair<ADepthCamera_WideAngleLens *, s11n::ImageSerializer>,
+    std::pair<AInstanceSegmentationCamera_WideAngleLens *, s11n::ImageSerializer>,
+    std::pair<ASemanticSegmentationCamera_WideAngleLens *, s11n::ImageSerializer>,
     std::pair<ADReyeVRSensor *, s11n::DReyeVRSerializer>,
     std::pair<AFisheyeSensor *, s11n::ImageSerializerCube>,
     std::pair<FCameraGBufferUint8 *, s11n::GBufferUint8Serializer>,
@@ -122,6 +130,10 @@ namespace sensor {
 #include "Carla/Sensor/InstanceSegmentationCamera.h"
 #include "Carla/Sensor/WorldObserver.h"
 #include "Carla/Sensor/DReyeVRSensor.h" // DReyeVRSensor header file
+#include "Carla/Sensor/DepthCamera_WideAngleLens.h"
+#include "Carla/Sensor/SceneCaptureCamera_WideAngleLens.h"
+#include "Carla/Sensor/SemanticSegmentationCamera_WideAngleLens.h"
+#include "Carla/Sensor/InstanceSegmentationCamera_WideAngleLens.h"
 #include "Carla/Sensor/FisheyeSensor.h"
 #include "Carla/Sensor/V2XSensor.h"
 #include "Carla/Sensor/CustomV2XSensor.h"
