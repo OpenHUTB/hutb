@@ -214,7 +214,7 @@ python cosmos_client.py http://url_to_server:port \
 
 ---
 
-## Understainding the Cosmos-Transfer Configuration
+## Understanding the Cosmos-Transfer Configuration
 
 This section describes the TOML configuration (see `example_data/prompts/rain.toml`). The client accepts a flat schema as shown below, and also supports the same keys nested under a top-level `controlnet_specs` table.
 
