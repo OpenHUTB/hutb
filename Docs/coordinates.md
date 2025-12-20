@@ -60,7 +60,7 @@ location = carla.Location(x=10,y=10, z=1)
 
 ### Rotation
 
-The [Rotation object](python_api.md#carlarotation) is used to define rotations within the CARLA coordinate system. Rotations are defined in Euler form as roll, pitch and then yaw. The Euler angles are measured in degrees. 
+The [Rotation object](python_api.md#carlarotation) is used to define rotations within the CARLA coordinate system. Rotations are defined in Euler form as yaw, pitch and roll. The Euler angles are measured in degrees. 
 
 The following code shows how to create a rotation object for a roll of 10 degrees, a pitch of 10 degrees and a yaw of 90 degrees:
 
@@ -68,7 +68,7 @@ The following code shows how to create a rotation object for a roll of 10 degree
 rotation = carla.Rotation(roll=10, pitch=10, yaw=90)
 ```
 
-The keyword arguments can be omitted and the relevant angle will be set to zero. Rotations are applied **intrinsically** in the order **pitch, yaw, roll**.
+The keyword arguments can be omitted and the relevant angle will be set to zero. Rotations are applied **intrinsically** in the order **yaw, pitch, roll**.
 
 ---
 
