@@ -56,7 +56,24 @@ public:
   /// @name Helpers to create actor definitions
   /// ==========================================================================
   /// @{
-
+  static void AddCommonCameraParameters(
+      const FString &Id,
+      bool bEnableModifyingPostProcessEffects,
+      bool &Success,
+      FActorDefinition &Definition);
+  
+  static void AddCommonWideAngleLensCameraParameters(
+      const FString &Id,
+      bool bEnableModifyingPostProcessEffects,
+      bool &Success,
+      FActorDefinition &Definition);
+  
+  static void AddCommonPostProcessingEffectsParameters(
+      const FString &Id,
+      bool bEnableModifyingPostProcessEffects,
+      bool &Success,
+      FActorDefinition &Definition);
+    
   static FActorDefinition MakeGenericDefinition(
       const FString &Category,
       const FString &Type,
@@ -87,14 +104,6 @@ public:
       bool bEnableModifyingPostProcessEffects,
       bool& Success,
       FActorDefinition& Definition);
-
-  static FActorDefinition MakeNormalsCameraDefinition();
-
-  UFUNCTION(Category = "Carla Actor", BlueprintCallable)
-  static void MakeNormalsCameraDefinition(
-      bool &Success,
-      FActorDefinition &Definition);
-
   static FActorDefinition MakeLidarDefinition(
       const FString &Id);
 
