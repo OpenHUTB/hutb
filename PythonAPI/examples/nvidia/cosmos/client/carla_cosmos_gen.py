@@ -167,6 +167,7 @@ class SensorInfo:
     def _callback(self, data):
         conv_map = {
             AOV.RGB: carla.ColorConverter.Raw,
+            AOV.NORMALS: carla.ColorConverter.Raw,
             AOV.SEMANTIC_SEGMENTATION: carla.ColorConverter.CityScapesPalette
         }
         conv = conv_map.get(self.sensor_type, carla.ColorConverter.Raw)
