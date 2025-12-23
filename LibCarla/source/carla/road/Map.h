@@ -98,6 +98,10 @@ namespace road {
     std::map<const carla::road::element::RoadInfoCrosswalk* ,
                std::vector<geom::Location>> GetAllCrosswalksInfo() const;
 
+    const std::unordered_map<RoadId, Road>& GetRoads() const {
+      return _data.GetRoads();
+    }
+
     /// Data structure for the signal search
     struct SignalSearchData {
       const element::RoadInfoSignal *signal;

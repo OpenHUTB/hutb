@@ -117,6 +117,9 @@ public:
   UPROPERTY(BlueprintReadOnly, EditAnywhere, Category="Sensor Gravity")
   float IMUISensorGravity = 9.81f;
 
+  UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Road Spline")
+  float SampleDistance = 2.0f;
+
   /// List of actor spawners that will be used to define and spawn the actors
   /// available in game.
   UPROPERTY(Category = "CARLA Game Mode", EditAnywhere)
@@ -147,6 +150,8 @@ private:
   void GenerateSpawnPoints();
 
   void ParseOpenDrive();
+
+  void SpawnRoadSplines();
 
   void RegisterEnvironmentObjects();
 
