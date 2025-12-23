@@ -119,5 +119,16 @@ namespace client {
     return Actor::Destroy();
   }
 
+  //Only Functional in Cosmos Control Sensor
+  void ServerSideSensor::SetIgnoredVehicles(const std::vector<ActorId>& vehicle_ids) {
+    _ignored_actors = vehicle_ids;
+    GetEpisode().Lock()->SetIgnoredVehicles(*this, vehicle_ids);
+  }
+
+  std::vector<ActorId> ServerSideSensor::GetIgnoredVehicles() const {
+    return _ignored_actors;
+  }
+
 } // namespace client
 } // namespace carla
+

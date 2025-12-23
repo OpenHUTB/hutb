@@ -184,9 +184,44 @@ namespace client {
     return result;
   }
 
+  std::vector<SharedPtr<RoadMark>> Map::GetAllRoadMarks() const {
+    std::vector<SharedPtr<RoadMark>> result;
+    std::vector<const road::element::RoadInfoStencil*> stencil_references = _map.GetAllStencilReferences();
+    for(const road::element::RoadInfoStencil* stencil_reference : stencil_references) {
+      result.emplace_back(
+          new RoadMark(nullptr, shared_from_this(), stencil_reference, 0));
+    }
+    return result;
+  }
+
+  std::vector<SharedPtr<RoadMark>> Map::GetRoadMarksFromId(std::string id) const {
+    std::vector<SharedPtr<RoadMark>> result;
+    std::vector<const road::element::RoadInfoStencil*> stencil_references = _map.GetAllStencilReferences();
+    for(const road::element::RoadInfoStencil* stencil_reference : stencil_references) {
+      if(stencil_reference->GetStencilId() == id) {
+        result.emplace_back(
+            new RoadMark(nullptr, shared_from_this(), stencil_reference, 0));
+      }
+    }
+    return result;
+  }
+
+  std::vector<SharedPtr<RoadMark>> Map::GetAllRoadMarksOfType(std::string type) const {
+    std::vector<SharedPtr<RoadMark>> result;
+    std::vector<const road::element::RoadInfoStencil*> stencil_references = _map.GetAllStencilReferences();
+    for(const road::element::RoadInfoStencil* stencil_reference : stencil_references) {
+      if(stencil_reference->GetStencil()->GetType() == type) {
+        result.emplace_back(
+            new RoadMark(nullptr, shared_from_this(), stencil_reference, 0));
+      }
+    }
+    return result;
+  }
+
   void Map::CookInMemoryMap(const std::string& path) const {
     traffic_manager::InMemoryMap::Cook(shared_from_this(), path);
   }
 
 } // namespace client
 } // namespace carla
+
