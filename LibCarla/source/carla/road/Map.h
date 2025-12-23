@@ -6,22 +6,24 @@
 
 #pragma once
 
+#include <map>
+#include <vector>
+
+#include <boost/optional.hpp>
+
 #include "carla/geom/Mesh.h"
 #include "carla/geom/Rtree.h"
 #include "carla/geom/Transform.h"
 #include "carla/NonCopyable.h"
 #include "carla/road/element/LaneMarking.h"
 #include "carla/road/element/RoadInfoMarkRecord.h"
+#include "carla/road/element/RoadInfoCrosswalk.h"
 #include "carla/road/element/Waypoint.h"
 #include "carla/road/MapData.h"
 #include "carla/road/RoadTypes.h"
 #include "carla/road/MeshFactory.h"
 #include "carla/geom/Vector3D.h"
 #include "carla/rpc/OpendriveGenerationParameters.h"
-
-#include <boost/optional.hpp>
-
-#include <vector>
 
 namespace carla {
 namespace road {
@@ -90,6 +92,11 @@ namespace road {
     /// Returns a list of locations defining 2d areas,
     /// when a location is repeated an area is finished
     std::vector<geom::Location> GetAllCrosswalkZones() const;
+
+    /// Returns a list of locations defining 2d areas,
+    /// when a location is repeated an area is finished
+    std::map<const carla::road::element::RoadInfoCrosswalk* ,
+               std::vector<geom::Location>> GetAllCrosswalksInfo() const;
 
     /// Data structure for the signal search
     struct SignalSearchData {

@@ -164,6 +164,7 @@ void ACarlaGameModeBase::InitGame(
   {
     StoreSpawnPoints();
   }
+  
 }
 
 void ACarlaGameModeBase::RestartPlayer(AController *NewPlayer)
