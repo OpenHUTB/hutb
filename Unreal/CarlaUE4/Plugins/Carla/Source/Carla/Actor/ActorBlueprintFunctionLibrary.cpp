@@ -2175,25 +2175,6 @@ void UActorBlueprintFunctionLibrary::SetCamera(
       RetrieveActorAttributeToFloat("lens_y_size", Description.Variations, 0.08f));
 }
 
-void UActorBlueprintFunctionLibrary::SetCamera(
-    const FActorDescription &Description,
-    AShaderBasedSensor_WideAngleLens *Camera)
-{
-  CARLA_ABFL_CHECK_ACTOR(Camera);
-  Camera->SetFloatShaderParameter(0, TEXT("CircleFalloff_NState"),
-      RetrieveActorAttributeToFloat("lens_circle_falloff", Description.Variations, 5.0f));
-  Camera->SetFloatShaderParameter(0, TEXT("CircleMultiplier_NState"),
-      RetrieveActorAttributeToFloat("lens_circle_multiplier", Description.Variations, 0.0f));
-  Camera->SetFloatShaderParameter(0, TEXT("K_NState"),
-      RetrieveActorAttributeToFloat("lens_k", Description.Variations, -1.0f));
-  Camera->SetFloatShaderParameter(0, TEXT("kcube"),
-      RetrieveActorAttributeToFloat("lens_kcube", Description.Variations, 0.0f));
-  Camera->SetFloatShaderParameter(0, TEXT("XSize_NState"),
-      RetrieveActorAttributeToFloat("lens_x_size", Description.Variations, 0.08f));
-  Camera->SetFloatShaderParameter(0, TEXT("YSize_NState"),
-      RetrieveActorAttributeToFloat("lens_y_size", Description.Variations, 0.08f));
-}
-
 void UActorBlueprintFunctionLibrary::SetLidar(
     const FActorDescription &Description,
     FLidarDescription &Lidar)
