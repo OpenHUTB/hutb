@@ -1,0 +1,25 @@
+name: hubt Linux CI/CD
+
+on:
+   push:
+
+jobs:
+    linux-dev:
+             name: Linux CI/CD
+             timeout-minutes: 1440
+             runs-on: self-hosted
+
+             env:
+                UE4_ROOT: ~/UnrealEngine_4.26
+
+             steps:
+                  - name: Checkout repository
+                    uses: actions/checkout@v5
+                    with:
+                         fetch-depth: 0
+
+                  - name: Show files
+                    run: |
+                       pwd
+                       ls -al
+
