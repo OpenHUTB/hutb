@@ -15,6 +15,9 @@ rem -- Parse arguments ---------------------------------------------------------
 rem ============================================================================
 
 set DEL_SRC=false
+:: --build-debug true|false
+::   Build the Debug version of Recast & Detour to debug LibCarla client
+set BUILD_DEBUG=false
 
 :arg-parse
 if not "%1"=="" (
@@ -28,6 +31,10 @@ if not "%1"=="" (
     )
     if "%1"=="--generator" (
         set GENERATOR=%2
+        shift
+    )
+    if "%1"=="--build-debug" (
+        set BUILD_DEBUG=true
         shift
     )
     shift
@@ -81,16 +88,42 @@ echo.%GENERATOR% | findstr /C:"Visual Studio" >nul && (
     set PLATFORM=
 )
 
-cmake .. -G %GENERATOR% %PLATFORM%^
-    -DCMAKE_BUILD_TYPE=Release^
-    -DCMAKE_CXX_FLAGS_RELEASE="/MD /MP"^
-    -DCMAKE_INSTALL_PREFIX="%RECAST_INSTALL_DIR:\=/%"^
-    -DCMAKE_CXX_FLAGS=/D_SILENCE_TR1_NAMESPACE_DEPRECATION_WARNING^
-    "%RECAST_SRC_DIR%"
-if %errorlevel%  neq 0 goto error_cmake
+if %BUILD_DEBUG% == true (
+    echo cmake .. -G %GENERATOR% %PLATFORM%^
+        -DCMAKE_BUILD_TYPE=Debug^
+        -DCMAKE_CXX_FLAGS_DEBUG="/MDd /MP"^
+        -DCMAKE_INSTALL_PREFIX="%RECAST_INSTALL_DIR:\=/%"^
+        -DCMAKE_CXX_FLAGS=/D_SILENCE_TR1_NAMESPACE_DEPRECATION_WARNING^
+        "%RECAST_SRC_DIR%"
+    cmake .. -G %GENERATOR% %PLATFORM%^
+        -DCMAKE_BUILD_TYPE=Debug^
+        -DCMAKE_CXX_FLAGS_DEBUG="/MDd /MP"^
+        -DCMAKE_INSTALL_PREFIX="%RECAST_INSTALL_DIR:\=/%"^
+        -DCMAKE_CXX_FLAGS=/D_SILENCE_TR1_NAMESPACE_DEPRECATION_WARNING^
+        "%RECAST_SRC_DIR%"
+    if %errorlevel%  neq 0 goto error_cmake
 
-echo %FILE_N% Building...
-cmake --build . --config Release --target install
+    echo %FILE_N% Building Debug...
+    cmake --build . --config Debug --target install
+) else (
+    echo cmake .. -G %GENERATOR% %PLATFORM%^
+        -DCMAKE_BUILD_TYPE=Release^
+        -DCMAKE_CXX_FLAGS_RELEASE="/MD /MP"^
+        -DCMAKE_INSTALL_PREFIX="%RECAST_INSTALL_DIR:\=/%"^
+        -DCMAKE_CXX_FLAGS=/D_SILENCE_TR1_NAMESPACE_DEPRECATION_WARNING^
+        "%RECAST_SRC_DIR%"
+    cmake .. -G %GENERATOR% %PLATFORM%^
+        -DCMAKE_BUILD_TYPE=Release^
+        -DCMAKE_CXX_FLAGS_RELEASE="/MD /MP"^
+        -DCMAKE_INSTALL_PREFIX="%RECAST_INSTALL_DIR:\=/%"^
+        -DCMAKE_CXX_FLAGS=/D_SILENCE_TR1_NAMESPACE_DEPRECATION_WARNING^
+        "%RECAST_SRC_DIR%"
+    if %errorlevel%  neq 0 goto error_cmake
+
+    echo %FILE_N% Building Release...
+    cmake --build . --config Release --target install
+)
+
 
 if errorlevel  neq 0 goto error_install
 

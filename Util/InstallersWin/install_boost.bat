@@ -171,14 +171,14 @@ b2 -j%NUMBER_OF_ASYNC_JOBS%^
     architecture=x86^
     address-model=64^
     toolset=%TOOLSET%^
-    variant=release^
-    link=static^
+    variant=debug,release^
+    link=static,shared^
     runtime-link=shared^
     threading=multi^
     --prefix="%BOOST_INSTALL_DIR:~0,-1%"^
     --libdir="%BOOST_LIB_DIR:~0,-1%"^
     --includedir="%BOOST_INSTALL_DIR:~0,-1%"^
-    install
+    install >nul
 if %errorlevel% neq 0 goto error_install
 
 for /d %%i in ("%BOOST_INSTALL_DIR%boost*") do rename "%%i" include
