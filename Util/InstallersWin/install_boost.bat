@@ -171,8 +171,8 @@ b2 -j%NUMBER_OF_ASYNC_JOBS%^
     architecture=x86^
     address-model=64^
     toolset=%TOOLSET%^
-    variant=debug,release^
-    link=static,shared^
+    variant=release^
+    link=static^
     runtime-link=shared^
     threading=multi^
     --prefix="%BOOST_INSTALL_DIR:~0,-1%"^
