@@ -269,7 +269,6 @@ if %DO_COPY_FILES%==true (
     echo f | xcopy /y "!XCOPY_FROM!Unreal\CarlaUE4\Content\Carla\HDMaps\Readme.md"  "!XCOPY_TO!HDMaps\README"
     :: 无人机配置文件
     echo f | xcopy /y "!XCOPY_FROM!Build\AirSim\Unreal\Environments\Blocks\settings.json"    "!XCOPY_TO!settings.json"
-    echo f | xcopy /y "!XCOPY_FROM!Build\AirSim\Unreal\Environments\Blocks\run.bat"          "!XCOPY_TO!run.bat"
     if exist "!XCOPY_FROM!Plugins" (
         echo d | xcopy /y /s "!XCOPY_FROM!Plugins"                                  "!XCOPY_TO!Plugins"
     )
