@@ -165,6 +165,7 @@ void ACarlaGameModeBase::InitGame(
   if(Map.has_value())
   {
     StoreSpawnPoints();
+    SpawnRoadSplines();
   }
   
 }
