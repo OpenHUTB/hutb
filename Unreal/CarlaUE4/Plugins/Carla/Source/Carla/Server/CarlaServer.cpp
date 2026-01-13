@@ -36,6 +36,12 @@
 #include "CarlaServerResponse.h"
 #include "Carla/Util/BoundingBoxCalculator.h"
 #include "Misc/FileHelper.h"
+#include "Carla/Cosmos/Exporter/CrosswalksExporter.h"
+#include "Carla/Cosmos/Exporter/RoadBoundaryExporter.h"
+#include "Carla/Cosmos/Exporter/LaneLineExporter.h"
+#include "Carla/Cosmos/Exporter/TrafficSignsExporter.h"
+#include "Carla/Cosmos/Exporter/WaitLinesExporter.h"
+#include "Carla/Cosmos/Exporter/RoadMarkingExporter.h"
 
 #include <compiler/disable-ue4-macros.h>
 #include <carla/Functional.h>
@@ -456,6 +462,122 @@ void FCarlaServer::FPimpl::BindActions()
       NamesStd.emplace_back(cr::FromFString(Name));
     }
     return NamesStd;
+  };
+
+  // ~~ Cosmos Export Functions ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+  BIND_SYNC(export_cosmos_crosswalks) << [this](const std::string& session_id, const std::string& output_path) -> R<std::string>
+  {
+    REQUIRE_CARLA_EPISODE();
+    ACarlaGameModeBase* GameMode = UCarlaStatics::GetGameMode(Episode->GetWorld());
+    if (!GameMode)
+    {
+      RESPOND_ERROR("unable to find CARLA game mode");
+    }
+    FString SessionIdFString = cr::ToFString(session_id);
+    FString OutputPathFString = cr::ToFString(output_path);
+    FString ErrorMessage;
+    bool bSuccess = UCrosswalksExporter::ExportCosmosCrosswalk(Episode->GetWorld(), SessionIdFString, OutputPathFString, ErrorMessage);
+    if (!bSuccess)
+    {
+      RESPOND_ERROR_FSTRING(ErrorMessage);
+    }
+    return std::string("Success");
+  };
+
+  BIND_SYNC(export_cosmos_road_boundaries) << [this](const std::string& session_id, const std::string& output_path) -> R<std::string>
+  {
+    REQUIRE_CARLA_EPISODE();
+    ACarlaGameModeBase* GameMode = UCarlaStatics::GetGameMode(Episode->GetWorld());
+    if (!GameMode)
+    {
+      RESPOND_ERROR("unable to find CARLA game mode");
+    }
+    FString SessionIdFString = cr::ToFString(session_id);
+    FString OutputPathFString = cr::ToFString(output_path);
+    FString ErrorMessage;
+    bool bSuccess = URoadBoundaryExporter::ExportCosmosRoadBoundaries(Episode->GetWorld(), SessionIdFString, OutputPathFString, ErrorMessage);
+    if (!bSuccess)
+    {
+      RESPOND_ERROR_FSTRING(ErrorMessage);
+    }
+    return std::string("Success");
+  };
+
+  BIND_SYNC(export_cosmos_lane_lines) << [this](const std::string& session_id, const std::string& output_path) -> R<std::string>
+  {
+    REQUIRE_CARLA_EPISODE();
+    ACarlaGameModeBase* GameMode = UCarlaStatics::GetGameMode(Episode->GetWorld());
+    if (!GameMode)
+    {
+      RESPOND_ERROR("unable to find CARLA game mode");
+    }
+    FString SessionIdFString = cr::ToFString(session_id);
+    FString OutputPathFString = cr::ToFString(output_path);
+    FString ErrorMessage;
+    bool bSuccess = ULaneLineExporter::ExportCosmosLaneLines(Episode->GetWorld(), SessionIdFString, OutputPathFString, ErrorMessage);
+    if (!bSuccess)
+    {
+      RESPOND_ERROR_FSTRING(ErrorMessage);
+    }
+    return std::string("Success");
+  };
+
+  BIND_SYNC(export_cosmos_traffic_signs) << [this](const std::string& session_id, const std::string& output_path) -> R<std::string>
+  {
+    REQUIRE_CARLA_EPISODE();
+    ACarlaGameModeBase* GameMode = UCarlaStatics::GetGameMode(Episode->GetWorld());
+    if (!GameMode)
+    {
+      RESPOND_ERROR("unable to find CARLA game mode");
+    }
+    FString SessionIdFString = cr::ToFString(session_id);
+    FString OutputPathFString = cr::ToFString(output_path);
+    FString ErrorMessage;
+    bool bSuccess = UTrafficSignsExporter::ExportCosmosTrafficSigns(Episode->GetWorld(), SessionIdFString, OutputPathFString, ErrorMessage);
+    if (!bSuccess)
+    {
+      RESPOND_ERROR_FSTRING(ErrorMessage);
+    }
+    return std::string("Success");
+  };
+
+  BIND_SYNC(export_cosmos_wait_lines) << [this](const std::string& session_id, const std::string& output_path) -> R<std::string>
+  {
+    REQUIRE_CARLA_EPISODE();
+    ACarlaGameModeBase* GameMode = UCarlaStatics::GetGameMode(Episode->GetWorld());
+    if (!GameMode)
+    {
+      RESPOND_ERROR("unable to find CARLA game mode");
+    }
+    FString SessionIdFString = cr::ToFString(session_id);
+    FString OutputPathFString = cr::ToFString(output_path);
+    FString ErrorMessage;
+    bool bSuccess = UWaitLinesExporter::ExportCosmosWaitLines(Episode->GetWorld(), SessionIdFString, OutputPathFString, ErrorMessage);
+    if (!bSuccess)
+    {
+      RESPOND_ERROR_FSTRING(ErrorMessage);
+    }
+    return std::string("Success");
+  };
+
+  BIND_SYNC(export_cosmos_road_markings) << [this](const std::string& session_id, const std::string& output_path) -> R<std::string>
+  {
+    REQUIRE_CARLA_EPISODE();
+    ACarlaGameModeBase* GameMode = UCarlaStatics::GetGameMode(Episode->GetWorld());
+    if (!GameMode)
+    {
+      RESPOND_ERROR("unable to find CARLA game mode");
+    }
+    FString SessionIdFString = cr::ToFString(session_id);
+    FString OutputPathFString = cr::ToFString(output_path);
+    FString ErrorMessage;
+    bool bSuccess = URoadMarkingExporter::ExportCosmosRoadMarkings(Episode->GetWorld(), SessionIdFString, OutputPathFString, ErrorMessage);
+    if (!bSuccess)
+    {
+      RESPOND_ERROR_FSTRING(ErrorMessage);
+    }
+    return std::string("Success");
   };
 
   // ~~ Episode settings and info ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1009,6 +1131,68 @@ BIND_SYNC(is_sensor_enabled_for_ros) << [this](carla::streaming::detail::stream_
     }
 
     Sensor->Send(cr::ToFString(message));
+    return R<void>::Success();
+  };
+
+  BIND_SYNC(set_ignored_vehicles) << [this](
+      cr::ActorId ActorId,
+      std::vector<cr::ActorId> vehicle_ids) -> R<void>
+  {
+    REQUIRE_CARLA_EPISODE();
+    FCarlaActor* CarlaActor = Episode->FindCarlaActor(ActorId);
+    if (!CarlaActor)
+    {
+      return RespondError(
+          "set_ignored_vehicles",
+          ECarlaServerResponse::ActorNotFound,
+          " Actor Id: " + FString::FromInt(ActorId));
+    }
+
+    if (CarlaActor->IsDormant())
+    {
+      return RespondError(
+          "set_ignored_vehicles",
+          ECarlaServerResponse::FunctionNotAvailiableWhenDormant,
+          " Actor Id: " + FString::FromInt(ActorId));
+    }
+
+    ASensor* Sensor = Cast<ASensor>(CarlaActor->GetActor());
+    if (!Sensor)
+    {
+      return RespondError(
+        "set_ignored_vehicles",
+        ECarlaServerResponse::ActorTypeMismatch,
+        " Actor Id: " + FString::FromInt(ActorId));
+    }
+
+    TArray<FCarlaActor::IdType> IgnoredVehicleIds;
+    for (auto Id : vehicle_ids)
+    {
+      // Validate that the actor ID corresponds to a vehicle
+      FCarlaActor* TargetActor = Episode->FindCarlaActor(Id);
+      if (!TargetActor)
+      {
+        return RespondError(
+          "set_ignored_vehicles",
+          ECarlaServerResponse::ActorNotFound,
+          " Target Actor Id: " + FString::FromInt(Id));
+      }
+      
+      // Check if the actor is a vehicle
+      if (TargetActor->GetActorInfo()->Description.Id.Contains("vehicle"))
+      {
+        IgnoredVehicleIds.Add(Id);
+      }
+      else
+      {
+        return RespondError(
+          "set_ignored_vehicles",
+          ECarlaServerResponse::ActorTypeMismatch,
+          " Actor Id: " + FString::FromInt(Id) + " is not a vehicle");
+      }
+    }
+
+    Sensor->SetIgnoredVehicles(IgnoredVehicleIds);
     return R<void>::Success();
   };
 

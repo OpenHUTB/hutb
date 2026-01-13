@@ -1,9 +1,5 @@
-# SPDX-FileCopyrightText: © 2025 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
-#
-# SPDX-License-Identifier: MIT
-
-
 #!/usr/bin/env python3
+
 import argparse
 import multiprocessing as mp
 import logging
@@ -13,10 +9,18 @@ from typing import Dict, List, Sequence, Tuple
 from pathlib import Path
 import yaml
 import subprocess
-import time
 import numpy as np
 import cv2
 import carla
+
+import json
+import tarfile
+import tempfile
+import math
+import os
+import traceback
+import glob
+
 from PIL import Image
 
 # === ENUMS AND DATA STRUCTURES ===
@@ -26,6 +30,7 @@ class AOV(Enum):
     SEMANTIC_SEGMENTATION = 2
     INSTANCE_SEGMENTATION = 3
     NORMALS = 4
+    RDS_HQ = 5
 
 @dataclass
 class FrameBundle:
@@ -51,9 +56,43 @@ def parse_frames_duration(info):
     else:
         return -1, -1.0
 
+def compute_rotation_components(rotation):
+    """Compute cosine and sine components for roll, pitch, yaw from CARLA rotation."""
+    roll = math.radians(rotation.roll)
+    pitch = math.radians(rotation.pitch)
+    yaw = math.radians(rotation.yaw)
+
+    cr, sr = math.cos(roll), math.sin(roll)
+    cp, sp = math.cos(pitch), math.sin(pitch)
+    cy, sy = math.cos(yaw), math.sin(yaw)
+
+    return cr, sr, cp, sp, cy, sy
+
+def build_transform_matrix(location, rotation, z_offset=0.0):
+    """Build a 4x4 transformation matrix from CARLA location and rotation."""
+    cr, sr, cp, sp, cy, sy = compute_rotation_components(rotation)
+    adjusted_z = location.z + z_offset
+
+    return [
+        [cy * cp, cy * sp * sr - sy * cr, cy * sp * cr + sy * sr, location.x],
+        [sy * cp, sy * sp * sr + cy * cr, sy * sp * cr - cy * sr, location.y],
+        [-sp, cp * sr, cp * cr, adjusted_z],
+        [0.0, 0.0, 0.0, 1.0]
+    ]
+
 # === CONFIGURATION LOADERS ===
 CLASSES_TO_KEEP_SHADED_SEG: List[Sequence[int]] = []
 CLASSES_TO_KEEP_CANNY: List[Sequence[int]] = []
+
+# Semantic label to object type mapping for CARLA vehicles
+SEMANTIC_LABEL_TO_OBJECT_TYPE = {
+    14: "Automobile",
+    15: "Truck",
+    16: "Bus",
+    17: "Train_or_tram_car",
+    18: "Rider",
+    19: "Rider"
+}
 
 def load_class_filter_config(path: str):
     path = Path(path).resolve()
@@ -249,14 +288,404 @@ def video_writer_worker(proc_q: mp.Queue, out_dir: Path, fps: float):
         w.release()
         tmp, final = paths[key]
         try:
-            subprocess.run(['ffmpeg', '-i', str(tmp), '-vf', 'fps=24', '-vsync', 'cfr',
-            '-c:v', 'libx264', '-pix_fmt', 'yuv420p', '-frames:v', '120', '-y', '-loglevel', 
-            'error', str(final)], check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-
+            subprocess.run(['ffmpeg', '-i', str(tmp), '-r', '24', '-c:v', 'libx264', 
+            '-y',  '-loglevel', 'error', str(final)], check=True, 
+            stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
         except subprocess.CalledProcessError as e:
             logging.error(f"FFmpeg failed for {key}: {e}")
         tmp.unlink(missing_ok=True)
     logging.info("[Writer] exiting")
+
+# === DYNAMIC OBJECT EXTRACTION (RDS-HQ FORMAT) ===
+def extract_dynamic_objects_data(world, ego_vehicle_id=None):
+    objects_data = {}
+
+    vehicles = world.get_actors().filter('vehicle.*')
+    for vehicle in vehicles:
+        if ego_vehicle_id is not None and vehicle.id == ego_vehicle_id:
+            continue
+
+        bbox = vehicle.bounding_box
+        transform = vehicle.get_transform()
+
+        object_to_world = build_transform_matrix(
+            transform.location, transform.rotation, bbox.extent.z
+        )
+
+        object_lwh = [bbox.extent.x * 2.0, bbox.extent.y * 2.0, bbox.extent.z * 2.0]
+        semantic_label = vehicle.semantic_tags[0] if vehicle.semantic_tags else 14  # Default to Car
+        object_type = SEMANTIC_LABEL_TO_OBJECT_TYPE.get(semantic_label, "Automobile")
+
+        objects_data[str(vehicle.id)] = {
+            "object_to_world": object_to_world,
+            "object_lwh": object_lwh,
+            "object_is_moving": True,
+            "object_type": object_type
+        }
+
+    walkers = world.get_actors().filter('walker.pedestrian.*')
+    for walker in walkers:
+        bbox = walker.bounding_box
+        transform = walker.get_transform()
+
+        object_to_world = build_transform_matrix(
+            transform.location, transform.rotation, bbox.extent.z
+        )
+
+        object_lwh = [bbox.extent.x * 2.0, bbox.extent.y * 2.0, bbox.extent.z * 2.0]
+
+        objects_data[str(walker.id)] = {
+            "object_to_world": object_to_world,
+            "object_lwh": object_lwh,
+            "object_is_moving": True,
+            "object_type": "Pedestrian"
+        }
+
+    return objects_data
+
+def export_dynamic_objects_data(dynamic_frames, session_id, output_dir):
+    objects_dir = output_dir / "all_object_info"
+    objects_dir.mkdir(parents=True, exist_ok=True)
+
+    with tempfile.TemporaryDirectory() as temp_dir:
+        temp_path = Path(temp_dir)
+
+        json_files = []
+        for frame_idx, frame_data in enumerate(dynamic_frames):
+            filename = f"{session_id}.{frame_idx:06d}.all_object_info.json"
+            json_file = temp_path / filename
+
+            with open(json_file, 'w') as f:
+                json.dump(frame_data, f, separators=(',', ':'))  # Compact format
+
+            json_files.append((filename, str(json_file)))
+
+        tar_filename = f"{session_id}.tar"
+        tar_path = objects_dir / tar_filename
+
+        with tarfile.open(tar_path, 'w') as tar:
+            for filename, filepath in json_files:
+                tar.add(filepath, arcname=filename)
+
+        return True
+
+def extract_camera_poses(world, frame_number, camera_sensor=None):
+    if camera_sensor is None:
+        logging.warning(f"Frame {frame_number}: No camera sensor provided, skipping pose extraction")
+        return None
+
+    transform = camera_sensor.get_transform()
+
+    loc = transform.location
+    cr, sr, cp, sp, cy, sy = compute_rotation_components(transform.rotation)
+
+    R = np.array([
+        [cy * cp, cy * sp * sr - sy * cr, cy * sp * cr + sy * sr],
+        [sy * cp, sy * sp * sr + cy * cr, sy * sp * cr - cy * sr],
+        [-sp, cp * sr, cp * cr]
+    ])
+
+    pose_carla = np.eye(4)
+    pose_carla[:3, :3] = R
+    pose_carla[:3, 3] = [loc.x, loc.y, loc.z]
+
+    pose_opencv = np.concatenate([
+        pose_carla[:, 1:2],   # X = Y_carla (right)
+        -pose_carla[:, 2:3],  # Y = -Z_carla (down)
+        pose_carla[:, 0:1],   # Z = X_carla (forward)
+        pose_carla[:, 3:4]
+    ], axis=1)
+
+    return pose_opencv
+
+def export_camera_pose_data(pose_frames, session_id, output_dir):
+    pose_dir = output_dir / "pose"
+    pose_dir.mkdir(parents=True, exist_ok=True)
+
+    with tempfile.TemporaryDirectory() as temp_dir:
+        temp_path = Path(temp_dir)
+
+        npy_files = []
+        for frame_idx, pose_matrix in enumerate(pose_frames):
+            if pose_matrix is not None:
+                filename = f"{session_id}.{frame_idx:06d}.pose.rds_hq.npy"
+                npy_file = temp_path / filename
+
+                np.save(npy_file, pose_matrix)
+                npy_files.append((filename, str(npy_file)))
+
+        tar_filename = f"{session_id}.tar"
+        tar_path = pose_dir / tar_filename
+
+        with tarfile.open(tar_path, 'w') as tar:
+            for filename, filepath in npy_files:
+                tar.add(filepath, arcname=filename)
+
+        logging.info(f"Exported {len(npy_files)} frames of camera pose data to {tar_path}")
+        return True
+
+# === CAMERA INTRINSICS EXPORT ===
+def extract_camera_intrinsics_from_sensor(sensor):
+    attributes = sensor.attributes
+
+    image_width = int(attributes.get('image_size_x', 1920))
+    image_height = int(attributes.get('image_size_y', 1080))
+    fov = float(attributes.get('fov', 90.0))
+
+    focal = image_width / (2.0 * np.tan(fov * np.pi / 360.0))
+
+    K = np.identity(3)
+    K[0, 0] = focal  # fx
+    K[1, 1] = focal  # fy
+    K[0, 2] = image_width / 2.0   # cx
+    K[1, 2] = image_height / 2.0  # cy
+
+    return K, image_width, image_height, fov
+
+def export_camera_intrinsincs_pinhole(K, width, height, session_id, output_dir):
+    pinhole_dir = output_dir / "pinhole_intrinsic"
+    pinhole_dir.mkdir(parents=True, exist_ok=True)
+
+    with tempfile.TemporaryDirectory() as temp_dir:
+        temp_path = Path(temp_dir)
+
+        # PinholeCamera expects [fx, fy, cx, cy, w, h]
+        intrinsic_data = np.array([
+            K[0,0],    # fx
+            K[1,1],    # fy
+            K[0,2],    # cx
+            K[1,2],    # cy
+            width,     # w
+            height     # h
+        ], dtype=np.float32)
+
+        filename = f"{session_id}.pinhole_intrinsic.rds_hq.npy"
+        npy_file = temp_path / filename
+        np.save(npy_file, intrinsic_data)
+
+        tar_path = pinhole_dir / f"{session_id}.tar"
+        with tarfile.open(tar_path, 'w') as tar:
+            tar.add(npy_file, arcname=filename)
+
+    logging.info(f"Exported pinhole camera intrinsics to {tar_path}")
+
+    return True
+
+
+# === DATASET CONFIG EXPORT ===
+def export_dataset_config(session_id, output_dir, rds_hq_camera_name="rds_hq", input_fps=30, target_render_fps=24, total_frames=None, chunk_frames=None):
+    """
+    Export dataset configuration JSON for RDS-HQ renderer.
+
+    Args:
+        session_id: Session identifier
+        output_dir: Output directory path
+        rds_hq_camera_name: Name of the RDS-HQ camera sensor
+        input_fps: FPS of the exported pose data (native CARLA recording FPS)
+        target_render_fps: Desired output video FPS (renderer will downsample)
+        total_frames: Total number of frames exported (used to calculate chunk size)
+        chunk_frames: Target chunk frame size (None = use full video, -1 = default 121, or specify exact value)
+
+    Returns:
+        Path to exported config file
+    """
+    if total_frames is not None:
+        downsample_ratio = input_fps // target_render_fps
+        downsampled_frames = total_frames // downsample_ratio
+
+        if chunk_frames is None:
+            chunk_frame = downsampled_frames
+        else:
+            chunk_frame = min(chunk_frames, downsampled_frames)
+    else:
+        chunk_frame = 121
+
+    config = {
+        "CAMERAS": [rds_hq_camera_name],
+        "MINIMAP_TYPES": [
+            "lanelines",
+            "road_boundaries",
+            "crosswalks",
+            "road_markings",
+            "wait_lines",
+            "poles",
+            "traffic_signs",
+            "traffic_lights"
+        ],
+        "INPUT_POSE_FPS": input_fps,  # Native recording FPS
+        "INPUT_LIDAR_FPS": 10,
+        "GT_VIDEO_FPS": input_fps,
+        "COSMOS_RESOLUTION": [1280, 704],
+        "NOT_POST_TRAINING": {
+            "RESIZE_RESOLUTION": [1280, 720],
+            "TO_COSMOS_RESOLUTION": "resize",
+            "TARGET_CHUNK_FRAME": chunk_frame,
+            "OVERLAP_FRAME": 0,
+            "TARGET_RENDER_FPS": target_render_fps  # Output video FPS
+        },
+        "POST_TRAINING": {
+            "RESIZE_RESOLUTION": [1280, 720],
+            "TO_COSMOS_RESOLUTION": "center-crop",
+            "TARGET_CHUNK_FRAME": chunk_frame,
+            "OVERLAP_FRAME": 0,
+            "TARGET_RENDER_FPS": target_render_fps
+        }
+    }
+
+    config_path = output_dir / f"dataset_{session_id}.json"
+    with open(config_path, 'w') as f:
+        json.dump(config, f, indent=2)
+
+    logging.info(f"Exported dataset config to {config_path}")
+    return str(config_path)
+
+
+# === RDS-HQ EXPORT ===
+def export_rds_hq_clip(world, args, log_frames, log_duration, dynamic_frames=None, pose_frames=None, camera_intrinsics=None):
+    rds_hq_dir = Path(args.output_dir) / "rds-hq"
+    rds_hq_dir.mkdir(parents=True, exist_ok=True)
+
+    log_file_base = Path(args.recorder_filename).stem
+    log_file_base_sanitized = log_file_base.replace('.', '_')
+
+    start_time_us = int(args.start * 1000000)
+    end_time_us = int((args.start + (args.duration if args.duration > 0 else log_duration)) * 1000000)
+    session_id = f"{log_file_base_sanitized}_{start_time_us}_{end_time_us}"
+
+    logging.info(f"Exporting RDS-HQ clip with session ID: {session_id}")
+    logging.info(f"Output directory: {rds_hq_dir}")
+
+    recording_fps = round(1.0 / (log_duration / log_frames))
+
+    try:
+        logging.info("Starting export of all static cosmos elements...")
+        static_exports = [
+            ("crosswalks", world.export_cosmos_crosswalks, "3d_crosswalks"),
+            ("road_boundaries", world.export_cosmos_road_boundaries, "3d_road_boundaries"),
+            ("lane_lines", world.export_cosmos_lane_lines, "3d_lanelines"),  # Note: no underscore for compatibility
+            ("traffic_signs", world.export_cosmos_traffic_signs, "3d_traffic_signs"),
+            ("wait_lines", world.export_cosmos_wait_lines, "3d_wait_lines"),
+            ("road_markings", world.export_cosmos_road_markings, "3d_road_markings")
+        ]
+
+        successful_exports = []
+        failed_exports = []
+        static_directories = {}
+
+        for export_name, export_func, dir_name in static_exports:
+            try:
+                logging.info(f"Attempting to export {export_name}...")
+                result = export_func(session_id, str(rds_hq_dir) + "/")
+                logging.info(f"Successfully exported {export_name}: {result}")
+                successful_exports.append(export_name)
+                static_directories[export_name] = dir_name
+            except Exception as e:
+                logging.error(f"Failed to export {export_name}: {e}")
+                logging.error(f"Full traceback: {traceback.format_exc()}")
+                failed_exports.append((export_name, str(e)))
+
+        for dir_path in rds_hq_dir.glob("3d_*"):
+            if dir_path.is_dir():
+                try:
+                    json_files = list(dir_path.glob("*.json"))
+
+                    if json_files:
+                        tar_filename = f"{session_id}.tar"
+                        tar_path = dir_path / tar_filename
+
+                        with tarfile.open(tar_path, 'w') as tar:
+                            for json_file in json_files:
+                                tar.add(json_file, arcname=json_file.name)
+
+                        logging.info(f"Created tar archive {tar_path} with {len(json_files)} JSON files")
+
+                        for json_file in json_files:
+                            json_file.unlink()
+                        logging.info(f"Removed {len(json_files)} JSON files from {dir_path.name}")
+                    else:
+                        logging.debug(f"No JSON files found in {dir_path}")
+                except Exception as e:
+                    logging.error(f"Failed to create tar archive for {dir_path.name}: {e}")
+
+        if dynamic_frames:
+            try:
+                actual_frame_count = len(dynamic_frames)
+                calculated_fps = actual_frame_count / (args.duration if args.duration > 0 else log_duration)
+                logging.info(f"Exporting {actual_frame_count} frames of dynamic objects (calculated fps: {calculated_fps:.2f})...")
+                if export_dynamic_objects_data(dynamic_frames, session_id, rds_hq_dir):
+                    successful_exports.append("dynamic_objects")
+            except Exception as e:
+                logging.error(f"Failed to export dynamic objects: {e}")
+                failed_exports.append(("dynamic_objects", str(e)))
+
+        if pose_frames:
+            try:
+                actual_frame_count = len(pose_frames)
+                calculated_fps = actual_frame_count / (args.duration if args.duration > 0 else log_duration)
+                logging.info(f"Exporting {actual_frame_count} frames of camera pose data (calculated fps: {calculated_fps:.2f})...")
+                if export_camera_pose_data(pose_frames, session_id, rds_hq_dir):
+                    successful_exports.append("camera_poses")
+            except Exception as e:
+                logging.error(f"Failed to export camera poses: {e}")
+                failed_exports.append(("camera_poses", str(e)))
+
+        if camera_intrinsics:
+            try:
+                logging.info("Exporting camera intrinsics...")
+                K, width, height, fov = camera_intrinsics
+                if export_camera_intrinsincs_pinhole(K, width, height, session_id, rds_hq_dir):
+                    successful_exports.append("camera_intrinsics")
+            except Exception as e:
+                logging.error(f"Failed to export camera intrinsics: {e}")
+                failed_exports.append(("camera_intrinsics", str(e)))
+
+        # Create metadata file with actual exported frame counts
+        actual_exported_frames = len(dynamic_frames) if dynamic_frames else 0
+        actual_duration = args.duration if args.duration > 0 else log_duration
+        actual_fps = actual_exported_frames / actual_duration if actual_duration > 0 else 0
+
+        metadata = {
+            "session_id": session_id,
+            "carla_version": "0.9.15",
+            "recorder_file": args.recorder_filename,
+            "start_time": args.start,
+            "duration": actual_duration,
+            "total_frames_in_recording": log_frames,
+            "exported_frames": actual_exported_frames,
+            "recording_fps": round(1.0 / (log_duration / log_frames)),
+            "exported_fps": round(actual_fps),
+            "camera_actor_id": args.camera,
+            "time_factor": args.time_factor,
+            "output_structure": {
+                "3d_crosswalks": f"{session_id}.tar",
+                "3d_road_boundaries": f"{session_id}.tar",
+                "3d_lanelines": f"{session_id}.tar",
+                "3d_traffic_signs": f"{session_id}.tar",
+                "3d_wait_lines": f"{session_id}.tar",
+                "3d_road_markings": f"{session_id}.tar",
+                "all_object_info": f"{session_id}.tar",
+                "pose": f"{session_id}.tar",
+                "pinhole_intrinsic": f"{session_id}.tar"
+            }
+        }
+
+        metadata_file = rds_hq_dir / f"{session_id}_metadata.json"
+        with open(metadata_file, 'w') as f:
+            json.dump(metadata, f, indent=2)
+
+        logging.info("Exporting dataset config for RDS-HQ renderer...")
+        export_dataset_config(
+            session_id=session_id,
+            output_dir=rds_hq_dir,
+            rds_hq_camera_name="rds_hq",
+            input_fps=recording_fps,
+            target_render_fps=24,
+            total_frames=actual_exported_frames
+        )
+
+    except Exception as e:
+        logging.error(f"Failed to export RDS-HQ clip: {e}")
+        raise
 
 # === MAIN ===
 def main():
@@ -281,7 +710,7 @@ def main():
         level=logging.INFO,
         format='%(asctime)s %(levelname)s %(processName)s: %(message)s'
     )
-    logging.info("Starting CarlaCosmos-DataAcquisition parallel pipeline")
+    logging.info("Starting CarlaCosmos-DataAcquisition with RDS-HQ export")
 
     if args.class_filter_config:
         load_class_filter_config(args.class_filter_config)
@@ -355,9 +784,39 @@ def main():
     timestamp = args.start
     total = log_duration if args.duration == 0.0 else args.duration
     frame_count = 0
+    dynamic_frames = []
+    pose_frames = []
+
+    has_rds_hq_sensor = any(si.sensor_type == AOV.RDS_HQ for si in sensor_infos)
+    camera_intrinsics = None
+
+    if has_rds_hq_sensor:
+        for si in sensor_infos:
+            if si.sensor_type == AOV.RDS_HQ:
+                K, width, height, fov = extract_camera_intrinsics_from_sensor(si.sensor)
+                camera_intrinsics = (K, width, height, fov)
+                break
+        logging.info("RDS-HQ sensor found - will export RDS-HQ data")
+    else:
+        logging.info("No RDS-HQ sensor found - skipping RDS-HQ export")
+
     try:
         while timestamp < args.start + total:
             idx = world.tick()
+
+            if has_rds_hq_sensor:
+                dynamic_objects = extract_dynamic_objects_data(world, args.camera)
+                dynamic_frames.append(dynamic_objects)
+
+                main_camera_sensor = None
+                for si in sensor_infos:
+                    if si.sensor_type == AOV.RDS_HQ:
+                        main_camera_sensor = si.sensor
+                        break
+
+                camera_pose = extract_camera_poses(world, frame_count, main_camera_sensor)
+                pose_frames.append(camera_pose)
+
             frame_dict = {}
             for si in sensor_infos:
                 res = si.capture_current_frame()
@@ -365,18 +824,25 @@ def main():
                     img,_,_ = res
                     frame_dict[si.sensor_type] = img
             raw_q.put(FrameBundle(idx, frame_dict, timestamp))
+
             frame_count += 1
             if frame_count % 100 == 0:
-                logging.info(f"Queued frame {frame_count}, timestamp={timestamp:.3f}, idx={idx}")
+                rds_frames_collected = len(dynamic_frames)
+                logging.info(f"Queued frame {frame_count}, timestamp={timestamp:.3f}, idx={idx}, RDS-HQ frames={rds_frames_collected}")
             timestamp += log_delta
     finally:
         for _ in workers: raw_q.put(None)
         for p in workers: p.join()
         proc_q.put(None); writer.join()
+
+        if has_rds_hq_sensor:
+            export_rds_hq_clip(world, args, log_frames, log_duration, dynamic_frames, pose_frames, camera_intrinsics)
+        else:
+            logging.info("Skipping RDS-HQ export (no rds_hq sensor defined)")
+
         client.stop_replayer(keep_actors=False)
         for si in sensor_infos: si.sensor.stop(); si.sensor.destroy()
         settings.synchronous_mode = False; settings.fixed_delta_seconds = None; world.apply_settings(settings)
-        logging.info("Finished CarlaCosmos-DataAcquisition parallel pipeline")
 
 if __name__ == '__main__':
     main()

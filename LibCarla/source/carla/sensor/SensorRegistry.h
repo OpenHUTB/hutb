@@ -49,6 +49,7 @@ class ARayCastLidar;
 class ASceneCaptureCamera;
 class ASemanticSegmentationCamera;
 class AInstanceSegmentationCamera;
+class ACosmosControlSensor;
 class ARssSensor;
 class FWorldObserver;
 class ADReyeVRSensor; // DReyeVR forward declaration
@@ -90,6 +91,7 @@ namespace sensor {
     std::pair<ASceneCaptureCamera *, s11n::ImageSerializer>,
     std::pair<ASemanticSegmentationCamera *, s11n::ImageSerializer>,
     std::pair<AInstanceSegmentationCamera *, s11n::ImageSerializer>,
+    std::pair<ACosmosControlSensor *, s11n::ImageSerializer>,
     std::pair<FWorldObserver *, s11n::EpisodeStateSerializer>,
     std::pair<ASceneCaptureCamera_WideAngleLens *, s11n::ImageSerializer>,
     std::pair<ADepthCamera_WideAngleLens *, s11n::ImageSerializer>,
@@ -130,6 +132,7 @@ namespace sensor {
 #include "Carla/Sensor/SceneCaptureCamera.h"
 #include "Carla/Sensor/SemanticSegmentationCamera.h"
 #include "Carla/Sensor/InstanceSegmentationCamera.h"
+#include "Carla/Sensor/CosmosControlSensor.h"
 #include "Carla/Sensor/WorldObserver.h"
 #include "Carla/Sensor/DReyeVRSensor.h" // DReyeVRSensor header file
 #include "Carla/Sensor/DepthCamera_WideAngleLens.h"

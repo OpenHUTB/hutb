@@ -41,6 +41,7 @@ class TestSensorTickTime(SyncSmokeTest):
       "sensor.camera.instance_segmentation",
       "sensor.other.v2x",
       "sensor.other.v2x_custom",
+      "sensor.camera.cosmos_visualization",
       "sensor.camera.rgb.wide_angle_lens",
       "sensor.camera.normals.wide_angle_lens",
       "sensor.camera.depth.wide_angle_lens",

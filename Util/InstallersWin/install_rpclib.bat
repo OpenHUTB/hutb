@@ -16,6 +16,9 @@ rem -- Parse arguments ---------------------------------------------------------
 rem ============================================================================
 
 set DEL_SRC=false
+:: --build-debug true|false
+::   Build the Debug version of rpclib to debug LibCarla client
+set BUILD_DEBUG=false
 
 :arg-parse
 if not "%1"=="" (
@@ -29,6 +32,10 @@ if not "%1"=="" (
     )
     if "%1"=="--delete-src" (
         set DEL_SRC=true
+    )
+    if "%1"=="--build-debug" (
+        set BUILD_DEBUG=true
+        shift
     )
     shift  
     goto :arg-parse
@@ -82,18 +89,46 @@ echo.%GENERATOR% | findstr /C:"Visual Studio" >nul && (
 )
 
 
-cmake .. -G %GENERATOR% %PLATFORM%^
-        -DCMAKE_BUILD_TYPE=Release^
-        -DRPCLIB_BUILD_EXAMPLES=OFF^
-        -DCMAKE_CXX_FLAGS_RELEASE="/MD /MP"^
-        -DCMAKE_INSTALL_PREFIX="%RPC_INSTALL_DIR:\=/%"^
-        "%RPC_SRC_DIR%"
-if %errorlevel% neq 0 goto error_cmake
+if %BUILD_DEBUG% == true (
+    echo cmake .. -G %GENERATOR% %PLATFORM%^
+            -DCMAKE_BUILD_TYPE=Debug^
+            -DRPCLIB_BUILD_EXAMPLES=OFF^
+            -DCMAKE_CXX_FLAGS_DEBUG="/MDd /MP"^
+            -DCMAKE_INSTALL_PREFIX="%RPC_INSTALL_DIR:\=/%"^
+            "%RPC_SRC_DIR%"
+    cmake .. -G %GENERATOR% %PLATFORM%^
+            -DCMAKE_BUILD_TYPE=Debug^
+            -DRPCLIB_BUILD_EXAMPLES=OFF^
+            -DCMAKE_CXX_FLAGS_DEBUG="/MDd /MP"^
+            -DCMAKE_INSTALL_PREFIX="%RPC_INSTALL_DIR:\=/%"^
+            "%RPC_SRC_DIR%"
+    if %errorlevel% neq 0 goto error_cmake
 
-echo %FILE_N% Building...
-cmake --build . --config Release --target install
+    echo %FILE_N% Building...
+    cmake --build . --config Debug --target install
 
-if %errorlevel% neq 0 goto error_install
+    if %errorlevel% neq 0 goto error_install
+) else (
+    echo cmake .. -G %GENERATOR% %PLATFORM%^
+            -DCMAKE_BUILD_TYPE=Release^
+            -DRPCLIB_BUILD_EXAMPLES=OFF^
+            -DCMAKE_CXX_FLAGS_RELEASE="/MD /MP"^
+            -DCMAKE_INSTALL_PREFIX="%RPC_INSTALL_DIR:\=/%"^
+            "%RPC_SRC_DIR%"
+    cmake .. -G %GENERATOR% %PLATFORM%^
+            -DCMAKE_BUILD_TYPE=Release^
+            -DRPCLIB_BUILD_EXAMPLES=OFF^
+            -DCMAKE_CXX_FLAGS_RELEASE="/MD /MP"^
+            -DCMAKE_INSTALL_PREFIX="%RPC_INSTALL_DIR:\=/%"^
+            "%RPC_SRC_DIR%"
+    if %errorlevel% neq 0 goto error_cmake
+
+    echo %FILE_N% Building...
+    cmake --build . --config Release --target install
+
+    if %errorlevel% neq 0 goto error_install
+)
+
 
 rem Remove the downloaded rpclib source because is no more needed
 if %DEL_SRC% == true (

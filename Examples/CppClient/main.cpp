@@ -75,7 +75,7 @@ int main(int argc, const char *argv[]) {
     std::cout << "Server API version : " << client.GetServerVersion() << '\n';
 
     // Load town
-    auto world = client.LoadWorld("Town05_Opt");
+    auto world = client.LoadWorld("Town10HD");
 
     // Get a random vehicle blueprint.
     auto blueprint_library = world.GetBlueprintLibrary();
