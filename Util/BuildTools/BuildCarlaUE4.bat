@@ -95,6 +95,9 @@ if not defined UE4_ROOT (
             set UE4_ROOT=%%C
         )
     )
+    if exist "%ROOT_PATH:/=\%Build\engine\Engine\Binaries\Win64\UE4Editor.exe" (
+        set UE4_ROOT=%ROOT_PATH:/=\%Build\engine\
+    )
     if not defined UE4_ROOT goto error_unreal_no_found
 )
 if not "%UE4_ROOT:~-1%"=="\" set UE4_ROOT=%UE4_ROOT%\
