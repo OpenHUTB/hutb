@@ -52,9 +52,17 @@ done
 
 source $(dirname "$0")/Environment.sh
 
-export CC="$UE4_ROOT/Engine/Extras/ThirdPartyNotUE/SDKs/HostLinux/Linux_x64/v17_clang-10.0.1-centos7/x86_64-unknown-linux-gnu/bin/clang"
-export CXX="$UE4_ROOT/Engine/Extras/ThirdPartyNotUE/SDKs/HostLinux/Linux_x64/v17_clang-10.0.1-centos7/x86_64-unknown-linux-gnu/bin/clang++"
-export PATH="$UE4_ROOT/Engine/Extras/ThirdPartyNotUE/SDKs/HostLinux/Linux_x64/v17_clang-10.0.1-centos7/x86_64-unknown-linux-gnu/bin:$PATH"
+#export CC="$UE4_ROOT/Engine/Extras/ThirdPartyNotUE/SDKs/HostLinux/Linux_x64/v17_clang-10.0.1-centos7/x86_64-unknown-linux-gnu/bin/clang"
+#export CXX="$UE4_ROOT/Engine/Extras/ThirdPartyNotUE/SDKs/HostLinux/Linux_x64/v17_clang-10.0.1-centos7/x86_64-unknown-linux-gnu/bin/clang++"
+#export PATH="$UE4_ROOT/Engine/Extras/ThirdPartyNotUE/SDKs/HostLinux/Linux_x64/v17_clang-10.0.1-centos7/x86_64-unknown-linux-gnu/bin:$PATH"
+
+export CC=/usr/bin/clang
+export CXX=/usr/bin/clang++
+export PATH=/usr/bin:/bin:$PATH                              
+
+echo $PATH
+#read -p "Press Enter to continue..."
+
 
 CXX_TAG=c10
 
@@ -64,9 +72,17 @@ IFS="," read -r -a PY_VERSION_LIST <<< "${PY_VERSION_LIST}"
 mkdir -p ${CARLA_BUILD_FOLDER}
 pushd ${CARLA_BUILD_FOLDER} >/dev/null
 
-LLVM_INCLUDE="$UE4_ROOT/Engine/Source/ThirdParty/Linux/LibCxx/include/c++/v1"
-LLVM_LIBPATH="$UE4_ROOT/Engine/Source/ThirdParty/Linux/LibCxx/lib/Linux/x86_64-unknown-linux-gnu"
-UNREAL_HOSTED_CFLAGS="--sysroot=$UE4_ROOT/Engine/Extras/ThirdPartyNotUE/SDKs/HostLinux/Linux_x64/v17_clang-10.0.1-centos7/x86_64-unknown-linux-gnu/"
+#LLVM_INCLUDE="$UE4_ROOT/Engine/Source/ThirdParty/Linux/LibCxx/include/c++/v1"
+#LLVM_LIBPATH="$UE4_ROOT/Engine/Source/ThirdParty/Linux/LibCxx/lib/Linux/x86_64-unknown-linux-gnu"
+#UNREAL_HOSTED_CFLAGS="--sysroot=$UE4_ROOT/Engine/Extras/ThirdPartyNotUE/SDKs/HostLinux/Linux_x64/v17_clang-10.0.1-centos7/x86_64-unknown-linux-gnu/"
+
+unset UNREAL_HOSTED_CFLAGS
+unset LLVM_INCLUDE
+unset LLVM_LIBPATH
+
+export CXXFLAGS="-std=c++11 -stdlib=libstdc++"
+export LDFLAGS="-stdlib=libstdc++"
+
 
 # ==============================================================================
 # -- Generate CMake toolchains -------------------------------------------------
@@ -422,7 +438,7 @@ unset RECAST_BASENAME
 # ==============================================================================
 
 LIBPNG_VERSION=1.6.37
-LIBPNG_REPO=https://sourceforge.net/projects/libpng/files/libpng16/${LIBPNG_VERSION}/libpng-${LIBPNG_VERSION}.tar.xz
+LIBPNG_REPO=https://sourceforge.net/projects/libpng/files/libpng16/older-releases/${LIBPNG_VERSION}/libpng-${LIBPNG_VERSION}.tar.xz
 LIBPNG_BASENAME=libpng-${LIBPNG_VERSION}
 LIBPNG_INSTALL=${LIBPNG_BASENAME}-install
 
@@ -512,9 +528,10 @@ else
       -Dtranscoder=gnuiconv \
       -Dnetwork=OFF \
       ..
+
   ninja
   ninja install
-
+  
   popd >/dev/null
 
   mkdir -p ${XERCESC_INSTALL_SERVER_DIR}
@@ -522,13 +539,14 @@ else
   pushd ${XERCESC_SRC_DIR}/build >/dev/null
 
   cmake -G "Ninja" \
-      -DCMAKE_CXX_FLAGS="-std=c++14 -stdlib=libc++ -fPIC -w -I${LLVM_INCLUDE} -L${LLVM_LIBPATH}" \
+      -DCMAKE_CXX_FLAGS="-std=c++14 -fPIC -w -I${LLVM_INCLUDE} -L${LLVM_LIBPATH}" \
       -DCMAKE_INSTALL_PREFIX="../../${XERCESC_INSTALL_SERVER_DIR}" \
       -DCMAKE_BUILD_TYPE=Release \
       -DBUILD_SHARED_LIBS=OFF \
       -Dtranscoder=gnuiconv \
       -Dnetwork=OFF \
       ..
+
   ninja
   ninja install
 
@@ -1045,8 +1063,7 @@ add_definitions(-DLIBCARLA_TEST_CONTENT_FOLDER="${LIBCARLA_TEST_CONTENT_FOLDER}"
 set(BOOST_INCLUDE_PATH "${BOOST_INCLUDE}")
 set(FASTDDS_INCLUDE_PATH "${FASTDDS_INCLUDE}")
 set(FASTDDS_LIB_PATH "${FASTDDS_LIB}")
-
-if (CMAKE_BUILD_TYPE STREQUAL "Server")
+if (CMAKE_BUILD_TYPE STREQUAL "Server") 
   # Here libraries linking libc++.
   set(LLVM_INCLUDE_PATH "${LLVM_INCLUDE}")
   set(LLVM_LIB_PATH "${LLVM_LIBPATH}")
@@ -1063,7 +1080,7 @@ elseif (CMAKE_BUILD_TYPE STREQUAL "Pytorch")
   list(APPEND CMAKE_PREFIX_PATH "${LIBTORCHCLUSTER_INSTALL_DIR}")
   list(APPEND CMAKE_PREFIX_PATH "${LIBTORCHSPARSE_INSTALL_DIR}")
 elseif (CMAKE_BUILD_TYPE STREQUAL "Client")
-  # Here libraries linking libstdc++.
+  # Here libraries linking libstdc++. 
   set(RPCLIB_INCLUDE_PATH "${RPCLIB_LIBSTDCXX_INCLUDE}")
   set(RPCLIB_LIB_PATH "${RPCLIB_LIBSTDCXX_LIBPATH}")
   set(GTEST_INCLUDE_PATH "${GTEST_LIBSTDCXX_INCLUDE}")

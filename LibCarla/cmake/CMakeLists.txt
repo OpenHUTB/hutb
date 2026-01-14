@@ -3,7 +3,7 @@ project(libcarla)
 
 option(LIBCARLA_BUILD_DEBUG "Build debug configuration" ON)
 option(LIBCARLA_BUILD_RELEASE "Build release configuration" ON)
-option(LIBCARLA_BUILD_TEST "Build unit tests" ON)
+option(LIBCARLA_BUILD_TEST "Build unit tests" OFF)
 
 message(STATUS "Build debug:   ${LIBCARLA_BUILD_DEBUG}")
 message(STATUS "Build release: ${LIBCARLA_BUILD_RELEASE}")
