@@ -61,7 +61,11 @@ export CXX=/usr/bin/clang++
 export PATH=/usr/bin:/bin:$PATH                              
 
 echo $PATH
+<<<<<<< Updated upstream
 #read -p "Press Enter to continue..."
+=======
+read -p "Press Enter to continue..."
+>>>>>>> Stashed changes
 
 
 CXX_TAG=c10
@@ -1063,6 +1067,10 @@ add_definitions(-DLIBCARLA_TEST_CONTENT_FOLDER="${LIBCARLA_TEST_CONTENT_FOLDER}"
 set(BOOST_INCLUDE_PATH "${BOOST_INCLUDE}")
 set(FASTDDS_INCLUDE_PATH "${FASTDDS_INCLUDE}")
 set(FASTDDS_LIB_PATH "${FASTDDS_LIB}")
+<<<<<<< Updated upstream
+=======
+
+>>>>>>> Stashed changes
 if (CMAKE_BUILD_TYPE STREQUAL "Server") 
   # Here libraries linking libc++.
   set(LLVM_INCLUDE_PATH "${LLVM_INCLUDE}")

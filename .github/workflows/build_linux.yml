@@ -22,4 +22,31 @@ jobs:
                     run: |
                        pwd
                        ls -al
+                  
+                  - name: setup
+                    run: |
+                       source ./setEnv64.sh 
+                       git update-index --skip-worktree Unreal/CarlaUE4/CarlaUE4.uproject
+                       make setup ARGS="--chrono"
+                    shell: bash 
+                 
+                  - name: build 
+                    run: |
+                       source ./setEnv64.sh 
+                       make plugins 
+                    shell: bash  
+
+                  - name: retrieve content
+                    run: | 
+                       source ./setEnv64.sh 
+                       make update 
+                    shell: bash 
+
+                  - name: package 
+                    run: |
+                       source ./setEnv64.sh 
+                       makepakage ARGS="--chrono"
+                    shell: bash 
+
+
 
