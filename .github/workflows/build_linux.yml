@@ -45,7 +45,7 @@ jobs:
                   - name: package 
                     run: |
                        source ./setEnv64.sh 
-                       makepakage ARGS="--chrono"
+                       make package ARGS="--chrono"
                     shell: bash 
 
 
