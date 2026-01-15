@@ -39,7 +39,7 @@ jobs:
                   - name: retrieve content
                     run: | 
                        source ./setEnv64.sh 
-                       make update 
+                       source ./update.sh  
                     shell: bash 
 
                   - name: package 
