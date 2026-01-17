@@ -10,7 +10,7 @@ jobs:
              runs-on: self-hosted:ubuntu-hutb
 
              env:
-                UE4_ROOT: ~/UnrealEngine_4.26
+                UE4_ROOT: /home/ubuntu/UnrealEngine_4.26
 
              steps:
                   - name: Checkout repository
