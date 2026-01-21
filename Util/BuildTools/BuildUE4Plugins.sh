@@ -18,6 +18,20 @@ CURRENT_STREETMAP_COMMIT=260273d6b7c3f28988cda31fd33441de7e272958
 STREETMAP_BRANCH=master
 STREETMAP_REPO=https://github.com/carla-simulator/StreetMap.git
 
+# build air plugin
+BUILD_AIR=true
+GIT_PULL=true
+AIR_BRANCH=main
+#AIR_REPO=https://github.com/OpenHUTB/air.git
+AIR_REPO=https://github.com/jiandaoshou-aidehua/air.git
+
+ROOT_PATH="/home/ubuntu/hutb"
+CARLA_PLUGINS_PATH="$ROOT_PATH/Unreal/CarlaUE4/Plugins"
+CARLA_STREETMAP_PLUGINS_PATH="$CARLA_PLUGINS_PATH/StreetMap"
+
+AIR_PLUGIN_PATH="$CARLA_PLUGINS_PATH/AirSim"
+AIR_BUILD_PATH="$ROOT_PATH/Build/AirSim"
+
 OPTS=`getopt -o h --long build,rebuild,clean,chrono,chrono-path: -n 'parse-options' -- "$@"`
 
 eval set -- "$OPTS"
@@ -54,7 +68,8 @@ done
 source $(dirname "$0")/Environment.sh
 
 if ! { ${REMOVE_INTERMEDIATE} || ${BUILD_STREETMAP}; }; then
-  fatal_error "Nothing selected to be done."
+ BUILD_SREETMAP=true 
+ # fatal_error "Nothing selected to be done."
 fi
 
 # ==============================================================================
@@ -90,5 +105,37 @@ if ${BUILD_STREETMAP} ; then
     git checkout ${CURRENT_STREETMAP_COMMIT}
   fi
 fi
+
+# ==============================================================================
+# -- Build airsim -------------------------------------------------------------
+# ==============================================================================
+
+if [ "$BUILD_AIR" = "true" ]; then
+    if [ -d "$AIR_BUILD_PATH/Unreal/Plugins/AirSim" ]; then
+        cd "$AIR_BUILD_PATH"
+        git fetch --all
+        git reset --hard origin/$AIR_BRANCH
+        git pull
+    else 
+        echo "Air cache directory: $CACHE_DIR/AirSim"
+        if [ -d "$CACHE_DIR/AirSim" ]; then
+           cp -a "$CACHE_DIR/AirSim" "$AIR_BUILD_PATH"
+        else 
+           git clone -b "$AIR_BRANCH" "$AIR_REPO" "$AIR_BUILD_PATH"
+	fi
+    fi
+    cd "$AIR_BUILD_PATH"
+    echo "Current dir: $(pwd)"
+    # Build AirSim
+    # read -p "press enter to continue ..."
+    ./setup.sh 
+    ./build.sh 
+    cp -a \
+       "$AIR_BUILD_PATH/Unreal/Plugins/AirSim" \
+       "$AIR_PLUGIN_PATH"
+fi
+
+
+
 
 log "StreetMap Success!"
