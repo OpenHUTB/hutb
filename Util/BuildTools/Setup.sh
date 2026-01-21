@@ -80,8 +80,8 @@ unset UNREAL_HOSTED_CFLAGS
 unset LLVM_INCLUDE
 unset LLVM_LIBPATH
 
-export CXXFLAGS="-std=c++11 -stdlib=libstdc++"
-export LDFLAGS="-stdlib=libstdc++"
+export CXXFLAGS="-std=c++14 -stdlib=libc++"
+export LDFLAGS="-stdlib=libc++"
 
 
 # ==============================================================================
@@ -286,7 +286,7 @@ else
   pushd ${RPCLIB_BASENAME}-libstdcxx-build >/dev/null
 
   cmake -G "Ninja" \
-      -DCMAKE_CXX_FLAGS="-fPIC -std=c++14" \
+      -DCMAKE_CXX_FLAGS="-fPIC -std=c++14 -stdlib=libstdc++" \
       -DCMAKE_INSTALL_PREFIX="../${RPCLIB_BASENAME}-libstdcxx-install" \
       ../${RPCLIB_BASENAME}-source
 
@@ -355,7 +355,7 @@ else
   pushd ${GTEST_BASENAME}-libstdcxx-build >/dev/null
 
   cmake -G "Ninja" \
-      -DCMAKE_CXX_FLAGS="-std=c++14" \
+      -DCMAKE_CXX_FLAGS="-std=c++14 -stdlib=libstdc++" \
       -DCMAKE_INSTALL_PREFIX="../${GTEST_BASENAME}-libstdcxx-install" \
       ../${GTEST_BASENAME}-source
 
@@ -409,7 +409,7 @@ else
   pushd ${RECAST_BASENAME}-build >/dev/null
 
   cmake -G "Ninja" \
-      -DCMAKE_CXX_FLAGS="-std=c++14 -fPIC" \
+      -DCMAKE_CXX_FLAGS="-std=c++14 -stdlib=libc++ -fPIC" \
       -DCMAKE_INSTALL_PREFIX="../${RECAST_BASENAME}-install" \
       -DRECASTNAVIGATION_DEMO=False \
       -DRECASTNAVIGATION_TEST=False \
@@ -521,7 +521,7 @@ else
   pushd ${XERCESC_SRC_DIR}/build >/dev/null
 
   cmake -G "Ninja" \
-      -DCMAKE_CXX_FLAGS="-std=c++14 -fPIC -w" \
+      -DCMAKE_CXX_FLAGS="-std=c++14 -stdlib=libc++ -fPIC -w" \
       -DCMAKE_INSTALL_PREFIX="../../${XERCESC_INSTALL_DIR}" \
       -DCMAKE_BUILD_TYPE=Release \
       -DBUILD_SHARED_LIBS=OFF \
@@ -539,7 +539,7 @@ else
   pushd ${XERCESC_SRC_DIR}/build >/dev/null
 
   cmake -G "Ninja" \
-      -DCMAKE_CXX_FLAGS="-std=c++14 -fPIC -w -I${LLVM_INCLUDE} -L${LLVM_LIBPATH}" \
+      -DCMAKE_CXX_FLAGS="-std=c++14 -stdlib=libc++ -fPIC -w -I${LLVM_INCLUDE} -L${LLVM_LIBPATH}" \
       -DCMAKE_INSTALL_PREFIX="../../${XERCESC_INSTALL_SERVER_DIR}" \
       -DCMAKE_BUILD_TYPE=Release \
       -DBUILD_SHARED_LIBS=OFF \

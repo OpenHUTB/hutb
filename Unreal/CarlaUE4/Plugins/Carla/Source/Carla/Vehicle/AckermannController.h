@@ -78,7 +78,7 @@ class PID
 };
 
 
-class FAckermannController
+class CARLA_API FAckermannController
 {
 public:
 

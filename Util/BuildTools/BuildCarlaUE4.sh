@@ -14,7 +14,7 @@ BUILD_CARLAUE4=false
 LAUNCH_UE4_EDITOR=false
 USE_CARSIM=false
 USE_CHRONO=false
-USE_SIMREADY=true
+USE_SIMREADY=false
 USE_PYTORCH=false
 USE_UNITY=true
 USE_ROS2=false
@@ -94,6 +94,8 @@ done
 # ==============================================================================
 
 source $(dirname "$0")/Environment.sh
+export UE4_ROOT=/home/ubuntu/UnrealEngine_4.26
+echo $UE4_ROOT
 
 if [ ! -d "${UE4_ROOT}" ]; then
   fatal_error "UE4_ROOT is not defined, or points to a non-existant directory, please set this environment variable."
@@ -202,7 +204,7 @@ if ${BUILD_CARLAUE4} ; then
     set -e
 
   fi
-
+  export UE_USE_SYSTEM_MONO=1  
   log "Build CarlaUE4 project."
   make CarlaUE4Editor ARGS=""
 
