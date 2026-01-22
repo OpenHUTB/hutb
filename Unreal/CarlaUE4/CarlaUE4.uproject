@@ -110,7 +110,7 @@
 		},
 		{
 			"Name": "RenderDocPlugin",
-			"Enabled": true
+			"Enabled": false
 		},
 		{
 			"Name": "CarSim",

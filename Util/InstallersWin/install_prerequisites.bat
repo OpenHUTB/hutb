@@ -11,6 +11,7 @@ set visual_studio_components=^
     Microsoft.VisualStudio.Workload.NativeGame ^
     Microsoft.VisualStudio.Workload.ManagedDesktop ^
     Microsoft.VisualStudio.Component.Windows10SDK.22621 ^
+    Microsoft.VisualStudio.Component.Windows11SDK.26100 ^
     Microsoft.VisualStudio.Component.VC.CMake.Project ^
     Microsoft.Net.Component.4.8.SDK ^
     Microsoft.Net.ComponentGroup.4.8.1.DeveloperTools ^
@@ -92,22 +93,6 @@ if errorlevel 1 (
 ) else (
     echo Found Ninja.
 )
-
-rem -- INSTALL PYTHON --
-:: %python_path% -V >nul 2>nul
-:: if errorlevel 1 (
-::     echo Could not find Python. Downloading...
-::     echo Installing Python %python_version_default%...
-::     curl -L -O https://www.python.org/ftp/python/%python_version_default%/python-%python_version_default%-amd64.exe || exit /b
-::     python-%python_version_default%-amd64.exe /passive PrependPath=1  || exit /b
-::     del python-%python_version_default%-amd64.exe
-::     set "PATH=%LocalAppData%\Programs\Python\Python38\Scripts\;%LocalAppData%\Programs\Python\Python38\;%PATH%"
-::     echo Installed Python %python_version_default%.
-:: ) else (
-::     echo Found Python.
-:: )
-
-:: Anaconda installation
 
 
 rem -- INSTALL PYTHON PACKAGES --

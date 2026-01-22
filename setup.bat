@@ -13,6 +13,31 @@ set python_root=
 
 rem -- PARSE COMMAND LINE ARGUMENTS --
 
+
+set scriptPath=%~dp0
+echo %scriptPath%
+
+set scriptDir=!scriptPath:~0,-1!
+
+set UE4_ROOT=!scriptDir!\Build\engine
+echo %UE4_ROOT%
+
+set "RelativePaths=Build\dependencies\prerequisites\CMake\bin;Build\dependencies\prerequisites\dotnet;Build\dependencies\prerequisites\GnuWin32\bin;Build\dependencies\prerequisites\miniconda3\envs\hutb_3.8;Build\dependencies\prerequisites\miniconda3\envs\hutb_3.8\Scripts"
+  
+
+for /f "tokens=2 delims==" %%a in ('set Path') do set "CurrentPath=%%a" 
+set "currentPath=%path%"
+
+for %%p in (%RelativePaths%) do (    
+    set "absPath=!scriptDir!\%%p"    
+    set "currentPath=!currentPath!;!absPath!"    
+)
+set "path=%currentPath%"
+
+echo !path!
+
+
+
 :parse
     if "%1"=="" (
         goto main
@@ -202,8 +227,15 @@ if not "%vs_env_bat%"=="" (
     exit 1
 )
 
+rem make LibCarla ARGS="--chrono" >LibCarla.log
 
-call %cd%\Build\dependencies\prerequisites\GnuWin32\bin\make launch ARGS="--chrono"
+rem make PythonAPI ARGS="--chrono" >python.log
+
+rem call %cd%\Build\dependencies\prerequisites\GnuWin32\bin\make launch ARGS="--chrono"
+
+make launch ARGS="--chrono" >launch.log
+
+rem make package ARGS="--chrono" >package.log
 
 
 
