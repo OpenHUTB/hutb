@@ -109,6 +109,11 @@ fi
 # ==============================================================================
 # -- Build airsim -------------------------------------------------------------
 # ==============================================================================
+echo "Build_Air:$BUILD_AIR"
+echo "CACHE_DIR:$CACHE_DIR"
+echo "Build_Air:$BUILD_AIR"
+
+
 
 if [ "$BUILD_AIR" = "true" ]; then
     if [ -d "$AIR_BUILD_PATH/Unreal/Plugins/AirSim" ]; then
@@ -116,11 +121,14 @@ if [ "$BUILD_AIR" = "true" ]; then
         git fetch --all
         git reset --hard origin/$AIR_BRANCH
         git pull
+	echo "0000"
     else 
         echo "Air cache directory: $CACHE_DIR/AirSim"
         if [ -d "$CACHE_DIR/AirSim" ]; then
            cp -a "$CACHE_DIR/AirSim" "$AIR_BUILD_PATH"
+	   echo "1111"
         else 
+	   echo "2222"
            git clone -b "$AIR_BRANCH" "$AIR_REPO" "$AIR_BUILD_PATH"
 	fi
     fi
