@@ -2,8 +2,8 @@ name: hutb Windows CI/CD
 
 on: 
   push:
-    branches:
-      - fix_network
+  pull_request:
+
 
 jobs:
   windows-dev:
