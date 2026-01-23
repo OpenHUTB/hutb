@@ -1,7 +1,7 @@
 chcp 65001
 
-unset http_proxy
-unset https_proxy
+rem unset http_proxy
+rem unset https_proxy
 
 :: python.exe
 set PATH=C:\software\anaconda3;%PATH%
