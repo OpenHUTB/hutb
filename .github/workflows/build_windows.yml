@@ -51,3 +51,7 @@ jobs:
           make check.PythonAPI
           make check.smoke
         shell: cmd
+
+      - uses: AutoModality/action-clean@v1
+      - uses: actions/checkout@v2
+      - run: echo Clean workspace
