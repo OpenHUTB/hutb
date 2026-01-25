@@ -1,5 +1,7 @@
 ## Latest Changes
 
+* Fix possible RPC Server deadlock on shutdown
+
 ## CARLA 0.9.16
 
  * Added NVIDIA Cosmos Transfer1 integration
