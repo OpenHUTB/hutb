@@ -22,6 +22,7 @@
 #include "carla/client/detail/Episode.h"
 #include "carla/client/detail/EpisodeProxy.h"
 #include "carla/profiler/LifetimeProfiled.h"
+#include "carla/rpc/CustomV2XBytes.h"
 #include "carla/rpc/TrafficLightState.h"
 #include "carla/rpc/VehicleLightStateList.h"
 #include "carla/rpc/LabelledPoint.h"
@@ -731,7 +732,7 @@ namespace detail {
         Actor & sensor,
         uint32_t gbuffer_id);
 
-    void Send(const Sensor &sensor, std::string message);
+    void Send(const Sensor &sensor, const carla::rpc::CustomV2XBytes &data);
 
     void SetIgnoredVehicles(const Sensor &sensor, const std::vector<ActorId>& vehicle_ids);
 

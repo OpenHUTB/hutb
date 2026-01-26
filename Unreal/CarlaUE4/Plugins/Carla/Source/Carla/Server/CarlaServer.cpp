@@ -942,9 +942,9 @@ void FCarlaServer::FPimpl::BindActions()
   };
 
 
-  BIND_SYNC(send) << [this](
+BIND_SYNC(send) << [this](
       cr::ActorId ActorId,
-      std::string message) -> R<void>
+      cr::CustomV2XBytes Data) -> R<void>
   {
     REQUIRE_CARLA_EPISODE();
     FCarlaActor* CarlaActor = Episode->FindCarlaActor(ActorId);
@@ -972,7 +972,7 @@ void FCarlaServer::FPimpl::BindActions()
         " Actor Id: " + FString::FromInt(ActorId));
     }
 
-    Sensor->Send(cr::ToFString(message));
+    Sensor->Send(Data);
     return R<void>::Success();
   };
 
