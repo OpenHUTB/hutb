@@ -41,12 +41,18 @@ jobs:
                        source ./setEnv64.sh 
                        source ./Update.sh  
                     shell: bash 
-
-                  - name: package 
+                  
+                  - name: CarlaUE4Editor
                     run: |
                        source ./setEnv64.sh 
-                       make package ARGS="--chrono"
-                    shell: bash 
+                       make CarlaUE4Editor ARGS="--chrono -j$(nproc)"
+                    shell: bash
+                    
+                    # - name: package 
+                    #run: |
+                    #   source ./setEnv64.sh 
+                    #   make package ARGS="--chrono"
+                    # shell: bash 
 
 
 
