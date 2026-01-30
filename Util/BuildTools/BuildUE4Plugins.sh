@@ -95,28 +95,27 @@ fi
 # ==============================================================================
 
 # download assets 
-:'
-if [[ ! -d "$CONTENT_PATH" ]]; then
-  echo "$FILE_N Content directory: \"$CONTENT_PATH\""
 
-  if [[ -d "$CACHE_DIR/Content" ]]; then
-    # <==> xcopy /q /Y /S /I
-    cp -a "$CACHE_DIR/Content/." "$CONTENT_PATH/"
-  else
-    git clone https://OpenHUTB:T8w6TYB_r71gGTP3A02B@git.code.tencent.com/OpenHUTB/Content.git "$CONTENT_PATH"
-    cd "$CONTENT_PATH"
-    git lfs pull
-  fi
+#if [[ ! -d "$CONTENT_PATH" ]]; then
+#  echo "$FILE_N Content directory: \"$CONTENT_PATH\""
 
-else
-  echo "$FILE_N Content directory already exists: \"$CONTENT_PATH\", executing git pull."
-  cd "$CONTENT_PATH"
-  git fetch --all
-  git reset --hard origin/master
-  git pull
-  git lfs pull
-fi
-'
+#  if [[ -d "$CACHE_DIR/Content" ]]; then
+#    # <==> xcopy /q /Y /S /I
+#    cp -a "$CACHE_DIR/Content/." "$CONTENT_PATH/"
+#  else
+#    git clone https://OpenHUTB:T8w6TYB_r71gGTP3A02B@git.code.tencent.com/OpenHUTB/Content.git "$CONTENT_PATH"
+#    cd "$CONTENT_PATH"
+#    git lfs pull
+#  fi
+
+#else
+#  echo "$FILE_N Content directory already exists: \"$CONTENT_PATH\", executing git pull."
+#  cd "$CONTENT_PATH"
+#  git fetch --all
+#  git reset --hard origin/master
+#  git pull
+#  git lfs pull
+#fi
 
 
 if ${BUILD_STREETMAP} ; then
