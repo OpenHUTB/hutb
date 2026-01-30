@@ -30,7 +30,7 @@ CARLA_STREETMAP_PLUGINS_PATH="$CARLA_PLUGINS_PATH/StreetMap"
 AIR_PLUGIN_PATH="$CARLA_PLUGINS_PATH/AirSim"
 AIR_BUILD_PATH="$ROOT_PATH/Build/AirSim"
 
-CONTENT_PATH="$ROOT_PATH/Unreal/CarlaUE4/Content"
+#CONTENT_PATH="$ROOT_PATH/Unreal/CarlaUE4/Content"
 
 OPTS=`getopt -o h --long build,rebuild,clean,chrono,chrono-path: -n 'parse-options' -- "$@"`
 
@@ -95,6 +95,7 @@ fi
 # ==============================================================================
 
 # download assets 
+:'
 if [[ ! -d "$CONTENT_PATH" ]]; then
   echo "$FILE_N Content directory: \"$CONTENT_PATH\""
 
@@ -115,7 +116,7 @@ else
   git pull
   git lfs pull
 fi
-
+'
 
 
 if ${BUILD_STREETMAP} ; then
