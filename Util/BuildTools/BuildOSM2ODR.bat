@@ -78,7 +78,7 @@ set OSM2ODR_INSTALL_PATH=%ROOT_PATH:/=\%PythonAPI\carla\dependencies\
 set OSM2ODR__SERVER_INSTALL_PATH=%ROOT_PATH:/=\%Unreal\CarlaUE4\Plugins\Carla\CarlaDependencies
 set CARLA_DEPENDENCIES_FOLDER=%ROOT_PATH:/=\%Unreal\CarlaUE4\Plugins\Carla\CarlaDependencies\
 
-if exist "%programfiles%\Microsoft Visual Studio\2022\Community\VC\Auxiliary\Build\vcvars64.bat" (
+if exist "%ProgramW6432%\Microsoft Visual Studio\2022\Community\VC\Auxiliary\Build\vcvars64.bat" (
     if %GENERATOR% == "" set GENERATOR="Visual Studio 17 2022"
 ) else (
     if %GENERATOR% == "" set GENERATOR="Visual Studio 16 2019"
@@ -100,12 +100,10 @@ rem Build OSM2ODR
 if %BUILD_OSM2ODR% == true (
     cd "%INSTALLATION_DIR%"
     if not exist "%OSM2ODR_SOURCE_PATH%" (
-        if exist "%CACHE_DIR:/=\%Installation.zip" (
-            "%ProgramW6432%/7-Zip/7z.exe" x "%CACHE_DIR:/=\%Installation.zip" -o"%ROOT_PATH%" -y
-            :: tar: Cannot connect to C: resolve failed
-            :: tar -xf %CACHE_DIR:/=\%Installation.zip  -C %ROOT_PATH%
+        if exist "%INSTALLATION_DIR:/=\%dependencies\src\osm2odr-source.zip" (
+            "%ProgramW6432%/7-Zip/7z.exe" x "%INSTALLATION_DIR:/=\%dependencies\src\osm2odr-source.zip" -o"%INSTALLATION_DIR%" -y
         ) else (
-            curl --retry 5 --retry-max-time 120 -L -o OSM2ODR.zip https://github.com/carla-simulator/sumo/archive/%CURRENT_OSM2ODR_COMMIT%.zip
+            curl --retry 5 --retry-max-time --ssl-no-revoke 120 -L -o OSM2ODR.zip https://github.com/carla-simulator/sumo/archive/%CURRENT_OSM2ODR_COMMIT%.zip
             tar -xf OSM2ODR.zip
             del OSM2ODR.zip
             ren sumo-%CURRENT_OSM2ODR_COMMIT% osm2odr-source

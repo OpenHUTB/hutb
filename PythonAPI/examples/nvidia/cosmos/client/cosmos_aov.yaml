@@ -2,7 +2,7 @@
   attributes:
     image_size_x: 1920
     image_size_y: 1080
-    fov: 110
+    fov: 90
   transform:
     location:
       x: 0
@@ -16,7 +16,7 @@
   attributes:
     image_size_x: 1920
     image_size_y: 1080
-    fov: 110
+    fov: 90
   transform:
     location:
       x: 0
@@ -30,7 +30,7 @@
   attributes:
     image_size_x: 1920
     image_size_y: 1080
-    fov: 110
+    fov: 90
   transform:
     location:
       x: 0
@@ -44,7 +44,7 @@
   attributes:
     image_size_x: 1920
     image_size_y: 1080
-    fov: 110
+    fov: 90
   transform:
     location:
       x: 0
@@ -58,7 +58,7 @@
   attributes:
     image_size_x: 1920
     image_size_y: 1080
-    fov: 110
+    fov: 90
   transform:
     location:
       x: 0
@@ -72,7 +72,7 @@
   attributes:
     image_size_x: 1920
     image_size_y: 1080
-    fov: 110
+    fov: 90
   transform:
     location:
       x: 0.0

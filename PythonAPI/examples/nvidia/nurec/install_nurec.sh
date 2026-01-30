@@ -1,5 +1,45 @@
-#!/usr/bin/env bash
+#! /usr/bin/env bash
+
 set -euo pipefail
+
+CARLA_VERSION=0.9.16
+PYTHON_EXECUTABLE=python
+
+CARLA_ROOT=$(realpath "$BASH_SOURCE[0]")
+CARLA_ROOT=$(dirname "$CARLA_ROOT")
+CARLA_ROOT=$CARLA_ROOT/../../../..
+CARLA_ROOT=$(realpath "$CARLA_ROOT")
+PYTHON_API_ROOT=$CARLA_ROOT/PythonAPI
+CARLA_NUREC_ROOT=$PYTHON_API_ROOT/examples/nvidia/nurec
+
+options=$( \
+    getopt \
+    -o "i:" \
+    --long "python:" \
+    -n 'install_nurec.sh' -- "$@")
+
+eval set -- "$options"
+
+while true; do
+    case "$1" in
+        -i|--python)
+            PYTHON_EXECUTABLE=$2
+            shift 2
+            ;;
+        --)
+            shift
+            break
+            ;;
+        *)
+            echo Unknown option $1
+            ;;
+    esac
+done
+
+echo Using python interpreter $PYTHON_EXECUTABLE.
+
+PYTHON_VERSION=$($PYTHON_EXECUTABLE -V)
+IFS=. read PYTHON_MAJOR PYTHON_MINOR PYTHON_PATCH <<< "$($PYTHON_EXECUTABLE -c 'import sys; print(".".join(map(str, sys.version_info[:3])))')"
 
 command_exists() { command -v "$1" >/dev/null 2>&1; }
 
@@ -10,7 +50,10 @@ TARGET_USER="${SUDO_USER:-$USER}"
 # Function to check if HuggingFace dataset exists
 check_hf_dataset() {
     local dataset_path="PhysicalAI-Autonomous-Vehicles-NuRec"
+    local dataset_path_real=$(realpath "$dataset_path")
     if [ -d "$dataset_path" ]; then
+        echo "HuggingFace dataset already exists, skipping download."
+        echo "If you need to download it again, delete $dataset_path_real."
         return 0
     fi
     return 1
@@ -199,6 +242,7 @@ if check_NuRec_container "docker.io/carlasimulator/nvidia-nurec-grpc:0.2.0"; the
 else
     echo "Initiating NuRec GRPC Container Downloads..."
     sudo -E docker pull docker.io/carlasimulator/nvidia-nurec-grpc:0.2.0
+    
     if [ $? -ne 0 ]; then
         echo "Error: Failed to download NuRec GRPC Container"
         exit 1
@@ -207,11 +251,9 @@ fi
 
 # Download the dataset from HuggingFace
 echo "Checking HuggingFace dataset..."
-if check_hf_dataset; then
-    echo "HuggingFace dataset already exists, skipping download."
-else
+if ! check_hf_dataset; then
     echo "Installing HuggingFace CLI..."
-    pip3 install --upgrade huggingface_hub || {
+    $PYTHON_EXECUTABLE -m pip install --upgrade huggingface_hub || {
         echo "Error: Failed to install HuggingFace CLI"
         exit 1
     }
@@ -279,7 +321,7 @@ echo "Installing Python dependencies..."
 
 # Install base dependencies
 echo "Installing base dependencies..."
-python -m pip install pygame numpy nvidia-nvjpeg-cu12 imageio|| {
+$PYTHON_EXECUTABLE -m pip install pygame numpy nvidia-nvjpeg-cu12 imageio|| {
     echo "Error: Failed to install pygame and numpy"
     exit 1
 }
@@ -287,27 +329,29 @@ python -m pip install pygame numpy nvidia-nvjpeg-cu12 imageio|| {
 # Install Carla Wheel
 echo "Installing Carla Wheel..."
 
-WHEEL=$(ls ../../../carla/dist/carla-0.9.16-cp310-cp310-*.whl | head -n 1)
-python -m pip install ${WHEEL} || {
+WHEEL_NAME_PREFIX=carla-$CARLA_VERSION-cp$PYTHON_MAJOR$PYTHON_MINOR-cp$PYTHON_MAJOR$PYTHON_MINOR
+
+WHEEL=$(ls $CARLA_ROOT/PythonAPI/carla/dist/$WHEEL_NAME_PREFIX-*.whl | head -n 1)
+$PYTHON_EXECUTABLE -m pip install ${WHEEL} || {
     echo "Error: Failed to install Carla Wheel"
     exit 1
 }
 
 # Install project requirements
 echo "Installing project requirements..."
-python -m pip install -r requirements.txt || {
+$PYTHON_EXECUTABLE -m pip install -r $CARLA_NUREC_ROOT/requirements.txt || {
     echo "Error: Failed to install project requirements"
     exit 1
 }
 
 # Install and setup GRPC Protos
 echo "Setting up GRPC Protos..."
-python -m pip install -r nre/grpc/requirements.txt || {
+$PYTHON_EXECUTABLE -m pip install -r $CARLA_NUREC_ROOT/nre/grpc/requirements.txt || {
     echo "Error: Failed to install GRPC requirements"
     exit 1
 }
 
-python3 nre/grpc/update_generated.py || {
+$PYTHON_EXECUTABLE $CARLA_NUREC_ROOT/nre/grpc/update_generated.py || {
     echo "Error: Failed to update generated GRPC files"
     exit 1
 }

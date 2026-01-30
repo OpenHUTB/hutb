@@ -69,7 +69,7 @@ if not exist "%FASTDDS_SRC_DIR%/thirdparty/fastcdr/build" (
 cd "%FASTDDS_SRC_DIR%/thirdparty/fastcdr/build"
 echo %FILE_N% Generating build...
 
-if exist "%programfiles%\Microsoft Visual Studio\2022\Community\VC\Auxiliary\Build\vcvars64.bat" (
+if exist "%ProgramW6432%\Microsoft Visual Studio\2022\Community\VC\Auxiliary\Build\vcvars64.bat" (
     cmake .. -G "Visual Studio 17 2022" -A x64^
         -DCMAKE_BUILD_TYPE=Release^
         -DCMAKE_CXX_FLAGS_RELEASE="/MD /MP"^
@@ -126,7 +126,7 @@ if not exist "%FASTDDS_BUILD_DIR%" (
 cd "%FASTDDS_BUILD_DIR%"
 echo %FILE_N% Generating build...
 
-if exist "%programfiles%\Microsoft Visual Studio\2022\Community\VC\Auxiliary\Build\vcvars64.bat" (
+if exist "%ProgramW6432%\Microsoft Visual Studio\2022\Community\VC\Auxiliary\Build\vcvars64.bat" (
     cmake .. -G "Visual Studio 17 2022" -A x64^
         -DCMAKE_BUILD_TYPE=Release^
         -DCMAKE_CXX_FLAGS_RELEASE="/MD /MP"^

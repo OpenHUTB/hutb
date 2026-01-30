@@ -381,7 +381,7 @@ namespace detail {
       if (attachment_type == rpc::AttachmentType::SpringArm ||
           attachment_type == rpc::AttachmentType::SpringArmGhost)
       {
-        const auto a = transform.location.MakeSafeUnitVector(std::numeric_limits<float>::epsilon());
+        const auto a = transform.location.MakeUnitVector(std::numeric_limits<float>::epsilon());
         const auto z = geom::Vector3D(0.0f, 0.f, 1.0f);
         constexpr float OneEps = 1.0f - std::numeric_limits<float>::epsilon();
         if (geom::Math::Dot(a, z) > OneEps) {
@@ -457,6 +457,10 @@ namespace detail {
 
   geom::BoundingBox Client::GetActorBoundingBox(rpc::ActorId actor) {
     return _pimpl->CallAndWait<geom::BoundingBox>("get_actor_bounding_box", actor);
+  }
+
+  geom::BoundingBox Client::GetTrafficSignTriggerVolume(rpc::ActorId actor) {
+    return _pimpl->CallAndWait<geom::BoundingBox>("get_traffic_sign_trigger_volume", actor);
   }
 
   geom::Transform Client::GetActorComponentWorldTransform(rpc::ActorId actor, const std::string componentName) {
@@ -708,23 +712,20 @@ namespace detail {
     _pimpl->streaming_client.UnSubscribe(token);
   }
 
-  void Client::EnableForROS(const streaming::Token &token) {
-    carla::streaming::detail::token_type thisToken(token);
-    _pimpl->AsyncCall("enable_sensor_for_ros", thisToken.get_stream_id());
+  void Client::EnableForROS(const rpc::ActorId actor) {
+    _pimpl->AsyncCall("enable_actor_for_ros", actor);
   }
 
-  void Client::DisableForROS(const streaming::Token &token) {
-    carla::streaming::detail::token_type thisToken(token);
-    _pimpl->AsyncCall("disable_sensor_for_ros", thisToken.get_stream_id());
+  void Client::DisableForROS(const rpc::ActorId actor) {
+    _pimpl->AsyncCall("disable_actor_for_ros", actor);
   }
 
-  bool Client::IsEnabledForROS(const streaming::Token &token) {
-    carla::streaming::detail::token_type thisToken(token);
-    return _pimpl->CallAndWait<bool>("is_sensor_enabled_for_ros", thisToken.get_stream_id());
+  bool Client::IsEnabledForROS(const rpc::ActorId actor) {
+    return _pimpl->CallAndWait<bool>("is_actor_enabled_for_ros", actor);
   }
 
-  void Client::Send(rpc::ActorId ActorId, std::string message) {
-    _pimpl->AsyncCall("send", ActorId, message);
+  void Client::Send(rpc::ActorId ActorId, const rpc::CustomV2XBytes &data) {
+    _pimpl->AsyncCall("send", ActorId, data);
   }
 
   void Client::SetIgnoredVehicles(rpc::ActorId ActorId, const std::vector<rpc::ActorId>& vehicle_ids) {

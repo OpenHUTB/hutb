@@ -79,7 +79,7 @@ rem Set the visual studio solution directory
 rem
 set LIBCARLA_VSPROJECT_PATH=%INSTALLATION_DIR:/=\%libcarla-visualstudio\
 
-if exist "%programfiles%\Microsoft Visual Studio\2022\Community\VC\Auxiliary\Build\vcvars64.bat" (
+if exist "%ProgramW6432%\Microsoft Visual Studio\2022\Community\VC\Auxiliary\Build\vcvars64.bat" (
     if %GENERATOR% == "" set GENERATOR="Visual Studio 17 2022"
 ) else (
     if %GENERATOR% == "" set GENERATOR="Visual Studio 16 2019"

@@ -8,14 +8,22 @@
 
 
 ## 使用示例
-1. 下载 [发布页面](https://github.com/OpenHUTB/hutb/releases) 中的对应的文件并解压；然后运行`WindowsNoEditor`文件夹下的`CarlaUE4.exe`，使用键盘`W`、`A`、`S`、`D`等进行控制，`Z`为倒档；
-2. 使用`pip install hutb`安装Python工具包，运行以下脚本在场景中 [生成车辆和行人](https://github.com/OpenHUTB/doc/blob/master/src/examples/generate_traffic.py) ：
+1. 下载 [文档页面](https://openhutb.github.io/doc/introduction/) 中链接的文件并运行；
+2. 使用`pip install PythonAPI/carla/dist/hutb-*.whl`安装特定 Python 版本的工具包，运行以下脚本在场景中 [生成车辆和行人](https://github.com/OpenHUTB/doc/blob/master/src/examples/generate_traffic.py) ：
 	```shell
 	python PythonAPI/examples/generate_traffic.py
 	```
-	[手动控制车辆](https://github.com/OpenHUTB/doc/blob/master/src/examples/manual_control.py) ：
+	[手动控制行人](https://github.com/OpenHUTB/doc/blob/master/src/examples/manual_control.py) ：
 	```shell
-	python PythonAPI/examples/manual_control.py
+	python PythonAPI/examples/manual_control.py --filter walker.pedestrian.*
+	```
+	使用 [config.py](https://github.com/OpenHUTB/hutb/blob/hutb/PythonAPI/util/config.py) [切换](ue/switch_mode.md) 到 [VR 模式](interbehavior.md) ，使用键盘`W`、`A`、`S`、`D`等进行控制，`Z`为倒档：
+	```shell
+	python config.py --map Town10HD?GAME=VR
+	```
+	切换到 [无人机模式](https://openhutb.github.io/air_doc/) ：
+	```shell
+	config.py --map Town10HD?GAME=AIR
 	```
 
 

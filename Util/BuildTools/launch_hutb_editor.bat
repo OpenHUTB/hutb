@@ -12,7 +12,7 @@ setlocal enabledelayedexpansion
 
 
 :: 安装 vs2022
-if exist "%ProgramFiles%\Microsoft Visual Studio\2022\" (
+if exist "%ProgramW6432%\Microsoft Visual Studio\2022\" (
     echo Visual Studio 2022 exist.
 ) else (
     echo Visual Studio 2022 not exist
@@ -64,7 +64,7 @@ if not exist %UE4_ROOT:/=\%\Engine\Binaries\Win64\UE4Editor.exe (
     :: /p:Configuration="Development Editor"    构建配置（调试用 DebugGame Editor，发布用 Shipping）
     :: /p:Platform="Win64"                      目标平台
     :: /m                                       启用多核编译（加快速度）
-    "%PROGRAMFILES%\Microsoft Visual Studio\2022\Community\MSBuild\Current\Bin\MSBuild.exe" UE4.sln /t:Build /p:Configuration="Development Editor" /p:Platform="Win64" /m
+    "%ProgramW6432%\Microsoft Visual Studio\2022\Community\MSBuild\Current\Bin\MSBuild.exe" UE4.sln /t:Build /p:Configuration="Development Editor" /p:Platform="Win64" /m
     cd ..
 )
 
@@ -109,7 +109,7 @@ if exist "!FullUnrealEnginePath!" (
     exit /b  
 )  
 
-call "%PROGRAMFILES%\Microsoft Visual Studio\2022\Community\VC\Auxiliary\Build\vcvars64.bat" || exit /b
+call "%ProgramW6432%\Microsoft Visual Studio\2022\Community\VC\Auxiliary\Build\vcvars64.bat" || exit /b
 cd !scriptDir!\carla1
   
 REM 启动UE4Editor.exe并传递uprojectPath的完整路径  

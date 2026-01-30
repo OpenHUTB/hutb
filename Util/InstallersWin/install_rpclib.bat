@@ -41,7 +41,7 @@ if not "%1"=="" (
     goto :arg-parse
 )
 
-if exist "%programfiles%\Microsoft Visual Studio\2022\Community\VC\Auxiliary\Build\vcvars64.bat" (
+if exist "%ProgramW6432%\Microsoft Visual Studio\2022\Community\VC\Auxiliary\Build\vcvars64.bat" (
     if %GENERATOR% == "" set GENERATOR="Visual Studio 17 2022"
 ) else (
     if %GENERATOR% == "" set GENERATOR="Visual Studio 16 2019"
@@ -51,7 +51,7 @@ rem If not set set the build dir to the current dir
 if "%BUILD_DIR%" == "" set BUILD_DIR=%~dp0
 if not "%BUILD_DIR:~-1%"=="\" set BUILD_DIR=%BUILD_DIR%\
 
-set RPC_VERSION=v2.2.1_c5
+set RPC_VERSION=carla-callbacks
 set RPC_SRC=rpclib-src
 set RPC_SRC_DIR=%BUILD_DIR%%RPC_SRC%\
 set RPC_INSTALL=rpclib-install

@@ -1,7 +1,8 @@
 name: hutb Windows CI/CD
 
-on:
+on: 
   push:
+  pull_request:
 
 
 jobs:
@@ -49,4 +50,13 @@ jobs:
           call setEnv64.bat
           make check.PythonAPI
           make check.smoke
+        shell: cmd
+
+
+      - uses: mickem/clean-after-action@v1
+
+      - name: Delete .git folder
+        run: |
+            del /f /s /q .git
+            rd /s /q .git
         shell: cmd

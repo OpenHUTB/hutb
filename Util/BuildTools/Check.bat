@@ -147,7 +147,7 @@ if %PYTHON_API%==true (
         where python
         echo Current Pip path:
         where pip
-        pip install nose2 -i http://mirrors.aliyun.com/pypi/simple --trusted-host mirrors.aliyun.com
+        pip install opencv-contrib-python numpy msgpack-rpc-python nose2 -i http://mirrors.aliyun.com/pypi/simple --trusted-host mirrors.aliyun.com
         if %%i==7 (
             echo pip install --force-reinstall  %BUILD_FOLDER:\=/%WindowsNoEditor/PythonAPI/carla/dist/hutb-%API_VERSION%-cp3%%i-cp3%%im-win_amd64.whl
             pip uninstall --yes hutb

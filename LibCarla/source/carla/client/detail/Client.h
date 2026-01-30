@@ -16,6 +16,7 @@
 #include "carla/rpc/AttachmentType.h"
 #include "carla/rpc/Command.h"
 #include "carla/rpc/CommandResponse.h"
+#include "carla/rpc/CustomV2XBytes.h"
 #include "carla/rpc/EnvironmentObject.h"
 #include "carla/rpc/EpisodeInfo.h"
 #include "carla/rpc/EpisodeSettings.h"
@@ -249,6 +250,9 @@ namespace detail {
     geom::BoundingBox GetActorBoundingBox(
         rpc::ActorId actor);
 
+    geom::BoundingBox GetTrafficSignTriggerVolume(
+        rpc::ActorId actor);
+
     geom::Transform GetActorComponentWorldTransform(
         rpc::ActorId actor,
         const std::string componentName);
@@ -454,17 +458,17 @@ namespace detail {
 
     void UnSubscribeFromStream(const streaming::Token &token);
 
-    void EnableForROS(const streaming::Token &token);
+    void EnableForROS(const rpc::ActorId actor);
 
-    void DisableForROS(const streaming::Token &token);
+    void DisableForROS(const rpc::ActorId actor);
 
-    bool IsEnabledForROS(const streaming::Token &token);
+    bool IsEnabledForROS(const rpc::ActorId actor);
 
     void UnSubscribeFromGBuffer(
         rpc::ActorId ActorId,
         uint32_t GBufferId);
 
-    void Send(rpc::ActorId ActorId, std::string message);
+    void Send(rpc::ActorId ActorId, const rpc::CustomV2XBytes &data);
 
     void SetIgnoredVehicles(rpc::ActorId ActorId, const std::vector<rpc::ActorId>& vehicle_ids);
 

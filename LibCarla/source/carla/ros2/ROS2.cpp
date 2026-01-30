@@ -65,7 +65,8 @@ enum ESensors {
   InstanceSegmentationCamera,
   WorldObserver,
   CameraGBufferUint8,
-  CameraGBufferFloat
+  CameraGBufferFloat,
+  HSSLidar
 };
 
 void ROS2::Enable(bool enable) {

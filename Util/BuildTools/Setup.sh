@@ -83,7 +83,6 @@ unset LLVM_LIBPATH
 export CXXFLAGS="-std=c++14 -stdlib=libc++"
 export LDFLAGS="-stdlib=libc++"
 
-
 # ==============================================================================
 # -- Generate CMake toolchains -------------------------------------------------
 # ==============================================================================
@@ -233,7 +232,7 @@ unset BOOST_BASENAME
 # -- Get rpclib and compile it with libc++ and libstdc++ -----------------------
 # ==============================================================================
 
-RPCLIB_PATCH=v2.2.1_c5
+RPCLIB_PATCH=carla-callbacks
 RPCLIB_BASENAME=rpclib-${RPCLIB_PATCH}-${CXX_TAG}
 
 RPCLIB_LIBCXX_INCLUDE=${PWD}/${RPCLIB_BASENAME}-libcxx-install/include
@@ -539,7 +538,7 @@ else
   pushd ${XERCESC_SRC_DIR}/build >/dev/null
 
   cmake -G "Ninja" \
-      -DCMAKE_CXX_FLAGS="-std=c++14 -stdlib=libc++ -fPIC -w -I${LLVM_INCLUDE} -L${LLVM_LIBPATH}" \
+      -DCMAKE_CXX_FLAGS="-std=c++14 -fPIC -w -I${LLVM_INCLUDE} -L${LLVM_LIBPATH}" \
       -DCMAKE_INSTALL_PREFIX="../../${XERCESC_INSTALL_SERVER_DIR}" \
       -DCMAKE_BUILD_TYPE=Release \
       -DBUILD_SHARED_LIBS=OFF \
@@ -947,7 +946,7 @@ if ${USE_ROS2} ; then
     FOONATHAN_MEMORY_VENDOR_BASENAME=foonathan-memory-vendor
     FOONATHAN_MEMORY_VENDOR_SOURCE_DIR=${PWD}/${FOONATHAN_MEMORY_VENDOR_BASENAME}-source
     FOONATHAN_MEMORY_VENDOR_REPO="https://github.com/eProsima/foonathan_memory_vendor.git"
-    FOONATHAN_MEMORY_VENDOR_BRANCH=master
+    FOONATHAN_MEMORY_VENDOR_BRANCH=v1.3.1
 
     git clone --depth 1 --branch ${FOONATHAN_MEMORY_VENDOR_BRANCH} ${FOONATHAN_MEMORY_VENDOR_REPO} ${FOONATHAN_MEMORY_VENDOR_SOURCE_DIR}
 

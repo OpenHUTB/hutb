@@ -61,6 +61,7 @@ cmake-build-debug
 *CodeLitePreProcessor.txt
 .aria2c.input
 .codelite
+.debug
 .gdb_history
 .gtest
 .idea

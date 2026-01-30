@@ -62,7 +62,7 @@ if "%BUILD_DIR%" == "" set BUILD_DIR=%~dp0
 if not "%BUILD_DIR:~-1%"=="\" set BUILD_DIR=%BUILD_DIR%\
 
 rem If not defined, use Visual Studio 2022 or 2019 as tool set
-if exist "%programfiles%\Microsoft Visual Studio\2022\Community\VC\Auxiliary\Build\vcvars64.bat" (
+if exist "%ProgramW6432%\Microsoft Visual Studio\2022\Community\VC\Auxiliary\Build\vcvars64.bat" (
     if "%TOOLSET%" == "" set TOOLSET=msvc-14.3
 ) else (
     if "%TOOLSET%" == "" set TOOLSET=msvc-14.2
@@ -131,7 +131,7 @@ if not exist "%BOOST_SRC_DIR%" (
 cd "%BOOST_SRC_DIR%"
 if not exist "b2.exe" (
     echo %FILE_N% Generating build...
-    if exist "%programfiles%\Microsoft Visual Studio\2022\Community\VC\Auxiliary\Build\vcvars64.bat" (
+    if exist "%ProgramW6432%\Microsoft Visual Studio\2022\Community\VC\Auxiliary\Build\vcvars64.bat" (
         call bootstrap.bat vc143
     ) else (
         call bootstrap.bat vc142

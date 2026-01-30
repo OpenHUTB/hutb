@@ -35,4 +35,3 @@ if [ -d "$BATCH_DIR" ]; then
     chmod u+x "$f" || echo "[setEnv64] Warning: chmod failed: $f"
   done
 fi
-

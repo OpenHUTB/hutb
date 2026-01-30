@@ -11,6 +11,35 @@ set interactive=false
 set python_path=python
 set python_root=
 
+
+rem -- extract dependencies --
+
+
+rem -- set path --
+
+set scriptPath=%~dp0
+echo %scriptPath%
+
+set scriptDir=!scriptPath:~0,-1!
+
+set UE4_ROOT=!scriptDir!\Build\engine
+echo %UE4_ROOT%
+
+set "RelativePaths=Build\dependencies\prerequisites\CMake\bin;Build\dependencies\prerequisites\dotnet;Build\dependencies\prerequisites\GnuWin32\bin;Build\dependencies\prerequisites\miniconda3\envs\hutb_3.8;Build\dependencies\prerequisites\miniconda3\envs\hutb_3.8\Scripts"
+  
+
+for /f "tokens=2 delims==" %%a in ('set Path') do set "CurrentPath=%%a" 
+set "currentPath=%path%"
+
+for %%p in (%RelativePaths%) do (    
+    set "absPath=!scriptDir!\%%p"    
+    set "currentPath=!currentPath!;!absPath!"    
+)
+set "path=%currentPath%"
+
+echo !path!
+
+
 rem -- PARSE COMMAND LINE ARGUMENTS --
 
 :parse
@@ -157,6 +186,88 @@ if exist "%cd%\Build\dependencies\" (
     ) else (
         echo GnuWin32 folder already exists.
     )
+
+
+    rem Extract src zip files
+    if not exist "%cd%\Build\boost-1.86.0-source" (
+        echo Unzipping boost-1.86.0-source.zip ...
+        "prerequisites\7zip\7z.exe" x "src\boost_1_86_0.zip" -o"%cd%\Build\" -y >nul
+    ) else (
+        echo Build\boost-1.86.0-source folder already exists.
+    )
+    if not exist "%cd%\Build\chrono-src" (
+        echo Unzipping chrono-src.zip ...
+        "prerequisites\7zip\7z.exe" x "src\chrono-src.zip" -o"%cd%\Build\" -y >nul
+    ) else (
+        echo Build\chrono-src folder already exists.
+    )
+    if not exist "%cd%\Build\eigen-3.3.7" (
+        echo Unzipping eigen-3.3.7.zip ...
+        "prerequisites\7zip\7z.exe" x "src\eigen-3.3.7.zip" -o"%cd%\Build\" -y >nul
+    ) else (
+        echo Build\eigen-3.3.7 folder already exists.
+    )
+    if not exist "%cd%\Build\fastDDS-src" (
+        echo Unzipping fastDDS-src.zip ...
+        "prerequisites\7zip\7z.exe" x "src\fastDDS-src.zip" -o"%cd%\Build\" -y >nul
+    ) else (
+        echo Build\fastDDS-src folder already exists.
+    )
+    if not exist "%cd%\Build\gtest-src" (
+        echo Unzipping gtest-src.zip ...
+        "prerequisites\7zip\7z.exe" x "src\gtest-src.zip" -o"%cd%\Build\" -y >nul
+    ) else (
+        echo Build\gtest-src folder already exists.
+    )
+    if not exist "%cd%\Build\libpng-1.2.37-source" (
+        echo Unzipping libpng-1.2.37-source.zip ...
+        "prerequisites\7zip\7z.exe" x "src\libpng-1.2.37-source.zip" -o"%cd%\Build\" -y >nul
+    ) else (
+        echo Build\libpng-1.2.37-source folder already exists.
+    )
+    if not exist "%cd%\Build\osm2odr-source" (
+        echo Unzipping osm2odr-source.zip ...
+        "prerequisites\7zip\7z.exe" x "src\osm2odr-source.zip" -o"%cd%\Build\" -y >nul
+    ) else (
+        echo Build\osm2odr-source folder already exists.
+    )
+    if not exist "%cd%\Build\proj-src" (
+        echo Unzipping proj-src.zip ...
+        "prerequisites\7zip\7z.exe" x "src\proj-src.zip" -o"%cd%\Build\" -y >nul
+    ) else (
+        echo Build\proj-src folder already exists.
+    )
+    if not exist "%cd%\Build\recast-src" (
+        echo Unzipping recast-src.zip ...
+        "prerequisites\7zip\7z.exe" x "src\recast-src.zip" -o"%cd%\Build\" -y >nul
+    ) else (
+        echo Build\recast-src folder already exists.
+    )
+    if not exist "%cd%\Build\rpclib-src" (
+        echo Unzipping rpclib-src.zip ...
+        "prerequisites\7zip\7z.exe" x "src\rpclib-src.zip" -o"%cd%\Build\" -y >nul
+    ) else (
+        echo Build\rpclib-src folder already exists.
+    )
+    if not exist "%cd%\Build\sqlite3-src" (
+        echo Unzipping sqlite3-src.zip ...
+        "prerequisites\7zip\7z.exe" x "src\sqlite3-src.zip" -o"%cd%\Build\" -y >nul
+    ) else (
+        echo Build\sqlite3-src folder already exists.
+    )
+    if not exist "%cd%\Build\xerces-c-3.2.3-source" (
+        echo Unzipping xerces-c-3.2.3-source.zip ...
+        "prerequisites\7zip\7z.exe" x "src\xerces-c-3.2.3-source.zip" -o"%cd%\Build\" -y >nul
+    ) else (
+        echo Build\xerces-c-3.2.3-source folder already exists.
+    )
+    if not exist "%cd%\Build\zlib-source" (
+        echo Unzipping zlib-source.zip ...
+        "prerequisites\7zip\7z.exe" x "src\zlib-source.zip" -o"%cd%\Build\" -y >nul
+    ) else (
+        echo Build\zlib-source folder already exists.
+    )
+
     popd
 ) else (
     echo Build\dependencies\ not found, please check the dependencies repository clone.
@@ -184,14 +295,14 @@ if %skip_prerequisites%==false (
 
 rem Activate VS terminal development environment:
 set "vs_env_bat="
-if exist "%PROGRAMFILES%\Microsoft Visual Studio\2022\Community\VC\Auxiliary\Build\vcvars64.bat" (
-    set "vs_env_bat=%PROGRAMFILES%\Microsoft Visual Studio\2022\Community\VC\Auxiliary\Build\vcvars64.bat"
+if exist "%ProgramW6432%\Microsoft Visual Studio\2022\Community\VC\Auxiliary\Build\vcvars64.bat" (
+    set "vs_env_bat=%ProgramW6432%\Microsoft Visual Studio\2022\Community\VC\Auxiliary\Build\vcvars64.bat"
 )
-if exist "%PROGRAMFILES%\Microsoft Visual Studio\2022\Professional\VC\Auxiliary\Build\vcvars64.bat" (
-    set "vs_env_bat=%PROGRAMFILES%\Microsoft Visual Studio\2022\Professional\VC\Auxiliary\Build\vcvars64.bat"
+if exist "%ProgramW6432%\Microsoft Visual Studio\2022\Professional\VC\Auxiliary\Build\vcvars64.bat" (
+    set "vs_env_bat=%ProgramW6432%\Microsoft Visual Studio\2022\Professional\VC\Auxiliary\Build\vcvars64.bat"
 )
-if exist "%PROGRAMFILES%\Microsoft Visual Studio\2022\Enterprise\VC\Auxiliary\Build\vcvars64.bat" (
-    set "vs_env_bat=%PROGRAMFILES%\Microsoft Visual Studio\2022\Enterprise\VC\Auxiliary\Build\vcvars64.bat"
+if exist "%ProgramW6432%\Microsoft Visual Studio\2022\Enterprise\VC\Auxiliary\Build\vcvars64.bat" (
+    set "vs_env_bat=%ProgramW6432%\Microsoft Visual Studio\2022\Enterprise\VC\Auxiliary\Build\vcvars64.bat"
 )
 
 if not "%vs_env_bat%"=="" (
@@ -202,8 +313,15 @@ if not "%vs_env_bat%"=="" (
     exit 1
 )
 
+rem make LibCarla ARGS="--chrono" >LibCarla.log
 
-call %cd%\Build\dependencies\prerequisites\GnuWin32\bin\make launch ARGS="--chrono"
+rem make PythonAPI ARGS="--chrono" >python.log
+
+rem call %cd%\Build\dependencies\prerequisites\GnuWin32\bin\make launch ARGS="--chrono"
+
+rem make launch ARGS="--chrono" >launch.log
+
+make package ARGS="--chrono" >package.log
 
 
 
