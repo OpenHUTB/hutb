@@ -120,9 +120,7 @@ namespace detail {
     template <typename FuncT>
         static auto WrapSyncCall(std::atomic_bool &shutdown_in_progress, boost::asio::io_context &io, FuncT &&functor) {
       return [&shutdown_in_progress, &io, functor=std::forward<FuncT>(functor)](Metadata metadata, Args... args) -> R {
-        auto const session_id = ::rpc::this_session().id();
-        auto task = std::packaged_task<R()>([session_id, functor=std::move(functor), args...]() {
-          ::rpc::this_session().set_id(session_id);
+        auto task = std::packaged_task<R()>([functor=std::move(functor), args...]() {
           return functor(args...);
         });
         if (metadata.IsResponseIgnored()) {
