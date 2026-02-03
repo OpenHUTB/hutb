@@ -17,7 +17,7 @@
 	```shell
 	python PythonAPI/examples/manual_control.py --filter walker.pedestrian.*
 	```
-	使用 [config.py](https://github.com/OpenHUTB/hutb/blob/hutb/PythonAPI/util/config.py) [切换](ue/switch_mode.md) 到 [VR 模式](interbehavior.md) ，使用键盘`W`、`A`、`S`、`D`等进行控制，`Z`为倒档：
+	使用 [config.py](https://github.com/OpenHUTB/hutb/blob/hutb/PythonAPI/util/config.py) [切换](ue/switch_mode.md) 到 [VR 模式](https://openhutb.github.io/doc/interbehavior/) ，使用键盘`W`、`A`、`S`、`D`等进行控制，`Z`为倒档：
 	```shell
 	python config.py --map Town10HD?GAME=VR
 	```
