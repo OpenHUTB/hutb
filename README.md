@@ -8,7 +8,7 @@
 
 
 ## 使用示例
-1. 下载 [文档页面](https://openhutb.github.io/doc/introduction/) 中链接的文件并运行；
+1. 使用并执行 [模拟器下载工具](https://gitee.com/OpenHUTB/sw/releases/download/up/hutb_downloader.exe) ，然后双击生成的 hutb 目录下的可执行文件；
 2. 使用`pip install PythonAPI/carla/dist/hutb-*.whl`安装特定 Python 版本的工具包，运行以下脚本在场景中 [生成车辆和行人](https://github.com/OpenHUTB/doc/blob/master/src/examples/generate_traffic.py) ：
 	```shell
 	python PythonAPI/examples/generate_traffic.py
@@ -23,7 +23,7 @@
 	```
 	切换到 [无人机模式](https://openhutb.github.io/air_doc/) ：
 	```shell
-	config.py --map Town10HD?GAME=AIR
+	python config.py --map Town10HD?GAME=AIR
 	```
 
 
