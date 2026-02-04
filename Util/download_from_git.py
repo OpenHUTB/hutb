@@ -13,9 +13,11 @@
 # 不被杀毒软件误报：https://blog.csdn.net/eastdawnc/article/details/113813790
 # Pyinstaller download_from_git.py --onefile --name hutb_downloader.exe
 
+import argparse
 import datetime
 import os, stat
 import shutil
+import sys
 import zipfile
 
 import git
@@ -158,13 +160,30 @@ def remove_readonly(func, path, _):
 
 
 if __name__ == '__main__':
+    argparser = argparse.ArgumentParser(
+        description=__doc__)
+    argparser.add_argument(
+        '-r',
+        '--repository',
+        metavar='R',
+        default='release',
+        help='HUTB big file repository (release, dependencies, Content) to download (default: release)')
+    args = argparser.parse_args()
+    print("Repository to download: %s" % args.repository)
+    # 退出程序（用于调试）
+    # sys.exit(0)
+
     start = datetime.datetime.now()
 
-    remote_path = "https://OpenHUTB:T8w6TYB_r71gGTP3A02B@git.code.tencent.com/OpenHUTB/release.git"
+    remote_path = f"https://OpenHUTB:T8w6TYB_r71gGTP3A02B@git.code.tencent.com/OpenHUTB/{args.repository}.git"
     # 获取当前代码路径的上级目录
     # os.path.dirname(__file__) 打包成exe后，会下载到系统的临时文件夹中（比如：C:\Users\nongf\AppData\Local\Temp\_MEI197442\hutb）
     cur_dir = os.getcwd()
-    local_path = os.path.join(cur_dir, 'hutb')  # , 'hutb'
+    if args.repository == 'release':
+        save_dir = 'hutb'
+    else:
+        save_dir = args.repository
+    local_path = os.path.join(cur_dir, save_dir)  # , 'hutb'
     print("Download path: ", local_path)
     
     if os.path.exists( local_path ):
@@ -177,28 +196,33 @@ if __name__ == '__main__':
     if os.path.exists( os.path.join(local_path, '.git') ):
         shutil.rmtree( os.path.join(local_path, '.git') , onerror=remove_readonly)
         os.remove( os.path.join(local_path, '.gitattributes') )
-    # 合并小文件
-    print("Merge small files...")
-    if os.path.exists( os.path.join(local_path, 'hutb.zip') ) is False:
-        merge_files(local_path, os.path.join(local_path, 'hutb.zip'))
+    
+    # 只有发行版仓库才需要进行合并小文件、解压、删除小文件的操作
+    if args.repository == 'release':
+        # 合并小文件
+        print("Merge small files...")
+        if os.path.exists( os.path.join(local_path, 'hutb.zip') ) is False:
+            merge_files(local_path, os.path.join(local_path, 'hutb.zip'))
 
-    print("Unzip hutb.zip...")
-    f = zipfile.ZipFile(os.path.join(local_path, 'hutb.zip'), 'r') # 压缩文件位置
-    for file in f.namelist():
-        print("Extracting file: ", file)
-        f.extract(file, local_path)               # 解压位置
-    f.close()
-    if os.path.exists( os.path.join(local_path, 'hutb.zip') ):
-        print("Remove hutb.zip...")
-        os.remove( os.path.join(local_path, 'hutb.zip') )
+        print("Unzip hutb.zip...")
+        f = zipfile.ZipFile(os.path.join(local_path, 'hutb.zip'), 'r') # 压缩文件位置
+        for file in f.namelist():
+            print("Extracting file: ", file)
+            f.extract(file, local_path)               # 解压位置
+        f.close()
+        if os.path.exists( os.path.join(local_path, 'hutb.zip') ):
+            print("Remove hutb.zip...")
+            os.remove( os.path.join(local_path, 'hutb.zip') )
 
-    print("Remove .dat small files...")
-    # 删除后缀名为.dat的小文件
-    for file_name in os.listdir(local_path):
-        if file_name.endswith('.dat'):
-            print("Removing file: ", file_name)
-            os.remove( os.path.join(local_path, file_name) )
+        print("Remove .dat small files...")
+        # 删除后缀名为.dat的小文件
+        for file_name in os.listdir(local_path):
+            if file_name.endswith('.dat'):
+                print("Removing file: ", file_name)
+                os.remove( os.path.join(local_path, file_name) )
+
 
     cost_time = datetime.datetime.now() - start
     # 当网络带宽足够大时，下载时间大约4-5分钟左右
     print('Download finished, cost: %s' % (cost_time))
+    print("Download to: ", local_path)
