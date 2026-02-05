@@ -272,22 +272,31 @@ if %DO_COPY_FILES%==true (
     if exist "!XCOPY_FROM!Plugins" (
         echo d | xcopy /y /s "!XCOPY_FROM!Plugins"                                  "!XCOPY_TO!Plugins"
     )
+    
     :: 下载 Mujoco
     set Mujoco_FILE_NAME=mujoco-3.3.5-windows-x86_64.zip
     :: !! 为延迟变量，执行时才扩展，需要 setlocal enabledelayedexpansion
-    set Mujoco_TEMP_FILE_DIR="!XCOPY_FROM!Build\%Mujoco_FILE_NAME%"
+    set Mujoco_TEMP_FILE_DIR="!XCOPY_FROM!Build\dependencies\Plugins\!Mujoco_FILE_NAME!"
     set Mujoco_REPO=https://github.com/google-deepmind/mujoco/releases/download/3.3.5/%Mujoco_FILE_NAME%
 
-    if exist "%CACHE_DIR:/=\%software\%Mujoco_FILE_NAME%" (
-        "%ProgramW6432%/7-Zip/7z.exe" x "%CACHE_DIR:/=\%software\%Mujoco_FILE_NAME%" -o"!XCOPY_FROM!Build\mujoco\" -y
+    if exist "!Mujoco_TEMP_FILE_DIR!" (
+        echo "%ProgramW6432%/7-Zip/7z.exe" x "!Mujoco_TEMP_FILE_DIR!" -o"!XCOPY_FROM!Build\dependencies\Plugins\mujoco" -y
+        "%ProgramW6432%/7-Zip/7z.exe" x "!Mujoco_TEMP_FILE_DIR!" -o"!XCOPY_FROM!Build\dependencies\Plugins\mujoco" -y
+        echo d | xcopy /y /s "!XCOPY_FROM!Build\dependencies\Plugins\mujoco"                             "!XCOPY_TO!mujoco"
     ) else (
         echo %FILE_N% Retrieving Mujoco from %Mujoco_REPO% to %Mujoco_TEMP_FILE_DIR% ...
         powershell -Command "(New-Object System.Net.WebClient).DownloadFile('%Mujoco_REPO%', '%Mujoco_TEMP_FILE_DIR%')"
         "%ProgramW6432%/7-Zip/7z.exe" x "!XCOPY_FROM!Build\%Mujoco_FILE_NAME%" -o"!XCOPY_FROM!Build\mujoco\" -y
-    )
-    :: 拷贝 mujoco 到打包目录
-    if exist "!XCOPY_FROM!Build\mujoco" (
         echo d | xcopy /y /s "!XCOPY_FROM!Build\mujoco"                             "!XCOPY_TO!mujoco"
+    )
+
+    :: Package sumo
+    set SUMO_FILE_NAME=sumo-win64-1.25.0.zip
+    set SUMO_TEMP_FILE_DIR="!XCOPY_FROM!Build\dependencies\Plugins\!SUMO_FILE_NAME!"
+    if exist "!SUMO_TEMP_FILE_DIR!" (
+        echo "%ProgramW6432%/7-Zip/7z.exe" x "!SUMO_TEMP_FILE_DIR!" -o"!XCOPY_FROM!Build\dependencies\Plugins\" -y
+        "%ProgramW6432%/7-Zip/7z.exe" x "!SUMO_TEMP_FILE_DIR!" -o"!XCOPY_FROM!Build\dependencies\Plugins\" -y
+        echo d | xcopy /y /s "!XCOPY_FROM!Build\dependencies\Plugins\sumo"                             "!XCOPY_TO!sumo"
     )
 )
 call :get_current_time_in_seconds T_END_DO_COPY_FILES
