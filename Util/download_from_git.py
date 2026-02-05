@@ -312,5 +312,5 @@ if __name__ == '__main__':
     print("Download to: ", local_path)
     kill_process_on_port(2000)  # 下载完成后自动启动CarlaUE4.exe，方便用户查看下载结果
     if os.path.exists( os.path.join(local_path, 'CarlaUE4.exe') ):
-        os.system("start /wait "" %s" % os.path.join(local_path, 'CarlaUE4.exe'))  # 启动CarlaUE4.exe
+        os.system("start "" %s" % os.path.join(local_path, 'CarlaUE4.exe'))  # 启动CarlaUE4.exe
     time.sleep(15)  # 延时15秒，方便查看命令行输出
