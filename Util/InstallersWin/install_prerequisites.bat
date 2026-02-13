@@ -80,19 +80,5 @@ rmdir %cd%\Temp
 
 :end_vs_install
 
-rem -- INSTALL NINJA --
-ninja --version >nul 2>nul
-if errorlevel 1 (
-    echo Could not find Ninja. Downloading...
-    curl -L -o %USERPROFILE%\AppData\Local\Microsoft\WindowsApps\ninja-win.zip https://github.com/ninja-build/ninja/releases/download/v%ninja_version%/ninja-win.zip || exit /b
-    powershell -command "Expand-Archive $env:USERPROFILE\AppData\Local\Microsoft\WindowsApps\ninja-win.zip $env:USERPROFILE\AppData\Local\Microsoft\WindowsApps\ninja-win" || exit /b
-    move %USERPROFILE%\AppData\Local\Microsoft\WindowsApps\ninja-win\ninja.exe %USERPROFILE%\AppData\Local\Microsoft\WindowsApps\ninja.exe || exit /b
-    rmdir /s /q %USERPROFILE%\AppData\Local\Microsoft\WindowsApps\ninja-win
-    del /f %USERPROFILE%\AppData\Local\Microsoft\WindowsApps\ninja-win.zip
-    echo Installed Ninja %ninja_version%.
-) else (
-    echo Found Ninja.
-)
-
 
 rem -- INSTALL PYTHON PACKAGES --
