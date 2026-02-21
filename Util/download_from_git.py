@@ -11,7 +11,7 @@
 # -F 单文件模式
 # Pyinstaller -F download_from_git.py --name hutb_downloader.exe
 # 不被杀毒软件误报：https://blog.csdn.net/eastdawnc/article/details/113813790
-# Pyinstaller download_from_git.py --onefile --name hutb_downloader.exe
+# Pyinstaller download_from_git.py --onefile -i hutb_log.ico --name hutb_downloader.exe
 
 import argparse
 import datetime
@@ -63,7 +63,7 @@ class GitRepository(object):
         git_local_path = os.path.join(self.local_path, '.git')
         if not is_git_dir(git_local_path):
             # TODO: Progress bar while fetching files from git-lfs
-            self.repo = Repo.clone_from(repo_url, to_path=self.local_path, branch=branch, progress=Progress(), depth=1)
+            self.repo = Repo.clone_from(repo_url, to_path=self.local_path, branch=branch, depth=1)
         else:
             self.repo = Repo(self.local_path)
 
@@ -211,7 +211,7 @@ if __name__ == '__main__':
 
     remote_path = f"https://OpenHUTB:T8w6TYB_r71gGTP3A02B@git.code.tencent.com/OpenHUTB/{args.repository}.git"
 
-    # 如果指定 -u 参数（上传发行版），则 -r 参数无效
+    # 如果指定 -upload 参数（上传发行版），则 -r 参数无效
     # d:\hutb\Build\dependencies\prerequisites\miniconda3\envs\hutb\python.exe download_from_git.py -u release
     if args.upload == 'release':
         print("Upload to repository: %s" % args.upload)
@@ -276,8 +276,8 @@ if __name__ == '__main__':
     repo = GitRepository(local_path, remote_path)
 
     # 移除工程中不相关的文件
-    print("Remove .git folder and .gitattributes file...")
     if os.path.exists( os.path.join(local_path, '.git') ):
+        print("Remove .git folder and .gitattributes file...")
         shutil.rmtree( os.path.join(local_path, '.git') , onerror=remove_readonly)
         os.remove( os.path.join(local_path, '.gitattributes') )
     
