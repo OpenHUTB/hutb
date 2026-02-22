@@ -7,17 +7,35 @@
 # 
 # 打包成exe
 # pip install pyinstaller
+# ** 根据.spec文件生成exe文件 **
+# Pyinstaller hutb_downloader.spec
+# 
+# 其他（开发过程）：
 # -i "icon.ico"  指定图标
 # -F 单文件模式
 # Pyinstaller -F download_from_git.py --name hutb_downloader.exe
 # 不被杀毒软件误报：https://blog.csdn.net/eastdawnc/article/details/113813790
-# Pyinstaller download_from_git.py --onefile -i hutb_log.ico --name hutb_downloader.exe
+# 文件夹：
+# Pyinstaller download_from_git.py --onedir --add-data "git\bin\*;git\bin\" --add-data "git\cmd\*;git\cmd\"  -i hutb_log.ico --name hutb_downloader
+# 然后用 7zip 打包成一个自解压可执行文件
+# 单个文件：
+# Pyinstaller download_from_git.py --onefile --add-data "git\bin\bash.exe;git\bin\" --add-data "git\bin\git.exe;git\bin\"  -i hutb_log.ico --name hutb_downloader
+
+
 
 import argparse
 import datetime
 import os, stat
-import shutil
 import sys
+
+# 使用当前 git 目录下的 git 可执行文件
+# 这样可以避免在打包成exe后，找不到git可执行文件的问题
+# 获取当前脚本所在的路径
+script_dir = os.path.dirname(os.path.abspath(__file__))
+git_path = os.path.join(script_dir, 'git', 'bin', 'git.exe')
+os.environ['GIT_PYTHON_GIT_EXECUTABLE'] = git_path
+
+import shutil
 import time
 import zipfile
 
