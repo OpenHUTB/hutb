@@ -20,22 +20,34 @@
 # 然后用 7zip 打包成一个自解压可执行文件
 # 单个文件：
 # Pyinstaller download_from_git.py --onefile --add-data "git\bin\bash.exe;git\bin\" --add-data "git\bin\git.exe;git\bin\"  -i hutb_log.ico --name hutb_downloader
-
+#
+# 上传到远程服务器：
+# python.exe download_from_git.py -u release
 
 
 import argparse
 import datetime
 import os, stat
+import shutil
 import sys
 
-# 使用当前 git 目录下的 git 可执行文件
-# 这样可以避免在打包成exe后，找不到git可执行文件的问题
+# 获取当前代码路径的上级目录
+home_dir = os.path.abspath(os.path.join(os.getcwd(), '..'))
 # 获取当前脚本所在的路径
-script_dir = os.path.dirname(os.path.abspath(__file__))
+script_dir = os.path.dirname(os.getcwd())
+
+# 使用当前 git 目录下的 git 可执行文件
+# 判断git目录是否存在
+prerequisites_dir = os.path.join(home_dir, 'Build', 'dependencies', 'prerequisites')
+if os.path.exists(os.path.join(prerequisites_dir, 'git')) and not os.path.exists(os.path.join(script_dir, 'git', 'bin', 'git.exe')):
+    # 将git目录拷贝到当前脚本所在的路径下
+    shutil.copytree(os.path.join(prerequisites_dir, 'git'), os.path.join(script_dir, 'git'))
+
+# 这样可以避免在打包成exe后，找不到git可执行文件的问题
 git_path = os.path.join(script_dir, 'git', 'bin', 'git.exe')
 os.environ['GIT_PYTHON_GIT_EXECUTABLE'] = git_path
 
-import shutil
+
 import time
 import zipfile
 
@@ -233,11 +245,13 @@ if __name__ == '__main__':
     # d:\hutb\Build\dependencies\prerequisites\miniconda3\envs\hutb\python.exe download_from_git.py -u release
     if args.upload == 'release':
         print("Upload to repository: %s" % args.upload)
-        # 获取当前代码路径的上级目录
-        parent_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
-        local_path = os.path.join(parent_dir, 'Build', 'UE4Carla')  # , 'hutb'
+        local_path = os.path.join(home_dir, 'Build', 'UE4Carla')  # , 'hutb'
         rep_path = os.path.join(local_path, 'release')
         print("Upload path: ", rep_path)
+        # 如果之前存在release目录，则删除
+        if os.path.exists( rep_path ):
+            print("Removing previous release directory: ", rep_path)
+            shutil.rmtree( rep_path , onerror=remove_readonly)
         repo = GitRepository(rep_path, remote_path)
         # 寻找 local_path 目录下修改日期最新的 .zip 文件
         latest_file = None
@@ -328,7 +342,7 @@ if __name__ == '__main__':
     # 当网络带宽足够大时，下载时间大约4-5分钟左右
     print('Download finished, cost: %s' % (cost_time))
     print("Download to: ", local_path)
-    kill_process_on_port(2000)  # 下载完成后自动启动CarlaUE4.exe，方便用户查看下载结果
-    if os.path.exists( os.path.join(local_path, 'CarlaUE4.exe') ):
-        os.system("start "" %s" % os.path.join(local_path, 'CarlaUE4.exe'))  # 启动CarlaUE4.exe
-    time.sleep(15)  # 延时15秒，方便查看命令行输出
+    # kill_process_on_port(2000)  # 下载完成后自动启动CarlaUE4.exe，方便用户查看下载结果
+    # if os.path.exists( os.path.join(local_path, 'CarlaUE4.exe') ):
+    #     os.system("start "" %s" % os.path.join(local_path, 'CarlaUE4.exe'))  # 启动CarlaUE4.exe
+    # time.sleep(15)  # 延时15秒，方便查看命令行输出
