@@ -38,6 +38,7 @@ rem ============================================================================
 set DOC_STRING="Run unit tests."
 set USAGE_STRING="Usage: %FILE_N% [-h|--help] [--gdb] [--xml] [--gtest_args=ARGS] [--python-version=VERSION]"
 
+
 set XML_OUTPUT=false
 set LIBCARLA_RELEASE=false
 set LIBCARLA_DEBUG=false
@@ -46,9 +47,14 @@ set PYTHON_API=false
 set RUN_BENCHMARK=false
 set MEASURE_TIME=true
 set UPLOAD_DOWNLOAD=false
-set python_dir=C:\software\anaconda3\envs\carla_dev\
+
+rem set home_dir=%LOCAL_PATH%..\..\
+rem 相对路径转换为完整的绝对路径
+rem for %%i in ("%home_dir%") do set home_dir=%%~fi
+set python_dir=%ROOT_PATH%Build\dependencies\prerequisites\miniconda3\envs\hutb_3.8\
 set python_path=%python_dir%python.exe
 set pip_path=%python_dir%Scripts\pip.exe
+echo python_path: %python_path%
 
 :arg-parse
 if not "%1"=="" (
@@ -114,17 +120,22 @@ if exist %INSTALLATION_DIR%UE4Carla/%CARLA_VERSION%-dirty/ (
 if %UPLOAD_DOWNLOAD%==true (
     cd /d %ROOT_PATH%Util
     rem  --distpath %INSTALLATION_DIR%UE4Carla
-    Pyinstaller hutb_downloader.spec
+    rem %pip_path% install Pyinstaller
+    %python_dir%Scripts\pyinstaller.exe hutb_downloader.spec
+
+    rem %pip_path% install gitpython
     rem 将编译好的包上传到远程服务器并下载编译好的包
     rem python %ROOT_PATH%Util\download_from_git.py -u release
-    call dist\hutb_downloader.exe  -u release
+    cd %ROOT_PATH%Util\dist\
+    hutb_downloader.exe  -u release
     rem 测试下载发行包
-    call dist\hutb_downloader.exe
-    cd /d %LOCAL_PATH%
-    goto good_exit
+    hutb_downloader.exe
+    cd /d %ROOT_PATH%
 ) else (
     echo Skipping upload and download of package for version %CARLA_VERSION%.
 )
+
+
 
 rem The directory of CarlaUE4.exe
 set BUILD_FOLDER=%INSTALLATION_DIR%UE4Carla/%CARLA_VERSION%/
