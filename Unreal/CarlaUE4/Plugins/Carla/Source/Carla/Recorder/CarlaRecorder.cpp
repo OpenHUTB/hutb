@@ -546,6 +546,9 @@ void ACarlaRecorder::Stop(void)
   }
 
   Clear();
+
+  // Reset the flag
+  bFirstTick = true;
 }
 
 void ACarlaRecorder::Clear(void)
