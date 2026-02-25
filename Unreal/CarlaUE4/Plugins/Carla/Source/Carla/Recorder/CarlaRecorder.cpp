@@ -488,8 +488,12 @@ void ACarlaRecorder::AddWeather(const FWeatherParameters& WeatherParams)
 std::string ACarlaRecorder::Start(
   std::string Name,
   FString MapName,
-  bool AdditionalData)
+  bool AdditionalData,
+  bool StopReplayer)
 {
+  // stop replayer if any in course
+  if (StopReplayer && Replayer.IsEnabled())
+    Replayer.Stop();
 
   // stop recording
   Stop();
