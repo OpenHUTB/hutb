@@ -50,18 +50,35 @@ rem -- MAIN --
 
 rem -- INSTALL VISUAL STUDIO IF NOT FOUND --
 setlocal EnableDelayedExpansion
-set "vs_found=false"
-if exist "%ProgramW6432%\Microsoft Visual Studio\2022\Community\VC\Auxiliary\Build\vcvars64.bat" (
-    set "vs_found=true"
+
+set "vs_19_found=false"
+if exist "%programfiles(x86)%\Microsoft Visual Studio\2019\Community\VC\Auxiliary\Build\vcvars64.bat" (
+    set "vs_19_found=true"
 )
-if exist "%ProgramW6432%\Microsoft Visual Studio\2022\Professional\VC\Auxiliary\Build\vcvars64.bat" (
-    set "vs_found=true"
+if exist "%programfiles(x86)%\Microsoft Visual Studio\2019\Professional\VC\Auxiliary\Build\vcvars64.bat" (
+    set "vs_19_found=true"
 )
-if exist "%ProgramW6432%\Microsoft Visual Studio\2022\Enterprise\VC\Auxiliary\Build\vcvars64.bat" (
-    set "vs_found=true"
+if exist "%programfiles(x86)%\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary\Build\vcvars64.bat" (
+    set "vs_19_found=true"
+)
+if "!vs_19_found!"=="true" (
+    echo Found Visual Studio 2019.
+    goto end_vs_install
+) else (
+    echo Could not find Visual Studio 2019.
 )
 
-if "!vs_found!"=="true" (
+set "vs_22_found=false"
+if exist "%ProgramW6432%\Microsoft Visual Studio\2022\Community\VC\Auxiliary\Build\vcvars64.bat" (
+    set "vs_22_found=true"
+)
+if exist "%ProgramW6432%\Microsoft Visual Studio\2022\Professional\VC\Auxiliary\Build\vcvars64.bat" (
+    set "vs_22_found=true"
+)
+if exist "%ProgramW6432%\Microsoft Visual Studio\2022\Enterprise\VC\Auxiliary\Build\vcvars64.bat" (
+    set "vs_22_found=true"
+)
+if "!vs_22_found!"=="true" (
     echo Found Visual Studio 2022.
     goto end_vs_install
 ) else (

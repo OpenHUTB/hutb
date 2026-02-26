@@ -23,6 +23,7 @@ jobs:
       - name: setup
         run: |
           call setEnv64.bat
+          call setup.bat
           git update-index --skip-worktree Unreal/CarlaUE4/CarlaUE4.uproject
           make setup ARGS="--chrono"
         shell: cmd

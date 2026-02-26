@@ -1,4 +1,4 @@
-@echo off
+﻿@echo off
 :: resolve display issue in Chinese (add support for utf-8)
 chcp 65001 > nul
 setlocal EnableDelayedExpansion
@@ -321,7 +321,7 @@ rem call %cd%\Build\dependencies\prerequisites\GnuWin32\bin\make launch ARGS="--
 
 rem make launch ARGS="--chrono" >launch.log
 
-make package ARGS="--chrono" >package.log
+rem make package ARGS="--chrono" >package.log
 
 
 
