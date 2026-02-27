@@ -130,6 +130,29 @@ if exist "%cd%\Build\dependencies\" (
         echo 7zip folder already exists.
     )
 
+
+    rem ---------------------------------------------------------------------------------------------------------------
+    rem Unzip Plugins
+    rem ---------------------------------------------------------------------------------------------------------------
+    rem Unzip RoadRunner Plugins
+    if not exist "%cd%\Unreal\CarlaUE4\Plugins\RoadRunnerRuntime" (
+        echo Unzipping Roadrunner Plugins ...
+        "prerequisites\7zip\7z.exe" x "Plugins\RoadRunner_Plugins.zip" -o"%cd%\Unreal\CarlaUE4\Plugins\" -y >nul
+    ) else (
+        echo RoadRunner Plugins already exists.
+    )
+    rem Unzip CesiumForUnreal Plugin
+    if not exist "%cd%\Unreal\CarlaUE4\Plugins\CesiumForUnreal" (
+        echo Unzipping CesiumForUnreal Plugin ...
+        "prerequisites\7zip\7z.exe" x "Plugins\CesiumForUnreal-426-v1.18.0-ue4.zip" -o"%cd%\Unreal\CarlaUE4\Plugins\" -y >nul
+    ) else (
+        echo CesiumForUnreal Plugin already exists.
+    )
+
+
+    rem ---------------------------------------------------------------------------------------------------------------
+    rem Unzip dependencies
+    rem ---------------------------------------------------------------------------------------------------------------
     rem fix no XINPUT1_3.dll error when lanunch UE4Editor
     rem install directx_Jun2010_redist.exe when DirectX folder not exist
     REG QUERY HKEY_CURRENT_USER\Software\Microsoft |find "DirectX" >nul
@@ -321,7 +344,7 @@ rem call %cd%\Build\dependencies\prerequisites\GnuWin32\bin\make launch ARGS="--
 
 rem make launch ARGS="--chrono" >launch.log
 
-rem make package ARGS="--chrono" >package.log
+make package ARGS="--chrono" >package.log
 
 
 
