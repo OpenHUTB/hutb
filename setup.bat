@@ -344,7 +344,7 @@ rem call %cd%\Build\dependencies\prerequisites\GnuWin32\bin\make launch ARGS="--
 
 rem make launch ARGS="--chrono" >launch.log
 
-make package ARGS="--chrono" >package.log
+rem make package ARGS="--chrono" >package.log
 
 
 
