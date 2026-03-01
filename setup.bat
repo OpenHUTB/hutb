@@ -322,6 +322,18 @@ if %skip_prerequisites%==false (
 
 rem Activate VS terminal development environment:
 set "vs_env_bat="
+rem for vs 2019
+if exist "%programfiles(x86)%\Microsoft Visual Studio\2019\Community\VC\Auxiliary\Build\vcvars64.bat" (
+    set "vs_env_bat=%programfiles(x86)%\Microsoft Visual Studio\2019\Community\VC\Auxiliary\Build\vcvars64.bat"
+)
+if exist "%programfiles(x86)%\Microsoft Visual Studio\2019\Professional\VC\Auxiliary\Build\vcvars64.bat" (
+    set "vs_env_bat=%programfiles(x86)%\Microsoft Visual Studio\2019\Professional\VC\Auxiliary\Build\vcvars64.bat"
+)
+if exist "%programfiles(x86)%\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary\Build\vcvars64.bat" (
+    set "vs_env_bat=%programfiles(x86)%\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary\Build\vcvars64.bat"
+)
+
+rem for vs 2022
 if exist "%ProgramW6432%\Microsoft Visual Studio\2022\Community\VC\Auxiliary\Build\vcvars64.bat" (
     set "vs_env_bat=%ProgramW6432%\Microsoft Visual Studio\2022\Community\VC\Auxiliary\Build\vcvars64.bat"
 )
@@ -336,7 +348,7 @@ if not "%vs_env_bat%"=="" (
     echo Activating "x64 Native Tools Command Prompt" terminal environment.
     call "%vs_env_bat%" || exit /b
 ) else (
-    echo Could not find vcvars64.bat for VS 2022, aborting setup...
+    echo Could not find vcvars64.bat for VS, aborting setup...
     exit 1
 )
 
