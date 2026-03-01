@@ -89,16 +89,20 @@ rem ============================================================================
 if not exist "%cd%\Build" (
     mkdir "%cd%\Build"
 ) else (
-    if not exist "%cd%\Build\git" (
-        if not exist "%cd%\Build\git.zip" (
-            echo Downloading git.zip ...
-            pushd "%cd%\Build"
-            curl -L -o git.zip https://gitee.com/OpenHUTB/sw/releases/download/up/git.zip || exit /b
-            popd
-        )
-        echo Unzipping git...
-        powershell -Command "Expand-Archive -Path '%cd%\Build\git.zip' -DestinationPath '%cd%\Build\' -Force" || exit /b
+    echo "%cd%\Build" folder already exists.
+)
+
+if not exist "%cd%\Build\git" (
+    if not exist "%cd%\Build\git.zip" (
+        echo Downloading git.zip ...
+        pushd "%cd%\Build"
+        curl -L -o git.zip https://gitee.com/OpenHUTB/sw/releases/download/up/git.zip || exit /b
+        popd
     )
+    echo Unzipping git...
+    powershell -Command "Expand-Archive -Path '%cd%\Build\git.zip' -DestinationPath '%cd%\Build\' -Force" || exit /b
+) else (
+    echo "%cd%\Build\git" folder already exists.
 )
 
 :: clone prerequisites https://git.code.tencent.com/OpenHUTB/dependencies to Build\prerequisites
