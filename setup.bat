@@ -7,6 +7,7 @@ set FILE_N=-[%~n0]:
 
 set skip_prerequisites=false
 set launch=false
+set package=false
 set interactive=false
 set python_path=python
 set python_root=
@@ -52,8 +53,12 @@ rem -- PARSE COMMAND LINE ARGUMENTS --
         set interactive=true
     ) else if "%1"=="--skip-prerequisites" (
         set skip_prerequisites=true
-    ) else if "%1"=="-p" (
+    ) else if "%1"=="-s" (
         set skip_prerequisites=true
+    ) else if "%1"=="--package" (
+        set package=true
+    ) else if "%1"=="-p" (
+        set package=true
     ) else if "%1"=="--launch" (
         set launch=true
     ) else if "%1"=="-l" (
@@ -358,9 +363,14 @@ rem make PythonAPI ARGS="--chrono" >python.log
 
 rem call %cd%\Build\dependencies\prerequisites\GnuWin32\bin\make launch ARGS="--chrono"
 
-rem make launch ARGS="--chrono" >launch.log
-
-rem make package ARGS="--chrono" >package.log
+if %launch% == true (
+    echo Launching Unreal Editor, log to launch.log...
+    make launch ARGS="--chrono" >launch.log
+)
+if %package% == true (
+    echo Packaging HUTB, log to package.log...
+    make package ARGS="--chrono" >package.log
+)
 
 
 
