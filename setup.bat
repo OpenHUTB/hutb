@@ -212,6 +212,12 @@ if exist "%cd%\Build\dependencies\" (
     ) else (
         echo dotnet folder already exists.
     )
+    if not exist "prerequisites\git\" (
+        echo Unzipping git ...
+        "prerequisites\7zip\7z.exe" x "prerequisites\git.zip" -o"prerequisites\" -y >nul
+    ) else (
+        echo git folder already exists.
+    )
     if not exist "prerequisites\GnuWin32\" (
         echo Unzipping GnuWin32 ...
         "prerequisites\7zip\7z.exe" x "prerequisites\GnuWin32.zip" -o"prerequisites\" -y >nul
