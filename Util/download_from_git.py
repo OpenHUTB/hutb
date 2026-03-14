@@ -7,8 +7,11 @@
 # 
 # 打包成exe
 # pip install pyinstaller
-# ** 根据.spec文件生成exe文件 **
-# Pyinstaller hutb_downloader.spec
+# ** 根据.spec文件生成exe文件 **: 
+# 1. 当前目录放有最小化的git文件夹：https://gitee.com/OpenHUTB/sw/releases/download/up/git_min.zip
+# 2. python git_files.py 生成git_files.txt文件，复制其中的内容到Util\hutb_downloader.spec文件的Analysis对象的datas参数中，
+# 3. 然后执行：Pyinstaller hutb_downloader.spec
+# 
 # 
 # 其他（开发过程）：
 # -i "icon.ico"  指定图标
