@@ -8,12 +8,14 @@
 # 打包成exe
 # pip install pyinstaller
 # ** 根据.spec文件生成exe文件 **: 
-# 1. 当前目录放有最小化的git文件夹：https://gitee.com/OpenHUTB/sw/releases/download/up/git_min.zip
+# 1. 当前目录放有cc文件夹：https://gitee.com/OpenHUTB/sw/releases/download/up/git_min.zip
 # 2. python git_files.py 生成git_files.txt文件，复制其中的内容到Util\hutb_downloader.spec文件的Analysis对象的datas参数中，
-# 3. 然后执行：Pyinstaller hutb_downloader.spec
+# 将git目录添加到datas参数中，换一台机器还是找不到git，转而从gitee下载git_min.zip，并解压到当前目录下，这样就可以避免在打包成exe后，找不到git可执行文件的问题
+# 3. Pyinstaller download_from_git.py --onefile --name hutb_downloader -i hutb_log.ico
 # 
 # 
 # 其他（开发过程）：
+# 使用.spec文件打包：Pyinstaller hutb_downloader.spec
 # -i "icon.ico"  指定图标
 # -F 单文件模式
 # Pyinstaller -F download_from_git.py --name hutb_downloader.exe
@@ -33,11 +35,17 @@ import datetime
 import os, stat
 import shutil
 import sys
+import inspect
 
 # 获取当前代码路径的上级目录
 home_dir = os.path.abspath(os.path.join(os.getcwd(), '..'))
 # 获取当前脚本所在的路径
-script_dir = os.path.dirname(os.getcwd())
+# script_dir = os.path.dirname(os.path.abspath(__file__))
+# 会下载到系统的临时文件中（C:\Users\nongf\AppData\Local\Temp\_MEI598322\git\bin\git.exe）
+# script_dir = os.path.dirname(os.getcwd())
+# 获取绝对路径的父目录
+script_dir = inspect.getfile(inspect.currentframe())
+script_dir = os.path.dirname(os.path.abspath(script_dir))
 
 # 使用当前 git 目录下的 git 可执行文件
 # 判断git目录是否存在
@@ -45,9 +53,19 @@ prerequisites_dir = os.path.join(home_dir, 'Build', 'dependencies', 'prerequisit
 if os.path.exists(os.path.join(prerequisites_dir, 'git')) and not os.path.exists(os.path.join(script_dir, 'git', 'bin', 'git.exe')):
     # 将git目录拷贝到当前脚本所在的路径下
     shutil.copytree(os.path.join(prerequisites_dir, 'git'), os.path.join(script_dir, 'git'))
+elif not os.path.exists(os.path.join(prerequisites_dir, 'git')) and not os.path.exists(os.path.join(script_dir, 'git', 'bin', 'git.exe')):
+    # 从gitee下载git_min.zip，并解压到当前目录下
+    print("Git directory not found in prerequisites, download it from https://gitee.com/OpenHUTB/sw/releases/download/up/git_min.zip and extract it to %s" % script_dir)
+    import urllib.request
+    import zipfile
+    urllib.request.urlretrieve("https://gitee.com/OpenHUTB/sw/releases/download/up/git_min.zip", os.path.join(script_dir, "git_min.zip"))
+    with zipfile.ZipFile(os.path.join(script_dir, "git_min.zip"), 'r') as zip_ref:
+        zip_ref.extractall(script_dir)
+        
 
 # 这样可以避免在打包成exe后，找不到git可执行文件的问题
 git_path = os.path.join(script_dir, 'git', 'bin', 'git.exe')
+print("Using git executable: ", git_path)
 os.environ['GIT_PYTHON_GIT_EXECUTABLE'] = git_path
 
 
@@ -304,7 +322,7 @@ if __name__ == '__main__':
         save_dir = args.repository
     local_path = os.path.join(cur_dir, save_dir)  # , 'hutb'
     print("Download path: ", local_path)
-    
+ 
     if os.path.exists( local_path ):
         # Remove previous download folder
         shutil.rmtree( local_path , onerror=remove_readonly)
@@ -339,6 +357,16 @@ if __name__ == '__main__':
         if os.path.exists( os.path.join(local_path, 'hutb.zip') ):
             print("Remove hutb.zip...")
             os.remove( os.path.join(local_path, 'hutb.zip') )
+
+
+    # 如果在当前目录存在git文件夹，则删除
+    if os.path.exists( os.path.join(script_dir, 'git') ):
+        print("Removing existing git directory: ", os.path.join(script_dir, 'git'))
+        shutil.rmtree( os.path.join(script_dir, 'git') , onerror=remove_readonly)
+    # 如果在当前目录存在git_min.zip文件，则删除
+    if os.path.exists( os.path.join(script_dir, 'git_min.zip') ):
+        print("Removing existing git_min.zip file: ", os.path.join(script_dir, 'git_min.zip'))
+        os.remove( os.path.join(script_dir, 'git_min.zip') )
 
 
     cost_time = datetime.datetime.now() - start
