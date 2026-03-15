@@ -121,9 +121,9 @@ if not exist "%cd%\Build\dependencies" (
     echo dependencies repo already exists, updating dependencies repository.
     pushd "%cd%\Build\dependencies"
     :: discard any local changes
-    "%cd%\Build\git\cmd\git.exe" reset --hard
-    "%cd%\Build\git\cmd\git.exe" pull
-    "%cd%\Build\git\cmd\git.exe" lfs pull
+    :: "%cd%\Build\git\cmd\git.exe" reset --hard
+    :: "%cd%\Build\git\cmd\git.exe" pull
+    :: "%cd%\Build\git\cmd\git.exe" lfs pull
     popd
 )
 
