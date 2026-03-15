@@ -63,9 +63,9 @@ install(DIRECTORY "${RPCLIB_INCLUDE_PATH}/rpc" DESTINATION include/system)
 file(GLOB libcarla_carla_rpclib "${RPCLIB_LIB_PATH}/*.*")
 install(FILES ${libcarla_carla_rpclib} DESTINATION lib)
 
-# Install boost headers (install in system folder to avoid extra warnings).
+# Install boost headers (install in system folder to avoid extra warnings). prevent printed message too long.
 # @todo Remove boost from public interface of LibCarla.client.
-install(DIRECTORY "${BOOST_INCLUDE_PATH}/boost" DESTINATION include/system)
+install(DIRECTORY "${BOOST_INCLUDE_PATH}/boost" DESTINATION include/system MESSAGE "Off")
 file(GLOB boost_libraries "${BOOST_LIB_PATH}/*.*")
 install(FILES ${boost_libraries} DESTINATION lib)
 

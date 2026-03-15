@@ -55,9 +55,14 @@ if exist "%SQLITE_INSTALL_DIR%" (
     goto already_build
 )
 
-echo %FILE_N% Retrieving %SQLITE_BASE_NAME% from %SQLITE_REPO% to %SQLITE_ZIP_DIR% ...
-powershell -Command "(New-Object System.Net.WebClient).DownloadFile('%SQLITE_REPO%', '%SQLITE_ZIP_DIR%')"
-if %errorlevel% neq 0 goto error_download
+if exist "%SQLITE_SRC_DIR%" (
+    echo %FILE_N% A Sqlite3 source directory already exists.
+    echo %FILE_N% Delete "%SQLITE_SRC_DIR%" if you want to force a rebuild.
+) else (
+    echo %FILE_N% Retrieving %SQLITE_BASE_NAME% from %SQLITE_REPO% to %SQLITE_ZIP_DIR% ...
+    powershell -Command "(New-Object System.Net.WebClient).DownloadFile('%SQLITE_REPO%', '%SQLITE_ZIP_DIR%')"
+    if %errorlevel% neq 0 goto error_download
+)
 
 echo %FILE_N% Extracting Sqlite3 from "%SQLITE_ZIP%".
 powershell -Command "Expand-Archive '%SQLITE_ZIP_DIR%' -DestinationPath '%BUILD_DIR%'"

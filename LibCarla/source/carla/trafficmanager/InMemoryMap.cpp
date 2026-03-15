@@ -166,6 +166,7 @@ namespace traffic_manager {
   void InMemoryMap::SetUp() {
 
     // 1. Building segment topology (i.e., defining set of segment predecessors and successors)
+    log_warning("1. Building segment topology (i.e., defining set of segment predecessors and successors)...");
     assert(_world_map != nullptr && "No map reference found.");
     auto waypoint_topology = _world_map->GetTopology();
 
@@ -227,6 +228,7 @@ namespace traffic_manager {
     }
 
     // 2. Consuming the raw dense topology from cc::Map into SimpleWaypoints.
+    log_warning("2. Consuming the raw dense topology from cc::Map into SimpleWaypoints....");
     SegmentMap segment_map;
     assert(_world_map != nullptr && "No map reference found.");
     auto raw_dense_topology = _world_map->GenerateWaypoints(MAP_RESOLUTION);
@@ -238,6 +240,7 @@ namespace traffic_manager {
     }
 
     // 3. Processing waypoints.
+    log_warning("3. Processing waypoints....");
     auto distance_squared = [](cg::Location l1, cg::Location l2) {
       return cg::Math::DistanceSquared(l1, l2);
     };
@@ -433,6 +436,10 @@ namespace traffic_manager {
                 break;
               }
               junction_end_waypoint = temp.front();
+            }
+            // Skip if traversed_waypoints is empty to avoid front() on empty vector
+            if (traversed_waypoints.empty()) {
+              continue;
             }
 
             // Calculate the angle between the first and the last point of the junction.

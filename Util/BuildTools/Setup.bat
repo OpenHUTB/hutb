@@ -65,6 +65,9 @@ if not "%1"=="" (
     if "%1"=="--ros2" (
         set USE_ROS2=true
     )
+    if "%1"=="--debug" (
+        set IS_DEBUG=true
+    )
     if "%1"=="--download_only" (
         set DOWNLOAD_ONLY=true
     )
@@ -184,9 +187,19 @@ rem -- Download and install rpclib ---------------------------------------------
 rem ============================================================================
 
 echo %FILE_N% Installing rpclib...
-call "%INSTALLERS_DIR%install_rpclib.bat"^
- --build-dir "%INSTALLATION_DIR%"^
- --generator %GENERATOR%
+if %IS_DEBUG% == true (
+    echo %FILE_N% rpclib debug mode enabled.
+    call "%INSTALLERS_DIR%install_rpclib.bat"^
+    --build-dir "%INSTALLATION_DIR%"^
+    --generator %GENERATOR%^
+    --build-debug true
+) else (
+    echo %FILE_N% rpclib release mode enabled.
+    call "%INSTALLERS_DIR%install_rpclib.bat"^
+    --build-dir "%INSTALLATION_DIR%"^
+    --generator %GENERATOR%
+)
+
 
 if %errorlevel% neq 0 goto failed
 
@@ -217,9 +230,18 @@ rem -- Download and install Recast & Detour ------------------------------------
 rem ============================================================================
 
 echo %FILE_N% Installing "Recast & Detour"...
-call "%INSTALLERS_DIR%install_recast.bat"^
- --build-dir "%INSTALLATION_DIR%"^
- --generator %GENERATOR%
+if %IS_DEBUG% == true (
+    echo %FILE_N% Recast & Detour debug mode enabled.
+    call "%INSTALLERS_DIR%install_recast.bat"^
+    --build-dir "%INSTALLATION_DIR%"^
+    --generator %GENERATOR%^
+    --build-debug true
+) else (
+    echo %FILE_N% Recast & Detour release mode enabled.
+    call "%INSTALLERS_DIR%install_recast.bat"^
+    --build-dir "%INSTALLATION_DIR%"^
+    --generator %GENERATOR%
+)
 
 if %errorlevel% neq 0 goto failed
 
@@ -256,17 +278,28 @@ rem -- Download and install Boost ----------------------------------------------
 rem ============================================================================
 
 echo %FILE_N% Installing Boost...
-call "%INSTALLERS_DIR%install_boost.bat"^
- --build-dir "%INSTALLATION_DIR%"^
- --toolset %TOOLSET%^
- --version %BOOST_VERSION%^
- -j %NUMBER_OF_ASYNC_JOBS%^
- --build-all true
-call "%INSTALLERS_DIR%install_boost.bat"^
- --build-dir "%INSTALLATION_DIR%"^
- --toolset %TOOLSET%^
- --version %BOOST_VERSION%^
- -j %NUMBER_OF_ASYNC_JOBS%
+if %IS_DEBUG% == true (
+    echo %FILE_N% boost debug mode enabled.
+    call "%INSTALLERS_DIR%install_boost.bat"^
+    --build-dir "%INSTALLATION_DIR%"^
+    --toolset %TOOLSET%^
+    --version %BOOST_VERSION%^
+    -j %NUMBER_OF_ASYNC_JOBS%^
+    --build-debug true
+) else (
+    call "%INSTALLERS_DIR%install_boost.bat"^
+    --build-dir "%INSTALLATION_DIR%"^
+    --toolset %TOOLSET%^
+    --version %BOOST_VERSION%^
+    -j %NUMBER_OF_ASYNC_JOBS%^
+    --build-all true
+    call "%INSTALLERS_DIR%install_boost.bat"^
+    --build-dir "%INSTALLATION_DIR%"^
+    --toolset %TOOLSET%^
+    --version %BOOST_VERSION%^
+    -j %NUMBER_OF_ASYNC_JOBS% 
+)
+
 
 if %errorlevel% neq 0 goto failed
 
@@ -318,6 +351,8 @@ xcopy /Y /S /I "%INSTALLATION_DIR%eigen-install\include\*" "%CARLA_DEPENDENCIES_
 rem ============================================================================
 rem -- Download and install Chrono ----------------------------------------------
 rem ============================================================================
+
+echo USE_CHRONO: %USE_CHRONO%
 
 if %USE_CHRONO% == true (
     echo %FILE_N% Installing Chrono...

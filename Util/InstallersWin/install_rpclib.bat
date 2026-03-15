@@ -90,12 +90,7 @@ echo.%GENERATOR% | findstr /C:"Visual Studio" >nul && (
 
 
 if %BUILD_DEBUG% == true (
-    echo cmake .. -G %GENERATOR% %PLATFORM%^
-            -DCMAKE_BUILD_TYPE=Debug^
-            -DRPCLIB_BUILD_EXAMPLES=OFF^
-            -DCMAKE_CXX_FLAGS_DEBUG="/MDd /MP"^
-            -DCMAKE_INSTALL_PREFIX="%RPC_INSTALL_DIR:\=/%"^
-            "%RPC_SRC_DIR%"
+    echo %FILE_N% cmake .. -G %GENERATOR% %PLATFORM% -DCMAKE_BUILD_TYPE=Debug -DRPCLIB_BUILD_EXAMPLES=OFF -DCMAKE_CXX_FLAGS_DEBUG="/MDd /MP" -DCMAKE_INSTALL_PREFIX="%RPC_INSTALL_DIR:\=/%" "%RPC_SRC_DIR%"
     cmake .. -G %GENERATOR% %PLATFORM%^
             -DCMAKE_BUILD_TYPE=Debug^
             -DRPCLIB_BUILD_EXAMPLES=OFF^
@@ -109,12 +104,7 @@ if %BUILD_DEBUG% == true (
 
     if %errorlevel% neq 0 goto error_install
 ) else (
-    echo cmake .. -G %GENERATOR% %PLATFORM%^
-            -DCMAKE_BUILD_TYPE=Release^
-            -DRPCLIB_BUILD_EXAMPLES=OFF^
-            -DCMAKE_CXX_FLAGS_RELEASE="/MD /MP"^
-            -DCMAKE_INSTALL_PREFIX="%RPC_INSTALL_DIR:\=/%"^
-            "%RPC_SRC_DIR%"
+    echo %FILE_N% cmake .. -G %GENERATOR% %PLATFORM% -DCMAKE_BUILD_TYPE=Release -DRPCLIB_BUILD_EXAMPLES=OFF -DCMAKE_CXX_FLAGS_RELEASE="/MD /MP" -DCMAKE_INSTALL_PREFIX="%RPC_INSTALL_DIR:\=/%"  "%RPC_SRC_DIR%"
     cmake .. -G %GENERATOR% %PLATFORM%^
             -DCMAKE_BUILD_TYPE=Release^
             -DRPCLIB_BUILD_EXAMPLES=OFF^

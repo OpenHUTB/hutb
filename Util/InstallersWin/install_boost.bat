@@ -26,6 +26,10 @@ if not "%1"=="" (
         set BUILD_DIR=%~dpn2
         shift
     )
+    if "%1"=="--build-debug" (
+        set IS_DEBUG=true
+        shift
+    )
     if "%1"=="--toolset" (
         set TOOLSET=%~2
         shift
@@ -78,7 +82,7 @@ rem ============================================================================
 set BOOST_BASENAME=boost-%BOOST_VERSION%
 set BOOST_SHA256SUM="cc77eb8ed25da4d596b25e77e4dbb6c5afaac9cddd00dc9ca947b6b268cc76a4"
 
-set BOOST_TEMP_FOLDER=boost_%BOOST_VERSION:.=_%
+set BOOST_TEMP_FOLDER=boost-%BOOST_VERSION:.=_%
 set BOOST_TEMP_FILE=%BOOST_TEMP_FOLDER%.zip
 set BOOST_TEMP_FILE_DIR=%BUILD_DIR%%BOOST_TEMP_FILE%
 
@@ -91,23 +95,37 @@ rem ============================================================================
 rem -- Get Boost ---------------------------------------------------------------
 rem ============================================================================
 
-if exist "%BOOST_INSTALL_DIR%" (
-    goto already_build
+
+if %IS_DEBUG% == true (
+    echo %FILE_N% Build boost debug mode enabled.
+) else (
+    if exist "%BOOST_INSTALL_DIR%" (
+        goto already_build
+    )
 )
 
 set _checksum=""
 
 if not exist "%BOOST_SRC_DIR%" (
-    if exist "%CACHE_DIR:/=\%Installation.zip" (
+    if exist "%INSTALLATION_DIR:/=\%dependencies\src\%BOOST_TEMP_FILE%" (
         if not exist "%BOOST_TEMP_FILE_DIR%" (
-            "%ProgramW6432%/7-Zip/7z.exe" x "%CACHE_DIR:/=\%Installation.zip" -o"%ROOT_PATH%" -y
+            echo %FILE_N% Extracting boost from "%INSTALLATION_DIR:/=\%dependencies\src\%BOOST_TEMP_FILE%" to "%INSTALLATION_DIR%", this can take a while...
+            "%INSTALLATION_DIR:/=\%dependencies\prerequisites\7zip\7z.exe" x "%INSTALLATION_DIR:/=\%dependencies\src\%BOOST_TEMP_FILE%" -o"%INSTALLATION_DIR%" -y >nul
         )
     )
 
     if not exist "%BOOST_TEMP_FILE_DIR%" (
-        echo %FILE_N% Retrieving boost from %BOOST_REPO% ...
-        powershell -Command "(New-Object System.Net.WebClient).DownloadFile('%BOOST_REPO%', '%BOOST_TEMP_FILE_DIR%')"
-        call :CheckSumEvaluate %BOOST_TEMP_FILE_DIR%,%BOOST_SHA256SUM%,_checksum
+        if not exist "%BUILD_DIR%%BOOST_TEMP_FOLDER%" (
+            echo %FILE_N% Retrieving boost from %BOOST_REPO% ...
+            powershell -Command "(New-Object System.Net.WebClient).DownloadFile('%BOOST_REPO%', '%BOOST_TEMP_FILE_DIR%')"
+            call :CheckSumEvaluate %BOOST_TEMP_FILE_DIR%,%BOOST_SHA256SUM%,_checksum
+            echo %FILE_N% Extracting boost from "%BOOST_TEMP_FILE%", this can take a while...
+            if exist "%INSTALLATION_DIR:/=\%dependencies\prerequisites\7zip\7z.exe" (
+                "%INSTALLATION_DIR:/=\%dependencies\prerequisites\7zip\7z.exe" x "%BOOST_TEMP_FILE_DIR%" -o"%BUILD_DIR%" -y
+            ) else (
+                powershell -Command "Expand-Archive '%BOOST_TEMP_FILE_DIR%' -DestinationPath '%BUILD_DIR%' -Force"
+            )
+        )
     )
     if "!_checksum!" == "1" (
         echo %FILE_N% Using Boost backup
@@ -115,12 +133,6 @@ if not exist "%BOOST_SRC_DIR%" (
         call :CheckSumEvaluate %BOOST_TEMP_FILE_DIR%,%BOOST_SHA256SUM%,_checksum
     )
     if "!_checksum!" == "1" goto error_download
-    echo %FILE_N% Extracting boost from "%BOOST_TEMP_FILE%", this can take a while...
-    if exist "%ProgramW6432%/7-Zip/7z.exe" (
-        "%ProgramW6432%/7-Zip/7z.exe" x "%BOOST_TEMP_FILE_DIR%" -o"%BUILD_DIR%" -y
-    ) else (
-        powershell -Command "Expand-Archive '%BOOST_TEMP_FILE_DIR%' -DestinationPath '%BUILD_DIR%' -Force"
-    )
     echo %FILE_N% Removing "%BOOST_TEMP_FILE%"
     rem del "%BOOST_TEMP_FILE_DIR%"
     rename "%BUILD_DIR%%BOOST_TEMP_FOLDER%" "%BOOST_BASENAME%-source"
@@ -160,29 +172,55 @@ where python
 echo Install boost...
 cd "%BOOST_SRC_DIR%"
 
-b2 -j%NUMBER_OF_ASYNC_JOBS%^
-    headers^
-    --layout=versioned^
-    --build-dir=.\build^
-    --with-system^
-    --with-filesystem^
-    --with-python^
-    --with-date_time^
-    architecture=x86^
-    address-model=64^
-    toolset=%TOOLSET%^
-    variant=release^
-    link=static^
-    runtime-link=shared^
-    threading=multi^
-    --prefix="%BOOST_INSTALL_DIR:~0,-1%"^
-    --libdir="%BOOST_LIB_DIR:~0,-1%"^
-    --includedir="%BOOST_INSTALL_DIR:~0,-1%"^
-    install >nul
-if %errorlevel% neq 0 goto error_install
-
+if "%IS_DEBUG%" == "true" (
+    echo %FILE_N% IS_DEBUG: "%IS_DEBUG%", building...
+    b2 -j%NUMBER_OF_ASYNC_JOBS%^
+        headers^
+        --layout=versioned^
+        --build-dir=.\build^
+        --with-system^
+        --with-filesystem^
+        --with-python^
+        --with-date_time^
+        architecture=x86^
+        address-model=64^
+        toolset=%TOOLSET%^
+        variant=debug^
+        link=static^
+        runtime-link=shared^
+        threading=multi^
+        --prefix="%BOOST_INSTALL_DIR:~0,-1%"^
+        --libdir="%BOOST_LIB_DIR:~0,-1%"^
+        --includedir="%BOOST_INSTALL_DIR:~0,-1%"^
+        install >nul
+    if %errorlevel% neq 0 echo %FILE_N% [ERROR] An error ocurred while installing boost in debug mode.
+) else (
+    echo %FILE_N% Building boost release...
+    b2 -j%NUMBER_OF_ASYNC_JOBS%^
+        headers^
+        --layout=versioned^
+        --build-dir=.\build^
+        --with-system^
+        --with-filesystem^
+        --with-python^
+        --with-date_time^
+        architecture=x86^
+        address-model=64^
+        toolset=%TOOLSET%^
+        variant=release^
+        link=static^
+        runtime-link=shared^
+        threading=multi^
+        --prefix="%BOOST_INSTALL_DIR:~0,-1%"^
+        --libdir="%BOOST_LIB_DIR:~0,-1%"^
+        --includedir="%BOOST_INSTALL_DIR:~0,-1%"^
+        install >nul
+    if %errorlevel% neq 0 goto error_install
+)
 for /d %%i in ("%BOOST_INSTALL_DIR%boost*") do rename "%%i" include
 goto success
+
+
 
 
 rem ============================================================================

@@ -86,18 +86,26 @@ if not exist "%ENGINE_PATH%" (
     )
     cd "%ENGINE_PATH%"
     echo %cd%
-    CALL Build.bat
+    if %IS_DEBUG% == true (
+        echo Building engine in Debug mode...
+        echo CALL Build.bat --is_debug --git-code %git_code%
+        CALL Build.bat --is_debug --git-code %git_code%
+    ) else (
+        echo Building engine in Release mode...
+        echo CALL Build.bat --git-code %git_code%
+        CALL Build.bat --git-code %git_code%
+    )
 
     echo Build engine completed.
     :: 设置用户的 UE4_ROOT 环境变量
     setx UE4_ROOT %ENGINE_PATH%
     echo New UE4_ROOT set to %ENGINE_PATH%
 ) else (
-    echo %FILE_N% Engine directory already exists: "%ENGINE_PATH%", executing git pull.
-    cd /d "%ENGINE_PATH%"
-    git fetch --all
-    git reset --hard origin/%ENGINE_BRANCH%
-    git pull
+    echo %FILE_N% Engine directory already exists: "%ENGINE_PATH%"
+    rem cd /d "%ENGINE_PATH%"
+    rem git fetch --all
+    rem git reset --hard origin/%ENGINE_BRANCH%
+    rem git pull
 )
 
 :: 下载资产
@@ -138,10 +146,11 @@ if  %GIT_PULL% == true (
 :: Build AIR
 if %BUILD_AIR% == true (
     if exist "%AIR_BUILD_PATH%\Unreal\Plugins\AirSim" (
-        cd "%AIR_BUILD_PATH%"
-        git fetch --all
-        git reset --hard origin/%AIR_BRANCH%
-        git pull
+        echo AirSim plugin already exists in build path: "%AIR_BUILD_PATH%\Unreal\Plugins\AirSim"
+        rem cd "%AIR_BUILD_PATH%"
+        rem git fetch --all
+        rem git reset --hard origin/%AIR_BRANCH%
+        rem git pull
     ) else (
         echo Air cache directory: "%CACHE_DIR:/=\%AirSim\"
         if exist "%CACHE_DIR:/=\%AirSim\" (
@@ -155,6 +164,7 @@ if %BUILD_AIR% == true (
     echo %cd%
     :: Build AirSim
     :: CALL clean_rebuild.bat
+    rem CALL build.cmd --Debug
     CALL build.cmd
     xcopy /q /Y /S /I "%AIR_BUILD_PATH:/=\%Unreal\Plugins\AirSim\"  %AIR_PLUGIN_PATH%
 )

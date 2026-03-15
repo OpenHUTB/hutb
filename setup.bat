@@ -229,7 +229,7 @@ if exist "%cd%\Build\dependencies\" (
     rem Extract src zip files
     if not exist "%cd%\Build\boost-1.86.0-source" (
         echo Unzipping boost-1.86.0-source.zip ...
-        "prerequisites\7zip\7z.exe" x "src\boost_1_86_0.zip" -o"%cd%\Build\" -y >nul
+        "prerequisites\7zip\7z.exe" x "src\boost-1_86_0.zip" -o"%cd%\Build\" -y >nul
     ) else (
         echo Build\boost-1.86.0-source folder already exists.
     )

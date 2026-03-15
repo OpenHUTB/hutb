@@ -39,6 +39,10 @@ if not "%1"=="" (
     if "%1"=="--clean" (
         set REMOVE_INTERMEDIATE=true
     )
+    if "%1"=="--build-debug" (
+        set IS_DEBUG=true
+        shift
+    )
     if "%1"=="--generator" (
         set GENERATOR=%2
         shift
@@ -57,6 +61,8 @@ if not "%1"=="" (
     goto :arg-parse
 )
 
+echo %FILE_N% IS_DEBUG=%IS_DEBUG%
+
 if %REMOVE_INTERMEDIATE% == false (
     if %BUILD_SERVER% == false (
         if %BUILD_CLIENT% == false (
@@ -66,10 +72,12 @@ if %REMOVE_INTERMEDIATE% == false (
     )
 )
 
+echo %FILE_N% Kill UE4Editor.exe if it is running, otherwise it will cause link error with Unreal\CarlaUE4\Plugins\Carla\Binaries\Win64\UE4Editor-Carla.dll
+:: wmic process where name="UE4Editor.exe" delete
+
 :: if exist UE4Editor.exe, kill it (otherwise it will cause link error with Unreal\CarlaUE4\Plugins\Carla\Binaries\Win64\UE4Editor-Carla.dll)
 :: There may be other unrelated UE4Editor.exe
 :: wmic process where name="UE4Editor.exe" |find /i "%UE4_ROOT:/=\%\Engine\Binaries\Win64\UE4Editor.exe"
-wmic process where name="UE4Editor.exe" delete
 
 rem ============================================================================
 rem -- Local Variables ---------------------------------------------------------
@@ -78,16 +86,22 @@ rem ============================================================================
 rem Set the visual studio solution directory
 rem
 set LIBCARLA_VSPROJECT_PATH=%INSTALLATION_DIR:/=\%libcarla-visualstudio\
+echo %FILE_N% LibCarla Visual Studio project directory: "%LIBCARLA_VSPROJECT_PATH%"
 
 if exist "%ProgramW6432%\Microsoft Visual Studio\2022\Community\VC\Auxiliary\Build\vcvars64.bat" (
     if %GENERATOR% == "" set GENERATOR="Visual Studio 17 2022"
 ) else (
     if %GENERATOR% == "" set GENERATOR="Visual Studio 16 2019"
 )
+echo %FILE_N% Using generator: %GENERATOR%
 
 
 set LIBCARLA_SERVER_INSTALL_PATH=%ROOT_PATH:/=\%Unreal\CarlaUE4\Plugins\Carla\CarlaDependencies\
 set LIBCARLA_CLIENT_INSTALL_PATH=%ROOT_PATH:/=\%PythonAPI\carla\dependencies\
+
+rem if %IS_DEBUG% == true (
+rem     set REMOVE_INTERMEDIATE=true
+rem )
 
 if %REMOVE_INTERMEDIATE% == true (
     rem Remove directories
@@ -128,30 +142,65 @@ set errorlevel=0
 rem Build libcarla server
 rem
 if %BUILD_SERVER% == true (
-    cmake -G %GENERATOR% %PLATFORM%^
-      -DCMAKE_BUILD_TYPE=Server^
-      -DCMAKE_CXX_FLAGS_RELEASE="/MD /MP"^
-      -DCMAKE_INSTALL_PREFIX="%LIBCARLA_SERVER_INSTALL_PATH:\=/%"^
-      "%ROOT_PATH%"
+    if %IS_DEBUG% == true (
+        echo %FILE_N% Building libcarla server in debug mode...
+        cmake -G %GENERATOR% %PLATFORM%^
+        -DCMAKE_BUILD_TYPE=Server^
+        -DCMAKE_CXX_FLAGS_DEBUG="/MDd /MP"^
+        -DCMAKE_INSTALL_PREFIX="%LIBCARLA_SERVER_INSTALL_PATH:\=/%"^
+        "%ROOT_PATH%"
 
-    if %errorlevel% neq 0 goto error_cmake
+        if %errorlevel% neq 0 goto error_cmake
 
-    cmake --build . --config Release --target install | findstr /V "Up-to-date:"
-    if %errorlevel% neq 0 goto error_install
+        cmake --build . --config Debug --target install | findstr /V "Up-to-date:"
+        if %errorlevel% neq 0 goto error_install
+        echo %FILE_N% Building libcarla server in debug mode... done.
+    ) else (
+        echo %FILE_N% Building libcarla server in release mode...
+        cmake -G %GENERATOR% %PLATFORM%^
+        -DCMAKE_BUILD_TYPE=Server^
+        -DCMAKE_CXX_FLAGS_RELEASE="/MD /MP"^
+        -DCMAKE_INSTALL_PREFIX="%LIBCARLA_SERVER_INSTALL_PATH:\=/%"^
+        "%ROOT_PATH%"
+
+        if %errorlevel% neq 0 goto error_cmake
+
+        cmake --build . --config Release --target install | findstr /V "Up-to-date:"
+        if %errorlevel% neq 0 goto error_install
+        echo %FILE_N% Building libcarla server in release mode... done.
+    )
+
 )
 
 rem Build libcarla client
 rem
 if %BUILD_CLIENT% == true (
-    cmake -G %GENERATOR% %PLATFORM%^
-      -DCMAKE_BUILD_TYPE=Client^
-      -DCMAKE_CXX_FLAGS_RELEASE="/MD /MP"^
-      -DCMAKE_INSTALL_PREFIX="%LIBCARLA_CLIENT_INSTALL_PATH:\=/%"^
-      "%ROOT_PATH%"
-    if %errorlevel% neq 0 goto error_cmake
+    if %IS_DEBUG% == true (
+        echo %FILE_N% Building libcarla client in debug mode...
+        cmake -G %GENERATOR% %PLATFORM%^
+        -DCMAKE_BUILD_TYPE=Client^
+        -DCMAKE_CXX_FLAGS_DEBUG="/MDd /MP"^
+        -DCMAKE_INSTALL_PREFIX="%LIBCARLA_CLIENT_INSTALL_PATH:\=/%"^
+        "%ROOT_PATH%"
+        if %errorlevel% neq 0 goto error_cmake
 
-    cmake --build . --config Release --target install | findstr /V "Up-to-date:"
-    if %errorlevel% neq 0 goto error_install
+        cmake --build . --config Debug --target install | findstr /V "Up-to-date:"
+        if %errorlevel% neq 0 goto error_install
+        echo %FILE_N% Building libcarla client in debug mode... done.
+    ) else (
+        echo %FILE_N% Building libcarla client in release mode...
+        cmake -G %GENERATOR% %PLATFORM%^
+        -DCMAKE_BUILD_TYPE=Client^
+        -DCMAKE_CXX_FLAGS_RELEASE="/MD /MP"^
+        -DCMAKE_INSTALL_PREFIX="%LIBCARLA_CLIENT_INSTALL_PATH:\=/%"^
+        "%ROOT_PATH%"
+        if %errorlevel% neq 0 goto error_cmake
+
+        cmake --build . --config Release --target install | findstr /V "Up-to-date:"
+        if %errorlevel% neq 0 goto error_install
+        echo %FILE_N% Building libcarla client in release mode... done.
+    )
+
 )
 
 goto success

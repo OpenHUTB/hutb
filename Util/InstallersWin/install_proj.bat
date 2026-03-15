@@ -71,9 +71,14 @@ if exist "%PROJ_INSTALL_DIR%" (
     goto already_build
 )
 
-echo %FILE_N% Retrieving %PROJ_BASE_NAME%.
-powershell -Command "(New-Object System.Net.WebClient).DownloadFile('%PROJ_REPO%', '%PROJ_ZIP_DIR%')"
-if %errorlevel% neq 0 goto error_download
+if exist "%PROJ_SRC_DIR%" (
+    echo %FILE_N% A PROJ source directory already exists.
+    echo %FILE_N% Delete "%PROJ_SRC_DIR%" if you want to force a rebuild.
+) else (
+    echo %FILE_N% Retrieving %PROJ_BASE_NAME%.
+    powershell -Command "(New-Object System.Net.WebClient).DownloadFile('%PROJ_REPO%', '%PROJ_ZIP_DIR%')"
+    if %errorlevel% neq 0 goto error_download
+)
 
 cd %BUILD_DIR%
 echo %FILE_N% Extracting PROJ from "%PROJ_ZIP%".

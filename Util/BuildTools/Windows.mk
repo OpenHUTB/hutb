@@ -8,6 +8,8 @@ export ROOT_PATH=$(CURDIR)/
 # for debug (modify to false when commit)
 export IS_DEBUG=false
 
+export git_code=T8w6TYB_r71gGTP3A02B
+
 # dependecy install/build directory (rpclib, gtest, boost)
 export INSTALLATION_DIR=$(ROOT_PATH)Build/
 
@@ -104,7 +106,7 @@ client: setup
 
 .PHONY: LibCarla
 LibCarla: setup
-	@"${CARLA_BUILD_TOOLS_FOLDER}/BuildLibCarla.bat" --server --client --generator "$(GENERATOR)"
+	@"${CARLA_BUILD_TOOLS_FOLDER}/BuildLibCarla.bat" --server --client --generator "$(GENERATOR)" $(ARGS)
 
 setup: downloadplugin
 	@"${CARLA_BUILD_TOOLS_FOLDER}/Setup.bat" --boost-toolset msvc-14.3 --generator "$(GENERATOR)" $(ARGS)

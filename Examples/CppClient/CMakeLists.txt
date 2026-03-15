@@ -5,7 +5,7 @@ project(example)
 link_directories(
     ${RPCLIB_LIB_PATH})
 
-file(GLOB example_sources "main.cpp" "*.h")
+file(GLOB example_sources "basic_usage.cpp" "*.h")
 
 file(GLOB example_client_sources "")
 
@@ -22,18 +22,19 @@ foreach(target ${build_targets})
 
   target_include_directories(${target} SYSTEM PRIVATE
       "../../LibCarla/source"
-      "../../Build/debug/boost-1.86.0-install/include"
-      "../../Build/debug/rpclib-install/include/"
-      "../../Build/debug/recast-install/include/"
+      "../../PythonAPI/carla/dependencies/include"    # 解决：无法打开 源 文件 "carla/client/ActorBlueprint.h"
+      "../../Build/boost-1.86.0-install/include"
+      "../../Build/rpclib-install/include/"
+      "../../Build/recast-install/include/"
       "../../Build/zlib-install/include/"
       "../../Build/libpng-1.2.37-install/include/"
       "../../LibCarla/source/third-party/")
 
   # 为特定的目标（可执行文件或库）指定链接器搜索库文件的目录
   target_link_directories(${target} PRIVATE
-      "../../Build/debug/boost-1.86.0-install/lib"
-      "../../Build/debug/rpclib-install/lib/"
-      "../../Build/debug/recast-install/lib/"
+      "../../Build/boost-1.86.0-install/lib"
+      "../../Build/rpclib-install/lib/"
+      "../../Build/recast-install/lib/"
       "../../PythonAPI/carla/dependencies/lib/"  # 为了导入 carla_client_debug.lib
       "../../Build/zlib-install/lib/"
       "../../Build/libcarla-visualstudio/LibCarla/cmake/client/Debug/"

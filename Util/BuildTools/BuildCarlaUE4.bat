@@ -183,23 +183,47 @@ echo %OPTIONAL_MODULES_TEXT% > "%ROOT_PATH%Unreal/CarlaUE4/Config/OptionalModule
 if %BUILD_UE4_EDITOR% == true (
     echo %FILE_N% Building Unreal Editor...
 
-    call "%UE4_ROOT%Engine\Build\BatchFiles\Build.bat"^
-        CarlaUE4Editor^
-        Win64^
-        Development^
-        -WaitMutex^
-        -FromMsBuild^
-        "%ROOT_PATH%Unreal/CarlaUE4/CarlaUE4.uproject"
-    if errorlevel 1 goto bad_exit
+    if %IS_DEBUG% == true (
+        echo %FILE_N% Building Unreal Editor in debug mode...
+        call "%UE4_ROOT%Engine\Build\BatchFiles\Build.bat"^
+            CarlaUE4Editor^
+            Win64^
+            Debug^
+            -WaitMutex^
+            -FromMsBuild^
+            "%ROOT_PATH%Unreal/CarlaUE4/CarlaUE4.uproject"
+        if errorlevel 1 goto bad_exit
 
-    call "%UE4_ROOT%Engine\Build\BatchFiles\Build.bat"^
-        CarlaUE4^
-        Win64^
-        Development^
-        -WaitMutex^
-        -FromMsBuild^
-        "%ROOT_PATH%Unreal/CarlaUE4/CarlaUE4.uproject"
-    if errorlevel 1 goto bad_exit
+        call "%UE4_ROOT%Engine\Build\BatchFiles\Build.bat"^
+            CarlaUE4^
+            Win64^
+            Debug^
+            -WaitMutex^
+            -FromMsBuild^
+            "%ROOT_PATH%Unreal/CarlaUE4/CarlaUE4.uproject"
+        if errorlevel 1 goto bad_exit
+    ) else (
+        echo %FILE_N% Building Unreal Editor in release mode...
+        call "%UE4_ROOT%Engine\Build\BatchFiles\Build.bat"^
+            CarlaUE4Editor^
+            Win64^
+            Development^
+            -WaitMutex^
+            -FromMsBuild^
+            "%ROOT_PATH%Unreal/CarlaUE4/CarlaUE4.uproject"
+        if errorlevel 1 goto bad_exit
+
+        call "%UE4_ROOT%Engine\Build\BatchFiles\Build.bat"^
+            CarlaUE4^
+            Win64^
+            Development^
+            -WaitMutex^
+            -FromMsBuild^
+            "%ROOT_PATH%Unreal/CarlaUE4/CarlaUE4.uproject"
+        if errorlevel 1 goto bad_exit
+    )
+
+
 )
 
 rem Launch Carla Editor
