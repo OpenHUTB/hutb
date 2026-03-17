@@ -223,6 +223,15 @@ public class Carla : ModuleRules
       PublicAdditionalLibraries.Add(Path.Combine(LibCarlaInstallPath, "lib", "proj.lib"));
       PublicAdditionalLibraries.Add(Path.Combine(LibCarlaInstallPath, "lib", "osm2odr.lib"));
       PublicAdditionalLibraries.Add(Path.Combine(LibCarlaInstallPath, "lib", "zlibstatic.lib"));
+
+      // DirectX
+      // 获取LibCarlaInstallPath下的所有dll文件，并添加为依赖
+      DirectoryInfo di = new DirectoryInfo(Path.Combine(LibCarlaInstallPath, "dll", "DirectX_Runtime"));
+      FileInfo[] dllFiles = di.GetFiles("*.dll");
+      foreach (FileInfo file in dllFiles)
+      {
+        AddDllDependency(Path.Combine(LibCarlaInstallPath, "dll", "DirectX_Runtime"), file.Name);
+      }
     }
     else
     {

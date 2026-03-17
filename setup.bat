@@ -175,6 +175,20 @@ if exist "%cd%\Build\dependencies\" (
         echo DirectX found!
     )
 
+    rem Unzip DirectX Runtime
+    if not exist "prerequisites\DirectX_Runtime" (
+        echo Unzipping DirectX Runtime ...
+        "prerequisites\7zip\7z.exe" x "prerequisites\DirectX_Runtime.zip" -o"prerequisites\" -y >nul
+        if not exist "%cd%\Unreal\CarlaUE4\Plugins\Carla\CarlaDependencies\dll\DirectX_Runtime" (
+            mkdir "%cd%\Unreal\CarlaUE4\Plugins\Carla\CarlaDependencies\dll\DirectX_Runtime"
+        ) else (
+            echo "%cd%\Unreal\CarlaUE4\Plugins\Carla\CarlaDependencies\dll\DirectX_Runtime" folder already exists.
+        )
+        xcopy /q /Y /S /I "prerequisites\DirectX_Runtime\*.*" "%cd%\Unreal\CarlaUE4\Plugins\Carla\CarlaDependencies\dll\DirectX_Runtime\"
+    ) else (
+        echo DirectX Runtime already exists.
+    )
+
     if not exist "prerequisites\miniconda3\" (
         echo Unzipping miniconda...
         "prerequisites\7zip\7z.exe" x "prerequisites\miniconda3.zip" -o"prerequisites\" -y >nul
