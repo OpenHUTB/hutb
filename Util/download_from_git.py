@@ -13,6 +13,12 @@
 # 将git目录添加到datas参数中，换一台机器还是找不到git，转而从gitee下载git_min.zip，并解压到当前目录下，这样就可以避免在打包成exe后，找不到git可执行文件的问题
 # 3. Pyinstaller download_from_git.py --onefile --name hutb_downloader -i hutb_log.ico
 # 
+#
+# 新机器问题：fatal: unable to access 'https://git.code.tencent.com/OpenHUTB/release.git/': error setting certificate verify locations: CAfile: E:/Projects/OpenHUTB-mcp/mcp/git/mingw64/ssl/certs/ca-bundle.crt/etc/ssl/certs/ca-bundle.crt CApath: none
+# 解决：git\bin\git.exe config --global http.sslVerify false
+# 
+# 没有拉取大文件：
+# 
 # 
 # 其他（开发过程）：
 # 使用.spec文件打包：Pyinstaller hutb_downloader.spec
@@ -67,6 +73,10 @@ elif not os.path.exists(os.path.join(prerequisites_dir, 'git')) and not os.path.
 git_path = os.path.join(script_dir, 'git', 'bin', 'git.exe')
 print("Using git executable: ", git_path)
 os.environ['GIT_PYTHON_GIT_EXECUTABLE'] = git_path
+
+disable_ssl_verify_command = "%s config --global http.sslVerify false" % os.path.join(script_dir, 'git', 'bin', 'git.exe')
+print(disable_ssl_verify_command)
+os.system(disable_ssl_verify_command)  # 解决新机器上git拉取代码时，出现的证书验证问题
 
 
 import time
@@ -219,6 +229,7 @@ def merge_files(input_dir, output_file):
     files.sort()
     
     with open(output_file, 'wb') as out:
+        print("Merging files into: ", output_file)
         for file_name in files:
             print("Merging file: ", file_name)
             file_path = os.path.join(input_dir, file_name)
@@ -326,7 +337,15 @@ if __name__ == '__main__':
     if os.path.exists( local_path ):
         # Remove previous download folder
         shutil.rmtree( local_path , onerror=remove_readonly)
-    repo = GitRepository(local_path, remote_path)
+    # gitpython 库在新机器下载大文件时会出现问题，改为直接调用 git 命令行工具进行下载
+    # repo = GitRepository(local_path, remote_path)
+    # 问题：Skipping object checkout, Git LFS is not installed for this repository.
+    # 解决：git lfs install
+    git_path = os.path.join(script_dir, 'git', 'bin', 'git.exe')
+    clone_cmd = "%s clone %s  %s && cd %s & %s lfs install  && %s lfs pull && cd .." % (git_path, remote_path, local_path, save_dir, git_path, git_path)
+    print("Cloning repository with command: ", clone_cmd)
+    os.system(clone_cmd)
+
 
     # 移除工程中不相关的文件
     if os.path.exists( os.path.join(local_path, '.git') ):
@@ -372,7 +391,11 @@ if __name__ == '__main__':
     cost_time = datetime.datetime.now() - start
     # 当网络带宽足够大时，下载时间大约4-5分钟左右
     print('Download finished, cost: %s' % (cost_time))
-    print("Download to: ", local_path)
+    print("Download path: ", local_path)
+    
+    print("Press any key to continue...")
+    print("Launch simulator to click the file: %s" % os.path.join(local_path, 'CarlaUE4.exe'))
+    input()
     # kill_process_on_port(2000)  # 下载完成后自动启动CarlaUE4.exe，方便用户查看下载结果
     # if os.path.exists( os.path.join(local_path, 'CarlaUE4.exe') ):
     #     os.system("start "" %s" % os.path.join(local_path, 'CarlaUE4.exe'))  # 启动CarlaUE4.exe
