@@ -169,44 +169,34 @@ class GitRepository(object):
             else:
                 print("Git LFS initialization completed!")
 
-            # 执行 git checkout 先检出 .gitattributes 和其他跟踪文件
-            print("Checking out repository files...")
-            file_checkout_result = subprocess.run(
-                [git_exe, "-C", self.local_path, "checkout"], shell=False
-            )
-            if file_checkout_result.returncode != 0:
-                print(
-                    f"\nWarning: Initial file checkout failed with return code {file_checkout_result.returncode}"
-                )
+            # 使用 git lfs pull 一步完成：checkout + fetch + checkout
+            # 这避免了分开执行时可能的 LFS 初始化问题
+            print("\nFetching and checking out repository files with LFS support...")
+            print("(This may take a few minutes depending on file size...)", flush=True)
+            sys.stdout.flush()
 
-            # 执行 git lfs fetch
-            print("Fetching LFS objects...")
-            print("(Initializing LFS download, this may take a moment...)")
-            fetch_result = subprocess.run(
-                [git_exe, "-C", self.local_path, "lfs", "fetch"],
+            pull_result = subprocess.run(
+                [git_exe, "-C", self.local_path, "lfs", "pull"],
                 shell=False,
-                stdout=subprocess.DEVNULL,
-                stderr=subprocess.DEVNULL,
             )
-            if fetch_result.returncode != 0:
-                print(
-                    f"\nWarning: LFS fetch failed with return code {fetch_result.returncode}"
-                )
 
-            # 执行 git lfs checkout
-            print("\nChecking out LFS files...")
-            checkout_result = subprocess.run(
-                [git_exe, "-C", self.local_path, "lfs", "checkout"],
-                shell=False,
-                stdout=subprocess.DEVNULL,
-                stderr=subprocess.DEVNULL,
-            )
-            if checkout_result.returncode != 0:
+            if pull_result.returncode != 0:
                 print(
-                    f"Warning: LFS checkout failed with return code {checkout_result.returncode}"
+                    f"\nWarning: git lfs pull failed with return code {pull_result.returncode}"
                 )
+                print("Attempting fallback: git checkout...")
+                # 备用方案：如果 lfs pull 失败，尝试普通 checkout
+                checkout_result = subprocess.run(
+                    [git_exe, "-C", self.local_path, "checkout"],
+                    shell=False,
+                )
+                if checkout_result.returncode != 0:
+                    print(
+                        f"Warning: git checkout also failed with return code {checkout_result.returncode}"
+                    )
+            else:
+                print("\nRepository files and LFS objects pulled successfully!")
 
-            print("\nGit LFS files pulled successfully!")
         except Exception as e:
             print(f"Error pulling LFS files: {e}")
         else:
