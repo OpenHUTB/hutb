@@ -298,6 +298,13 @@ if %DO_COPY_FILES%==true (
         "%ProgramW6432%/7-Zip/7z.exe" x "!SUMO_TEMP_FILE_DIR!" -o"!XCOPY_FROM!Build\dependencies\Plugins\" -y
         echo d | xcopy /y /s "!XCOPY_FROM!Build\dependencies\Plugins\sumo"                             "!XCOPY_TO!sumo"
     )
+
+    :: copy DirectX Runtime dll to package
+    set DirectX_TEMP_FILE_DIR="!XCOPY_FROM!Build\dependencies\prerequisites\DirectX_Runtime"
+    if exist "!DirectX_TEMP_FILE_DIR!" (
+        :: 拷贝DirectX Runtime中所有的dll文件到运行exe所需的dll目录下
+        echo d | xcopy /y /s "!XCOPY_FROM!Build\dependencies\prerequisites\DirectX_Runtime\*.dll"      "!XCOPY_TO!CarlaUE4\Binaries\Win64"
+    )
 )
 call :get_current_time_in_seconds T_END_DO_COPY_FILES
 set /A ELAPSED_TIME=!T_END_DO_COPY_FILES! - !T_START_DO_COPY_FILES!
