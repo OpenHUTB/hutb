@@ -17,7 +17,8 @@
 # 新机器问题：fatal: unable to access 'https://git.code.tencent.com/OpenHUTB/release.git/': error setting certificate verify locations: CAfile: E:/Projects/OpenHUTB-mcp/mcp/git/mingw64/ssl/certs/ca-bundle.crt/etc/ssl/certs/ca-bundle.crt CApath: none
 # 解决：git\bin\git.exe config --global http.sslVerify false
 # 
-# 没有拉取大文件：
+# 解决：没有拉取大文件：
+# 解决：git\bin\git.exe lfs install
 # 
 # 
 # 其他（开发过程）：
@@ -32,6 +33,8 @@
 # 单个文件：
 # Pyinstaller download_from_git.py --onefile --add-data "git\bin\bash.exe;git\bin\" --add-data "git\bin\git.exe;git\bin\"  -i hutb_log.ico --name hutb_downloader
 #
+#
+# 
 # 上传到远程服务器：
 # python.exe download_from_git.py -u release
 

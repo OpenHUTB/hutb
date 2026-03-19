@@ -18,7 +18,7 @@ rem ============================================================================
 set DEL_SRC=false
 :: --build-debug true|false
 ::   Build the Debug version of rpclib to debug LibCarla client
-set BUILD_DEBUG=false
+set IS_DEBUG=false
 
 :arg-parse
 if not "%1"=="" (
@@ -34,7 +34,7 @@ if not "%1"=="" (
         set DEL_SRC=true
     )
     if "%1"=="--build-debug" (
-        set BUILD_DEBUG=true
+        set IS_DEBUG=true
         shift
     )
     shift  
@@ -61,7 +61,12 @@ set RPC_BUILD_DIR=%RPC_SRC_DIR%build\
 set PUSHD_RPC=%RPC_SRC_DIR%
 
 if exist "%RPC_INSTALL_DIR%" (
-    goto already_build
+    if %IS_DEBUG% == true (
+        echo %FILE_N% A rpclib Debug installation already exists. Rebuild it.
+    ) else (
+        echo %FILE_N% A rpclib Release installation already exists.
+        goto already_build
+    )
 )
 
 if not exist "%RPC_SRC_DIR%" (
@@ -89,7 +94,7 @@ echo.%GENERATOR% | findstr /C:"Visual Studio" >nul && (
 )
 
 
-if %BUILD_DEBUG% == true (
+if %IS_DEBUG% == true (
     echo %FILE_N% cmake .. -G %GENERATOR% %PLATFORM% -DCMAKE_BUILD_TYPE=Debug -DRPCLIB_BUILD_EXAMPLES=OFF -DCMAKE_CXX_FLAGS_DEBUG="/MDd /MP" -DCMAKE_INSTALL_PREFIX="%RPC_INSTALL_DIR:\=/%" "%RPC_SRC_DIR%"
     cmake .. -G %GENERATOR% %PLATFORM%^
             -DCMAKE_BUILD_TYPE=Debug^

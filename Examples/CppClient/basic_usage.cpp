@@ -1,12 +1,13 @@
 // 参考:https://zhuanlan.zhihu.com/p/663460928
+#include <random>
 #include <sstream>
 #include <string>
 #include <thread>
 #include <tuple>
 
 // 注意：hutb\Unreal\CarlaUE4\Plugins\Carla\CarlaDependencies\include\carla 不存在 carla/client 目录
-#include <carla/client/ActorBlueprint.h>
-#include <carla/client/BlueprintLibrary.h>
+#include <carla/actors/ActorBlueprint.h>
+#include <carla/actors/BlueprintLibrary.h>
 #include <carla/client/Client.h>
 #include <carla/client/Sensor.h>
 #include <carla/client/TimeoutException.h>
@@ -23,6 +24,35 @@ static auto ParseArguments(int argc, const char* argv[])
     using ResultType = std::tuple<std::string, uint16_t>;
     return argc == 3u ? ResultType{ argv[1u], std::stoi(argv[2u]) } : ResultType{ "localhost", 2000u };
 }
+
+
+// 随机选取
+template <typename RangeT, typename RNG>
+static auto& RandomChoice(const RangeT& range, RNG&& generator)
+{
+    std::uniform_int_distribution<size_t> dist{ 0u, range.size() - 1u };
+    return range[dist(std::forward<RNG>(generator))];
+}
+
+// 一个创建汽车的函数，方便循环使用
+SharedPtr<client::Vehicle> SetVehicle(geom::Transform transform, client::World world)
+{
+    std::mt19937_64 rng((std::random_device())());
+
+    // Get a random vehicle blueprint.
+    SharedPtr<actors::BlueprintLibrary> blueprint_library = world.GetBlueprintLibrary();
+    auto vehicles = blueprint_library->Filter("vehicle");
+    // 在容器中随机选取车型
+    actors::BlueprintLibrary vehicle_bp = RandomChoice(*vehicles, rng);
+
+    SharedPtr<client::Actor> actor = world.SpawnActor(vehicle_bp, transform);
+    SharedPtr<client::Vehicle> vehicle = boost::static_pointer_cast<client::Vehicle>(actor);
+    // 将汽车全部设置为自动驾驶模式
+    vehicle->SetAutopilot(true);
+    return vehicle;
+}
+
+
 
 int main(int argc, const char* argv[])
 {
@@ -48,7 +78,9 @@ int main(int argc, const char* argv[])
         // 获取推荐的车辆其实位置
         std::vector<geom::Transform> spawn_point = map->GetRecommendedSpawnPoints();
 
-        // 构建汽车对象
+
+        // ********************************************************************************************
+        // 构建汽车对象********************************************************************************
         // 获取这张地图中所有实物的蓝图
         SharedPtr<actors::BlueprintLibrary> blueprint_library = world.GetBlueprintLibrary();
         // 获取汽车的蓝图并指定其颜色
@@ -68,7 +100,6 @@ int main(int argc, const char* argv[])
         view_transform.rotation.pitch = -15.0f;
         spectator->SetTransform(view_transform);
 
-
         // 参考：https://zhuanlan.zhihu.com/p/663726656
         // 踩油门
         // client::Vehicle::Control control;
@@ -77,6 +108,7 @@ int main(int argc, const char* argv[])
         // {
         //     vehicle->ApplyControl(control);
         // }
+
         // 除了油门，还可以控制刹车、方向盘、传动比、手刹等
         // control.brake = 0.1;
         // control.steer = 0.02;
@@ -86,7 +118,34 @@ int main(int argc, const char* argv[])
         // 速度加速度：AckermanControl
 
         // 自动驾驶
-        vehicle->SetAutopilot(true);
+        // vehicle->SetAutopilot(true);
+        // std:cout << "Autopilot enabled" << std::endl;
+        // ********************************************************************************************
+
+
+
+        // ********************************************************************************************
+        // 添加行人************************************************************************************
+        actors::ActorBlueprint walker_bp = *blueprint_library->Find("walker.pedestrian.0037");
+        SharedPtr<client::Actor> walker_actor = world.SpawnActor(walker_bp, recommend_points[200]);
+        SharedPtr<client::Walker> walker = boost::static_pointer_cast<client::Walker>(walker_actor);
+        // 切换视角查看生成的行人
+        view_transform = recommend_points[200];
+        spectator = world.GetSpectator();
+        view_transform.location -= 5.0f * view_transform.GetForwardVector();
+        view_transform.location.z += 3.0f;
+        view_transform.rotation.yaw += 0.0f;
+        view_transform.rotation.pitch = -15.0f;
+        spectator->SetTransform(view_transform);
+        // 让行人动起来
+        client::Walker::Control walker_control;
+        walker_control.speed = 0.2;
+        walker_control.jump = false; // 爬坡的时候使用
+        walker_control.direction = { recommend_points[201].location.x,recommend_points[200].location.y,0.0 };
+        walker->ApplyControl(walker_control);
+        // ********************************************************************************************
+
+        
 
 
     }

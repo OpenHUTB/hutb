@@ -17,7 +17,7 @@ rem ============================================================================
 set DEL_SRC=false
 :: --build-debug true|false
 ::   Build the Debug version of Recast & Detour to debug LibCarla client
-set BUILD_DEBUG=false
+set IS_DEBUG=false
 
 :arg-parse
 if not "%1"=="" (
@@ -34,7 +34,7 @@ if not "%1"=="" (
         shift
     )
     if "%1"=="--build-debug" (
-        set BUILD_DEBUG=true
+        set IS_DEBUG=true
         shift
     )
     shift
@@ -59,7 +59,12 @@ set RECAST_BUILD_DIR=%RECAST_SRC_DIR%build\
 set RECAST_BASENAME=%RECAST_SRC%
 
 if exist "%RECAST_INSTALL_DIR%" (
-    goto already_build
+    if %IS_DEBUG% == true (
+        echo %FILE_N% A "Recast & Detour" installation already exists. Rebuild it.
+    ) else (
+        echo %FILE_N% A "Recast & Detour" Release installation already exists.
+        goto already_build
+    )
 )
 
 if not exist "%RECAST_SRC_DIR%" (
@@ -88,7 +93,7 @@ echo.%GENERATOR% | findstr /C:"Visual Studio" >nul && (
     set PLATFORM=
 )
 
-if %BUILD_DEBUG% == true (
+if %IS_DEBUG% == true (
     echo cmake .. -G %GENERATOR% %PLATFORM%^
         -DCMAKE_BUILD_TYPE=Debug^
         -DCMAKE_CXX_FLAGS_DEBUG="/MDd /MP"^

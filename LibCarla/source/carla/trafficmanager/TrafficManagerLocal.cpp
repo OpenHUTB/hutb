@@ -130,7 +130,7 @@ void TrafficManagerLocal::SetupLocalMap() {
       local_map->SetUp();
     }
   } else {
-    log_warning("No InMemoryMap cache found. Setting up local map. This may take a while...");
+    log_warning("No InMemoryMap cache found (TM). Setting up local map. This may take a while...");
     local_map->SetUp();
   }
 }
