@@ -86,9 +86,9 @@ else:
 
 
 # 这样可以避免在打包成exe后，找不到git可执行文件的问题
-git_path = os.path.join(script_dir, "git", "bin", "git.exe")
-print("Using git executable: ", git_path)
-os.environ["GIT_PYTHON_GIT_EXECUTABLE"] = git_path
+git_exe = os.path.join(script_dir, "git", "bin", "git.exe")
+print("Using git executable: ", git_exe)
+os.environ["GIT_PYTHON_GIT_EXECUTABLE"] = git_exe
 
 # 必须在设置GIT_PYTHON_GIT_EXECUTABLE环境变量之后，才能导入git库，否则git库会使用系统环境变量中默认的git路径，导致找不到git可执行文件的问题
 from git.repo import Repo
@@ -435,14 +435,15 @@ if __name__ == "__main__":
     if os.path.exists(local_path):
         # Remove previous download folder
         shutil.rmtree(local_path, onerror=remove_readonly)
+    repo = GitRepository(local_path, remote_path)
     # gitpython 库在新机器下载大文件时会出现问题，改为直接调用 git 命令行工具进行下载
     # repo = GitRepository(local_path, remote_path)
     # 问题：Skipping object checkout, Git LFS is not installed for this repository.
     # 解决：git lfs install
-    git_path = os.path.join(script_dir, 'git', 'bin', 'git.exe')
-    clone_cmd = "%s clone %s  %s && cd %s & %s lfs install  && %s lfs pull && cd .." % (git_path, remote_path, local_path, save_dir, git_path, git_path)
-    print("Cloning repository with command: ", clone_cmd)
-    os.system(clone_cmd)
+    # git_path = os.path.join(script_dir, 'git', 'bin', 'git.exe')
+    # clone_cmd = "%s clone %s  %s && cd %s & %s lfs install  && %s lfs pull && cd .." % (git_path, remote_path, local_path, save_dir, git_path, git_path)
+    # print("Cloning repository with command: ", clone_cmd)
+    # os.system(clone_cmd)
 
 
     # 移除工程中不相关的文件
