@@ -50,9 +50,6 @@ import subprocess
 import urllib.request
 import zipfile
 
-from git.repo import Repo
-from git.repo.fun import is_git_dir
-
 # 获取当前代码路径的上级目录
 home_dir = os.path.abspath(os.path.join(os.getcwd(), ".."))
 # 获取当前脚本所在的路径
@@ -66,16 +63,13 @@ script_dir = os.path.dirname(os.path.abspath(script_dir))
 # 使用当前 git 目录下的 git 可执行文件
 # 判断git目录是否存在
 prerequisites_dir = os.path.join(home_dir, "Build", "dependencies", "prerequisites")
-if os.path.exists(os.path.join(prerequisites_dir, "git")) and not os.path.exists(
-    os.path.join(script_dir, "git", "bin", "git.exe")
-):
+if os.path.exists(os.path.join(prerequisites_dir, "git")) and not os.path.exists(os.path.join(script_dir, "git", "bin", "git.exe")):
     # 将git目录拷贝到当前脚本所在的路径下
+    print("Copying git directory from prerequisites to current script directory...")
     shutil.copytree(
         os.path.join(prerequisites_dir, "git"), os.path.join(script_dir, "git")
     )
-elif not os.path.exists(os.path.join(prerequisites_dir, "git")) and not os.path.exists(
-    os.path.join(script_dir, "git", "bin", "git.exe")
-):
+elif not os.path.exists(os.path.join(prerequisites_dir, "git")) and not os.path.exists(os.path.join(script_dir, "git", "bin", "git.exe")):
     # 从gitee下载git_min.zip，并解压到当前目录下
     print(
         "Git directory not found in prerequisites, download it from https://gitee.com/OpenHUTB/sw/releases/download/up/git_min.zip and extract it to %s"
@@ -87,6 +81,8 @@ elif not os.path.exists(os.path.join(prerequisites_dir, "git")) and not os.path.
     )
     with zipfile.ZipFile(os.path.join(script_dir, "git_min.zip"), "r") as zip_ref:
         zip_ref.extractall(script_dir)
+else:
+    print("Git directory not found in prerequisites or current script directory.")
 
 
 # 这样可以避免在打包成exe后，找不到git可执行文件的问题
@@ -94,6 +90,9 @@ git_path = os.path.join(script_dir, "git", "bin", "git.exe")
 print("Using git executable: ", git_path)
 os.environ["GIT_PYTHON_GIT_EXECUTABLE"] = git_path
 
+# 必须在设置GIT_PYTHON_GIT_EXECUTABLE环境变量之后，才能导入git库，否则git库会使用系统环境变量中默认的git路径，导致找不到git可执行文件的问题
+from git.repo import Repo
+from git.repo.fun import is_git_dir
 
 disable_ssl_verify_command = "%s config --global http.sslVerify false" % os.path.join(script_dir, 'git', 'bin', 'git.exe')
 print(disable_ssl_verify_command)
@@ -501,8 +500,8 @@ if __name__ == "__main__":
     print("Download finished, cost: %s" % (cost_time))
     print("Download path: ", local_path)
     
-    print("Press any key to continue...")
     print("Launch simulator to click the file: %s" % os.path.join(local_path, 'CarlaUE4.exe'))
+    print("Press any key to continue...")
     input()
     # kill_process_on_port(2000)  # 下载完成后自动启动CarlaUE4.exe，方便用户查看下载结果
     # if os.path.exists( os.path.join(local_path, 'CarlaUE4.exe') ):
