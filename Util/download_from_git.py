@@ -1,3 +1,14 @@
+# 用法
+# 1. 下载模拟器：
+# hutb_downloader.exe
+# 2. 下载发行版：
+# hutb_downloader.exe -r lfs_demo
+# 3. 添加不删除.git记录的选项(--skipp, -s)
+#
+# 打包方法： 
+# Pyinstaller download_from_git.py --onefile --name hutb_downloader -i hutb_log.ico
+# 
+# 
 # 从git下载发行版
 # 参考：https://cloud.tencent.com/developer/article/1600803
 #
@@ -34,8 +45,7 @@
 # Pyinstaller download_from_git.py --onefile --add-data "git\bin\bash.exe;git\bin\" --add-data "git\bin\git.exe;git\bin\"  -i hutb_log.ico --name hutb_downloader
 #
 #
-# 
-# 上传到远程服务器：
+# 0. 上传到远程服务器：
 # python.exe download_from_git.py -u release
 
 
@@ -44,11 +54,19 @@ import datetime
 import inspect
 import os
 import shutil
+import ssl
 import stat
 import sys
 import subprocess
 import urllib.request
 import zipfile
+
+
+# 解决：urllib.error.URLError: <urlopen error [SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: unable to get local issuer certificate (_ssl.c:1017)>
+# https://www.cnblogs.com/lxmtx/p/12929905.html
+# 全局取消证书验证
+ssl._create_default_https_context = ssl._create_unverified_context
+
 
 # 获取当前代码路径的上级目录
 home_dir = os.path.abspath(os.path.join(os.getcwd(), ".."))
@@ -97,6 +115,7 @@ from git.repo.fun import is_git_dir
 disable_ssl_verify_command = "%s config --global http.sslVerify false" % os.path.join(script_dir, 'git', 'bin', 'git.exe')
 print(disable_ssl_verify_command)
 os.system(disable_ssl_verify_command)  # 解决新机器上git拉取代码时，出现的证书验证问题
+
 
 
 
