@@ -305,6 +305,16 @@ if %DO_COPY_FILES%==true (
         :: 拷贝DirectX Runtime中所有的dll文件到运行exe所需的dll目录下
         echo d | xcopy /y /s "!XCOPY_FROM!Build\dependencies\prerequisites\DirectX_Runtime\*.dll"      "!XCOPY_TO!CarlaUE4\Binaries\Win64"
     )
+
+    :: copy launch CarlaUE4.exe script including VC143_CRT Runtime installer
+    set LAUNCH_GAME_FILE="!XCOPY_FROM!Util\package\CarlaUE4.bat"
+    if exist "!LAUNCH_GAME_FILE!" (
+        echo d | xcopy /y /s "!XCOPY_FROM!Util\package\CarlaUE4.bat"      "!XCOPY_TO!"
+    )
+    set VC143_CRT_FILE="!XCOPY_FROM!Build\dependencies\prerequisites\vc_redist.x64.exe"
+    if exist "!VC143_CRT_FILE!" (
+        echo d | xcopy /y /s "!XCOPY_FROM!Build\dependencies\prerequisites\vc_redist.x64.exe"      "!XCOPY_TO!CarlaUE4"
+    )
 )
 call :get_current_time_in_seconds T_END_DO_COPY_FILES
 set /A ELAPSED_TIME=!T_END_DO_COPY_FILES! - !T_START_DO_COPY_FILES!
