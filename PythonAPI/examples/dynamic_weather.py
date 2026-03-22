@@ -21,7 +21,6 @@ import argparse
 import math
 import random
 import sys
-import time
 
 
 def clamp(value, minimum=0.0, maximum=100.0):
@@ -35,24 +34,13 @@ def lerp(a, b, t):
 
 def get_weather_presets():
     """Return a list of (WeatherParameters, name) tuples for random weather mode."""
-    presets = [
-        (carla.WeatherParameters.ClearNoon, "ClearNoon"),
-        (carla.WeatherParameters.CloudyNoon, "CloudyNoon"),
-        (carla.WeatherParameters.WetNoon, "WetNoon"),
-        (carla.WeatherParameters.WetCloudyNoon, "WetCloudyNoon"),
-        (carla.WeatherParameters.MidRainyNoon, "MidRainyNoon"),
-        (carla.WeatherParameters.HardRainNoon, "HardRainNoon"),
-        (carla.WeatherParameters.SoftRainNoon, "SoftRainNoon"),
-        (carla.WeatherParameters.ClearSunset, "ClearSunset"),
-        (carla.WeatherParameters.CloudySunset, "CloudySunset"),
-        (carla.WeatherParameters.WetSunset, "WetSunset"),
-        (carla.WeatherParameters.WetCloudySunset, "WetCloudySunset"),
-        (carla.WeatherParameters.MidRainSunset, "MidRainSunset"),
-        (carla.WeatherParameters.HardRainSunset, "HardRainSunset"),
-        (carla.WeatherParameters.SoftRainSunset, "SoftRainSunset"),
-        (carla.WeatherParameters.DustStorm, "DustStorm"),
-        (carla.WeatherParameters.Fog, "Fog"),
-    ]
+    presets = []
+    # Dynamically get all available weather presets
+    for name in dir(carla.WeatherParameters):
+        attr = getattr(carla.WeatherParameters, name)
+        # Filter out private attributes and methods, keep only weather presets
+        if not name.startswith('_') and isinstance(attr, carla.WeatherParameters):
+            presets.append((attr, name))
     return presets
 
 
@@ -109,6 +97,10 @@ class RandomWeather(object):
     def __init__(self, world, switch_interval=30.0, transition_time=5.0):
         self.world = world
         self.presets = get_weather_presets()
+
+        if not self.presets:
+            raise RuntimeError("No weather presets found in carla.WeatherParameters")
+
         self.switch_interval = switch_interval  # seconds between weather changes
         self.transition_time = transition_time  # seconds for smooth transition
         self.current_preset_idx = random.randint(0, len(self.presets) - 1)
@@ -163,9 +155,14 @@ class RandomWeather(object):
 
     def _start_new_transition(self):
         """Start transitioning to a new random weather preset."""
+        # If only one preset, no transition needed
+        if len(self.presets) <= 1:
+            self.time_since_switch = 0.0
+            return
+
         # Pick a different preset than current
         new_idx = self.current_preset_idx
-        while new_idx == self.current_preset_idx and len(self.presets) > 1:
+        while new_idx == self.current_preset_idx:
             new_idx = random.randint(0, len(self.presets) - 1)
 
         self.target_preset_idx = new_idx
