@@ -11,17 +11,49 @@ CARLA Dynamic Weather:
 
 Connect to a CARLA Simulator instance and control the weather. Change Sun
 position smoothly with time and generate storms occasionally.
+
+With --random flag, randomly switch between weather presets at intervals.
 """
 
 import carla
 
 import argparse
 import math
+import random
 import sys
+import time
 
 
 def clamp(value, minimum=0.0, maximum=100.0):
     return max(minimum, min(value, maximum))
+
+
+def lerp(a, b, t):
+    """Linear interpolation between a and b."""
+    return a + (b - a) * t
+
+
+def get_weather_presets():
+    """Return a list of (WeatherParameters, name) tuples for random weather mode."""
+    presets = [
+        (carla.WeatherParameters.ClearNoon, "ClearNoon"),
+        (carla.WeatherParameters.CloudyNoon, "CloudyNoon"),
+        (carla.WeatherParameters.WetNoon, "WetNoon"),
+        (carla.WeatherParameters.WetCloudyNoon, "WetCloudyNoon"),
+        (carla.WeatherParameters.MidRainyNoon, "MidRainyNoon"),
+        (carla.WeatherParameters.HardRainNoon, "HardRainNoon"),
+        (carla.WeatherParameters.SoftRainNoon, "SoftRainNoon"),
+        (carla.WeatherParameters.ClearSunset, "ClearSunset"),
+        (carla.WeatherParameters.CloudySunset, "CloudySunset"),
+        (carla.WeatherParameters.WetSunset, "WetSunset"),
+        (carla.WeatherParameters.WetCloudySunset, "WetCloudySunset"),
+        (carla.WeatherParameters.MidRainSunset, "MidRainSunset"),
+        (carla.WeatherParameters.HardRainSunset, "HardRainSunset"),
+        (carla.WeatherParameters.SoftRainSunset, "SoftRainSunset"),
+        (carla.WeatherParameters.DustStorm, "DustStorm"),
+        (carla.WeatherParameters.Fog, "Fog"),
+    ]
+    return presets
 
 
 class Sun(object):
@@ -71,6 +103,94 @@ class Storm(object):
         return 'Storm(clouds=%d%%, rain=%d%%, wind=%d%%)' % (self.clouds, self.rain, self.wind)
 
 
+class RandomWeather(object):
+    """Randomly switches between weather presets at specified intervals."""
+
+    def __init__(self, world, switch_interval=30.0, transition_time=5.0):
+        self.world = world
+        self.presets = get_weather_presets()
+        self.switch_interval = switch_interval  # seconds between weather changes
+        self.transition_time = transition_time  # seconds for smooth transition
+        self.current_preset_idx = random.randint(0, len(self.presets) - 1)
+        self.target_preset_idx = self.current_preset_idx
+        self.transition_elapsed = 0.0
+        self.time_since_switch = 0.0
+        self.in_transition = False
+
+        # Set initial weather
+        self.world.set_weather(self.presets[self.current_preset_idx][0])
+        self.start_weather = self.presets[self.current_preset_idx][0]
+        self.target_weather = self.start_weather
+
+    def _interpolate_weather(self, start, target, t):
+        """Interpolate between two weather states."""
+        weather = carla.WeatherParameters()
+        weather.cloudiness = lerp(start.cloudiness, target.cloudiness, t)
+        weather.precipitation = lerp(start.precipitation, target.precipitation, t)
+        weather.precipitation_deposits = lerp(start.precipitation_deposits, target.precipitation_deposits, t)
+        weather.wind_intensity = lerp(start.wind_intensity, target.wind_intensity, t)
+        weather.fog_density = lerp(start.fog_density, target.fog_density, t)
+        weather.fog_distance = lerp(start.fog_distance, target.fog_distance, t)
+        weather.fog_falloff = lerp(start.fog_falloff, target.fog_falloff, t)
+        weather.wetness = lerp(start.wetness, target.wetness, t)
+        weather.scattering_intensity = lerp(start.scattering_intensity, target.scattering_intensity, t)
+        weather.mie_scattering_scale = lerp(start.mie_scattering_scale, target.mie_scattering_scale, t)
+        weather.rayleigh_scattering_scale = lerp(start.rayleigh_scattering_scale, target.rayleigh_scattering_scale, t)
+        weather.sun_azimuth_angle = lerp(start.sun_azimuth_angle, target.sun_azimuth_angle, t)
+        weather.sun_altitude_angle = lerp(start.sun_altitude_angle, target.sun_altitude_angle, t)
+        return weather
+
+    def tick(self, delta_seconds):
+        self.time_since_switch += delta_seconds
+
+        # Check if it's time to switch to a new weather preset
+        if not self.in_transition and self.time_since_switch >= self.switch_interval:
+            self._start_new_transition()
+
+        # Handle ongoing transition
+        if self.in_transition:
+            self.transition_elapsed += delta_seconds
+            t = min(1.0, self.transition_elapsed / self.transition_time)
+
+            interpolated = self._interpolate_weather(
+                self.start_weather, self.target_weather, t
+            )
+            self.world.set_weather(interpolated)
+
+            if t >= 1.0:
+                self.in_transition = False
+                self.current_preset_idx = self.target_preset_idx
+
+    def _start_new_transition(self):
+        """Start transitioning to a new random weather preset."""
+        # Pick a different preset than current
+        new_idx = self.current_preset_idx
+        while new_idx == self.current_preset_idx and len(self.presets) > 1:
+            new_idx = random.randint(0, len(self.presets) - 1)
+
+        self.target_preset_idx = new_idx
+        self.start_weather = self.world.get_weather()
+        self.target_weather = self.presets[self.target_preset_idx][0]
+        self.transition_elapsed = 0.0
+        self.time_since_switch = 0.0
+        self.in_transition = True
+
+    def get_current_preset_name(self):
+        return self.presets[self.current_preset_idx][1]
+
+    def get_target_preset_name(self):
+        if self.in_transition:
+            return self.presets[self.target_preset_idx][1]
+        return None
+
+    def __str__(self):
+        current = self.get_current_preset_name()
+        if self.in_transition:
+            target = self.get_target_preset_name()
+            return f'Weather: {current} -> {target}'
+        return f'Weather: {current}'
+
+
 class Weather(object):
     def __init__(self, weather):
         self.weather = weather
@@ -113,6 +233,22 @@ def main():
         default=1.0,
         type=float,
         help='rate at which the weather changes (default: 1.0)')
+    argparser.add_argument(
+        '--random',
+        action='store_true',
+        help='enable random weather mode, randomly switch between weather presets')
+    argparser.add_argument(
+        '--interval',
+        metavar='SECONDS',
+        default=30.0,
+        type=float,
+        help='interval between weather changes in random mode (default: 30.0)')
+    argparser.add_argument(
+        '--transition',
+        metavar='SECONDS',
+        default=5.0,
+        type=float,
+        help='transition time between weather presets in random mode (default: 5.0)')
     args = argparser.parse_args()
 
     speed_factor = args.speed
@@ -122,19 +258,40 @@ def main():
     client.set_timeout(2.0)
     world = client.get_world()
 
-    weather = Weather(world.get_weather())
+    if args.random:
+        # Random weather mode
+        random_weather = RandomWeather(
+            world,
+            switch_interval=args.interval,
+            transition_time=args.transition
+        )
+        print(f'Random weather mode enabled. Switching every {args.interval}s')
 
-    elapsed_time = 0.0
+        elapsed_time = 0.0
 
-    while True:
-        timestamp = world.wait_for_tick(seconds=30.0).timestamp
-        elapsed_time += timestamp.delta_seconds
-        if elapsed_time > update_freq:
-            weather.tick(speed_factor * elapsed_time)
-            world.set_weather(weather.weather)
-            sys.stdout.write('\r' + str(weather) + 12 * ' ')
-            sys.stdout.flush()
-            elapsed_time = 0.0
+        while True:
+            timestamp = world.wait_for_tick(seconds=30.0).timestamp
+            elapsed_time += timestamp.delta_seconds
+            if elapsed_time > update_freq:
+                random_weather.tick(elapsed_time)
+                sys.stdout.write('\r' + str(random_weather) + 20 * ' ')
+                sys.stdout.flush()
+                elapsed_time = 0.0
+    else:
+        # Original dynamic weather mode (sun position + storm)
+        weather = Weather(world.get_weather())
+
+        elapsed_time = 0.0
+
+        while True:
+            timestamp = world.wait_for_tick(seconds=30.0).timestamp
+            elapsed_time += timestamp.delta_seconds
+            if elapsed_time > update_freq:
+                weather.tick(speed_factor * elapsed_time)
+                world.set_weather(weather.weather)
+                sys.stdout.write('\r' + str(weather) + 12 * ' ')
+                sys.stdout.flush()
+                elapsed_time = 0.0
 
 
 if __name__ == '__main__':
