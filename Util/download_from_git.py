@@ -116,7 +116,12 @@ disable_ssl_verify_command = "%s config --global http.sslVerify false" % os.path
 print(disable_ssl_verify_command)
 os.system(disable_ssl_verify_command)  # 解决新机器上git拉取代码时，出现的证书验证问题
 
-
+# 将本地的 Git 配置设置为不验证远程仓库的 LFS 锁定状态，
+# 解决 git lfs push -f 报错：
+# stdout: 'Locking support detected on remote "origin". Consider enabling it with: git config lfs.https://git.code.tencent.com/OpenHUTB/release.git.locksverify false'
+disable_lfs_lock_verify_command = "%s config lfs.https://git.code.tencent.com/OpenHUTB/release.git.locksverify false" % os.path.join(script_dir, 'git', 'bin', 'git.exe')
+print(disable_lfs_lock_verify_command)
+os.system(disable_lfs_lock_verify_command)
 
 
 def show_progress_bar(current, total, bar_length=40):
@@ -429,11 +434,21 @@ if __name__ == "__main__":
                 print("Removing file: ", file_path)
                 os.remove(file_path)
         # 将最新的 .zip 重命名为 hutb.zip，并切分成多个 .dat 小文件，上传到 git 仓库中
+        # Build/UE4Carla下没有.zip文件需要判断一下，避免报错
+        if latest_file is None:
+            print("No zip file found in local path: ", local_path)
+            sys.exit(1)
         if os.path.exists(os.path.join(local_path, latest_file)):
-            os.rename(
-                os.path.join(local_path, latest_file),
-                os.path.join(local_path, "hutb.zip"),
-            )
+            # 如果 hutb.zip 已经存在，则先删除
+            if os.path.exists(os.path.join(local_path, "hutb.zip")):
+                print("Removing existing hutb.zip file: ", os.path.join(local_path, "hutb.zip"))
+                os.remove(os.path.join(local_path, "hutb.zip"))
+            # 如果 latest_file 不是 hutb.zip，则重命名为 hutb.zip
+            if latest_file != "hutb.zip":
+                os.rename(
+                    os.path.join(local_path, latest_file),
+                    os.path.join(local_path, "hutb.zip"),
+                )
         if os.path.exists(os.path.join(rep_path, "*.dat")) is False:
             split_file(
                 os.path.join(local_path, "hutb.zip"), rep_path, 256 * 1024 * 1024
@@ -499,9 +514,9 @@ if __name__ == "__main__":
             f.extract(file, local_path)  # 解压位置
         f.close()
         print()  # 换行
-        if os.path.exists(os.path.join(local_path, "hutb.zip")):
-            print("Remove hutb.zip...")
-            os.remove(os.path.join(local_path, "hutb.zip"))
+        # if os.path.exists(os.path.join(local_path, "hutb.zip")):
+        #     print("Remove hutb.zip...")
+        #     os.remove(os.path.join(local_path, "hutb.zip"))
 
     # 如果在当前目录存在git文件夹，则删除
     if os.path.exists(os.path.join(script_dir, "git")):
