@@ -7,6 +7,8 @@ set FILE_N=-[%~n0]:
 
 set skip_prerequisites=false
 set launch=false
+rem launch editor directly, used for quick test after build/package
+set direct_launch=false
 set package=false
 set interactive=false
 set python_path=python
@@ -63,6 +65,10 @@ rem -- PARSE COMMAND LINE ARGUMENTS --
         set launch=true
     ) else if "%1"=="-l" (
         set launch=true
+    ) else if "%1"=="-d" (
+        set direct_launch=true
+    ) else if "%1"=="--direct-launch" (
+        set direct_launch=true
     ) else (
         echo %1 | findstr /B /C:"--python-root=" >nul
         if not errorlevel 1 (
@@ -85,6 +91,23 @@ rem -- PARSE COMMAND LINE ARGUMENTS --
 rem -- MAIN --
 
 :main
+
+
+rem if direct_launch is true, skip all the setup and launch game directly, used for quick test after build/package
+if %direct_launch% == true (
+    echo Directly launching Unreal Editor, log to launch.log...
+    set UE4_Editor_path=!scriptDir!\Build\engine\Engine\Binaries\Win64\UE4Editor.exe
+    set uproject_path=!scriptDir!\Unreal\CarlaUE4\CarlaUE4.uproject
+    if not exist "!UE4_Editor_path!" (
+        echo UE4Editor.exe not found at !UE4_Editor_path!, please check if the build step is finished and the file exists.
+        exit /b
+    ) else (
+        echo Found UE4Editor.exe at !UE4_Editor_path!, launching...
+        start "" "!UE4_Editor_path!" "!uproject_path!" >launch.log 2>&1
+    )
+    exit /b
+)
+
 
 rem ============================================================================
 rem -- Download prerequisites from https://git.code.tencent.com/OpenHUTB/dependencies
