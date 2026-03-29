@@ -35,14 +35,13 @@ set CONTENT_DIR=%ROOT_PATH:/=\%Unreal\CarlaUE4\Content\Carla\
 set CARLA_DEPENDENCIES_FOLDER=%ROOT_PATH:/=\%Unreal\CarlaUE4\Plugins\Carla\CarlaDependencies\
 set CARLA_BINARIES_FOLDER=%ROOT_PATH:/=\%Unreal\CarlaUE4\Plugins\Carla\Binaries\Win64
 set CARLA_PYTHON_DEPENDENCIES=%ROOT_PATH:/=\%PythonAPI\carla\dependencies\
-:: 如果存在就不需要重新下载
-:: 资产压缩包
+rem asset zip package
 set CONTENT_ZIP=C:\jenkins\Content.zip
-:: 软件依赖
+rem dependences source code
 set INSTALLATION_ZIP=C:\jenkins\Installation.zip
 set USE_CHRONO=false
 set USE_ROS2=false
-:: 仅下载依赖和资产，不进行编译（用于打包编辑器 make editor）
+rem only download depedencies and asset, no compilation (only package editor: make editor)
 set DOWNLOAD_ONLY=false
 set CHRONO_PATH=
 
@@ -115,7 +114,7 @@ if not exist "%INSTALLATION_DIR%" (
     echo %FILE_N% Creating "%INSTALLATION_DIR%" folder...
     mkdir "%INSTALLATION_DIR%"
 
-    :: 如果存在依赖软件的源代码压缩包，则解压到Carla主目录（包含Build目录），后面就不需要下载
+    rem use cache
     if exist "%INSTALLATION_ZIP%" (
         echo Extract Content from %INSTALLATION_ZIP% to %Carla_ROOT_DIR% ...
         if exist "%ProgramW6432%/7-Zip/7z.exe" (
@@ -130,7 +129,7 @@ if not exist "%CONTENT_DIR%" (
     echo %FILE_N% Creating "%CONTENT_DIR%" folder...
     mkdir "%CONTENT_DIR%"
 
-    :: 如果存在资产内容的压缩包，则解压到CarlaUE4目录（包含Content目录），后面就不需要下载
+    :: use cache
     if exist "%CONTENT_ZIP%" (
         echo Extract Content from %CONTENT_ZIP% to %CarlaUE4_DIR% ...
         if exist "%ProgramW6432%/7-Zip/7z.exe" (
@@ -141,7 +140,7 @@ if not exist "%CONTENT_DIR%" (
     )
 )
 
-:: 仅下载不安装
+:: only download, no installation
 if %DOWNLOAD_ONLY%==true (
     goto success
 )
@@ -231,13 +230,13 @@ rem ============================================================================
 
 echo %FILE_N% Installing "Recast & Detour"...
 if %IS_DEBUG% == true (
-    echo %FILE_N% Recast & Detour debug mode enabled.
+    echo %FILE_N% "Recast & Detour" debug mode enabled.
     call "%INSTALLERS_DIR%install_recast.bat"^
     --build-dir "%INSTALLATION_DIR%"^
     --generator %GENERATOR%^
     --build-debug true
 ) else (
-    echo %FILE_N% Recast & Detour release mode enabled.
+    echo %FILE_N% "Recast & Detour" release mode enabled.
     call "%INSTALLERS_DIR%install_recast.bat"^
     --build-dir "%INSTALLATION_DIR%"^
     --generator %GENERATOR%
@@ -246,7 +245,6 @@ if %IS_DEBUG% == true (
 if %errorlevel% neq 0 goto failed
 
 if not defined install_recast (
-
     echo %FILE_N% Failed while installing "Recast & Detour".
     goto failed
 ) else (
@@ -299,7 +297,6 @@ if %IS_DEBUG% == true (
     --version %BOOST_VERSION%^
     -j %NUMBER_OF_ASYNC_JOBS% 
 )
-
 
 if %errorlevel% neq 0 goto failed
 

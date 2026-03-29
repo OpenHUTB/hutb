@@ -100,13 +100,13 @@ rem ============================================================================
 where python 1>nul
 if %errorlevel% neq 0 goto error_py
 
-for /l %%i in (14,-1,7) do (
-    :: offline resource: https://repo.anaconda.com/pkgs/main/win-64/
-    echo "If conda viural environment hutb_3.%%i already exists, delete it"
-    call conda remove -n hutb_3.%%i --all --yes
-    echo "Creating new conda environment hutb_3.%%i ..."
-    call conda create -n hutb_3.%%i python=3.%%i --yes
-)
+rem for /l %%i in (14,-1,7) do (
+rem     :: offline resource: https://repo.anaconda.com/pkgs/main/win-64/
+rem     echo "If conda viural environment hutb_3.%%i already exists, delete it"
+rem     call conda remove -n hutb_3.%%i --all --yes
+rem     echo "Creating new conda environment hutb_3.%%i ..."
+rem     call conda create -n hutb_3.%%i python=3.%%i --yes
+rem )
 
 
 rem Build for Python 2
@@ -114,6 +114,10 @@ rem
 if %BUILD_FOR_PYTHON2%==true (
     goto py2_not_supported
 )
+
+set conda_root=%ROOT_PATH:/=\%Build\dependencies\prerequisites\miniconda3\
+set boost_src_dir=%BOOST_INSTALL_FOLDER:/=\%boost-%BOOST_VERSION:.=_%
+echo boost source directory: %boost_src_dir%
 
 rem Build for Python 3
 rem
@@ -134,23 +138,35 @@ if %BUILD_FOR_PYTHON3%==true (
             del /f /s /q %BOOST_INSTALL_FOLDER:/=\%*  >nul
             rem remove empty directory
             rd /s /q %BOOST_INSTALL_FOLDER:/=\%  >nul
-            echo Delete boost source code: %BOOST_SOURCE_FOLDER:/=\%*
-            del /f /s /q %BOOST_SOURCE_FOLDER:/=\%*  >nul
-            rd /s /q %BOOST_SOURCE_FOLDER:/=\%  >nul
+            echo Delete boost source code: %boost_src_dir:/=\%*
+            del /f /s /q %boost_src_dir:/=\%*  >nul
+            rd /s /q %boost_src_dir:/=\%  >nul
         )
         
         cd "%ROOT_PATH%"
-        REM conda create --name hutb_3.%%i python=3.%%i --yes
-        call conda activate hutb_3.%%i
-        pip install setuptools wheel
-        echo Current Python path: 
-        where python
-        make LibCarla
-        make osm2odr
+        echo %FILE_N% Root path: %ROOT_PATH%
+        echo Building LibCarla and osm with Python 3.%%i ...
+        %WINDIR%\System32\WindowsPowerShell\v1.0\powershell.exe ^
+            -ExecutionPolicy ByPass -NoExit -Command^
+            "& %conda_root%shell\condabin\conda-hook.ps1 ; conda activate %conda_root% ";^
+            conda activate hutb_3.%%i;^
+            python --version;^
+            pip list;^
+            make LibCarla;^
+            make osm2odr; ^
+            exit 0;
 
         cd "%PYTHON_LIB_PATH%"
-        echo Building Python API Python 3.%%i
-        python setup.py bdist_wheel
+        echo Building Python API with Python 3.%%i ...
+        %WINDIR%\System32\WindowsPowerShell\v1.0\powershell.exe ^
+            -ExecutionPolicy ByPass -NoExit -Command^
+            "& %conda_root%shell\condabin\conda-hook.ps1 ; conda activate %conda_root% ";^
+            conda activate hutb_3.%%i;^
+            python --version;^
+            pip list;^
+            python setup.py bdist_wheel; ^
+            exit 0;
+
         echo errorlevel: %errorlevel%
         if not exist "%PYTHON_LIB_PATH%dist\" (
             goto error_build_wheel

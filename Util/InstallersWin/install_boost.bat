@@ -87,9 +87,18 @@ set BOOST_TEMP_FILE=%BOOST_TEMP_FOLDER%.zip
 set BOOST_TEMP_FILE_DIR=%BUILD_DIR%%BOOST_TEMP_FILE%
 
 set BOOST_REPO=https://archives.boost.io/release/%BOOST_VERSION%/source/%BOOST_TEMP_FILE%
-set BOOST_SRC_DIR=%BUILD_DIR%%BOOST_BASENAME%-source\
+rem set BOOST_SRC_DIR=%BUILD_DIR%%BOOST_BASENAME%-source\
+set BOOST_SRC_DIR=%INSTALLATION_DIR:/=\%%BOOST_TEMP_FOLDER%
 set BOOST_INSTALL_DIR=%BUILD_DIR%%BOOST_BASENAME%-install\
 set BOOST_LIB_DIR=%BOOST_INSTALL_DIR%lib\
+
+
+set conda_root=%ROOT_PATH:/=\%Build\dependencies\prerequisites\miniconda3\
+rem activate python env
+call %conda_root%Scripts\activate.bat hutb && python --version
+:: conda activate carla_dev
+echo %FILE_N% Python version after activate hutb:
+call python --version
 
 rem ============================================================================
 rem -- Get Boost ---------------------------------------------------------------
@@ -106,15 +115,12 @@ if %IS_DEBUG% == true (
 
 set _checksum=""
 
-if not exist "%BOOST_SRC_DIR%" (
+if not exist "%INSTALLATION_DIR:/=\%%BOOST_TEMP_FOLDER%" (
+    echo %INSTALLATION_DIR:/=\%%BOOST_TEMP_FOLDER% not exist.
     if exist "%INSTALLATION_DIR:/=\%dependencies\src\%BOOST_TEMP_FILE%" (
-        if not exist "%BOOST_TEMP_FILE_DIR%" (
-            echo %FILE_N% Extracting boost from "%INSTALLATION_DIR:/=\%dependencies\src\%BOOST_TEMP_FILE%" to "%INSTALLATION_DIR%", this can take a while...
-            "%INSTALLATION_DIR:/=\%dependencies\prerequisites\7zip\7z.exe" x "%INSTALLATION_DIR:/=\%dependencies\src\%BOOST_TEMP_FILE%" -o"%INSTALLATION_DIR%" -y >nul
-        )
-    )
-
-    if not exist "%BOOST_TEMP_FILE_DIR%" (
+        echo %FILE_N% Extracting boost from "%INSTALLATION_DIR:/=\%dependencies\src\%BOOST_TEMP_FILE%" to "%INSTALLATION_DIR%" ...
+        "%INSTALLATION_DIR:/=\%dependencies\prerequisites\7zip\7z.exe" x "%INSTALLATION_DIR:/=\%dependencies\src\%BOOST_TEMP_FILE%" -o"%INSTALLATION_DIR%" -y >nul
+    ) else (
         echo %FILE_N% Boost source zip file not found in "%INSTALLATION_DIR:/=\%dependencies\src\%BOOST_TEMP_FILE%".
         echo %FILE_N% Downloading boost from "%BOOST_REPO%"...
         if not exist "%BUILD_DIR%%BOOST_TEMP_FOLDER%" (
@@ -129,25 +135,29 @@ if not exist "%BOOST_SRC_DIR%" (
             )
         )
     )
-    if "!_checksum!" == "1" (
-        echo %FILE_N% Using Boost backup
-        powershell -Command "(New-Object System.Net.WebClient).DownloadFile('https://carla-releases.s3.us-east-005.backblazeb2.com/Backup/%BOOST_TEMP_FILE%', '%BOOST_TEMP_FILE_DIR%')"
-        call :CheckSumEvaluate %BOOST_TEMP_FILE_DIR%,%BOOST_SHA256SUM%,_checksum
-    )
-    if "!_checksum!" == "1" goto error_download
-    echo %FILE_N% Removing "%BOOST_TEMP_FILE%"
+
+    rem if "!_checksum!" == "1" (
+    rem     echo %FILE_N% Using Boost backup
+    rem     powershell -Command "(New-Object System.Net.WebClient).DownloadFile('https://carla-releases.s3.us-east-005.backblazeb2.com/Backup/%BOOST_TEMP_FILE%', '%BOOST_TEMP_FILE_DIR%')"
+    rem     call :CheckSumEvaluate %BOOST_TEMP_FILE_DIR%,%BOOST_SHA256SUM%,_checksum
+    rem )
+    rem if "!_checksum!" == "1" goto error_download
+    rem echo %FILE_N% Removing "%BOOST_TEMP_FILE%"
     rem del "%BOOST_TEMP_FILE_DIR%"
-    rename "%BUILD_DIR%%BOOST_TEMP_FOLDER%" "%BOOST_BASENAME%-source"
+    rem rename "%BUILD_DIR%%BOOST_TEMP_FOLDER%" "%BOOST_BASENAME%-source"
 ) else (
     echo %FILE_N% Not downloading boost because already exists the folder "%BOOST_SRC_DIR%".
 )
 
-cd "%BOOST_SRC_DIR%"
+echo cd "%INSTALLATION_DIR:/=\%%BOOST_TEMP_FOLDER%"
+cd "%INSTALLATION_DIR:/=\%%BOOST_TEMP_FOLDER%"
 if not exist "b2.exe" (
     echo %FILE_N% Generating build...
     if exist "%ProgramW6432%\Microsoft Visual Studio\2022\Community\VC\Auxiliary\Build\vcvars64.bat" (
+        echo call bootstrap.bat vc143
         call bootstrap.bat vc143
     ) else (
+        echo call bootstrap.bat vc142
         call bootstrap.bat vc142
     )
 )
@@ -171,7 +181,7 @@ if %BUILD_ALL%==true (
 )
 
 where python
-echo Install boost...
+echo %FILE_N% cd "%BOOST_SRC_DIR%". Install boost...
 cd "%BOOST_SRC_DIR%"
 
 if "%IS_DEBUG%" == "true" (
