@@ -519,16 +519,16 @@ if __name__ == "__main__":
         #     os.remove(os.path.join(local_path, "hutb.zip"))
 
     # 如果在当前目录存在git文件夹，则删除
-    if os.path.exists(os.path.join(script_dir, "git")):
-        print("Removing existing git directory: ", os.path.join(script_dir, "git"))
-        shutil.rmtree(os.path.join(script_dir, "git"), onerror=remove_readonly)
+    # if os.path.exists(os.path.join(script_dir, "git")):
+    #     print("Removing existing git directory: ", os.path.join(script_dir, "git"))
+    #     shutil.rmtree(os.path.join(script_dir, "git"), onerror=remove_readonly)
     # 如果在当前目录存在git_min.zip文件，则删除
-    if os.path.exists(os.path.join(script_dir, "git_min.zip")):
-        print(
-            "Removing existing git_min.zip file: ",
-            os.path.join(script_dir, "git_min.zip"),
-        )
-        os.remove(os.path.join(script_dir, "git_min.zip"))
+    # if os.path.exists(os.path.join(script_dir, "git_min.zip")):
+    #     print(
+    #         "Removing existing git_min.zip file: ",
+    #         os.path.join(script_dir, "git_min.zip"),
+    #     )
+    #     os.remove(os.path.join(script_dir, "git_min.zip"))
 
     cost_time = datetime.datetime.now() - start
     # 当网络带宽足够大时，下载时间大约4-5分钟左右
