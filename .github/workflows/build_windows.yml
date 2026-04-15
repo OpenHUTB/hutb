@@ -1,4 +1,4 @@
-name: hutb Windows CI/CD
+name: hutb Windows CI/CD 
 
 on: 
   pull_request:
