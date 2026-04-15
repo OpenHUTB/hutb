@@ -139,8 +139,8 @@ if %UPLOAD_DOWNLOAD%==true (
 
 rem The directory of CarlaUE4.exe
 set BUILD_FOLDER=%INSTALLATION_DIR%UE4Carla/%CARLA_VERSION%/
-:: debug only (rename with no dirty)
-set IS_DEBUG=true
+rem debug only (rename with no dirty)
+rem set IS_DEBUG=true
 if %IS_DEBUG%==true (
     set BUILD_FOLDER=%INSTALLATION_DIR%UE4Carla\debug\
 )
