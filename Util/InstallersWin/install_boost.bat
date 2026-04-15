@@ -94,9 +94,6 @@ set BOOST_LIB_DIR=%BOOST_INSTALL_DIR%lib\
 
 
 set conda_root=%ROOT_PATH:/=\%Build\dependencies\prerequisites\miniconda3\
-rem activate python env
-call %conda_root%Scripts\activate.bat hutb && python --version
-:: conda activate carla_dev
 echo %FILE_N% Python version after activate hutb:
 call python --version
 

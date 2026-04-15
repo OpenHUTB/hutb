@@ -8,6 +8,9 @@ export ROOT_PATH=$(CURDIR)/
 # for debug (modify to false when commit)
 export IS_DEBUG=false
 
+# python env root
+export conda_root=%ROOT_PATH:/=\%Build\dependencies\prerequisites\miniconda3\
+
 export git_code=T8w6TYB_r71gGTP3A02B
 
 # dependecy install/build directory (rpclib, gtest, boost)
