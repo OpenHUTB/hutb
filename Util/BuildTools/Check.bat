@@ -56,6 +56,9 @@ set python_path=%python_dir%python.exe
 set pip_path=%python_dir%Scripts\pip.exe
 echo python_path: %python_path%
 
+echo set conda_root=%ROOT_PATH:/=\%Build\dependencies\prerequisites\miniconda3\
+set conda_root=%ROOT_PATH:/=\%Build\dependencies\prerequisites\miniconda3\
+
 :arg-parse
 if not "%1"=="" (
     if "%1"=="--all" (
@@ -175,7 +178,6 @@ if %PYTHON_API%==true (
     echo Current directory: %cd%
     for /l %%i in (8,-1,8) do (
         echo Running Python API for Python 3.%%i unit tests.
-        set conda_root=%ROOT_PATH:/=\%Build\dependencies\prerequisites\miniconda3\
         %WINDIR%\System32\WindowsPowerShell\v1.0\powershell.exe ^
             -ExecutionPolicy ByPass -NoExit -Command^
             "& %conda_root%shell\condabin\conda-hook.ps1 ; conda activate %conda_root% ";^
@@ -183,7 +185,7 @@ if %PYTHON_API%==true (
             python --version;^
             pip list;^
             pip install opencv-contrib-python numpy msgpack-rpc-python nose2 -i http://mirrors.aliyun.com/pypi/simple --trusted-host mirrors.aliyun.com; ^
-            pip install  %BUILD_FOLDER:\=/%WindowsNoEditor/PythonAPI/carla/dist/hutb-%API_VERSION%-cp3%%i-cp3%%i-win_amd64.whl ^
+            pip install  %BUILD_FOLDER:\=/%WindowsNoEditor/PythonAPI/carla/dist/hutb-%API_VERSION%-cp3%%i-cp3%%i-win_amd64.whl; ^
             cd %ROOT_PATH%PythonAPI\test\unit\; ^
             python -m nose2 test_transform; ^
             python -m nose2 test_vehicle; ^
@@ -198,14 +200,11 @@ if %PYTHON_API%==true (
 
 cd %ROOT_PATH:/=\%PythonAPI\test\
 
-
-
 rem ============================================================================
 rem -- Run smoke tests ---------------------------------------------------------
 rem ============================================================================
 
 call :get_current_time_in_seconds T_START_DO_TEST
-
 
 if %SMOKE_TESTS%==true (
     echo Current directory: %cd%
@@ -217,21 +216,20 @@ if %SMOKE_TESTS%==true (
     echo Smoke list: %smoke_list%
     for /l %%i in (7,-1,7) do (
         echo Running smoke tests for Python 3.%%i
-        call conda activate hutb_3.%%i
-        echo Current Python path: 
-        where python
-        pip install nose2 -i http://mirrors.aliyun.com/pypi/simple --trusted-host mirrors.aliyun.com
-        if %%i==7 (
-            echo pip install --force-reinstall  %BUILD_FOLDER:\=/%WindowsNoEditor/PythonAPI/carla/dist/hutb-%API_VERSION%-cp3%%i-cp3%%im-win_amd64.whl
-            pip install --force-reinstall  %BUILD_FOLDER:\=/%WindowsNoEditor/PythonAPI/carla/dist/hutb-%API_VERSION%-cp3%%i-cp3%%im-win_amd64.whl
-        ) else (
-            echo pip install --force-reinstall  %BUILD_FOLDER:\=/%WindowsNoEditor/PythonAPI/carla/dist/hutb-%API_VERSION%-cp3%%i-cp3%%i-win_amd64.whl
-            pip uninstall --yes hutb
-            pip install  %BUILD_FOLDER:\=/%WindowsNoEditor/PythonAPI/carla/dist/hutb-%API_VERSION%-cp3%%i-cp3%%i-win_amd64.whl
-        )
-        pip install -r requirements.txt -i http://mirrors.aliyun.com/pypi/simple --trusted-host mirrors.aliyun.com
-        echo python -m nose2 -v %smoke_list%
-        python -m nose2 -v %smoke_list%
+        %WINDIR%\System32\WindowsPowerShell\v1.0\powershell.exe ^
+            -ExecutionPolicy ByPass -NoExit -Command^
+            "& %conda_root%shell\condabin\conda-hook.ps1 ; conda activate %conda_root% ";^
+            conda activate hutb_3.%%i;^
+            python --version;^
+            pip list;^
+            pip install nose2 -i http://mirrors.aliyun.com/pypi/simple --trusted-host mirrors.aliyun.com;^
+            echo pip install --force-reinstall  %BUILD_FOLDER:\=/%WindowsNoEditor/PythonAPI/carla/dist/hutb-%API_VERSION%-cp3%%i-cp3%%im-win_amd64.whl;^
+            pip install --force-reinstall  %BUILD_FOLDER:\=/%WindowsNoEditor/PythonAPI/carla/dist/hutb-%API_VERSION%-cp3%%i-cp3%%im-win_amd64.whl;^
+            pip install -r requirements.txt -i http://mirrors.aliyun.com/pypi/simple --trusted-host mirrors.aliyun.com;^
+            echo python -m nose2 -v %smoke_list%;^
+            python -m nose2 -v %smoke_list%;^
+            exit 0;
+
     )
 )
 
