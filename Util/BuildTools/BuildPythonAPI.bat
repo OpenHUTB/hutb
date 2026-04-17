@@ -116,8 +116,6 @@ if %BUILD_FOR_PYTHON2%==true (
 )
 
 set conda_root=%ROOT_PATH:/=\%Build\dependencies\prerequisites\miniconda3\
-set boost_src_dir=%BOOST_INSTALL_FOLDER:/=\%boost-%BOOST_VERSION:.=_%
-echo boost source directory: %boost_src_dir%
 
 rem Build for Python 3
 rem
@@ -138,9 +136,9 @@ if %BUILD_FOR_PYTHON3%==true (
             del /f /s /q %BOOST_INSTALL_FOLDER:/=\%*  >nul
             rem remove empty directory
             rd /s /q %BOOST_INSTALL_FOLDER:/=\%  >nul
-            echo Delete boost source code: %boost_src_dir:/=\%*
-            del /f /s /q %boost_src_dir:/=\%*  >nul
-            rd /s /q %boost_src_dir:/=\%  >nul
+            echo Delete boost source code: %BOOST_SOURCE_FOLDER:/=\%*
+            del /f /s /q %BOOST_SOURCE_FOLDER:/=\%*  >nul
+            rd /s /q %BOOST_SOURCE_FOLDER:/=\%  >nul
         )
         
         cd "%ROOT_PATH%"
