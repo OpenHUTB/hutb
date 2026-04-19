@@ -30,8 +30,15 @@
 
 ## 源码编译
 
-使用`git clone`或从此页面下载项目。请注意，hutb分支包含最新版本以及最新的修复程序和功能。
-然后按照 [如何在Windows上构建中文说明](https://openhutb.github.io/doc/build_windows/) 、[如何在Linux上构建](https://openhutb.github.io/doc/build_linux/) 中的说明进行操作。
+使用`git clone`或从此页面下载项目。
+```shell
+# 启动编辑器
+setup.bat -l
+# 打包
+setup.bat -p
+```
+请注意，hutb分支包含最新版本以及最新的修复程序和功能。
+或者按照 [如何在Windows上构建中文说明](https://openhutb.github.io/doc/build_windows/) 、[如何在Linux上构建](https://openhutb.github.io/doc/build_linux/) 中的说明进行操作。
 
 
 >[!NOTE]
@@ -62,7 +69,7 @@
 
 ## 其他
 
-除了文档之外，还为用户创建了一些附加内容。这是一种涵盖不同主题的好方法，例如对特定模块的详细解释、功能的最新改进、未来的工作等等。
+除了文档之外，还为用户创建了一些附加内容。这是一种涵盖不同主题的好方法，例如对特定模块的详细解释、功能的最新改进、未来的工作等。
 
 *   __常规__  
 	*   艺术改进：环境和渲染 — [视频](https://youtu.be/ZZaHevsz8W8) | [PPT](https://drive.google.com/file/d/1l9Ztaq0Q8fNN5YPU4-5vL13eZUwsQl5P/view?usp=sharing)  

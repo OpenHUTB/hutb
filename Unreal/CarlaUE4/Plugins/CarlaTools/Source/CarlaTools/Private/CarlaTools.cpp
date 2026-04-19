@@ -22,10 +22,11 @@ void FCarlaToolsModule::ShutdownModule()
 IMPLEMENT_MODULE(FCarlaToolsModule, CarlaTools)
 
 #include <compiler/disable-ue4-macros.h>
+THIRD_PARTY_INCLUDES_START
 #include <carla/Exception.h>
-#include <compiler/enable-ue4-macros.h>
-
 #include <exception>
+THIRD_PARTY_INCLUDES_END
+#include <compiler/enable-ue4-macros.h>
 
 namespace carla {
 

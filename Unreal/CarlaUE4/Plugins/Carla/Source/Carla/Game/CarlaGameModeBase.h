@@ -10,9 +10,11 @@
 #include "GameFramework/GameModeBase.h"
 
 #include <compiler/disable-ue4-macros.h>
+THIRD_PARTY_INCLUDES_START
 #include <boost/optional.hpp>
 #include <carla/rpc/Texture.h>
 #include <carla/rpc/MaterialParameter.h>
+THIRD_PARTY_INCLUDES_END
 #include <compiler/enable-ue4-macros.h>
 
 #include "Carla/Actor/ActorData.h"
