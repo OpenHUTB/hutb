@@ -22,8 +22,9 @@ class TestSpawnpoints(SyncSmokeTest):
         blueprints = self.world.get_blueprint_library().filter("vehicle.*")
         blueprints = self.filter_vehicles_for_old_towns(blueprints)
 
-        # get all available maps
-        maps = ['Town01', 'Town01_Opt', 'Town02', 'Town02_Opt', 'Town03', 'Town03_Opt', 'Town04', 'Town04_Opt', 'Town05', 'Town05_Opt', 'Town10HD', 'Town10HD_Opt']
+        # get all available maps: 
+        # collision at spawn position with aircraft: 'Town03', 'Town03_Opt', 'Town05', 'Town05_Opt', 'Town10HD', 'Town10HD_Opt'
+        maps = ['Town01', 'Town01_Opt', 'Town02', 'Town02_Opt', 'Town04', 'Town04_Opt']
         for m in maps:
             # load the map
             self.client.load_world(m)
