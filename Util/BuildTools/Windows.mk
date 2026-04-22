@@ -83,7 +83,7 @@ check.PythonAPI:
 
 # somke testc
 check.smoke:
-	@"${CARLA_BUILD_TOOLS_FOLDER}/Check.bat" --smoke
+	@"${CARLA_BUILD_TOOLS_FOLDER}/Check.bat" --smoke $(ARGS)
 
 check.upload:
 	@"${CARLA_BUILD_TOOLS_FOLDER}/Check.bat" --upload $(ARGS)
