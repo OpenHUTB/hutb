@@ -148,6 +148,7 @@ if %IS_DEBUG%==true (
     set BUILD_FOLDER=D:\hutb\Build\UE4Carla\debug\
 )
 
+set exe_dir=%BUILD_FOLDER:\=/%WindowsNoEditor/%
 set exe_path=%BUILD_FOLDER:/=\%WindowsNoEditor\CarlaUE4.exe
 
 :: If exist CarlaUE4.exe process, kill it
@@ -155,6 +156,8 @@ for /f "tokens=5" %%a in ('netstat -ano ^| findstr :3654') do taskkill /F /PID %
 :: use command "start" to launch a new service process. Otherwise stuck
 echo Unreal service is launching with command: start %exe_path% -RenderOffscreen --carla-rpc-port=3654 --carla-streaming-port=0 -nosound
 if exist %exe_path% (
+    :: prevent to Choose Vehicle when launching the service, which will cause the service to be stuck and fail to run smoke tests.
+    cd /d %exe_dir%
     start %exe_path% -RenderOffscreen --carla-rpc-port=3654 --carla-streaming-port=0 -nosound
 ) else (
     echo Error: %exe_path% not exitst.
