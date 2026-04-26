@@ -18,10 +18,12 @@
 #include "Carla/Game/CarlaEngine.h"
 
 #include <compiler/disable-ue4-macros.h>
+THIRD_PARTY_INCLUDES_START
 #include <carla/Logging.h>
 #include <carla/Buffer.h>
 #include <carla/BufferView.h>
 #include <carla/sensor/SensorRegistry.h>
+THIRD_PARTY_INCLUDES_END
 #include <compiler/enable-ue4-macros.h>
 
 // =============================================================================

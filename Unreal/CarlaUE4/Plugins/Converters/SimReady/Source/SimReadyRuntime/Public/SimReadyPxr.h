@@ -124,8 +124,12 @@ THIRD_PARTY_INCLUDES_START
 THIRD_PARTY_INCLUDES_END
 #endif
 
+#include <compiler/disable-ue4-macros.h>
+THIRD_PARTY_INCLUDES_START
 #include <boost/preprocessor/seq/for_each.hpp>
 #include <boost/utility/value_init.hpp>
+THIRD_PARTY_INCLUDES_END
+#include <compiler/enable-ue4-macros.h>
 
 #if PLATFORM_WINDOWS
 // Fix C4506 caused by "VT_API Vt_DefaultValueHolder Vt_DefaultValueFactory<VT_TYPE(elem)>::Invoke();" in value.h

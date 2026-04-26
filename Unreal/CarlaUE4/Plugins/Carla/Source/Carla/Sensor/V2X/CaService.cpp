@@ -8,8 +8,14 @@
 #include "CaService.h"
 #include "Carla/Game/CarlaStatics.h"
 #include "Carla/Sensor/InertialMeasurementUnit.h"
+
+#include <compiler/disable-ue4-macros.h>
+THIRD_PARTY_INCLUDES_START
 #include <boost/algorithm/clamp.hpp>
 #include "carla/rpc/String.h"
+THIRD_PARTY_INCLUDES_END
+#include <compiler/enable-ue4-macros.h>
+
 #include "Carla/Util/BoundingBoxCalculator.h"
 #include <chrono>
 

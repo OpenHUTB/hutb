@@ -12,7 +12,37 @@
 #include "Carla/Sensor/ImageUtil.h"
 
 #include "Async/Async.h"
+#if CARLA_HAS_ENGINE_GBUFFER_VIEW
 #include "Renderer/Public/GBufferView.h"
+#else
+enum class EGBufferTextureID : uint8
+{
+  SceneColor = 0,
+  SceneDepth,
+  SceneStencil,
+  GBufferA,
+  GBufferB,
+  GBufferC,
+  GBufferD,
+  GBufferE,
+  GBufferF,
+  Velocity,
+  SSAO,
+  CustomDepth,
+  CustomStencil
+};
+
+struct FGBufferRequest
+{
+  static constexpr size_t TextureCount = 13u;
+  uint64 DesiredTexturesMask = 0u;
+
+  void MarkAsRequested(EGBufferTextureID TextureID)
+  {
+    DesiredTexturesMask |= (UINT64_C(1) << static_cast<uint8>(TextureID));
+  }
+};
+#endif
 
 #include <type_traits>
 
@@ -399,17 +429,19 @@ public:
   /// Blocks until the render thread has finished all it's tasks.
   void WaitForRenderThreadToFinish() {
     TRACE_CPUPROFILER_EVENT_SCOPE(ASceneCaptureSensor::WaitForRenderThreadToFinish);
+    // NOTE: FlushRenderingCommands() blocks game thread → worsens RPC timeout with multi-sensor.
+    // Keep disabled. GPU readback throttle in PixelReader.cpp handles backpressure instead.
     // FlushRenderingCommands();
   }
 
   void EnableGBuffers(bool Enable = true)
   {
-    bEnableGBuffers = Enable;
+    bEnableGBuffers = Enable && (CARLA_HAS_ENGINE_GBUFFER_VIEW != 0);
   }
 
   bool AreGBuffersEnabled() const
   {
-    return bEnableGBuffers;
+    return bEnableGBuffers && (CARLA_HAS_ENGINE_GBUFFER_VIEW != 0);
   }
   struct
   {
@@ -476,6 +508,7 @@ protected:
 
 private:
 
+#if CARLA_HAS_ENGINE_GBUFFER_VIEW
   template <
     typename SensorT,
     typename CameraGBufferT>
@@ -541,12 +574,27 @@ private:
         ViewSize.Y,
         Self.GetFOVAngle());
   }
+#else
+  template <typename SensorT, typename CameraGBufferT>
+  static void SendGBuffer(
+      SensorT& Self,
+      CameraGBufferT& CameraGBuffer,
+      FGBufferRequest& GBufferData,
+      EGBufferTextureID TextureID)
+  {
+    (void)Self;
+    (void)CameraGBuffer;
+    (void)GBufferData;
+    (void)TextureID;
+  }
+#endif
 
 protected:
 
   template <typename T>
   void SendGBufferTexturesInternal(T& Self, FGBufferRequest& GBufferData)
   {
+#if CARLA_HAS_ENGINE_GBUFFER_VIEW
     for (size_t i = 0; i != FGBufferRequest::TextureCount; ++i)
     {
       if ((GBufferData.DesiredTexturesMask & (UINT64_C(1) << i)) == 0) {
@@ -599,6 +647,10 @@ protected:
           abort();
       }
     }
+#else
+    (void)Self;
+    (void)GBufferData;
+#endif
   }
 
 };

@@ -9,8 +9,10 @@
 #include "Carla/Sensor/AsyncDataStream.h"
 
 #include <compiler/disable-ue4-macros.h>
-#include <carla/streaming/Stream.h>
+THIRD_PARTY_INCLUDES_START
 #include <boost/optional.hpp>
+#include <carla/streaming/Stream.h>
+THIRD_PARTY_INCLUDES_END
 #include <compiler/enable-ue4-macros.h>
 
 // =============================================================================

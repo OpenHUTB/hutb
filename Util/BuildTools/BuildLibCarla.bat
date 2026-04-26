@@ -153,7 +153,7 @@ if %BUILD_SERVER% == true (
 
         if %errorlevel% neq 0 goto error_cmake
 
-        cmake --build . --config Debug --target install | findstr /V "Up-to-date:"
+        cmake --build . --config Debug --target install | findstr /V "Up-to-date:" >nul
         if %errorlevel% neq 0 goto error_install
         echo %FILE_N% Building libcarla server in debug mode... done.
     ) else (
@@ -167,7 +167,7 @@ if %BUILD_SERVER% == true (
 
         if %errorlevel% neq 0 goto error_cmake
 
-        cmake --build . --config Release --target install | findstr /V "Up-to-date:"
+        cmake --build . --config Release --target install | findstr /V "Up-to-date:" >nul
         if %errorlevel% neq 0 goto error_install
         echo %FILE_N% Building libcarla server in release mode... done.
     )
@@ -186,7 +186,7 @@ if %BUILD_CLIENT% == true (
         "%ROOT_PATH%"
         if %errorlevel% neq 0 goto error_cmake
 
-        cmake --build . --config Debug --target install | findstr /V "Up-to-date:"
+        cmake --build . --config Debug --target install | findstr /V "Up-to-date:" >nul
         if %errorlevel% neq 0 goto error_install
         echo %FILE_N% Building libcarla client in debug mode... done.
     ) else (
@@ -198,7 +198,7 @@ if %BUILD_CLIENT% == true (
         "%ROOT_PATH%"
         if %errorlevel% neq 0 goto error_cmake
 
-        cmake --build . --config Release --target install | findstr /V "Up-to-date:"
+        cmake --build . --config Release --target install | findstr /V "Up-to-date:" >nul
         if %errorlevel% neq 0 goto error_install
         echo %FILE_N% Building libcarla client in release mode... done.
     )

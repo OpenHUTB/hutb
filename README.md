@@ -1,10 +1,9 @@
 # 人车模拟器
 
-该项目是一个用于研究[具身人](https://openhutb.github.io/doc/#_5)、[无人车](https://openhutb.github.io/doc/#_4)、[无人机](https://openhutb.github.io/air_doc/)的影视级物理模拟器。
-基于 [Carla-DReyeVR](https://openhutb.github.io/doc/interbehavior/) 和 [OpenSim](https://openhutb.github.io/doc/pedestrian/tuto_content_chrono_opensim/) 开发，旨在支持人车系统的开发、训练和验证。
+该项目是一个用于研究[具身人](https://openhutb.github.io/doc/#_5)、[无人车](https://openhutb.github.io/doc/#_4)、[无人机](https://openhutb.github.io/air_doc/)的影视级物理模拟器，旨在支持人和载具算法的开发、训练和验证。
 除了开源代码外，还提供了为此目的创建的可自由使用的开放数字资产（[城镇布局](https://openhutb.github.io/doc/core_map/#non-layered-maps) 、[建筑](https://openhutb.github.io/doc/catalogue/) 、[车辆](https://openhutb.github.io/doc/catalogue_vehicles/) 、[行人](https://openhutb.github.io/doc/catalogue_pedestrians/) 、[道具](https://openhutb.github.io/doc/catalogue_props/) 等）。
 该模拟平台支持 [传感器](https://openhutb.github.io/doc/ref_sensors/) 、[数据合成](https://openhutb.github.io/doc/tuto_G_retrieve_data/) 、[交通管理器](https://openhutb.github.io/doc/adv_traffic_manager/) 、[多物理场仿真](https://openhutb.github.io/doc/tuto_G_chrono/) 、[行人导航](https://openhutb.github.io/doc/tuto_G_pedestrian_navigation/) 、[Python接口](https://openhutb.github.io/doc/python_api/) 等的标准规范。
-详细介绍请参考 [人车孪创文档](https://openhutb.github.io) 。
+详细介绍请参考 [文档](https://openhutb.github.io) 。
 
 
 ## 使用示例
@@ -17,20 +16,29 @@
 	```shell
 	python PythonAPI/examples/manual_control.py --filter walker.pedestrian.*
 	```
-	使用 [config.py](https://github.com/OpenHUTB/hutb/blob/hutb/PythonAPI/util/config.py) [切换](ue/switch_mode.md) 到 [VR 模式](https://openhutb.github.io/doc/interbehavior/) ，使用键盘`W`、`A`、`S`、`D`等进行控制，`Z`为倒档：
+	使用 [config.py](https://github.com/OpenHUTB/hutb/blob/hutb/PythonAPI/util/config.py) [切换](ue/switch_mode.md) 到 [VR 驾驶舱模式](https://openhutb.github.io/doc/interbehavior/) ，使用罗技方向盘或键盘`W`、`A`、`S`、`D`等进行控制，`Z`为倒档：
 	```shell
 	python config.py --map Town10HD?GAME=VR
 	```
 	切换到 [无人机模式](https://openhutb.github.io/air_doc/) ：
 	```shell
 	python config.py --map Town10HD?GAME=AIR
+	# 起飞后按回车键进入不同状态
+	python PythonClient/multirotor/hello_drone.py
 	```
 
 
 ## 源码编译
 
-使用`git clone`或从此页面下载项目。请注意，hutb分支包含最新版本以及最新的修复程序和功能。
-然后按照 [如何在Windows上构建中文说明](https://openhutb.github.io/doc/build_windows/) 、[如何在Linux上构建](https://openhutb.github.io/doc/build_linux/) 中的说明进行操作。
+使用`git clone`或从此页面下载项目。
+```shell
+# 启动编辑器
+setup.bat -l
+# 打包
+setup.bat -p
+```
+请注意，hutb分支包含最新版本以及最新的修复程序和功能。
+或者按照 [如何在Windows上构建中文说明](https://openhutb.github.io/doc/build_windows/) 、[如何在Linux上构建](https://openhutb.github.io/doc/build_linux/) 中的说明进行操作。
 
 
 >[!NOTE]
@@ -59,10 +67,9 @@
 * [**强化学习**](https://openhutb.github.io/doc/used_by/#rl): 各种强化学习模型的代码
 
 
-
 ## 其他
 
-除了文档之外，还为用户创建了一些附加内容。这是一种涵盖不同主题的好方法，例如对特定模块的详细解释、功能的最新改进、未来的工作等等。
+除了文档之外，还为用户创建了一些附加内容。这是一种涵盖不同主题的好方法，例如对特定模块的详细解释、功能的最新改进、未来的工作等。
 
 *   __常规__  
 	*   艺术改进：环境和渲染 — [视频](https://youtu.be/ZZaHevsz8W8) | [PPT](https://drive.google.com/file/d/1l9Ztaq0Q8fNN5YPU4-5vL13eZUwsQl5P/view?usp=sharing)  
@@ -86,6 +93,34 @@
 	*   OpenDRIVE 独立模式 — [视频](https://youtu.be/U25GhofVV1Q) | [PPT](https://drive.google.com/file/d/1D5VsgfX7dmgPWn7UtDDid3-OdS1HI4pY/view?usp=sharing)  
 
 
+## 参考和许可证
+
+```
+@inproceedings{Dosovitskiy17,
+  title = {{CARLA}: {An} Open Urban Driving Simulator},
+  author = {Alexey Dosovitskiy and German Ros and Felipe Codevilla and Antonio Lopez and Vladlen Koltun},
+  booktitle = {Proceedings of the 1st Annual Conference on Robot Learning},
+  pages = {1--16},
+  year = {2017}
+}
+```
 
 
+```
+@article{jdan,
+	author={Haidong Wang and Xuan He and Zhiyong Li and Jin Yuan and Shutao Li},
+	title={JDAN: Joint Detection and Association Network for Real-Time Online Multi-Object Tracking.},
+	journal={ACM Transactions on Multimedia Computing, Communications, and Applications},
+	volume=19,
+	year=2023,
+}
+```
 
+该项目站在巨人的肩膀上，诚挚感谢以下开源项目的开发者：
+- [Carla](https://github.com/carla-simulator/carla) (MIT 许可证)
+- [AirSim](https://github.com/microsoft/AirSim) (MIT 许可证)
+- [DReyeVR](https://openhutb.github.io/doc/interbehavior/) (MIT 许可证)
+- [OpenSim](https://openhutb.github.io/doc/pedestrian/tuto_content_chrono_opensim/) (Apache 许可证)
+
+Carla 相关的资产遵循 CC-BY 许可证。
+其他相关资产（包括湖南工商大学大学、长沙中电软件园等地图场景）和代码基于 [MIT 许可证](./LICENSE) 开源。
