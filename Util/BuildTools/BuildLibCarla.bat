@@ -127,6 +127,7 @@ if %REMOVE_INTERMEDIATE% == true (
 )
 
 if not exist "%LIBCARLA_VSPROJECT_PATH%" mkdir "%LIBCARLA_VSPROJECT_PATH%"
+echo %FILE_N% cd "%LIBCARLA_VSPROJECT_PATH%"
 cd "%LIBCARLA_VSPROJECT_PATH%"
 
 echo.%GENERATOR% | findstr /C:"Visual Studio" >nul && (
@@ -144,6 +145,7 @@ rem
 if %BUILD_SERVER% == true (
     if %IS_DEBUG% == true (
         echo %FILE_N% Building libcarla server in debug mode...
+        echo cmake -G %GENERATOR% %PLATFORM%  -DCMAKE_BUILD_TYPE=Server  -DCMAKE_CXX_FLAGS_RELEASE="/MD /MP"  -DCMAKE_INSTALL_PREFIX="%LIBCARLA_SERVER_INSTALL_PATH:\=/%"  "%ROOT_PATH%"
         cmake -G %GENERATOR% %PLATFORM%^
         -DCMAKE_BUILD_TYPE=Server^
         -DCMAKE_CXX_FLAGS_DEBUG="/MDd /MP"^

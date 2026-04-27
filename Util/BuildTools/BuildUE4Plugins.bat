@@ -117,12 +117,12 @@ if not exist "%CONTENT_PATH%" (
         git clone https://OpenHUTB:T8w6TYB_r71gGTP3A02B@git.code.tencent.com/OpenHUTB/Content.git %CONTENT_PATH%  &&  cd %CONTENT_PATH%  && git lfs pull
     )
 ) else (
-    echo %FILE_N% Content directory already exists: "%CONTENT_PATH%", executing git pull.
+    echo %FILE_N% Content directory already exists: "%CONTENT_PATH%". if you need update, please execute git pull.
     cd /d "%CONTENT_PATH%"
-    git fetch --all
-    git reset --hard origin/master
-    git pull
-    git lfs pull
+    rem git fetch --all
+    rem git reset --hard origin/master
+    rem git pull
+    rem git lfs pull
 )
 
 
