@@ -48,6 +48,7 @@ jobs:
       - name: test
         run: |
           call setEnv64.bat
+          make check.PythonAPI
           make check.smoke
         shell: cmd
 

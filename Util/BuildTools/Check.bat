@@ -45,6 +45,7 @@ set LIBCARLA_DEBUG=false
 set SMOKE_TESTS=false
 set PYTHON_API=false
 set RUN_BENCHMARK=false
+set AIR_TESTS=false
 set MEASURE_TIME=true
 set UPLOAD_DOWNLOAD=false
 
@@ -85,6 +86,11 @@ if not "%1"=="" (
         shift
     )
 
+    if "%1"=="--air" (
+        set AIR_TESTS=true
+        shift
+    )
+
     if "%1"=="--python-api" (
         set PYTHON_API=true
         shift
@@ -111,12 +117,12 @@ rem ============================================================================
 rem -- Launch Serve for test ---------------------------------------------------
 rem ============================================================================
 
-rem 获取CarlaUE4所在的目录（参考Package.bat）
+rem Get the directory where CarlaUE4 is located (refer to Package.bat).
 for /f %%i in ('git rev-parse --short HEAD') do set CARLA_VERSION=%%i
 if not defined CARLA_VERSION goto bad_exit
 
-rem 如果存在dirty后缀，则表示是多个版本切换后编译的包，测试时也使用该包
-rem （解决测试时候找不到dirty目录中的可执行文件的问题）
+rem If the "dirty" suffix is ​​present, it indicates that the package was compiled after switching between multiple versions, and this package is also used during testing.
+rem (Solve the problem of not being able to find the executable file in the dirty directory during testing)
 if exist %INSTALLATION_DIR%UE4Carla/%CARLA_VERSION%-dirty/ (
     set CARLA_VERSION=%CARLA_VERSION%-dirty
 )
@@ -128,11 +134,11 @@ if %UPLOAD_DOWNLOAD%==true (
     %python_dir%Scripts\pyinstaller.exe hutb_downloader.spec
 
     rem %pip_path% install gitpython
-    rem 将编译好的包上传到远程服务器并下载编译好的包
+    rem Upload the compiled package to the remote server and download the compiled package.
     rem python %ROOT_PATH%Util\download_from_git.py -u release
     cd %ROOT_PATH%Util\dist\
     hutb_downloader.exe  -u release
-    rem 测试下载发行包
+    rem Test download distribution package
     hutb_downloader.exe
     cd /d %ROOT_PATH%
 ) else (
@@ -199,16 +205,10 @@ if %PYTHON_API%==true (
             pip install  %BUILD_FOLDER:\=/%WindowsNoEditor/PythonAPI/carla/dist/hutb-%API_VERSION%-cp3%%i-cp3%%i-win_amd64.whl
         )
         cd %ROOT_PATH%PythonAPI\test\unit\
-        if %IS_DEBUG%==true (
-            :: skip test client
-            python -m nose2 test_transform
-            python -m nose2 test_vehicle
-        ) else (
-            :: PythonAPI client version == git rev-parse --short HEAD
-            :: python -m nose2
-            python -m nose2 test_transform
-            python -m nose2 test_vehicle
-        )
+        python -m nose2 test_transform
+        python -m nose2 test_vehicle
+        :: test air API
+        python -c "import airsim; c=airsim.MultirotorClient(port=41451); c.confirmConnection()"
     )
 
     if %XML_OUTPUT%==true (
@@ -265,7 +265,7 @@ if %MEASURE_TIME%==true if %SMOKE_TESTS%==true echo %FILE_N% [TIME]: Running smo
 
 
 rem ============================================================================
-:: 杀死服务端
+:: kill service process after test
 for /f "tokens=5" %%a in ('netstat -ano ^| findstr :3654') do taskkill /F /PID %%a
 
 
