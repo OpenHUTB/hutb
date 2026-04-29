@@ -50,6 +50,7 @@ jobs:
           call setEnv64.bat
           make check.PythonAPI
           make check.smoke
+          make check.air
         shell: cmd
 
 
