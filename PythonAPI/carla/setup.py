@@ -199,7 +199,7 @@ setup(
     version='2.9.16',
     author='OpenHUTB',
     package_dir={'': 'source'},
-    packages=['carla', 'airsim', 'carla.ad', 'carla.ad.rss', 'carla.ad.map'] if is_rss_variant_enabled() else ['carla'],
+    packages=['carla', 'airsim', 'carla.ad', 'carla.ad.rss', 'carla.ad.map'] if is_rss_variant_enabled() else ['carla', 'airsim'],
     # For non-rss build do a fine grained include/exclude on the package data.
     package_data={'carla' : [""]},
     exclude_package_data={} if is_rss_variant_enabled() else {'carla':[CleanADStubFiles.CARLA_RSS_STUB_FILE]},
@@ -209,7 +209,7 @@ setup(
     long_description=long_description,
     long_description_content_type='text/markdown',
     url='https://github.com/OpenHUTB/hutb',
-    author_email='whd@hutb.edu.cn',
+    author_email='open@hutb.edu.cn',
     include_package_data=True,
     cmdclass={'install_lib': CleanADStubFiles},
     install_requires=[
