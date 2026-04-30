@@ -1,0 +1,109 @@
+{
+  "_meta": {
+    "mujoco_version": "3.7.0",
+    "snapshot_date": "2026-04-18",
+    "source": "https://github.com/google-deepmind/mujoco/blob/main/src/xml/xml_native_reader.cc",
+    "description": "MJCF schema snapshot for diff-based update detection. Compare against a fresh extract to find new elements/attributes."
+  },
+  "body": {
+    "attrs": ["name", "childclass", "pos", "quat", "mocap", "axisangle", "xyaxes", "zaxis", "euler", "gravcomp", "sleep", "user"],
+    "children": ["inertial", "joint", "freejoint", "geom", "site", "camera", "light", "attach", "plugin", "composite", "flexcomp"]
+  },
+  "inertial": {
+    "attrs": ["pos", "quat", "mass", "diaginertia", "axisangle", "xyaxes", "zaxis", "euler", "fullinertia"]
+  },
+  "joint": {
+    "attrs": ["name", "class", "type", "group", "pos", "axis", "springdamper", "limited", "actuatorfrclimited", "solreflimit", "solimplimit", "solreffriction", "solimpfriction", "stiffness", "range", "actuatorfrcrange", "actuatorgravcomp", "margin", "ref", "springref", "armature", "damping", "frictionloss", "user"]
+  },
+  "freejoint": {
+    "attrs": ["name", "group", "align"]
+  },
+  "geom": {
+    "attrs": ["name", "class", "type", "contype", "conaffinity", "condim", "group", "priority", "size", "material", "friction", "mass", "density", "shellinertia", "solmix", "solref", "solimp", "margin", "gap", "fromto", "pos", "quat", "axisangle", "xyaxes", "zaxis", "euler", "hfield", "mesh", "fitscale", "rgba", "fluidshape", "fluidcoef", "user"]
+  },
+  "site": {
+    "attrs": ["name", "class", "type", "group", "pos", "quat", "material", "size", "fromto", "axisangle", "xyaxes", "zaxis", "euler", "rgba", "user"]
+  },
+  "camera": {
+    "attrs": ["name", "class", "projection", "fovy", "ipd", "resolution", "output", "pos", "quat", "axisangle", "xyaxes", "zaxis", "euler", "mode", "target", "focal", "focalpixel", "principal", "principalpixel", "sensorsize", "user"]
+  },
+  "light": {
+    "attrs": ["name", "class", "directional", "type", "castshadow", "active", "pos", "dir", "bulbradius", "intensity", "range", "attenuation", "cutoff", "exponent", "ambient", "diffuse", "specular", "mode", "target", "texture"]
+  },
+  "actuator_common": {
+    "attrs": ["name", "class", "group", "nsample", "interp", "delay", "ctrllimited", "forcelimited", "actlimited", "ctrlrange", "forcerange", "actrange", "lengthrange", "gear", "damping", "armature", "cranklength", "user"],
+    "targets": ["joint", "jointinparent", "tendon", "slidersite", "cranksite", "site", "refsite"]
+  },
+  "actuator_types": {
+    "general": ["dyntype", "gaintype", "biastype", "dynprm", "gainprm", "biasprm", "actdim"],
+    "motor": [],
+    "position": ["kp", "kv", "dampratio", "timeconst", "inheritrange"],
+    "velocity": ["kv"],
+    "intvelocity": ["kp", "kv", "dampratio"],
+    "damper": ["kv"],
+    "cylinder": ["timeconst", "area", "diameter", "bias"],
+    "muscle": ["timeconst", "tausmooth", "range", "force", "scale", "lmin", "lmax", "vmax", "fpmax", "fvmax"],
+    "adhesion": ["gain"],
+    "dcmotor": ["motorconst", "resistance", "nominal", "saturation", "inductance", "cogging", "controller", "thermal", "lugre", "input"]
+  },
+  "sensor_types": [
+    "touch", "accelerometer", "velocimeter", "gyro", "force", "torque", "magnetometer",
+    "camprojection", "rangefinder",
+    "jointpos", "jointvel", "ballquat", "ballangvel",
+    "jointlimitpos", "jointlimitvel", "jointlimitfrc",
+    "tendonpos", "tendonvel", "tendonlimitpos", "tendonlimitvel", "tendonlimitfrc",
+    "actuatorpos", "actuatorvel", "actuatorfrc",
+    "jointactuatorfrc", "tendonactuatorfrc",
+    "framepos", "framequat", "framexaxis", "frameyaxis", "framezaxis",
+    "framelinvel", "frameangvel", "framelinacc", "frameangacc",
+    "subtreecom", "subtreelinvel", "subtreeangmom",
+    "insidesite", "distance", "normal", "fromto", "contact",
+    "e_potential", "e_kinetic", "clock",
+    "tactile", "user", "plugin"
+  ],
+  "sensor_common": {
+    "attrs": ["name", "nsample", "interp", "delay", "interval", "cutoff", "noise", "user"]
+  },
+  "tendon": {
+    "spatial": {
+      "attrs": ["name", "class", "group", "limited", "actuatorfrclimited", "range", "actuatorfrcrange", "solreflimit", "solimplimit", "solreffriction", "solimpfriction", "frictionloss", "springlength", "width", "material", "margin", "stiffness", "damping", "armature", "rgba", "user"],
+      "wrap_types": ["site", "geom", "pulley"]
+    },
+    "fixed": {
+      "attrs": ["name", "class", "group", "limited", "actuatorfrclimited", "range", "actuatorfrcrange", "solreflimit", "solimplimit", "solreffriction", "solimpfriction", "frictionloss", "springlength", "margin", "stiffness", "damping", "armature", "user"],
+      "wrap_types": ["joint"]
+    }
+  },
+  "equality": {
+    "connect": ["name", "class", "body1", "body2", "anchor", "site1", "site2", "active", "solref", "solimp"],
+    "weld": ["name", "class", "body1", "body2", "relpose", "anchor", "site1", "site2", "active", "solref", "solimp", "torquescale"],
+    "joint": ["name", "class", "joint1", "joint2", "polycoef", "active", "solref", "solimp"],
+    "tendon": ["name", "class", "tendon1", "tendon2", "polycoef", "active", "solref", "solimp"],
+    "flex": ["name", "class", "flex", "active", "solref", "solimp"],
+    "flexvert": ["name", "class", "flex", "active", "solref", "solimp"],
+    "flexstrain": ["name", "class", "flex", "active", "solref", "solimp"]
+  },
+  "contact": {
+    "pair": ["name", "class", "geom1", "geom2", "condim", "friction", "solref", "solreffriction", "solimp", "gap", "margin"],
+    "exclude": ["name", "body1", "body2"]
+  },
+  "asset": {
+    "mesh": ["name", "class", "content_type", "file", "vertex", "normal", "texcoord", "face", "refpos", "refquat", "scale", "smoothnormal", "maxhullvert", "inertia", "builtin", "params", "material"],
+    "hfield": ["name", "content_type", "file", "nrow", "ncol", "size", "elevation"],
+    "texture": ["name", "type", "colorspace", "content_type", "file", "gridsize", "gridlayout", "builtin", "rgb1", "rgb2", "mark", "markrgb", "random", "width", "height", "hflip", "vflip", "nchannel"],
+    "material": ["name", "class", "texture", "texrepeat", "texuniform", "emission", "specular", "shininess", "reflectance", "metallic", "roughness", "rgba"]
+  },
+  "compiler": {
+    "attrs": ["autolimits", "boundmass", "boundinertia", "settotalmass", "balanceinertia", "strippath", "coordinate", "angle", "fitaabb", "eulerseq", "meshdir", "texturedir", "discardvisual", "usethread", "fusestatic", "inertiafromgeom", "inertiagrouprange", "saveinertial", "assetdir", "alignfree"]
+  },
+  "option": {
+    "attrs": ["timestep", "impratio", "tolerance", "ls_tolerance", "noslip_tolerance", "ccd_tolerance", "sleep_tolerance", "gravity", "wind", "magnetic", "density", "viscosity", "o_margin", "o_solref", "o_solimp", "o_friction", "integrator", "cone", "jacobian", "solver", "iterations", "ls_iterations", "noslip_iterations", "ccd_iterations", "sdf_iterations", "sdf_initpoints", "actuatorgroupdisable"],
+    "flag": ["constraint", "equality", "frictionloss", "limit", "contact", "spring", "damper", "gravity", "clampctrl", "warmstart", "filterparent", "actuation", "refsafe", "sensor", "midphase", "eulerdamp", "autoreset", "nativeccd", "island", "override", "energy", "fwdinv", "invdiscrete", "multiccd", "sleep"]
+  },
+  "keyframe": {
+    "key": ["name", "time", "qpos", "qvel", "act", "mpos", "mquat", "ctrl"]
+  },
+  "default": {
+    "child_elements": ["mesh", "material", "joint", "geom", "site", "camera", "light", "pair", "equality", "tendon", "general", "motor", "position", "velocity", "intvelocity", "damper", "cylinder", "muscle", "adhesion", "dcmotor"]
+  }
+}

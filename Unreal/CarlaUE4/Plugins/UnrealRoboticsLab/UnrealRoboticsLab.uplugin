@@ -1,0 +1,43 @@
+{
+	"FileVersion": 3,
+	"Version": 1,
+	"VersionName": "0.1-alpha",
+	"FriendlyName": "Unreal Robotics Lab (URLab)",
+	"Description": "MuJoCo physics simulation plugin for Unreal Engine — drag-and-drop MJCF import, 40+ sensors, ZMQ networking, debug visualization, and record/replay.",
+	"Category": "Simulation",
+	"CreatedBy": "Jonathan Embley-Riches",
+	"CreatedByURL": "https://github.com/URLab-Sim",
+	"DocsURL": "https://urlab-sim.github.io/UnrealRoboticsLab/",
+	"MarketplaceURL": "",
+	"SupportURL": "https://github.com/URLab-Sim/UnrealRoboticsLab/issues",
+	"CanContainContent": true,
+	"IsBetaVersion": false,
+	"IsExperimentalVersion": true,
+	"Installed": true,
+	"Modules": [
+		{
+			"Name": "URLab",
+			"Type": "Runtime",
+			"LoadingPhase": "Default"
+		},
+		{
+			"Name": "URLabEditor",
+			"Type": "Editor",
+			"LoadingPhase": "Default"
+		}
+	],
+	"Plugins": [
+		{
+			"Name": "EnhancedInput",
+			"Enabled": true
+		},
+		{
+			"Name": "EditorScriptingUtilities",
+			"Enabled": true
+		},
+		{
+			"Name": "ProceduralMeshComponent",
+			"Enabled": true
+		}
+	]
+}

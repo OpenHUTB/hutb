@@ -1,0 +1,15 @@
+[submodule "third_party/MuJoCo/src"]
+	path = third_party/MuJoCo/src
+	url = https://github.com/google-deepmind/mujoco
+[submodule "third_party/CoACD/src"]
+	path = third_party/CoACD/src
+	url = https://github.com/SarahWeiii/CoACD
+	# third_party/CoACD/build.{ps1,sh} overlays our custom CMakeLists.txt
+	# onto this submodule's working tree on every build, which would show up
+	# as "modified content" noise in URLab's `git status`. `ignore = dirty`
+	# hides those expected working-tree modifications while still reporting
+	# pointer changes (which are what actually matter for URLab).
+	ignore = dirty
+[submodule "third_party/libzmq/src"]
+	path = third_party/libzmq/src
+	url = https://github.com/zeromq/libzmq

@@ -1,0 +1,58 @@
+qTHIRD-PARTY SOFTWARE NOTICES AND INFORMATION
+--------------------------------------------------------------------------------
+The UnrealRoboticsLab plugin incorporates several third-party software components. 
+This file provides the required notices and license information for these components.
+
+1. MuJoCo (Multi-Joint dynamics with Contact)
+--------------------------------------------------------------------------------
+Copyright (c) Google LLC.
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at:
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+
+2. CoACD (Approximate Convex Decomposition)
+--------------------------------------------------------------------------------
+Copyright (c) 2022-2023 Sarah Wei.
+Licensed under the MIT License.
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+3. libzmq (ZeroMQ)
+--------------------------------------------------------------------------------
+Copyright (c) 2007-2024 Contributors to the ZeroMQ project.
+Licensed under the Mozilla Public License Version 2.0 (MPL 2.0).
+
+The source code for libzmq is available at: https://github.com/zeromq/libzmq
+The libzmq library is used here as an unmodified binary. If you modify the 
+libzmq source files, those specific files must be made available under the 
+MPL 2.0. The "larger work" (UnrealRoboticsLab) remains under its own license.
+
+4. Legal Disclaimer regarding Epic Games / Unreal Engine
+--------------------------------------------------------------------------------
+UnrealRoboticsLab is an independent software plugin. It is NOT affiliated with, 
+endorsed by, or sponsored by Epic Games, Inc. "Unreal" and "Unreal Engine" are 
+trademarks or registered trademarks of Epic Games, Inc. in the US and elsewhere.
+--------------------------------------------------------------------------------

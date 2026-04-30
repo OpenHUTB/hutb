@@ -1,0 +1,56 @@
+# Unreal Engine compatible clang-format configuration
+# Based on UE coding standards with project-specific adjustments
+
+BasedOnStyle: LLVM
+
+# Indentation
+IndentWidth: 4
+TabWidth: 4
+UseTab: ForIndentation
+IndentCaseLabels: false
+NamespaceIndentation: None
+
+# Braces
+BreakBeforeBraces: Allman
+BraceWrapping:
+  AfterClass: true
+  AfterControlStatement: true
+  AfterEnum: true
+  AfterFunction: true
+  AfterNamespace: true
+  AfterStruct: true
+  BeforeCatch: true
+  BeforeElse: true
+
+# Line length
+ColumnLimit: 140
+
+# Alignment
+AlignAfterOpenBracket: Align
+AlignConsecutiveAssignments: false
+AlignConsecutiveDeclarations: false
+AlignTrailingComments: true
+
+# Includes
+# NOTE: .generated.h must be the LAST include in each header file.
+# clang-format cannot enforce this rule — it must be maintained manually.
+SortIncludes: false
+IncludeBlocks: Preserve
+
+# Spaces
+SpaceAfterCStyleCast: false
+SpaceBeforeParens: ControlStatements
+SpacesInAngles: false
+SpacesInParentheses: false
+
+# Other
+AllowShortFunctionsOnASingleLine: Inline
+AllowShortIfStatementsOnASingleLine: false
+AllowShortLoopsOnASingleLine: false
+PointerAlignment: Left
+DerivePointerAlignment: false
+
+# UE-specific: keep UPROPERTY/UFUNCTION macros on their own line
+# These are handled as macros by clang-format
+MacroBlockBegin: ""
+MacroBlockEnd: ""
