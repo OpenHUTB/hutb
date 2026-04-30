@@ -181,6 +181,23 @@ if exist "%cd%\Build\dependencies\" (
         echo CesiumForUnreal Plugin already exists.
     )
 
+        
+    rem ============================================================================
+    rem -- Initial UnrealRoboticsLab dependencies ----------------------------------
+    rem ============================================================================
+
+    echo %FILE_N% Initial UnrealRoboticsLab dependencies...
+    set UnrealRoboticsLab_FOLDER=%cd%\Unreal\CarlaUE4\Plugins\UnrealRoboticsLab\
+    echo UnrealRoboticsLab_FOLDER: %UnrealRoboticsLab_FOLDER%
+    echo "%UnrealRoboticsLab_FOLDER%third_party\install" folder...
+    if not exist "%cd%\Unreal\CarlaUE4\Plugins\UnrealRoboticsLab\third_party\install" (
+        "prerequisites\7zip\7z.exe" x "Plugins\mujoco-3.3.5-windows-x86_64.zip" -o"%cd%\Unreal\CarlaUE4\Plugins\UnrealRoboticsLab\third_party\install\MuJoCo" -y
+        "prerequisites\7zip\7z.exe" x "Plugins\CoACD.zip" -o"%cd%\Unreal\CarlaUE4\Plugins\UnrealRoboticsLab\third_party\install\" -y
+        "prerequisites\7zip\7z.exe" x "Plugins\libzmq.zip" -o"%cd%\Unreal\CarlaUE4\Plugins\UnrealRoboticsLab\third_party\install\" -y
+    ) else (
+        echo Found UnrealRoboticsLab dependencies at "%UnrealRoboticsLab_FOLDER%third_party\install\".
+    )
+
 
     rem ---------------------------------------------------------------------------------------------------------------
     rem Unzip dependencies
