@@ -104,6 +104,16 @@ for /l %%i in (14,-1,7) do (
     :: offline resource: https://repo.anaconda.com/pkgs/main/win-64/
     echo "If conda viural environment hutb_3.%%i already exists, delete it"
     call conda remove -n hutb_3.%%i --all --yes
+    rem Remove residual virtual environment files to avoid "Permission denied" errors when creating virtual environments.
+    rem get hutb_3.%%i virtual environment directory, if it exists, and remove it
+    for /f "tokens=2" %%a in ('conda env list ^| findstr hutb_3.%%i') do (
+        echo ENV_DIR: %%a
+        rem remove the environment directory if it still exists after conda remove
+        if exist "%%a" (
+            echo "Removing existing conda environment: %%a"
+            rmdir /s /q "%%a"
+        )
+    )
     echo "Creating new conda environment hutb_3.%%i ..."
     call conda create -n hutb_3.%%i python=3.%%i --yes
 )
