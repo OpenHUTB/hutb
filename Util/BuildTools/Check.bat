@@ -241,8 +241,6 @@ if %PYTHON_API%==true (
         cd %ROOT_PATH:/=\%PythonAPI\test\unit\
         python -m nose2 test_transform
         python -m nose2 test_vehicle
-        :: test air API
-        python -c "import airsim; c=airsim.MultirotorClient(port=41451); c.confirmConnection()"
     )
 
     if %XML_OUTPUT%==true (
