@@ -2,8 +2,25 @@
 """CarlaAir Quick Start - Step 2: 天气控制"""
 import carla
 import time
+import argparse
 
-client = carla.Client('localhost', 2000)
+argparser = argparse.ArgumentParser(
+    description=__doc__)
+argparser.add_argument(
+    '--host',
+    metavar='H',
+    default='localhost',
+    help='IP of the host CARLA Simulator (default: localhost)')
+argparser.add_argument(
+    '-p', '--port',
+    metavar='P',
+    default=2000,
+    type=int,
+    help='TCP port of CARLA Simulator (default: 2000)')
+
+args = argparser.parse_args()
+
+client = carla.Client(args.host, args.port)
 world = client.get_world()
 
 presets = {
