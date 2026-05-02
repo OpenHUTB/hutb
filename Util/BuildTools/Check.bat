@@ -149,7 +149,8 @@ if %UPLOAD_DOWNLOAD%==true (
 
 rem The directory of CarlaUE4.exe
 set BUILD_FOLDER=%INSTALLATION_DIR%UE4Carla/%CARLA_VERSION%/
-:: debug only (rename with no dirty)
+rem debug only (rename with no dirty)
+rem set IS_DEBUG=true
 if %IS_DEBUG%==true (
     set BUILD_FOLDER=%INSTALLATION_DIR%UE4Carla\debug\
 )
@@ -157,7 +158,7 @@ if %IS_DEBUG%==true (
 set exe_dir=%BUILD_FOLDER:\=/%WindowsNoEditor/%
 set exe_path=%BUILD_FOLDER:/=\%WindowsNoEditor\CarlaUE4.exe
 
-:: If exist CarlaUE4.exe process, kill it
+rem If exist CarlaUE4.exe process, kill it
 for /f "tokens=5" %%a in ('netstat -ano ^| findstr :3654') do taskkill /F /PID %%a
 :: use command "start" to launch a new service process. Otherwise stuck
 echo Unreal service is launching with command: start %exe_path% -RenderOffscreen --carla-rpc-port=3654 --carla-streaming-port=0 -nosound
@@ -170,6 +171,49 @@ if exist %exe_path% (
     goto bad_exit
 )
 
+
+rem ============================================================================
+rem -- Install Python packages -------------------------------------------------
+rem ============================================================================
+
+for /l %%i in (14,-1,7) do (
+    call conda activate hutb_3.%%i
+    pip install -r %ROOT_PATH:/=\%PythonAPI\test\requirements.txt -i http://mirrors.aliyun.com/pypi/simple --trusted-host mirrors.aliyun.com
+    if %%i==7 (
+        rem Python 3.7 whl file has "cp37m" in its name, while Python 3.8-3.11 whl files have "cp3%%i" in their names.
+        echo pip install --force-reinstall  %BUILD_FOLDER:\=/%WindowsNoEditor/PythonAPI/carla/dist/hutb-%API_VERSION%-cp3%%i-cp3%%im-win_amd64.whl
+        pip uninstall --yes hutb
+        pip install  %BUILD_FOLDER:\=/%WindowsNoEditor/PythonAPI/carla/dist/hutb-%API_VERSION%-cp3%%i-cp3%%im-win_amd64.whl
+    ) else (
+        echo pip install --force-reinstall  %BUILD_FOLDER:\=/%WindowsNoEditor/PythonAPI/carla/dist/hutb-%API_VERSION%-cp3%%i-cp3%%i-win_amd64.whl
+        pip uninstall --yes hutb
+        pip install  %BUILD_FOLDER:\=/%WindowsNoEditor/PythonAPI/carla/dist/hutb-%API_VERSION%-cp3%%i-cp3%%i-win_amd64.whl
+    )
+)
+
+:: goto success
+
+
+
+rem ============================================================================
+rem -- Run Carla-Air example tests ---------------------------------------------
+rem ============================================================================
+
+:: AIR_TESTS
+if %AIR_TESTS%==true (
+    echo Running Carla-Air example tests...
+    for /l %%i in (11,-1,7) do (
+        echo Running Carla-Air Python API for Python.%%i example tests.
+        call conda activate hutb_3.%%i
+        cd %ROOT_PATH:/=\%PythonAPI\examples\air\
+        rem python 3.7 - 3.11 is normal, but 3.12, 3.13, 3.14 is abnormal: No module named 'backports'
+        python 01_hello_world.py --port 3654
+        python 02_weather_control.py --port 3654
+        python 03_spawn_traffic.py --port 3654
+        python 04_sensor_capture.py --port 3654
+        echo Finished Carla-Air Python API for Python.%%i example tests.
+    )
+)
 
 
 rem ============================================================================
@@ -185,7 +229,7 @@ if %XML_OUTPUT%==true (
 
 if %PYTHON_API%==true (
     echo Current directory: %cd%
-    for /l %%i in (7,-1,7) do (
+    for /l %%i in (14,-1,7) do (
         echo Running Python API for Python Python.%%i unit tests.
         where conda
         :: call D:\software\anaconda3\Scripts\activate.bat hutb_3.%%i && python --version
@@ -194,21 +238,9 @@ if %PYTHON_API%==true (
         where python
         echo Current Pip path:
         where pip
-        pip install opencv-contrib-python numpy msgpack-rpc-python nose2 -i http://mirrors.aliyun.com/pypi/simple --trusted-host mirrors.aliyun.com
-        if %%i==7 (
-            echo pip install --force-reinstall  %BUILD_FOLDER:\=/%WindowsNoEditor/PythonAPI/carla/dist/hutb-%API_VERSION%-cp3%%i-cp3%%im-win_amd64.whl
-            pip uninstall --yes hutb
-            pip install  %BUILD_FOLDER:\=/%WindowsNoEditor/PythonAPI/carla/dist/hutb-%API_VERSION%-cp3%%i-cp3%%im-win_amd64.whl
-        ) else (
-            echo pip install --force-reinstall  %BUILD_FOLDER:\=/%WindowsNoEditor/PythonAPI/carla/dist/hutb-%API_VERSION%-cp3%%i-cp3%%i-win_amd64.whl
-            pip uninstall --yes hutb
-            pip install  %BUILD_FOLDER:\=/%WindowsNoEditor/PythonAPI/carla/dist/hutb-%API_VERSION%-cp3%%i-cp3%%i-win_amd64.whl
-        )
-        cd %ROOT_PATH%PythonAPI\test\unit\
+        cd %ROOT_PATH:/=\%PythonAPI\test\unit\
         python -m nose2 test_transform
         python -m nose2 test_vehicle
-        :: test air API
-        python -c "import airsim; c=airsim.MultirotorClient(port=41451); c.confirmConnection()"
     )
 
     if %XML_OUTPUT%==true (
@@ -236,21 +268,11 @@ if %SMOKE_TESTS%==true (
     )
     :read_done
     echo Smoke list: %smoke_list%
-    for /l %%i in (7,-1,7) do (
+    for /l %%i in (14,-1,7) do (
         echo Running smoke tests for Python 3.%%i
         call conda activate hutb_3.%%i
         echo Current Python path: 
         where python
-        pip install nose2 -i http://mirrors.aliyun.com/pypi/simple --trusted-host mirrors.aliyun.com
-        if %%i==7 (
-            echo pip install --force-reinstall  %BUILD_FOLDER:\=/%WindowsNoEditor/PythonAPI/carla/dist/hutb-%API_VERSION%-cp3%%i-cp3%%im-win_amd64.whl
-            pip install --force-reinstall  %BUILD_FOLDER:\=/%WindowsNoEditor/PythonAPI/carla/dist/hutb-%API_VERSION%-cp3%%i-cp3%%im-win_amd64.whl
-        ) else (
-            echo pip install --force-reinstall  %BUILD_FOLDER:\=/%WindowsNoEditor/PythonAPI/carla/dist/hutb-%API_VERSION%-cp3%%i-cp3%%i-win_amd64.whl
-            pip uninstall --yes hutb
-            pip install  %BUILD_FOLDER:\=/%WindowsNoEditor/PythonAPI/carla/dist/hutb-%API_VERSION%-cp3%%i-cp3%%i-win_amd64.whl
-        )
-        pip install -r requirements.txt -i http://mirrors.aliyun.com/pypi/simple --trusted-host mirrors.aliyun.com
         echo python -m nose2 -v %smoke_list%
         python -m nose2 -v %smoke_list%
     )

@@ -1,2 +1,6 @@
 nose2
 numpy
+msgpack-rpc-python
+nose2
+# pygame
+# backports

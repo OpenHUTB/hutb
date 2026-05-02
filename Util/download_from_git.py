@@ -440,7 +440,7 @@ if __name__ == "__main__":
             sys.exit(1)
         if os.path.exists(os.path.join(local_path, latest_file)):
             # 如果 hutb.zip 已经存在，则先删除
-            if os.path.exists(os.path.join(local_path, "hutb.zip")):
+            if os.path.exists(os.path.join(local_path, "hutb.zip"))  and latest_file != "hutb.zip":
                 print("Removing existing hutb.zip file: ", os.path.join(local_path, "hutb.zip"))
                 os.remove(os.path.join(local_path, "hutb.zip"))
             # 如果 latest_file 不是 hutb.zip，则重命名为 hutb.zip

@@ -2,9 +2,26 @@
 """CarlaAir Quick Start - Step 1: 连接验证"""
 import carla
 import airsim
+import argparse
+
+argparser = argparse.ArgumentParser(
+    description=__doc__)
+argparser.add_argument(
+    '--host',
+    metavar='H',
+    default='localhost',
+    help='IP of the host CARLA Simulator (default: localhost)')
+argparser.add_argument(
+    '-p', '--port',
+    metavar='P',
+    default=2000,
+    type=int,
+    help='TCP port of CARLA Simulator (default: 2000)')
+
+args = argparser.parse_args()
 
 # 连接 CARLA（地面仿真）
-client = carla.Client('localhost', 2000)
+client = carla.Client(args.host, args.port)
 client.set_timeout(10)
 world = client.get_world()
 print(f"CARLA 连接成功: {world.get_map().name}")
