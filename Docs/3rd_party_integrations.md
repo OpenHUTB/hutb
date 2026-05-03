@@ -76,3 +76,4 @@ The RLlib integration brings support between the Ray/RLlib library and CARLA, al
 [__Chrono__](https://projectchrono.org/) is a multi-physics simulation engine providing high realism vehicle dynamics using templates. CARLA's Chrono integraion allows CARLA users to add Chrono templates to simulate vehicle dynamics. Please refer to the full documentation [__here__](tuto_G_chrono.md).
 
 ---
+这是我的测试修改 - 添加了第三方集成文档的更新。
