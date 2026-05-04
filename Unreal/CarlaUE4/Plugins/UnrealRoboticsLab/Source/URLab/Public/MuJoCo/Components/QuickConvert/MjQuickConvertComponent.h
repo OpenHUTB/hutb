@@ -95,15 +95,16 @@ public:
 
     /** @brief Friction parameters (sliding, torsional, rolling). Applied to all geoms created by this component. */
     UPROPERTY(EditAnywhere, Category="MuJoCo|Physics")
-    FVector3d friction = {1.0, 1, 1};
+    FVector friction = {1.0, 1, 1};
+    // FVector3d friction = {1.0, 1, 1};
 
     /** @brief Constraint solver reference parameters (timeconst, dampratio). Applied to all geoms. */
     UPROPERTY(EditAnywhere, Category="MuJoCo|Physics")
-    FVector3d solref = {0.02, 1.0, 0.0};
+    FVector solref = {0.02, 1.0, 0.0};
 
     /** @brief Constraint solver impedance parameters (dmin, dmax, width). Applied to all geoms. */
     UPROPERTY(EditAnywhere, Category="MuJoCo|Physics")
-    FVector3d solimp = {0.9, 0.95, 0.001};
+    FVector solimp = {0.9, 0.95, 0.001};
 
     /** @brief Map of Geom name to MuJoCo ID. Populated after Compile(). */
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="MuJoCo|Debug",

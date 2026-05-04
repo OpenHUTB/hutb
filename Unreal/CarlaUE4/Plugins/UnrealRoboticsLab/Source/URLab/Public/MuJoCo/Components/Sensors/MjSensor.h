@@ -222,7 +222,7 @@ public:
 
     /** @brief User data for custom sensors. Maps to sensor->userdata. */
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MuJoCo|Sensor")
-    TArray<double> UserParams;
+    TArray<float> UserParams;
 
 public:
 

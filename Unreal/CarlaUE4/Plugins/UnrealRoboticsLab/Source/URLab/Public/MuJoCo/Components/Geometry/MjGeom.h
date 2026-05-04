@@ -352,7 +352,8 @@ public:
     /** @brief Optional Unreal material override for primitive visualizer meshes (Box/Sphere/Cylinder). */
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MuJoCo|Geom|Visual",
         meta=(EditCondition="Type != EMjGeomType::Mesh", EditConditionHides))
-    TObjectPtr<UMaterialInterface> OverrideMaterial;
+    UObject* OverrideMaterial;  // UObject*裸指针，其中只记录内存地址，https://zhuanlan.zhihu.com/p/504115127
+    // TObjectPtr<UMaterialInterface> OverrideMaterial;
 
     /** @brief Reference to a UMjDefault component for default class inheritance. Set via detail customization dropdown. */
 	UPROPERTY(BlueprintReadWrite, Category = "MuJoCo|Geom")

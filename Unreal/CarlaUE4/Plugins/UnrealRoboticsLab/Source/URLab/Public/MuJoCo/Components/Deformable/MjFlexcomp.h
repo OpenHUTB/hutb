@@ -24,11 +24,14 @@
 
 #include "CoreMinimal.h"
 #include "MuJoCo/Components/MjComponent.h"
+// fix: hutb/Unreal/CarlaUE4/Plugins/UnrealRoboticsLab/Source/URLab/Public/MuJoCo/Components/Deformable/MjFlexcomp.h(311) : Error: Unrecognized type 'UDynamicMeshComponent' - type must be a UCLASS, USTRUCT or UENUM
+// #include "Components/DynamicMeshComponent.h"
+#include "ProceduralMeshComponent.h"
 #include <mujoco/mjspec.h>
 #include <mujoco/mujoco.h>
 #include "MjFlexcomp.generated.h"
 
-class UDynamicMeshComponent;
+// class UDynamicMeshComponent;
 
 UENUM(BlueprintType)
 enum class EMjFlexcompType : uint8
@@ -130,7 +133,7 @@ public:
     // --- Direct Type Data ---
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MuJoCo|Flexcomp|Direct")
-    TArray<double> PointData;
+    TArray<float> PointData;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MuJoCo|Flexcomp|Direct")
     TArray<int32> ElementData;
@@ -308,7 +311,7 @@ private:
     bool bIsRegistered = false;
 
     UPROPERTY()
-    UDynamicMeshComponent* DynamicMesh = nullptr;
+    UProceduralMeshComponent* DynamicMesh = nullptr;
 
     /** Remap from raw UE vertex index → welded MuJoCo flex vertex index.
      *  Used each tick: raw_pos[i] = flexvert_xpos[RawToWelded[i]]. */

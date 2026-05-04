@@ -34,9 +34,10 @@ public class URLab : ModuleRules
 			"RHI",
 			"UMG",
 			"AssetRegistry",
-			"ProceduralMeshComponent",
-			"GeometryFramework",
-			"GeometryCore"
+			"DynamicMesh",
+			"ProceduralMeshComponent"
+			// "GeometryFramework",
+			// "GeometryCore"
 		});
 
 		// Editor-only dependencies for DecomposeMesh and other #if WITH_EDITOR code

@@ -38,11 +38,11 @@ struct FMjBodyKinematics
 
     /** @brief Joint positions (qpos). Size depends on joint type (1 for hinge, 7 for free). */
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
-    TArray<double> QPos;
+    TArray<float> QPos;
 
     /** @brief Joint velocities (qvel). */
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
-    TArray<double> QVel;
+    TArray<float> QVel;
 };
 
 /**
@@ -56,7 +56,7 @@ struct FMjReplayFrame
 
     /** @brief Simulation time in seconds. */
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
-    double Timestamp = 0.0;
+    float Timestamp = 0.0;
 
     /**
      * @brief Map of Joint Name -> Kinematics.

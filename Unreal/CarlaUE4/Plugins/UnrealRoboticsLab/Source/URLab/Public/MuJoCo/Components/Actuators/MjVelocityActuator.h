@@ -43,7 +43,7 @@ public:
 
     /** @brief Derivative gain (Kv) for velocity damping. */
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MuJoCo|Actuator|Parameters", meta=(EditCondition="bOverride_Kv"))
-    double Kv = 0.0f;
+    float Kv = 0.0f;
 
     virtual void ParseSpecifics(const class FXmlNode* Node) override;
     virtual void ExtractSpecifics(const mjsActuator* act) override;
