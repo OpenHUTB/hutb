@@ -3,4 +3,5 @@ numpy
 msgpack-rpc-python
 nose2
 # pygame
-# backports
+backports.weakref
+backports.ssl_match_hostname
