@@ -771,10 +771,10 @@ void UMjDebugVisualizer::GetSegPoolSiblings(EMjCameraMode Mode,
     // }
 
     OutSiblings.Reserve(Pool->Num());
-    for (const TObjectPtr<UStaticMeshComponent>& Sib : *Pool)
-    {
-        if (Sib) OutSiblings.Add(Sib);
-    }
+    // for (const TObjectPtr<UStaticMeshComponent>& Sib : *Pool)
+    // {
+    //     if (Sib) OutSiblings.Add(Sib);
+    // }
 }
 
 // ---------------------------------------------------------------------------
