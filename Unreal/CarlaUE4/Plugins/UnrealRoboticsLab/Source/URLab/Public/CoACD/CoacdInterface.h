@@ -34,7 +34,7 @@ namespace CoacdInterface {
    
 
 template <typename VertexType, typename IndexType>
-CoACD_Mesh ConvertToCoACDMesh(const Chaos::TArrayCollectionArray<VertexType>& Vertices, const TArray<IndexType, 3>& Indices) {
+CoACD_Mesh ConvertToCoACDMesh(const Chaos::TArrayCollectionArray<VertexType>& Vertices, const TArray& Indices) {
 
     CoACD_Mesh coacdMesh;
 

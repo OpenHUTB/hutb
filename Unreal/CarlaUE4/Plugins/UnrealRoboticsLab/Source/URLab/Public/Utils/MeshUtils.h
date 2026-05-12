@@ -51,7 +51,7 @@ ALandscape* FindLandscapeActor(UWorld* World);
 
 template <typename VertexType, typename IndexType>
 int SaveMeshAsOBJSimple(const FString& FilePath, const Chaos::TArrayCollectionArray<VertexType>& Vertices,
-                        const TArray<IndexType, 3>& Indices) {
+                        const TArray& Indices) {
     FString OutputString;
 
     // Write vertices
@@ -69,7 +69,7 @@ int SaveMeshAsOBJSimple(const FString& FilePath, const Chaos::TArrayCollectionAr
 
 template <typename VertexType, typename IndexType>
 int SaveMeshAsOBJComplex(const FString& FilePath, const Chaos::TArrayCollectionArray<VertexType>& Vertices,
-                         const TArray<IndexType, 3>& Indices, float Threshold = 0.05f) {
+                         const TArray& Indices, float Threshold = 0.05f) {
     CoACD_Mesh inputMesh = CoacdInterface::ConvertToCoACDMesh(Vertices, Indices);
 
     CoACD_MeshArray result = CoACD_run(inputMesh, Threshold, -1, preprocess_auto, 30, 1000, 20, 150, 3, false, true, false, 100,
@@ -85,7 +85,7 @@ int SaveMeshAsOBJComplex(const FString& FilePath, const Chaos::TArrayCollectionA
 
 template <typename VertexType, typename IndexType>
 int SaveMesh(const FString& FilePath, const Chaos::TArrayCollectionArray<VertexType>& Vertices,
-             const TArray<IndexType, 3>& Indices, bool ComplexMeshRequired, float Threshold = 0.05f) {
+             const TArray& Indices, bool ComplexMeshRequired, float Threshold = 0.05f) {
     if (ComplexMeshRequired)
         return MeshUtils::SaveMeshAsOBJComplex(FilePath, Vertices, Indices, Threshold);
 
