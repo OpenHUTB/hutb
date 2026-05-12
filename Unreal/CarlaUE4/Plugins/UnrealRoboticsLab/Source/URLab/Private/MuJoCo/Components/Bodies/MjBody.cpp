@@ -132,7 +132,7 @@ void UMjBody::Setup(USceneComponent* Parent, mjsBody* ParentBody, FMujocoSpecWra
     // Sleep policy (MuJoCo 3.4+). Only written when non-default so the global option takes effect otherwise.
     if (BodyToAttachTo && SleepPolicy != EMjBodySleepPolicy::Default)
     {
-        BodyToAttachTo->sleep = static_cast<mjtSleepPolicy>(static_cast<uint8>(SleepPolicy));
+        // BodyToAttachTo->sleep = static_cast<mjtSleepPolicy>(static_cast<uint8>(SleepPolicy));
     }
     
     if (bOverride_ChildClassName)
@@ -314,13 +314,13 @@ void UMjBody::Bind(mjModel* Model, mjData* Data, const FString& Prefix)
 			UStaticMesh* Mesh = SMC->GetStaticMesh();
 			if (Mesh)
 			{
-				UBodySetup* BodySetup = Mesh->GetBodySetup();
-				if (BodySetup)
-				{
-					FVector LocalCenter = BodySetup->AggGeom.CalcAABB(FTransform::Identity).GetCenter();
-					m_MeshPivotOffset = LocalCenter;
-					break; 
-				}
+				// UBodySetup* BodySetup = Mesh->GetBodySetup();
+				// if (BodySetup)
+				// {
+				// 	FVector LocalCenter = BodySetup->AggGeom.CalcAABB(FTransform::Identity).GetCenter();
+				// 	m_MeshPivotOffset = LocalCenter;
+				// 	break; 
+				// }
 			}
 		}
 	}
@@ -402,21 +402,22 @@ bool UMjBody::IsAwake() const
 {
     // body_awake: mjtSleepState — mjS_ASLEEP=0, mjS_AWAKE=1
     if (m_BodyView.id < 0 || !m_BodyView._d) return true;  // unbound → treat as awake
-    return m_BodyView._d->body_awake[m_BodyView.id] != 0;
+    return true;
+    // return m_BodyView._d->body_awake[m_BodyView.id] != 0;
 }
 
 void UMjBody::Wake()
 {
     if (m_BodyView.id < 0 || !m_BodyView._d || !m_BodyView._m) return;
 
-    m_BodyView._d->body_awake[m_BodyView.id] = 1;  // mjS_AWAKE
+    // m_BodyView._d->body_awake[m_BodyView.id] = 1;  // mjS_AWAKE
 
     // Also wake the kinematic tree so the physics step propagates the wake.
     int32 TreeId = m_BodyView._m->body_treeid[m_BodyView.id];
     if (TreeId >= 0 && TreeId < m_BodyView._m->ntree)
     {
-        m_BodyView._d->tree_asleep[TreeId] = -1;  // <0 → awake
-        m_BodyView._d->tree_awake[TreeId]  = 1;
+        // m_BodyView._d->tree_asleep[TreeId] = -1;  // <0 → awake
+        // m_BodyView._d->tree_awake[TreeId]  = 1;
     }
 }
 
@@ -424,16 +425,16 @@ void UMjBody::Sleep()
 {
     if (m_BodyView.id < 0 || !m_BodyView._d || !m_BodyView._m) return;
 
-    m_BodyView._d->body_awake[m_BodyView.id] = 0;  // mjS_ASLEEP
+    // m_BodyView._d->body_awake[m_BodyView.id] = 0;  // mjS_ASLEEP
 
     // Also mark the kinematic tree as sleeping.
     int32 TreeId = m_BodyView._m->body_treeid[m_BodyView.id];
     if (TreeId >= 0 && TreeId < m_BodyView._m->ntree)
     {
         // tree_asleep >= 0 means the tree is sleeping (value is an index in the sleep cycle).
-        if (m_BodyView._d->tree_asleep[TreeId] < 0)
-            m_BodyView._d->tree_asleep[TreeId] = 0;
-        m_BodyView._d->tree_awake[TreeId] = 0;
+        //  if (m_BodyView._d->tree_asleep[TreeId] < 0)
+        //     m_BodyView._d->tree_asleep[TreeId] = 0;
+        // m_BodyView._d->tree_awake[TreeId] = 0;
     }
 }
 

@@ -194,7 +194,7 @@ struct JointView {
         pos_offset  = m->jnt_pos + (id * 3);
         axis_local  = m->jnt_axis + (id * 3);
         stiffness       = m->jnt_stiffness + id;
-        stiffnesspoly   = m->jnt_stiffnesspoly + (id * mjNPOLY);
+        // stiffnesspoly   = m->jnt_stiffnesspoly + (id * mjNPOLY);
         range           = m->jnt_range + (id * 2);
         margin      = m->jnt_margin + id;
         solref_limit= m->jnt_solref + (id * mjNREF);
@@ -202,7 +202,7 @@ struct JointView {
         user        = m->jnt_user + (id * m->nuser_jnt);
 
         damping         = m->dof_damping + dof_adr;
-        dampingpoly     = m->dof_dampingpoly + (dof_adr * mjNPOLY);
+        // dampingpoly     = m->dof_dampingpoly + (dof_adr * mjNPOLY);
         armature        = m->dof_armature + dof_adr;
         frictionloss    = m->dof_frictionloss + dof_adr;
         solref_friction = m->dof_solref + (dof_adr * mjNREF);
@@ -350,9 +350,9 @@ struct TendonView {
 
         // Config
         stiffness       = m->tendon_stiffness + id;
-        stiffnesspoly   = m->tendon_stiffnesspoly + (id * mjNPOLY);
+        // stiffnesspoly   = m->tendon_stiffnesspoly + (id * mjNPOLY);
         damping         = m->tendon_damping + id;
-        dampingpoly     = m->tendon_dampingpoly + (id * mjNPOLY);
+        // dampingpoly     = m->tendon_dampingpoly + (id * mjNPOLY);
         frictionloss    = m->tendon_frictionloss + id;
         armature        = m->tendon_armature + id;
         range           = m->tendon_range + (id * 2);

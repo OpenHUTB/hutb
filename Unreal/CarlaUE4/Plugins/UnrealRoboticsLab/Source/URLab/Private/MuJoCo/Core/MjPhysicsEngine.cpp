@@ -413,7 +413,8 @@ void UMjPhysicsEngine::RunMujocoAsync()
             const double TargetTime = LoopStartTime + (TargetInterval / SpeedFactor);
             while (FPlatformTime::Seconds() < TargetTime)
             {
-                FPlatformProcess::YieldThread();
+                // FPlatformProcess::YieldThread();
+                FPlatformProcess::Sleep(0.0f);
             }
         }
     });

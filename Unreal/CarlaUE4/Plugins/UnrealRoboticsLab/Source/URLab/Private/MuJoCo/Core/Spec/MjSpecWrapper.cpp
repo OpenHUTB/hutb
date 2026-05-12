@@ -229,8 +229,9 @@ TArray<FString> FMujocoSpecWrapper::PrepareMeshForMuJoCo(UStaticMeshComponent* S
     if (!SMC || !SMC->GetStaticMesh()) return ResultNames;
 
     UStaticMesh* Mesh = SMC->GetStaticMesh();
-    UBodySetup* BodySetup = Mesh->GetBodySetup();
-    if (!BodySetup || BodySetup->TriMeshGeometries.Num() == 0) return ResultNames;
+    UBodySetup* BodySetup = nullptr; // Mesh->GetBodySetup();
+    // if (!BodySetup || BodySetup->TriMeshGeometries.Num() == 0) return ResultNames;
+    if (!BodySetup) return ResultNames;
 
     FString MeshType = bComplexMeshRequired ? "Complex" : "Simple";
     UStaticMesh* StaticMesh = Cast<UStaticMesh>(BodySetup->GetOuter());
@@ -288,7 +289,7 @@ TArray<FString> FMujocoSpecWrapper::PrepareMeshForMuJoCo(UStaticMeshComponent* S
     }
 
     const int32 GeometryIndex = 0;
-    auto& TriGeom = BodySetup->TriMeshGeometries[GeometryIndex];
+    auto& TriGeom = nullptr; // BodySetup->TriMeshGeometries[GeometryIndex];
     auto& Vertices = TriGeom.GetReference()->Particles().X();
 
     FString CurrentHash;

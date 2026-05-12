@@ -74,7 +74,7 @@ void FMuJoCoOptions::ApplyToSpec(mjSpec* Spec) const
     if (bEnableSleep)
     {
         Spec->option.enableflags |= MJ_ENBL_SLEEP;
-        Spec->option.sleep_tolerance = SleepTolerance;
+        // Spec->option.sleep_tolerance = SleepTolerance;
     }
 }
 
@@ -133,7 +133,7 @@ void FMuJoCoOptions::ApplyOverridesToModel(mjModel* Model) const
     if (bEnableSleep)
     {
         Model->opt.enableflags |= MJ_ENBL_SLEEP;
-        Model->opt.sleep_tolerance = SleepTolerance;
+        // Model->opt.sleep_tolerance = SleepTolerance;
     }
     else
     {
