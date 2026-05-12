@@ -70,7 +70,7 @@ public:
     static bool ReadAttrFloat(const FXmlNode* Node, const TCHAR* Attr, float& Out, bool& bOverride);
 
     /** @brief Read a double attribute. Returns true if present. */
-    static bool ReadAttrDouble(const FXmlNode* Node, const TCHAR* Attr, double& Out, bool& bOverride);
+    static bool ReadAttrDouble(const FXmlNode* Node, const TCHAR* Attr, float& Out, bool& bOverride);
 
     /** @brief Read an int32 attribute. Returns true if present. */
     static bool ReadAttrInt(const FXmlNode* Node, const TCHAR* Attr, int32& Out, bool& bOverride);

@@ -72,7 +72,7 @@ bool MjXmlUtils::ReadAttrFloat(const FXmlNode* Node, const TCHAR* Attr, float& O
     return true;
 }
 
-bool MjXmlUtils::ReadAttrDouble(const FXmlNode* Node, const TCHAR* Attr, double& Out, bool& bOverride)
+bool MjXmlUtils::ReadAttrDouble(const FXmlNode* Node, const TCHAR* Attr, float& Out, bool& bOverride)
 {
     FString Str = Node->GetAttribute(Attr);
     if (Str.IsEmpty()) return false;
