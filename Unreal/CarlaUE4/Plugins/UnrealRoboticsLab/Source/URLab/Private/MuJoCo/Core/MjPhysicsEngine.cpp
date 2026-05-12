@@ -28,6 +28,7 @@
 #include "MuJoCo/Core/AMjManager.h"
 #include "Kismet/GameplayStatics.h"
 #include "HAL/FileManager.h"
+#include "Async/Async.h"
 #include "Async/Future.h"
 #include "Misc/Paths.h"
 #include "XmlFile.h"

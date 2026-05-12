@@ -96,18 +96,19 @@ void UMjDcMotorActuator::ExportTo(mjsActuator* Actuator, mjsDefault* Default)
     const double ResistanceArg = bOverride_Resistance ? (double)Resistance : 0.0;
     const int    InputModeArg  = bOverride_Input ? (int)Input : 0;
 
-    const char* err = mjs_setToDCMotor(
-        Actuator,
-        bOverride_MotorConst  ? MotorConstBuf  : nullptr,
-        ResistanceArg,
-        bOverride_Nominal     ? NominalBuf     : nullptr,
-        bOverride_Saturation  ? SaturationBuf  : nullptr,
-        bOverride_Inductance  ? InductanceBuf  : nullptr,
-        bOverride_Cogging     ? CoggingBuf     : nullptr,
-        bOverride_Controller  ? ControllerBuf  : nullptr,
-        bOverride_Thermal     ? ThermalBuf     : nullptr,
-        bOverride_LuGre       ? LuGreBuf       : nullptr,
-        InputModeArg);
+    const char* err = '0';
+    //mjs_setToDCMotor(
+    //    Actuator,
+    //    bOverride_MotorConst  ? MotorConstBuf  : nullptr,
+    //    ResistanceArg,
+    //    bOverride_Nominal     ? NominalBuf     : nullptr,
+    //    bOverride_Saturation  ? SaturationBuf  : nullptr,
+    //    bOverride_Inductance  ? InductanceBuf  : nullptr,
+    //    bOverride_Cogging     ? CoggingBuf     : nullptr,
+    //    bOverride_Controller  ? ControllerBuf  : nullptr,
+    //    bOverride_Thermal     ? ThermalBuf     : nullptr,
+    //    bOverride_LuGre       ? LuGreBuf       : nullptr,
+    //    InputModeArg);
 
     if (err && err[0])
     {
