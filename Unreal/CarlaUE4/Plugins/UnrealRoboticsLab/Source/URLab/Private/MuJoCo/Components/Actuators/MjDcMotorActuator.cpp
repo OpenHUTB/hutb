@@ -96,7 +96,7 @@ void UMjDcMotorActuator::ExportTo(mjsActuator* Actuator, mjsDefault* Default)
     const double ResistanceArg = bOverride_Resistance ? (double)Resistance : 0.0;
     const int    InputModeArg  = bOverride_Input ? (int)Input : 0;
 
-    const char* err = '0';
+    const char* err = nullptr;
     //mjs_setToDCMotor(
     //    Actuator,
     //    bOverride_MotorConst  ? MotorConstBuf  : nullptr,

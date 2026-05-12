@@ -709,10 +709,10 @@ void UMjDebugVisualizer::DestroySegPool(EMjCameraMode Mode)
 	TArray<UObject*>* Pool = GetSegPoolArray(Mode);
     if (!Pool) return;
 
-    for (const UObject*& Sib : *Pool)
-    {
-        // if (Sib) Sib->DestroyComponent();
-    }
+    // for (const UObject*& Sib : *Pool)
+    // {
+    //     // if (Sib) Sib->DestroyComponent();
+    // }
     Pool->Reset();
 }
 
@@ -763,12 +763,12 @@ void UMjDebugVisualizer::GetSegPoolSiblings(EMjCameraMode Mode,
 {
     OutSiblings.Reset();
     const TArray* Pool = nullptr;
-    switch (Mode)
-    {
-    case EMjCameraMode::InstanceSegmentation: Pool = &InstanceSegSiblings; break;
-    case EMjCameraMode::SemanticSegmentation: Pool = &SemanticSegSiblings; break;
-    default:                                  return;
-    }
+    // switch (Mode)
+    // {
+    // case EMjCameraMode::InstanceSegmentation: Pool = &InstanceSegSiblings; break;
+    // case EMjCameraMode::SemanticSegmentation: Pool = &SemanticSegSiblings; break;
+    // default:                                  return;
+    // }
 
     OutSiblings.Reserve(Pool->Num());
     for (const TObjectPtr<UStaticMeshComponent>& Sib : *Pool)

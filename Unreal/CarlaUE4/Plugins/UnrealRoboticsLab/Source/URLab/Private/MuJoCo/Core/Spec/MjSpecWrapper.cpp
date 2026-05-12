@@ -289,7 +289,7 @@ TArray<FString> FMujocoSpecWrapper::PrepareMeshForMuJoCo(UStaticMeshComponent* S
     }
 
     const int32 GeometryIndex = 0;
-    auto& TriGeom = nullptr; // BodySetup->TriMeshGeometries[GeometryIndex];
+    auto& TriGeom; // BodySetup->TriMeshGeometries[GeometryIndex];
     auto& Vertices = TriGeom.GetReference()->Particles().X();
 
     FString CurrentHash;
