@@ -23,6 +23,7 @@
 #pragma once
  
 #include <mujoco/mujoco.h>
+#include <mujoco/mjmodel.h>
 #include <string>
 #include "MuJoCo/Utils/MjUtils.h"
 #include "Utils/URLabLogging.h"

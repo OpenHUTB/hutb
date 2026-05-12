@@ -41,10 +41,10 @@ void UMjCameraFeedEntry::BindToCamera(UMjCamera* InCamera)
     if (CameraNameText)
     {
         CameraNameText->SetText(FText::FromString(InCamera->MjName));
-        FSlateFontInfo FontInfo = CameraNameText->GetFont();
-        FontInfo.Size = 12;
-        FontInfo.TypefaceFontName = TEXT("Bold");
-        CameraNameText->SetFont(FontInfo);
+        // FSlateFontInfo FontInfo = CameraNameText->GetFont();
+        // FontInfo.Size = 12;
+        // FontInfo.TypefaceFontName = TEXT("Bold");
+        // CameraNameText->SetFont(FontInfo);
         CameraNameText->SetColorAndOpacity(FSlateColor(FLinearColor(0.8f, 0.9f, 1.0f, 1.0f)));
     }
 
@@ -90,12 +90,12 @@ void UMjCameraFeedEntry::RefreshBrush()
 
     FeedImage->SetBrushResourceObject(BrushResource);
 
-    FSlateBrush Brush = FeedImage->GetBrush();
-    Brush.DrawAs    = ESlateBrushDrawType::Image;
-    Brush.ImageType = ESlateBrushImageType::FullColor;
-    Brush.Tiling    = ESlateBrushTileType::NoTile;
-    Brush.ImageSize = FVector2D(W, H);
-    FeedImage->SetBrush(Brush);
+    // FSlateBrush Brush = FeedImage->GetBrush();
+    // Brush.DrawAs    = ESlateBrushDrawType::Image;
+    // Brush.ImageType = ESlateBrushImageType::FullColor;
+    // Brush.Tiling    = ESlateBrushTileType::NoTile;
+    // Brush.ImageSize = FVector2D(W, H);
+    // FeedImage->SetBrush(Brush);
 
     UE_LOG(LogURLab, Log,
         TEXT("[MjCameraFeedEntry] Brush set: '%s' mode=%s RT=%dx%d display=%.0fx%.0f"),
@@ -125,19 +125,19 @@ void UMjCameraFeedEntry::UpdateDepthPreview()
     const float InvRange = 1.0f / (Far - Near);
 
     // Update the platform texture's mip0 pixels. BGRA byte order.
-    FTexture2DMipMap& Mip = DepthPreviewTexture->GetPlatformData()->Mips[0];
-    uint8* Dst = (uint8*)Mip.BulkData.Lock(LOCK_READ_WRITE);
-    for (int32 i = 0; i < DepthReadbackScratch.Num(); ++i)
-    {
-        const float Depth = DepthReadbackScratch[i].R;
-        const float Norm  = FMath::Clamp((Depth - Near) * InvRange, 0.0f, 1.0f);
-        const uint8 Gray  = (uint8)FMath::RoundToInt(Norm * 255.0f);
-        Dst[i * 4 + 0] = Gray;  // B
-        Dst[i * 4 + 1] = Gray;  // G
-        Dst[i * 4 + 2] = Gray;  // R
-        Dst[i * 4 + 3] = 255;   // A
-    }
-    Mip.BulkData.Unlock();
+    // FTexture2DMipMap& Mip = DepthPreviewTexture->GetPlatformData()->Mips[0];
+    // uint8* Dst = (uint8*)Mip.BulkData.Lock(LOCK_READ_WRITE);
+    // for (int32 i = 0; i < DepthReadbackScratch.Num(); ++i)
+    // {
+    //     const float Depth = DepthReadbackScratch[i].R;
+    //     const float Norm  = FMath::Clamp((Depth - Near) * InvRange, 0.0f, 1.0f);
+    //     const uint8 Gray  = (uint8)FMath::RoundToInt(Norm * 255.0f);
+    //     Dst[i * 4 + 0] = Gray;  // B
+    //     Dst[i * 4 + 1] = Gray;  // G
+    //     Dst[i * 4 + 2] = Gray;  // R
+    //     Dst[i * 4 + 3] = 255;   // A
+    // }
+    // Mip.BulkData.Unlock();
     DepthPreviewTexture->UpdateResource();
 }
 
@@ -158,10 +158,10 @@ void UMjCameraFeedEntry::UpdateFeed()
 {
     if (!BoundCamera || !FeedImage || !BoundCamera->RenderTarget) return;
 
-    if (!FeedImage->GetBrush().GetResourceObject())
-    {
-        RefreshBrush();
-    }
+    // if (!FeedImage->GetBrush().GetResourceObject())
+    // {
+    //     RefreshBrush();
+    // }
 
     if (BoundCamera->CaptureMode == EMjCameraMode::Depth)
     {

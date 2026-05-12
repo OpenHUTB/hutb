@@ -132,10 +132,10 @@ void UMjDebugVisualizer::CaptureDebugData()
     }
 
     DebugData.BodyAwake.SetNumUninitialized(Model->nbody);
-    for (int32 i = 0; i < Model->nbody; ++i)
-    {
-        DebugData.BodyAwake[i] = Data->body_awake ? Data->body_awake[i] : 1;
-    }
+    // for (int32 i = 0; i < Model->nbody; ++i)
+    // {
+    //     DebugData.BodyAwake[i] = Data->body_awake ? Data->body_awake[i] : 1;
+    // }
 
     // Per-body Halton seed, matching MuJoCo's native islandColor algorithm in
     // engine_vis_visualize.c: use the active constraint island's dof-address if
@@ -157,31 +157,31 @@ void UMjDebugVisualizer::CaptureDebugData()
         const int32 Island = (Data->nisland > 0 && Data->dof_island) ? Data->dof_island[Dof] : -1;
         int32 H = (Island >= 0 && Data->island_dofadr) ? Data->island_dofadr[Island] : -1;
 
-        if (H == -1 && bSleepEnabled && Model->dof_treeid && Model->tree_dofadr)
-        {
-            int32 Tree = Model->dof_treeid[Dof];
-            const bool bBodyAwake = Data->body_awake ? (Data->body_awake[b] != 0) : true;
-            if (!bBodyAwake && Data->tree_asleep && Model->ntree > 0 &&
-                Tree >= 0 && Tree < Model->ntree)
-            {
-                // Reimplementation of MuJoCo's mj_sleepCycle (engine_sleep.c).
-                int32 Smallest = Tree;
-                int32 Current = Tree;
-                for (int32 Count = 0; Count <= Model->ntree; ++Count)
-                {
-                    const int32 Next = Data->tree_asleep[Current];
-                    if (Next < 0 || Next >= Model->ntree) { Smallest = -1; break; }
-                    if (Next < Smallest) Smallest = Next;
-                    Current = Next;
-                    if (Current == Tree) break;
-                }
-                Tree = Smallest;
-            }
-            if (Tree >= 0 && Tree < Model->ntree)
-            {
-                H = Model->tree_dofadr[Tree];
-            }
-        }
+        // if (H == -1 && bSleepEnabled && Model->dof_treeid && Model->tree_dofadr)
+        // {
+        //     int32 Tree = Model->dof_treeid[Dof];
+        //     // const bool bBodyAwake = Data->body_awake ? (Data->body_awake[b] != 0) : true;
+        //     // if (!bBodyAwake && Data->tree_asleep && Model->ntree > 0 &&
+        //     //     Tree >= 0 && Tree < Model->ntree)
+        //     // {
+        //     //     // Reimplementation of MuJoCo's mj_sleepCycle (engine_sleep.c).
+        //     //     int32 Smallest = Tree;
+        //     //     int32 Current = Tree;
+        //     //     // for (int32 Count = 0; Count <= Model->ntree; ++Count)
+        //     //     // {
+        //     //     //     const int32 Next = Data->tree_asleep[Current];
+        //     //     //     if (Next < 0 || Next >= Model->ntree) { Smallest = -1; break; }
+        //     //     //     if (Next < Smallest) Smallest = Next;
+        //     //     //     Current = Next;
+        //     //     //     if (Current == Tree) break;
+        //     //     // }
+        //     //     Tree = Smallest;
+        //     // }
+        //     // if (Tree >= 0 && Tree < Model->ntree)
+        //     // {
+        //     //     H = Model->tree_dofadr[Tree];
+        //     // }
+        // }
 
         DebugData.BodyIslandSeed[b] = H;
     }
@@ -545,7 +545,7 @@ void UMjDebugVisualizer::UpdateBodyOverlays()
 // Per-camera segmentation pool
 // ---------------------------------------------------------------------------
 
-TArray<TObjectPtr<UStaticMeshComponent>>* UMjDebugVisualizer::GetSegPoolArray(EMjCameraMode Mode)
+TArray<UObject*>* UMjDebugVisualizer::GetSegPoolArray(EMjCameraMode Mode)
 {
     switch (Mode)
     {
@@ -591,7 +591,7 @@ UStaticMeshComponent* UMjDebugVisualizer::SpawnSegSibling(
     // passes from picking it up (source of the "faint tinge" in viewport
     // otherwise). Leave bRenderInMainPass at default true — the seg capture's
     // own rendering uses the main pass.
-    Sibling->bVisibleInSceneCaptureOnly         = true;
+    // Sibling->bVisibleInSceneCaptureOnly         = true;
     Sibling->SetCastShadow(false);
     Sibling->SetCollisionEnabled(ECollisionEnabled::NoCollision);
     Sibling->SetGenerateOverlapEvents(false);
@@ -627,7 +627,7 @@ UStaticMeshComponent* UMjDebugVisualizer::SpawnSegSibling(
 
 void UMjDebugVisualizer::BuildSegPool(EMjCameraMode Mode)
 {
-    TArray<TObjectPtr<UStaticMeshComponent>>* Pool = GetSegPoolArray(Mode);
+	TArray<UObject*>* Pool = GetSegPoolArray(Mode);
     if (!Pool) return;
 
     AAMjManager* Manager = Cast<AAMjManager>(GetOwner());
@@ -706,12 +706,12 @@ void UMjDebugVisualizer::BuildSegPool(EMjCameraMode Mode)
 
 void UMjDebugVisualizer::DestroySegPool(EMjCameraMode Mode)
 {
-    TArray<TObjectPtr<UStaticMeshComponent>>* Pool = GetSegPoolArray(Mode);
+	TArray<UObject*>* Pool = GetSegPoolArray(Mode);
     if (!Pool) return;
 
-    for (const TObjectPtr<UStaticMeshComponent>& Sib : *Pool)
+    for (const UObject*& Sib : *Pool)
     {
-        if (Sib) Sib->DestroyComponent();
+        // if (Sib) Sib->DestroyComponent();
     }
     Pool->Reset();
 }
@@ -721,7 +721,7 @@ void UMjDebugVisualizer::AcquireSegPool(EMjCameraMode Mode, UMjCamera* Camera,
 {
     OutSiblings.Reset();
 
-    TArray<TObjectPtr<UStaticMeshComponent>>* Pool = GetSegPoolArray(Mode);
+    TArray<UObject*>* Pool = GetSegPoolArray(Mode);
     TSet<TWeakObjectPtr<UMjCamera>>*          Subs = GetSegSubscribers(Mode);
     if (!Pool || !Subs) return;
 
@@ -734,7 +734,7 @@ void UMjDebugVisualizer::AcquireSegPool(EMjCameraMode Mode, UMjCamera* Camera,
     }
 
     OutSiblings.Reserve(Pool->Num());
-    for (const TObjectPtr<UStaticMeshComponent>& Sib : *Pool)
+	for (const UObject* Sib : *Pool)
     {
         if (Sib) OutSiblings.Add(Sib);
     }

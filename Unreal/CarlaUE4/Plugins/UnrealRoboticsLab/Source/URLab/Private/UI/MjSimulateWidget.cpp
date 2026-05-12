@@ -53,11 +53,11 @@ void UMjSimulateWidget::NativeConstruct()
 
     auto StyleButton = [](UButton* Btn, FLinearColor BGColor) {
         if (!Btn) return;
-        FButtonStyle Style = Btn->GetStyle();
-        Style.Normal.TintColor = FSlateColor(BGColor);
-        Style.Hovered.TintColor = FSlateColor(BGColor * 1.5f);
-        Style.Pressed.TintColor = FSlateColor(BGColor * 0.5f);
-        Btn->SetStyle(Style);
+        // FButtonStyle Style = Btn->GetStyle();
+        // Style.Normal.TintColor = FSlateColor(BGColor);
+        // Style.Hovered.TintColor = FSlateColor(BGColor * 1.5f);
+        // Style.Pressed.TintColor = FSlateColor(BGColor * 0.5f);
+        // Btn->SetStyle(Style);
     };
 
     StyleButton(PlayPauseButton, FLinearColor(0.2f, 0.6f, 0.2f, 0.9f));
@@ -69,11 +69,11 @@ void UMjSimulateWidget::NativeConstruct()
 
     if (TimeText)
     {
-        FSlateFontInfo FontInfo = TimeText->GetFont();
-        FontInfo.Size = 14;
-        FontInfo.TypefaceFontName = TEXT("Bold");
-        TimeText->SetFont(FontInfo);
-        TimeText->SetColorAndOpacity(FSlateColor(FLinearColor(1.0f, 0.9f, 0.3f, 1.0f)));
+        // FSlateFontInfo FontInfo = TimeText->GetFont();
+        // FontInfo.Size = 14;
+        // FontInfo.TypefaceFontName = TEXT("Bold");
+        // TimeText->SetFont(FontInfo);
+        // TimeText->SetColorAndOpacity(FSlateColor(FLinearColor(1.0f, 0.9f, 0.3f, 1.0f)));
     }
 
     // Shrink Button Fonts
@@ -81,10 +81,10 @@ void UMjSimulateWidget::NativeConstruct()
     {
         if (UTextBlock* BtnText = Cast<UTextBlock>(PlayPauseButton->GetChildAt(0)))
         {
-            FSlateFontInfo FontInfo = BtnText->GetFont();
-            FontInfo.Size = 14;
-            FontInfo.TypefaceFontName = TEXT("Bold");
-            BtnText->SetFont(FontInfo);
+            // FSlateFontInfo FontInfo = BtnText->GetFont();
+            // FontInfo.Size = 14;
+            // FontInfo.TypefaceFontName = TEXT("Bold");
+            // BtnText->SetFont(FontInfo);
         }
     }
 
@@ -92,10 +92,10 @@ void UMjSimulateWidget::NativeConstruct()
     {
         if (UTextBlock* BtnText = Cast<UTextBlock>(ResetButton->GetChildAt(0)))
         {
-            FSlateFontInfo FontInfo = BtnText->GetFont();
-            FontInfo.Size = 14;
-            FontInfo.TypefaceFontName = TEXT("Bold");
-            BtnText->SetFont(FontInfo);
+            // FSlateFontInfo FontInfo = BtnText->GetFont();
+            // FontInfo.Size = 14;
+            // FontInfo.TypefaceFontName = TEXT("Bold");
+            // BtnText->SetFont(FontInfo);
         }
     }
 
@@ -222,9 +222,9 @@ void UMjSimulateWidget::NativeConstruct()
         if (UTextBlock* BtnText = Cast<UTextBlock>(PossessButton->GetChildAt(0)))
         {
             BtnText->SetText(FText::FromString(TEXT("Possess")));
-            FSlateFontInfo BtnFont = BtnText->GetFont();
-            BtnFont.Size = 9;
-            BtnText->SetFont(BtnFont);
+            // FSlateFontInfo BtnFont = BtnText->GetFont();
+            // BtnFont.Size = 9;
+            // BtnText->SetFont(BtnFont);
             BtnText->SetAutoWrapText(false);
             BtnText->SetJustification(ETextJustify::Center);
         }
@@ -234,14 +234,14 @@ void UMjSimulateWidget::NativeConstruct()
     if (ArticulationSelector)
     {
         ArticulationSelector->OnSelectionChanged.AddDynamic(this, &UMjSimulateWidget::OnArticulationSelected);
-        FTableRowStyle RowStyle = ArticulationSelector->GetItemStyle();
-        FSlateColor RowBG(FLinearColor(0.15f, 0.15f, 0.18f, 1.0f));
-        FSlateColor RowHover(FLinearColor(0.25f, 0.30f, 0.35f, 1.0f));
-        RowStyle.SetEvenRowBackgroundBrush(FSlateRoundedBoxBrush(RowBG, 0.0f));
-        RowStyle.SetOddRowBackgroundBrush(FSlateRoundedBoxBrush(RowBG, 0.0f));
-        RowStyle.SetEvenRowBackgroundHoveredBrush(FSlateRoundedBoxBrush(RowHover, 0.0f));
-        RowStyle.SetOddRowBackgroundHoveredBrush(FSlateRoundedBoxBrush(RowHover, 0.0f));
-        ArticulationSelector->SetItemStyle(RowStyle);
+        // FTableRowStyle RowStyle = ArticulationSelector->GetItemStyle();
+        // FSlateColor RowBG(FLinearColor(0.15f, 0.15f, 0.18f, 1.0f));
+        // FSlateColor RowHover(FLinearColor(0.25f, 0.30f, 0.35f, 1.0f));
+        // RowStyle.SetEvenRowBackgroundBrush(FSlateRoundedBoxBrush(RowBG, 0.0f));
+        // RowStyle.SetOddRowBackgroundBrush(FSlateRoundedBoxBrush(RowBG, 0.0f));
+        // RowStyle.SetEvenRowBackgroundHoveredBrush(FSlateRoundedBoxBrush(RowHover, 0.0f));
+        // RowStyle.SetOddRowBackgroundHoveredBrush(FSlateRoundedBoxBrush(RowHover, 0.0f));
+        // ArticulationSelector->SetItemStyle(RowStyle);
     }
 
     // Attempt to find manager if not initialized
@@ -652,9 +652,9 @@ void UMjSimulateWidget::RebuildReplayBindingUI(UVerticalBox* ReplayBox)
     // Header
     UTextBlock* HeaderLabel = NewObject<UTextBlock>(this);
     HeaderLabel->SetText(FText::FromString(TEXT("Articulations:")));
-    FSlateFontInfo HeaderFont = HeaderLabel->GetFont();
-    HeaderFont.Size = 9;
-    HeaderLabel->SetFont(HeaderFont);
+    // FSlateFontInfo HeaderFont = HeaderLabel->GetFont();
+    // HeaderFont.Size = 9;
+    // HeaderLabel->SetFont(HeaderFont);
     HeaderLabel->SetColorAndOpacity(FSlateColor(FLinearColor(0.7f, 0.7f, 0.7f)));
     ReplayBox->AddChildToVerticalBox(HeaderLabel)->SetPadding(FMargin(0, 8, 0, 2));
 
@@ -674,38 +674,38 @@ void UMjSimulateWidget::RebuildReplayBindingUI(UVerticalBox* ReplayBox)
 
         UTextBlock* EnabledLabel = NewObject<UTextBlock>(this);
         EnabledLabel->SetText(FText::FromString(TEXT("On")));
-        FSlateFontInfo SmallFont = EnabledLabel->GetFont();
-        SmallFont.Size = 8;
-        EnabledLabel->SetFont(SmallFont);
-        EnabledLabel->SetColorAndOpacity(FSlateColor(FLinearColor(0.6f, 0.6f, 0.6f)));
-        Row->AddChildToHorizontalBox(EnabledLabel)->SetPadding(FMargin(0, 0, 8, 0));
-
-        // RelPos checkbox
-        UCheckBox* RelPosCB = NewObject<UCheckBox>(this);
-        RelPosCB->SetIsChecked(Binding.bRelativePosition);
-        RelPosCB->OnCheckStateChanged.AddDynamic(this, &UMjSimulateWidget::HandleReplayBindingRelPosChanged);
-        Row->AddChildToHorizontalBox(RelPosCB)->SetPadding(FMargin(0, 0, 4, 0));
-
-        UTextBlock* RelPosLabel = NewObject<UTextBlock>(this);
-        RelPosLabel->SetText(FText::FromString(TEXT("RelPos")));
-        RelPosLabel->SetFont(SmallFont);
-        RelPosLabel->SetColorAndOpacity(FSlateColor(FLinearColor(0.6f, 0.6f, 0.6f)));
-        Row->AddChildToHorizontalBox(RelPosLabel)->SetPadding(FMargin(0, 0, 8, 0));
-
-        // Articulation name
-        FString DisplayName = MjUtils::PrettifyName(Binding.Articulation->GetName());
-        UTextBlock* NameLabel = NewObject<UTextBlock>(this);
-        NameLabel->SetText(FText::FromString(DisplayName));
-        NameLabel->SetFont(SmallFont);
-        NameLabel->SetColorAndOpacity(FSlateColor(FLinearColor::White));
-        Row->AddChildToHorizontalBox(NameLabel);
-
-        ReplayBox->AddChildToVerticalBox(Row)->SetPadding(FMargin(4, 2, 0, 2));
-
-        // Store checkbox references for the handler to find the binding index
-        // We use a simple approach: store them in parallel arrays
-        ReplayEnabledCheckBoxes.Add(EnabledCB);
-        ReplayRelPosCheckBoxes.Add(RelPosCB);
+        // FSlateFontInfo SmallFont = EnabledLabel->GetFont();
+        // SmallFont.Size = 8;
+        // EnabledLabel->SetFont(SmallFont);
+        // EnabledLabel->SetColorAndOpacity(FSlateColor(FLinearColor(0.6f, 0.6f, 0.6f)));
+        // Row->AddChildToHorizontalBox(EnabledLabel)->SetPadding(FMargin(0, 0, 8, 0));
+        // 
+        // // RelPos checkbox
+        // UCheckBox* RelPosCB = NewObject<UCheckBox>(this);
+        // RelPosCB->SetIsChecked(Binding.bRelativePosition);
+        // RelPosCB->OnCheckStateChanged.AddDynamic(this, &UMjSimulateWidget::HandleReplayBindingRelPosChanged);
+        // Row->AddChildToHorizontalBox(RelPosCB)->SetPadding(FMargin(0, 0, 4, 0));
+        // 
+        // UTextBlock* RelPosLabel = NewObject<UTextBlock>(this);
+        // RelPosLabel->SetText(FText::FromString(TEXT("RelPos")));
+        // RelPosLabel->SetFont(SmallFont);
+        // RelPosLabel->SetColorAndOpacity(FSlateColor(FLinearColor(0.6f, 0.6f, 0.6f)));
+        // Row->AddChildToHorizontalBox(RelPosLabel)->SetPadding(FMargin(0, 0, 8, 0));
+        // 
+        // // Articulation name
+        // FString DisplayName = MjUtils::PrettifyName(Binding.Articulation->GetName());
+        // UTextBlock* NameLabel = NewObject<UTextBlock>(this);
+        // NameLabel->SetText(FText::FromString(DisplayName));
+        // NameLabel->SetFont(SmallFont);
+        // NameLabel->SetColorAndOpacity(FSlateColor(FLinearColor::White));
+        // Row->AddChildToHorizontalBox(NameLabel);
+        // 
+        // ReplayBox->AddChildToVerticalBox(Row)->SetPadding(FMargin(4, 2, 0, 2));
+        // 
+        // // Store checkbox references for the handler to find the binding index
+        // // We use a simple approach: store them in parallel arrays
+        // ReplayEnabledCheckBoxes.Add(EnabledCB);
+        // ReplayRelPosCheckBoxes.Add(RelPosCB);
     }
 }
 
@@ -799,10 +799,10 @@ void UMjSimulateWidget::RefreshArticulationControls()
         UTextBlock* HeaderText = NewObject<UTextBlock>(this);
         HeaderText->SetText(FText::FromString(Title));
 
-        FSlateFontInfo FontInfo = HeaderText->GetFont();
-        FontInfo.Size = 11;
-        FontInfo.TypefaceFontName = TEXT("Bold");
-        HeaderText->SetFont(FontInfo);
+        // FSlateFontInfo FontInfo = HeaderText->GetFont();
+        // FontInfo.Size = 11;
+        // FontInfo.TypefaceFontName = TEXT("Bold");
+        // HeaderText->SetFont(FontInfo);
         HeaderText->SetColorAndOpacity(FSlateColor(FLinearColor(0.85f, 0.9f, 1.0f, 1.0f)));
 
         FName HeaderName(TEXT("Header"));
@@ -816,10 +816,10 @@ void UMjSimulateWidget::RefreshArticulationControls()
         ExpArea->SetIsExpanded(true);
 
         // Style the expandable area with a visible border
-        FExpandableAreaStyle AreaStyle = ExpArea->GetStyle();
-        AreaStyle.CollapsedImage.TintColor = FSlateColor(FLinearColor(0.3f, 0.35f, 0.4f, 1.0f));
-        AreaStyle.ExpandedImage.TintColor = FSlateColor(FLinearColor(0.3f, 0.35f, 0.4f, 1.0f));
-        ExpArea->SetStyle(AreaStyle);
+        // FExpandableAreaStyle AreaStyle = ExpArea->GetStyle();
+        // AreaStyle.CollapsedImage.TintColor = FSlateColor(FLinearColor(0.3f, 0.35f, 0.4f, 1.0f));
+        // AreaStyle.ExpandedImage.TintColor = FSlateColor(FLinearColor(0.3f, 0.35f, 0.4f, 1.0f));
+        // ExpArea->SetStyle(AreaStyle);
 
         UVerticalBoxSlot* BoxSlot = ParentList->AddChildToVerticalBox(ExpArea);
         if (BoxSlot)
@@ -882,14 +882,14 @@ void UMjSimulateWidget::RefreshArticulationControls()
             if (ManagerRef->PhysicsEngine) IntegratorCombo->SetSelectedIndex((int)ManagerRef->PhysicsEngine->Options.Integrator);
             IntegratorCombo->OnSelectionChanged.AddDynamic(this, &UMjSimulateWidget::OnIntegratorSelected);
             {
-                FTableRowStyle RowStyle = IntegratorCombo->GetItemStyle();
-                FSlateColor RowBG(FLinearColor(0.15f, 0.15f, 0.18f, 1.0f));
-                FSlateColor RowHover(FLinearColor(0.25f, 0.30f, 0.35f, 1.0f));
-                RowStyle.SetEvenRowBackgroundBrush(FSlateRoundedBoxBrush(RowBG, 0.0f));
-                RowStyle.SetOddRowBackgroundBrush(FSlateRoundedBoxBrush(RowBG, 0.0f));
-                RowStyle.SetEvenRowBackgroundHoveredBrush(FSlateRoundedBoxBrush(RowHover, 0.0f));
-                RowStyle.SetOddRowBackgroundHoveredBrush(FSlateRoundedBoxBrush(RowHover, 0.0f));
-                IntegratorCombo->SetItemStyle(RowStyle);
+                // FTableRowStyle RowStyle = IntegratorCombo->GetItemStyle();
+                // FSlateColor RowBG(FLinearColor(0.15f, 0.15f, 0.18f, 1.0f));
+                // FSlateColor RowHover(FLinearColor(0.25f, 0.30f, 0.35f, 1.0f));
+                // RowStyle.SetEvenRowBackgroundBrush(FSlateRoundedBoxBrush(RowBG, 0.0f));
+                // RowStyle.SetOddRowBackgroundBrush(FSlateRoundedBoxBrush(RowBG, 0.0f));
+                // RowStyle.SetEvenRowBackgroundHoveredBrush(FSlateRoundedBoxBrush(RowHover, 0.0f));
+                // RowStyle.SetOddRowBackgroundHoveredBrush(FSlateRoundedBoxBrush(RowHover, 0.0f));
+                // IntegratorCombo->SetItemStyle(RowStyle);
             }
             PhysicsBox->AddChildToVerticalBox(IntegratorCombo);
         }
@@ -945,14 +945,14 @@ void UMjSimulateWidget::RefreshArticulationControls()
             KeyframeSelector->OnSelectionChanged.AddDynamic(this, &UMjSimulateWidget::OnKeyframeSelected);
 
             // Style matching replay dropdown
-            FTableRowStyle RowStyle = KeyframeSelector->GetItemStyle();
-            FSlateColor RowBG(FLinearColor(0.15f, 0.15f, 0.18f, 1.0f));
-            FSlateColor RowHover(FLinearColor(0.25f, 0.30f, 0.35f, 1.0f));
-            RowStyle.SetEvenRowBackgroundBrush(FSlateRoundedBoxBrush(RowBG, 0.0f));
-            RowStyle.SetOddRowBackgroundBrush(FSlateRoundedBoxBrush(RowBG, 0.0f));
-            RowStyle.SetEvenRowBackgroundHoveredBrush(FSlateRoundedBoxBrush(RowHover, 0.0f));
-            RowStyle.SetOddRowBackgroundHoveredBrush(FSlateRoundedBoxBrush(RowHover, 0.0f));
-            KeyframeSelector->SetItemStyle(RowStyle);
+            // FTableRowStyle RowStyle = KeyframeSelector->GetItemStyle();
+            // FSlateColor RowBG(FLinearColor(0.15f, 0.15f, 0.18f, 1.0f));
+            // FSlateColor RowHover(FLinearColor(0.25f, 0.30f, 0.35f, 1.0f));
+            // RowStyle.SetEvenRowBackgroundBrush(FSlateRoundedBoxBrush(RowBG, 0.0f));
+            // RowStyle.SetOddRowBackgroundBrush(FSlateRoundedBoxBrush(RowBG, 0.0f));
+            // RowStyle.SetEvenRowBackgroundHoveredBrush(FSlateRoundedBoxBrush(RowHover, 0.0f));
+            // RowStyle.SetOddRowBackgroundHoveredBrush(FSlateRoundedBoxBrush(RowHover, 0.0f));
+            // KeyframeSelector->SetItemStyle(RowStyle);
         }
         RefreshKeyframeDropdown();
         if (UVerticalBoxSlot* BoxSlot = KeyframeBox->AddChildToVerticalBox(KeyframeSelector))
@@ -968,12 +968,12 @@ void UMjSimulateWidget::RefreshArticulationControls()
             BtnText->SetText(FText::FromString(TEXT("Reset to Keyframe")));
             BtnText->SetColorAndOpacity(FSlateColor(FLinearColor::White));
             BtnText->SetJustification(ETextJustify::Center);
-            FSlateFontInfo FontInfo = BtnText->GetFont();
-            FontInfo.Size = 14;
-            BtnText->SetFont(FontInfo);
-            ResetToKeyframeButton->AddChild(BtnText);
-            ResetToKeyframeButton->SetBackgroundColor(FLinearColor(0.1f, 0.4f, 0.8f, 1.0f));
-            ResetToKeyframeButton->OnClicked.AddDynamic(this, &UMjSimulateWidget::HandleResetToKeyframe);
+            // FSlateFontInfo FontInfo = BtnText->GetFont();
+            // FontInfo.Size = 14;
+            // BtnText->SetFont(FontInfo);
+            // ResetToKeyframeButton->AddChild(BtnText);
+            // ResetToKeyframeButton->SetBackgroundColor(FLinearColor(0.1f, 0.4f, 0.8f, 1.0f));
+            // ResetToKeyframeButton->OnClicked.AddDynamic(this, &UMjSimulateWidget::HandleResetToKeyframe);
         }
         if (UVerticalBoxSlot* BoxSlot = KeyframeBox->AddChildToVerticalBox(ResetToKeyframeButton))
         {
@@ -988,12 +988,12 @@ void UMjSimulateWidget::RefreshArticulationControls()
             BtnText->SetText(FText::FromString(TEXT("Hold Keyframe")));
             BtnText->SetColorAndOpacity(FSlateColor(FLinearColor::White));
             BtnText->SetJustification(ETextJustify::Center);
-            FSlateFontInfo FontInfo = BtnText->GetFont();
-            FontInfo.Size = 14;
-            BtnText->SetFont(FontInfo);
-            HoldKeyframeButton->AddChild(BtnText);
-            HoldKeyframeButton->SetBackgroundColor(FLinearColor(0.1f, 0.6f, 0.3f, 1.0f));
-            HoldKeyframeButton->OnClicked.AddDynamic(this, &UMjSimulateWidget::HandleHoldKeyframe);
+            // FSlateFontInfo FontInfo = BtnText->GetFont();
+            // FontInfo.Size = 14;
+            // BtnText->SetFont(FontInfo);
+            // HoldKeyframeButton->AddChild(BtnText);
+            // HoldKeyframeButton->SetBackgroundColor(FLinearColor(0.1f, 0.6f, 0.3f, 1.0f));
+            // HoldKeyframeButton->OnClicked.AddDynamic(this, &UMjSimulateWidget::HandleHoldKeyframe);
         }
         if (UVerticalBoxSlot* BoxSlot = KeyframeBox->AddChildToVerticalBox(HoldKeyframeButton))
         {
@@ -1011,16 +1011,16 @@ void UMjSimulateWidget::RefreshArticulationControls()
             ReplaySessionSelector->OnSelectionChanged.AddDynamic(this, &UMjSimulateWidget::OnReplaySessionSelected);
 
             // Lighten the dropdown row backgrounds for readability
-            FTableRowStyle RowStyle = ReplaySessionSelector->GetItemStyle();
-            FSlateColor RowBG(FLinearColor(0.15f, 0.15f, 0.18f, 1.0f));
-            FSlateColor RowHover(FLinearColor(0.25f, 0.30f, 0.35f, 1.0f));
-            RowStyle.SetEvenRowBackgroundBrush(FSlateRoundedBoxBrush(RowBG, 0.0f));
-            RowStyle.SetOddRowBackgroundBrush(FSlateRoundedBoxBrush(RowBG, 0.0f));
-            RowStyle.SetEvenRowBackgroundHoveredBrush(FSlateRoundedBoxBrush(RowHover, 0.0f));
-            RowStyle.SetOddRowBackgroundHoveredBrush(FSlateRoundedBoxBrush(RowHover, 0.0f));
-            RowStyle.SetTextColor(FSlateColor(FLinearColor::White));
-            RowStyle.SetSelectedTextColor(FSlateColor(FLinearColor::White));
-            ReplaySessionSelector->SetItemStyle(RowStyle);
+            // FTableRowStyle RowStyle = ReplaySessionSelector->GetItemStyle();
+            // FSlateColor RowBG(FLinearColor(0.15f, 0.15f, 0.18f, 1.0f));
+            // FSlateColor RowHover(FLinearColor(0.25f, 0.30f, 0.35f, 1.0f));
+            // RowStyle.SetEvenRowBackgroundBrush(FSlateRoundedBoxBrush(RowBG, 0.0f));
+            // RowStyle.SetOddRowBackgroundBrush(FSlateRoundedBoxBrush(RowBG, 0.0f));
+            // RowStyle.SetEvenRowBackgroundHoveredBrush(FSlateRoundedBoxBrush(RowHover, 0.0f));
+            // RowStyle.SetOddRowBackgroundHoveredBrush(FSlateRoundedBoxBrush(RowHover, 0.0f));
+            // RowStyle.SetTextColor(FSlateColor(FLinearColor::White));
+            // RowStyle.SetSelectedTextColor(FSlateColor(FLinearColor::White));
+            // ReplaySessionSelector->SetItemStyle(RowStyle);
         }
         ReplayBox->AddChildToVerticalBox(ReplaySessionSelector)->SetPadding(FMargin(0, 5, 0, 5));
         RefreshReplaySessionDropdown();
@@ -1043,20 +1043,20 @@ void UMjSimulateWidget::RefreshArticulationControls()
             LoadCSVButton = NewObject<UButton>(this);
             UTextBlock* BtnLabel = NewObject<UTextBlock>(this);
             BtnLabel->SetText(FText::FromString(TEXT("Load Replay")));
-            FSlateFontInfo Font = BtnLabel->GetFont();
-            Font.Size = 10;
-            BtnLabel->SetFont(Font);
-            BtnLabel->SetColorAndOpacity(FSlateColor(FLinearColor::White));
-            LoadCSVButton->AddChild(BtnLabel);
-
-            FButtonStyle BtnStyle = LoadCSVButton->GetStyle();
-            FLinearColor BtnColor(0.4f, 0.3f, 0.7f, 0.9f);
-            BtnStyle.Normal.TintColor = FSlateColor(BtnColor);
-            BtnStyle.Hovered.TintColor = FSlateColor(BtnColor * 1.2f);
-            BtnStyle.Pressed.TintColor = FSlateColor(BtnColor * 0.8f);
-            LoadCSVButton->SetStyle(BtnStyle);
-
-            LoadCSVButton->OnClicked.AddDynamic(this, &UMjSimulateWidget::OnLoadCSVClicked);
+            // FSlateFontInfo Font = BtnLabel->GetFont();
+            // Font.Size = 10;
+            // BtnLabel->SetFont(Font);
+            // BtnLabel->SetColorAndOpacity(FSlateColor(FLinearColor::White));
+            // LoadCSVButton->AddChild(BtnLabel);
+            // 
+            // FButtonStyle BtnStyle = LoadCSVButton->GetStyle();
+            // FLinearColor BtnColor(0.4f, 0.3f, 0.7f, 0.9f);
+            // BtnStyle.Normal.TintColor = FSlateColor(BtnColor);
+            // BtnStyle.Hovered.TintColor = FSlateColor(BtnColor * 1.2f);
+            // BtnStyle.Pressed.TintColor = FSlateColor(BtnColor * 0.8f);
+            // LoadCSVButton->SetStyle(BtnStyle);
+            // 
+            // LoadCSVButton->OnClicked.AddDynamic(this, &UMjSimulateWidget::OnLoadCSVClicked);
         }
         ReplayBox->AddChildToVerticalBox(LoadCSVButton)->SetPadding(FMargin(0, 5, 0, 5));
 
@@ -1066,20 +1066,20 @@ void UMjSimulateWidget::RefreshArticulationControls()
             SaveRecordingButton = NewObject<UButton>(this);
             UTextBlock* SaveLabel = NewObject<UTextBlock>(this);
             SaveLabel->SetText(FText::FromString(TEXT("Save Recording")));
-            FSlateFontInfo SaveFont = SaveLabel->GetFont();
-            SaveFont.Size = 10;
-            SaveLabel->SetFont(SaveFont);
-            SaveLabel->SetColorAndOpacity(FSlateColor(FLinearColor::White));
-            SaveRecordingButton->AddChild(SaveLabel);
+            // FSlateFontInfo SaveFont = SaveLabel->GetFont();
+            // SaveFont.Size = 10;
+            // SaveLabel->SetFont(SaveFont);
+            // SaveLabel->SetColorAndOpacity(FSlateColor(FLinearColor::White));
+            // SaveRecordingButton->AddChild(SaveLabel);
 
-            FButtonStyle SaveStyle = SaveRecordingButton->GetStyle();
-            FLinearColor SaveColor(0.2f, 0.5f, 0.3f, 0.9f);
-            SaveStyle.Normal.TintColor = FSlateColor(SaveColor);
-            SaveStyle.Hovered.TintColor = FSlateColor(SaveColor * 1.2f);
-            SaveStyle.Pressed.TintColor = FSlateColor(SaveColor * 0.8f);
-            SaveRecordingButton->SetStyle(SaveStyle);
-
-            SaveRecordingButton->OnClicked.AddDynamic(this, &UMjSimulateWidget::OnSaveRecordingClicked);
+            // FButtonStyle SaveStyle = SaveRecordingButton->GetStyle();
+            // FLinearColor SaveColor(0.2f, 0.5f, 0.3f, 0.9f);
+            // SaveStyle.Normal.TintColor = FSlateColor(SaveColor);
+            // SaveStyle.Hovered.TintColor = FSlateColor(SaveColor * 1.2f);
+            // SaveStyle.Pressed.TintColor = FSlateColor(SaveColor * 0.8f);
+            // SaveRecordingButton->SetStyle(SaveStyle);
+            // 
+            // SaveRecordingButton->OnClicked.AddDynamic(this, &UMjSimulateWidget::OnSaveRecordingClicked);
         }
         ReplayBox->AddChildToVerticalBox(SaveRecordingButton)->SetPadding(FMargin(0, 5, 0, 5));
     }

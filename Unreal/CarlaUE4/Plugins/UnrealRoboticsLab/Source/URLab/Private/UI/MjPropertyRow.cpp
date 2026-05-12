@@ -79,36 +79,36 @@ void UMjPropertyRow::InitializeProperty(const FString& InName, EMjPropertyType I
     }
 
     // Aesthetic Styling
-    FSlateFontInfo LabelFont = PropertyLabel ? PropertyLabel->GetFont() : FSlateFontInfo();
-    LabelFont.Size = (PropertyType == EMjPropertyType::Header) ? 14 : 11;
-    LabelFont.TypefaceFontName = (PropertyType == EMjPropertyType::Header) ? TEXT("Bold") : TEXT("Regular");
-
+    // FSlateFontInfo LabelFont = PropertyLabel ? PropertyLabel->GetFont() : FSlateFontInfo();
+    // LabelFont.Size = (PropertyType == EMjPropertyType::Header) ? 14 : 11;
+    // LabelFont.TypefaceFontName = (PropertyType == EMjPropertyType::Header) ? TEXT("Bold") : TEXT("Regular");
+// 
     FLinearColor TextColor = (PropertyType == EMjPropertyType::Header) ? FLinearColor(0.4f, 0.7f, 1.0f, 1.0f) : FLinearColor(0.9f, 0.9f, 0.9f, 1.0f);
 
     if (PropertyLabel)
     {
-        PropertyLabel->SetFont(LabelFont);
+        // PropertyLabel->SetFont(LabelFont);
         PropertyLabel->SetColorAndOpacity(FSlateColor(TextColor));
     }
     
     if (ValueDisplay)
     {
-        FSlateFontInfo ValFont = ValueDisplay->GetFont();
-        ValFont.Size = 11;
-        ValFont.TypefaceFontName = TEXT("Regular");
-        ValueDisplay->SetFont(ValFont);
-        ValueDisplay->SetColorAndOpacity(FSlateColor(FLinearColor(0.6f, 1.0f, 0.6f, 1.0f))); // nice green for values
+        // FSlateFontInfo ValFont = ValueDisplay->GetFont();
+        // ValFont.Size = 11;
+        // ValFont.TypefaceFontName = TEXT("Regular");
+        // ValueDisplay->SetFont(ValFont);
+        // ValueDisplay->SetColorAndOpacity(FSlateColor(FLinearColor(0.6f, 1.0f, 0.6f, 1.0f))); // nice green for values
     }
 
     SetValue(InitialValue);
 
     if (PropertySlider)
     {
-        FSliderStyle Style = PropertySlider->GetWidgetStyle();
-        Style.BarThickness = 6.0f; // Make the bar thicker
+        // FSliderStyle Style = PropertySlider->GetWidgetStyle();
+        // Style.BarThickness = 6.0f; // Make the bar thicker
         // Create an image size for the thumb since we can't easily change it without a new brush
         // but we can adjust the thumb image size if we have a default one. Just making the bar thicker often helps a lot.
-        PropertySlider->SetWidgetStyle(Style);
+        // PropertySlider->SetWidgetStyle(Style);
     }
 }
 

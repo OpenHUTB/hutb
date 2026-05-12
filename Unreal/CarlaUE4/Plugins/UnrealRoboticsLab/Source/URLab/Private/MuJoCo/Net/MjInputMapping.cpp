@@ -118,18 +118,18 @@ void UMjInputMapping::SetupBindings()
 
 void UMjInputMapping::GenericInputHandler(const FInputActionInstance& Instance)
 {
-    const UInputAction* SourceAction = Instance.GetSourceAction();
-    if (!SourceAction) return;
-
-    if (FCachedMjBinding* Binding = ActionCache.Find(SourceAction))
-    {
-        UMjActuator* Act = Binding->Actuator.Get();
-        if (Act)
-        {
-            float InputVal = Instance.GetValue().Get<float>(); // Handles Axis/bool conversion
-            float FinalVal = InputVal * Binding->Scale;
-            
-            Act->SetControl(FinalVal);
-        }
-    }
+    // const UInputAction* SourceAction = Instance.GetSourceAction();
+    // if (!SourceAction) return;
+    // 
+    // if (FCachedMjBinding* Binding = ActionCache.Find(SourceAction))
+    // {
+    //     UMjActuator* Act = Binding->Actuator.Get();
+    //     if (Act)
+    //     {
+    //         float InputVal = Instance.GetValue().Get<float>(); // Handles Axis/bool conversion
+    //         float FinalVal = InputVal * Binding->Scale;
+    //         
+    //         Act->SetControl(FinalVal);
+    //     }
+    // }
 }

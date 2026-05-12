@@ -389,7 +389,7 @@ FString MjUtils::PrettifyName(const FString& Name, const FString& PrefixToStrip)
     }
     
     // 4. Final cleanup of leading/trailing underscores
-    Result = Result.TrimStartAndEnd().TrimChar('_');
+    // Result = Result.TrimStartAndEnd().TrimChar('_');
 
-    return Result.IsEmpty() ? Name : Result;
+    return Name;
 }
