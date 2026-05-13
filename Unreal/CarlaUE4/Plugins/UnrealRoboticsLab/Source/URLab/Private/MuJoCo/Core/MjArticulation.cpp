@@ -659,7 +659,7 @@ void AMjArticulation::ApplyControls()
         else if (HeldKeyframeCtrl.Num() > 0)
         {
             // Ctrl-based hold — actuators drive to target positions
-            int32 Count = FMath::Min(HeldKeyframeCtrl.Num(), m_model->nu);
+            int32 Count = FMath::Min((float)(HeldKeyframeCtrl.Num()), (float)(m_model->nu));
             for (int32 i = 0; i < Count; i++)
             {
                 m_data->ctrl[i] = (mjtNum)HeldKeyframeCtrl[i];
