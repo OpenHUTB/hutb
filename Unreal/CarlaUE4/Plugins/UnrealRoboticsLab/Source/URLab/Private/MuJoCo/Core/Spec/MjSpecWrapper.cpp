@@ -289,81 +289,81 @@ TArray<FString> FMujocoSpecWrapper::PrepareMeshForMuJoCo(UStaticMeshComponent* S
     }
 
     const int32 GeometryIndex = 0;
-    auto& TriGeom; // BodySetup->TriMeshGeometries[GeometryIndex];
-    auto& Vertices = TriGeom.GetReference()->Particles().X();
-
-    FString CurrentHash;
-    bool bLargeIndices = TriGeom.GetReference()->Elements().RequiresLargeIndices();
-    if (bLargeIndices)
-    {
-        const auto& Indices = TriGeom.GetReference()->Elements().GetLargeIndexBuffer();
-        CurrentHash = IO::ComputeMeshHash(Vertices, Indices);
-    }
-    else
-    {
-        const auto& Indices = TriGeom.GetReference()->Elements().GetSmallIndexBuffer();
-        CurrentHash = IO::ComputeMeshHash(Vertices, Indices);
-    }
-    CurrentHash += bComplexMeshRequired ? TEXT("_complex") : TEXT("_simple");
-    if (bComplexMeshRequired)
-    {
-        CurrentHash += FString::Printf(TEXT("_t%.4f"), CoACDThreshold);
-    }
-
-    int MeshCount = IO::NumFilesExist(FullFilePath, bComplexMeshRequired);
-    if (MeshCount > 0)
-    {
-        FString CachedHash = IO::LoadMeshHash(FullFilePath);
-        if (CachedHash != CurrentHash)
-        {
-            UE_LOG(LogURLabWrapper, Log, TEXT("Mesh '%s' has changed (hash mismatch). Re-exporting."), *AssetName);
-            IO::DeleteMeshCache(FullFilePath, bComplexMeshRequired);
-            MeshCount = 0;
-        }
-    }
-
-    if (MeshCount == 0)
-    {
-        UE_LOG(LogURLabWrapper, Log, TEXT("Saving mesh geometry for: %s"), *AssetName);
-
-        if (bLargeIndices)
-        {
-            const auto& Indices = TriGeom.GetReference()->Elements().GetLargeIndexBuffer();
-            MeshCount = MeshUtils::SaveMesh(FullFilePath, Vertices, Indices, bComplexMeshRequired, CoACDThreshold);
-        }
-        else
-        {
-            const auto& Indices = TriGeom.GetReference()->Elements().GetSmallIndexBuffer();
-            MeshCount = MeshUtils::SaveMesh(FullFilePath, Vertices, Indices, bComplexMeshRequired, CoACDThreshold);
-        }
-
-        if (MeshCount == 0)
-        {
-            UE_LOG(LogURLabWrapper, Error, TEXT("MeshUtils::SaveMesh failed to save any meshes for %s."), *AssetName);
-            return ResultNames;
-        }
-
-        IO::SaveMeshHash(FullFilePath, CurrentHash);
-    }
-    
-    FString BaseName = FPaths::GetBaseFilename(FilePath);
-    FString Directory = FPaths::GetPath(FilePath);
-    
-    if (!bComplexMeshRequired) 
-    {
-        FString sub_file_path = FString::Printf(TEXT("%s/%s.obj"), *Directory, *BaseName);
-        ResultNames.Add(AddMeshAsset(AssetName, sub_file_path, Scale));
-    } 
-    else
-    {
-        for (int i = 0; i < MeshCount; i++) 
-        {
-            FString sub_file_path = FString::Printf(TEXT("%s/%s_sub_%d.obj"), *Directory, *BaseName, i);
-            FString SubMeshName = FString::Printf(TEXT("%s_%d"), *AssetName, i);
-            ResultNames.Add(AddMeshAsset(SubMeshName, sub_file_path, Scale));
-        }
-    }
-    
+    // // auto& TriGeom; // BodySetup->TriMeshGeometries[GeometryIndex];
+    // auto& Vertices = TriGeom.GetReference()->Particles().X();
+    // 
+    // FString CurrentHash;
+    // bool bLargeIndices = TriGeom.GetReference()->Elements().RequiresLargeIndices();
+    // if (bLargeIndices)
+    // {
+    //     const auto& Indices = TriGeom.GetReference()->Elements().GetLargeIndexBuffer();
+    //     CurrentHash = IO::ComputeMeshHash(Vertices, Indices);
+    // }
+    // else
+    // {
+    //     const auto& Indices = TriGeom.GetReference()->Elements().GetSmallIndexBuffer();
+    //     CurrentHash = IO::ComputeMeshHash(Vertices, Indices);
+    // }
+    // CurrentHash += bComplexMeshRequired ? TEXT("_complex") : TEXT("_simple");
+    // if (bComplexMeshRequired)
+    // {
+    //     CurrentHash += FString::Printf(TEXT("_t%.4f"), CoACDThreshold);
+    // }
+    // 
+    // int MeshCount = IO::NumFilesExist(FullFilePath, bComplexMeshRequired);
+    // if (MeshCount > 0)
+    // {
+    //     FString CachedHash = IO::LoadMeshHash(FullFilePath);
+    //     if (CachedHash != CurrentHash)
+    //     {
+    //         UE_LOG(LogURLabWrapper, Log, TEXT("Mesh '%s' has changed (hash mismatch). Re-exporting."), *AssetName);
+    //         IO::DeleteMeshCache(FullFilePath, bComplexMeshRequired);
+    //         MeshCount = 0;
+    //     }
+    // }
+    // 
+    // if (MeshCount == 0)
+    // {
+    //     UE_LOG(LogURLabWrapper, Log, TEXT("Saving mesh geometry for: %s"), *AssetName);
+    // 
+    //     if (bLargeIndices)
+    //     {
+    //         const auto& Indices = TriGeom.GetReference()->Elements().GetLargeIndexBuffer();
+    //         MeshCount = MeshUtils::SaveMesh(FullFilePath, Vertices, Indices, bComplexMeshRequired, CoACDThreshold);
+    //     }
+    //     else
+    //     {
+    //         const auto& Indices = TriGeom.GetReference()->Elements().GetSmallIndexBuffer();
+    //         MeshCount = MeshUtils::SaveMesh(FullFilePath, Vertices, Indices, bComplexMeshRequired, CoACDThreshold);
+    //     }
+    // 
+    //     if (MeshCount == 0)
+    //     {
+    //         UE_LOG(LogURLabWrapper, Error, TEXT("MeshUtils::SaveMesh failed to save any meshes for %s."), *AssetName);
+    //         return ResultNames;
+    //     }
+    // 
+    //     IO::SaveMeshHash(FullFilePath, CurrentHash);
+    // }
+    // 
+    // FString BaseName = FPaths::GetBaseFilename(FilePath);
+    // FString Directory = FPaths::GetPath(FilePath);
+    // 
+    // if (!bComplexMeshRequired) 
+    // {
+    //     FString sub_file_path = FString::Printf(TEXT("%s/%s.obj"), *Directory, *BaseName);
+    //     ResultNames.Add(AddMeshAsset(AssetName, sub_file_path, Scale));
+    // } 
+    // else
+    // {
+    //     for (int i = 0; i < MeshCount; i++) 
+    //     {
+    //         FString sub_file_path = FString::Printf(TEXT("%s/%s_sub_%d.obj"), *Directory, *BaseName, i);
+    //         FString SubMeshName = FString::Printf(TEXT("%s_%d"), *AssetName, i);
+    //         ResultNames.Add(AddMeshAsset(SubMeshName, sub_file_path, Scale));
+    //     }
+    // }
+    // 
     return ResultNames; 
 }
 
