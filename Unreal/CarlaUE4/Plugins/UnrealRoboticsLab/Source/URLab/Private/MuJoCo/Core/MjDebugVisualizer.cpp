@@ -762,7 +762,7 @@ void UMjDebugVisualizer::GetSegPoolSiblings(EMjCameraMode Mode,
                                             TArray<UPrimitiveComponent*>& OutSiblings) const
 {
     OutSiblings.Reset();
-    const TArray* Pool = nullptr;
+    // const TArray* Pool = nullptr;
     // switch (Mode)
     // {
     // case EMjCameraMode::InstanceSegmentation: Pool = &InstanceSegSiblings; break;
@@ -770,7 +770,7 @@ void UMjDebugVisualizer::GetSegPoolSiblings(EMjCameraMode Mode,
     // default:                                  return;
     // }
 
-    OutSiblings.Reserve(Pool->Num());
+    // OutSiblings.Reserve(Pool->Num());
     // for (const TObjectPtr<UStaticMeshComponent>& Sib : *Pool)
     // {
     //     if (Sib) OutSiblings.Add(Sib);
