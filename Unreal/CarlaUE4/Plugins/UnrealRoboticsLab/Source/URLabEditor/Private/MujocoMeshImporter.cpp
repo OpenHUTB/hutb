@@ -323,9 +323,9 @@ bool UMujocoGenerationAction::ValidateMesh(UStaticMesh* Mesh, const FString& Mes
     // }
 
     // Log mesh statistics
-    int32 NumVertices = LOD0.VertexBuffers.StaticMeshVertexBuffer.GetNumVertices();
-    int32 NumTriangles = LOD0.IndexBuffer.GetNumIndices() / 3;
-    int32 NumUVChannels = LOD0.VertexBuffers.StaticMeshVertexBuffer.GetNumTexCoords();
+    int32 NumVertices; // = LOD0.VertexBuffers.StaticMeshVertexBuffer.GetNumVertices();
+    int32 NumTriangles; // = LOD0.IndexBuffer.GetNumIndices() / 3;
+    int32 NumUVChannels; // = LOD0.VertexBuffers.StaticMeshVertexBuffer.GetNumTexCoords();
 
     UE_LOG(LogURLabEditor, Log, TEXT("Mesh '%s' validation: %d vertices, %d triangles, %d UV channels"),
         *MeshName, NumVertices, NumTriangles, NumUVChannels);
