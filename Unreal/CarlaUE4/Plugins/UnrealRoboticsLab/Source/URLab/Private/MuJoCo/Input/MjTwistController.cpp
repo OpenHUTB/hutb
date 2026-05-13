@@ -71,10 +71,10 @@ void UMjTwistController::BindInput(UEnhancedInputComponent* EIC)
 	{
 		if (ActionKeys[i])
 		{
-			EIC->BindAction(ActionKeys[i], ETriggerEvent::Started, this,
-				&UMjTwistController::OnActionPressed);
-			EIC->BindAction(ActionKeys[i], ETriggerEvent::Completed, this,
-				&UMjTwistController::OnActionReleased);
+			// EIC->BindAction(ActionKeys[i], ETriggerEvent::Started, this,
+			// 	&UMjTwistController::OnActionPressed);
+			// EIC->BindAction(ActionKeys[i], ETriggerEvent::Completed, this,
+			// 	&UMjTwistController::OnActionReleased);
 		}
 	}
 }

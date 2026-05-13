@@ -734,10 +734,10 @@ void UMjDebugVisualizer::AcquireSegPool(EMjCameraMode Mode, UMjCamera* Camera,
     }
 
     OutSiblings.Reserve(Pool->Num());
-	for (const UObject* Sib : *Pool)
-    {
-        if (Sib) OutSiblings.Add(Sib);
-    }
+	// for (const UObject* Sib : *Pool)
+    // {
+    //     if (Sib) OutSiblings.Add(Sib);
+    // }
 }
 
 void UMjDebugVisualizer::ReleaseSegPool(EMjCameraMode Mode, UMjCamera* Camera)
