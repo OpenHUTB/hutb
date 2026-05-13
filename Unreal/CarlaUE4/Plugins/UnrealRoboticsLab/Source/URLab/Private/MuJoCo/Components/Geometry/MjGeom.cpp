@@ -759,11 +759,11 @@ void UMjGeom::DecomposeMesh()
 
     UStaticMesh* Mesh = SMC->GetStaticMesh();
     UBodySetup* BodySetup; // Mesh->GetBodySetup();
-    if (!BodySetup) // || BodySetup->TriMeshGeometries.Num() == 0)
-    {
-        UE_LOG(LogURLab, Warning, TEXT("[MjGeom] DecomposeMesh: '%s' has no collision geometry."), *GetName());
-        return;
-    }
+    // if (!BodySetup) // || BodySetup->TriMeshGeometries.Num() == 0)
+    // {
+    //     UE_LOG(LogURLab, Warning, TEXT("[MjGeom] DecomposeMesh: '%s' has no collision geometry."), *GetName());
+    //     return;
+    // }
 
     // Remove any existing decomposition first
     RemoveDecomposition();
