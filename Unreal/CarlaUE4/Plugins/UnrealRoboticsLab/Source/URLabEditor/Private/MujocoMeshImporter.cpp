@@ -434,7 +434,7 @@ UTexture2D* UMujocoGenerationAction::ImportSingleTexture(const FString& SourcePa
     FSavePackageArgs SaveArgs;
     SaveArgs.TopLevelFlags = RF_Public | RF_Standalone;
     SaveArgs.SaveFlags = SAVE_NoError;
-    UPackage::SavePackage(Package, NewTexture, *PackageFileName, SaveArgs);
+    // UPackage::SavePackage(Package, NewTexture, *PackageFileName, SaveArgs);
 
     UE_LOG(LogURLabEditor, Log, TEXT("Successfully imported texture: %s"), *FileName);
     return NewTexture;
@@ -608,7 +608,7 @@ UMaterialInstanceConstant* UMujocoGenerationAction::CreateMaterialInstance(
     FSavePackageArgs SaveArgs;
     SaveArgs.TopLevelFlags = RF_Public | RF_Standalone;
     SaveArgs.SaveFlags = SAVE_NoError;
-    UPackage::SavePackage(Package, MaterialInstance, *PackageFileName, SaveArgs);
+    // UPackage::SavePackage(Package, MaterialInstance, *PackageFileName, SaveArgs);
 
     UE_LOG(LogURLabEditor, Log, TEXT("Successfully created material instance: %s"), *InstanceName);
     return MaterialInstance;
