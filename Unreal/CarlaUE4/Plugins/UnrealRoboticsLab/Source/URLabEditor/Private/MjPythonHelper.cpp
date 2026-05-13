@@ -197,16 +197,16 @@ FString FMjPythonHelper::EnsurePythonReady(bool& bOutCancelled)
             TEXT("Click 'Yes' to browse for your Python interpreter, or 'Cancel' to cancel the import."),
             *PythonPath));
 
-        EAppReturnType::Type Result = FMessageDialog::Open(EAppMsgType::YesNoCancel, Message, Title);
-        if (Result == EAppReturnType::Cancel)
-        {
-            bOutCancelled = true;
-            return FString();
-        }
-        if (Result == EAppReturnType::No)
-        {
-            return FString(); // Skip preprocessing
-        }
+        // EAppReturnType::Type Result = FMessageDialog::Open(EAppMsgType::YesNoCancel, Message, Title);
+        // if (Result == EAppReturnType::Cancel)
+        // {
+        //     bOutCancelled = true;
+        //     return FString();
+        // }
+        // if (Result == EAppReturnType::No)
+        // {
+        //     return FString(); // Skip preprocessing
+        // }
 
         // Browse for Python
         PythonPath = BrowseForPython();
@@ -260,8 +260,8 @@ FString FMjPythonHelper::EnsurePythonReady(bool& bOutCancelled)
                 *EnvLabel);
         }
 
-        EAppReturnType::Type Result = FMessageDialog::Open(EAppMsgType::YesNoCancel,
-            FText::FromString(MessageStr), Title);
+        EAppReturnType::Type Result; // = FMessageDialog::Open(EAppMsgType::YesNoCancel,
+        //    FText::FromString(MessageStr), Title);
 
         if (Result == EAppReturnType::Cancel)
         {
@@ -292,11 +292,11 @@ FString FMjPythonHelper::EnsurePythonReady(bool& bOutCancelled)
                 TEXT("Install 'trimesh', 'numpy', and 'scipy' to:\n%s?\n\n")
                 TEXT("The editor will be unresponsive during installation.\n\n")
                 TEXT("Click 'Cancel' to cancel the import."), *PythonPath));
-            if (FMessageDialog::Open(EAppMsgType::OkCancel, InstallMsg, Title) == EAppReturnType::Cancel)
-            {
-                bOutCancelled = true;
-                return FString();
-            }
+            // if (FMessageDialog::Open(EAppMsgType::OkCancel, InstallMsg, Title) == EAppReturnType::Cancel)
+            // {
+            //     bOutCancelled = true;
+            //     return FString();
+            // }
         }
 
         // Install packages if not already present
@@ -305,21 +305,21 @@ FString FMjPythonHelper::EnsurePythonReady(bool& bOutCancelled)
             FString InstallLog;
             if (!InstallPythonPackages(PythonPath, InstallLog))
             {
-                FMessageDialog::Open(EAppMsgType::Ok,
-                    FText::FromString(FString::Printf(
-                        TEXT("Failed to install packages. You can install them manually by running:\n\n")
-                        TEXT("%s -m pip install trimesh numpy scipy\n\n")
-                        TEXT("Error log:\n%s"),
-                        *PythonPath, *InstallLog)),
-                    FText::FromString(TEXT("Package Install Failed")));
+                // FMessageDialog::Open(EAppMsgType::Ok,
+                //     FText::FromString(FString::Printf(
+                //         TEXT("Failed to install packages. You can install them manually by running:\n\n")
+                //         TEXT("%s -m pip install trimesh numpy scipy\n\n")
+                //         TEXT("Error log:\n%s"),
+                //         *PythonPath, *InstallLog)),
+                //     FText::FromString(TEXT("Package Install Failed")));
                 return FString();
             }
 
             if (!CheckPythonPackages(PythonPath))
             {
-                FMessageDialog::Open(EAppMsgType::Ok,
-                    FText::FromString(TEXT("Packages were installed but still cannot be imported. Check your Python environment.")),
-                    FText::FromString(TEXT("Package Verification Failed")));
+                // FMessageDialog::Open(EAppMsgType::Ok,
+                //     FText::FromString(TEXT("Packages were installed but still cannot be imported. Check your Python environment.")),
+                //     FText::FromString(TEXT("Package Verification Failed")));
                 return FString();
             }
         }
@@ -354,9 +354,9 @@ FString FMjPythonHelper::BrowseForPython()
     FString PythonPath = OutFiles[0];
     if (!ValidatePythonBinary(PythonPath))
     {
-        FMessageDialog::Open(EAppMsgType::Ok,
-            FText::FromString(FString::Printf(TEXT("'%s' is not a valid Python interpreter."), *PythonPath)),
-            FText::FromString(TEXT("Invalid Python")));
+        // FMessageDialog::Open(EAppMsgType::Ok,
+        //     FText::FromString(FString::Printf(TEXT("'%s' is not a valid Python interpreter."), *PythonPath)),
+        //     FText::FromString(TEXT("Invalid Python")));
         return FString();
     }
 
