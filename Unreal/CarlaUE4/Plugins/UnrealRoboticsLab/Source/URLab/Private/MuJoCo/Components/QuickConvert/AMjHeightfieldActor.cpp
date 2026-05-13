@@ -36,7 +36,7 @@ AMjHeightfieldActor::AMjHeightfieldActor()
     BoundsBox->SetBoxExtent(FVector(1000.f, 1000.f, 500.f));
     BoundsBox->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
     BoundsBox->SetCollisionResponseToAllChannels(ECR_Overlap);
-    BoundsBox->SetLineThickness(2.0f);
+    // BoundsBox->SetLineThickness(2.0f);
     SetRootComponent(BoundsBox);
 
     // Line batch for the editor grid visualizer — no collision, no tick
@@ -153,7 +153,7 @@ void AMjHeightfieldActor::RebuildGridVisualizer()
     const float StepX = (Bounds.Max.X - Bounds.Min.X) / FMath::Max(DrawResolution - 1, 1);
     const float StepY = (Bounds.Max.Y - Bounds.Min.Y) / FMath::Max(DrawResolution - 1, 1);
 
-    const FColor LineColorSRGB = GridColor.ToFColorSRGB();
+    const FColor LineColorSRGB; // = GridColor.ToFColorSRGB();
 
     // 1. Pre-sample the heights into a 2D array
     TArray<FVector> Points;

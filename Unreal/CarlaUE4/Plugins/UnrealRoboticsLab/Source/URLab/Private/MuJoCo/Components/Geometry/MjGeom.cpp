@@ -758,8 +758,8 @@ void UMjGeom::DecomposeMesh()
     }
 
     UStaticMesh* Mesh = SMC->GetStaticMesh();
-    UBodySetup* BodySetup = Mesh->GetBodySetup();
-    if (!BodySetup || BodySetup->TriMeshGeometries.Num() == 0)
+    UBodySetup* BodySetup; // Mesh->GetBodySetup();
+    if (!BodySetup) // || BodySetup->TriMeshGeometries.Num() == 0)
     {
         UE_LOG(LogURLab, Warning, TEXT("[MjGeom] DecomposeMesh: '%s' has no collision geometry."), *GetName());
         return;
@@ -781,7 +781,7 @@ void UMjGeom::DecomposeMesh()
     FString FullFilePath = FPaths::ConvertRelativePathToFull(FilePath);
 
     const int32 GeometryIndex = 0;
-    auto& TriGeom = BodySetup->TriMeshGeometries[GeometryIndex];
+    // auto& TriGeom; // = BodySetup->TriMeshGeometries[GeometryIndex];
     auto& Vertices = TriGeom.GetReference()->Particles().X();
 
     int MeshCount = 0;
