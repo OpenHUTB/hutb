@@ -23,7 +23,8 @@ public class URLabEditor : ModuleRules
 			"SlateCore",
 			"XmlParser",
 			"Projects",
-			"LevelEditor"
+			"LevelEditor",
+			"EditorStyle"
 		});
 
 		PrivateDependencyModuleNames.AddRange(new string[]

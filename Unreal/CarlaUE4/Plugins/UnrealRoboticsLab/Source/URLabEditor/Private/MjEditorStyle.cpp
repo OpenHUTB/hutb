@@ -22,7 +22,7 @@
 
 #include "MjEditorStyle.h"
 #include "Styling/SlateStyleRegistry.h"
-#include "Styling/AppStyle.h"
+#include "EditorStyleSet.h"
 #include "Interfaces/IPluginManager.h"
 
 TSharedPtr<FSlateStyleSet> FMjEditorStyle::StyleInstance = nullptr;
@@ -60,8 +60,8 @@ void FMjEditorStyle::Initialize()
 		else
 		{
 			// Copy the existing brush from the engine's style set
-			const FSlateBrush* Existing = FAppStyle::Get().GetBrush(FallbackBrush);
-			if (Existing && Existing != FAppStyle::GetNoBrush())
+			const FSlateBrush* Existing = FEditorStyle::Get().GetBrush(FallbackBrush);
+			if (Existing && Existing != FEditorStyle::GetNoBrush())
 			{
 				StyleInstance->Set(PropertyName, new FSlateBrush(*Existing));
 			}
