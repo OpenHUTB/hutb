@@ -69,7 +69,7 @@ void UMjBox::OnRegister()
     // Apply override material after mesh is created and registered
     if (VisualizerMesh && OverrideMaterial && IsValid(OverrideMaterial) && GetOwner())
     {
-        VisualizerMesh->SetMaterial(0, OverrideMaterial);
+        // VisualizerMesh->SetMaterial(0, OverrideMaterial);
     }
 }
 

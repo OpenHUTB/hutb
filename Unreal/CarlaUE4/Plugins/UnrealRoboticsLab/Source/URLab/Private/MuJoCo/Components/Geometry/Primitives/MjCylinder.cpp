@@ -68,7 +68,7 @@ void UMjCylinder::OnRegister()
 
     if (VisualizerMesh && OverrideMaterial && IsValid(OverrideMaterial) && GetOwner())
     {
-        VisualizerMesh->SetMaterial(0, OverrideMaterial);
+        // VisualizerMesh->SetMaterial(0, OverrideMaterial);
     }
 }
 

@@ -523,7 +523,7 @@ void UMjGeom::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent
     if (PropertyName == GET_MEMBER_NAME_CHECKED(UMjGeom, OverrideMaterial) ||
         MemberPropertyName == GET_MEMBER_NAME_CHECKED(UMjGeom, OverrideMaterial))
     {
-        ApplyOverrideMaterial(OverrideMaterial);
+        // ApplyOverrideMaterial(OverrideMaterial);
     }
 }
 #endif
