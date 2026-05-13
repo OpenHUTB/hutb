@@ -263,41 +263,41 @@ FString FMjPythonHelper::EnsurePythonReady(bool& bOutCancelled)
         EAppReturnType::Type Result; // = FMessageDialog::Open(EAppMsgType::YesNoCancel,
         //    FText::FromString(MessageStr), Title);
 
-        if (Result == EAppReturnType::Cancel)
-        {
-            bOutCancelled = true;
-            return FString();
-        }
-        else if (Result == EAppReturnType::No)
-        {
-            PythonPath = BrowseForPython();
-            if (PythonPath.IsEmpty())
-            {
-                bOutCancelled = true;
-                return FString();
-            }
-
-            // Re-check packages with new Python
-            if (CheckPythonPackages(PythonPath))
-            {
-                UE_LOG(LogURLabEditor, Log, TEXT("[Python] Packages already available in selected Python."));
-                StorePythonOverride(PythonPath);
-                return PythonPath;
-            }
-
-            bPackagesPresent = false;
-
-            // Ask to install for the new Python
-            FText InstallMsg = FText::FromString(FString::Printf(
-                TEXT("Install 'trimesh', 'numpy', and 'scipy' to:\n%s?\n\n")
-                TEXT("The editor will be unresponsive during installation.\n\n")
-                TEXT("Click 'Cancel' to cancel the import."), *PythonPath));
-            // if (FMessageDialog::Open(EAppMsgType::OkCancel, InstallMsg, Title) == EAppReturnType::Cancel)
-            // {
-            //     bOutCancelled = true;
-            //     return FString();
-            // }
-        }
+        // if (Result == EAppReturnType::Cancel)
+        // {
+        //     bOutCancelled = true;
+        //     return FString();
+        // }
+        // else if (Result == EAppReturnType::No)
+        // {
+        //     PythonPath = BrowseForPython();
+        //     if (PythonPath.IsEmpty())
+        //     {
+        //         bOutCancelled = true;
+        //         return FString();
+        //     }
+// 
+        //     // Re-check packages with new Python
+        //     if (CheckPythonPackages(PythonPath))
+        //     {
+        //         UE_LOG(LogURLabEditor, Log, TEXT("[Python] Packages already available in selected Python."));
+        //         StorePythonOverride(PythonPath);
+        //         return PythonPath;
+        //     }
+// 
+        //     bPackagesPresent = false;
+// 
+        //     // Ask to install for the new Python
+        //     FText InstallMsg = FText::FromString(FString::Printf(
+        //         TEXT("Install 'trimesh', 'numpy', and 'scipy' to:\n%s?\n\n")
+        //         TEXT("The editor will be unresponsive during installation.\n\n")
+        //         TEXT("Click 'Cancel' to cancel the import."), *PythonPath));
+        //     // if (FMessageDialog::Open(EAppMsgType::OkCancel, InstallMsg, Title) == EAppReturnType::Cancel)
+        //     // {
+        //     //     bOutCancelled = true;
+        //     //     return FString();
+        //     // }
+        // }
 
         // Install packages if not already present
         if (!bPackagesPresent)
