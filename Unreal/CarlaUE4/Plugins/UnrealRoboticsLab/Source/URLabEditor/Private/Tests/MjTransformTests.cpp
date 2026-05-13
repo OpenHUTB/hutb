@@ -465,7 +465,7 @@ bool FMjTransformMixedEulerSeq::RunTest(const FString& Parameters)
         return SameSign || OppSign;
     };
 
-    const double Pi2 = UE_PI / 2.0; // 90 degrees
+    const double Pi2 = 3.1415926 / 2.0;  // UE_PI / 2.0; // 90 degrees
 
     // --- Case 1: pure all-intrinsic "xyz" (90°, 0°, 0°) ---
     // Expected: Q1 * Q2 * Q3 = (cos45, sin45, 0, 0) * identity * identity

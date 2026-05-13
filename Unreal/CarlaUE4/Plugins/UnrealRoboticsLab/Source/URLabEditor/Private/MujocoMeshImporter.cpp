@@ -382,7 +382,7 @@ UTexture2D* UMujocoGenerationAction::ImportSingleTexture(const FString& SourcePa
     }
     else if (Extension == TEXT("tga"))
     {
-        ImageFormat = EImageFormat::TGA;
+        // ImageFormat = EImageFormat::TGA;
     }
     else if (Extension == TEXT("bmp"))
     {

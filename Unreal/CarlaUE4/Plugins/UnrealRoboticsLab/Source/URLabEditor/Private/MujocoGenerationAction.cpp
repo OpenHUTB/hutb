@@ -46,7 +46,7 @@
 
 UMujocoGenerationAction::UMujocoGenerationAction()
 {
-    SupportedClasses.Add(UBlueprint::StaticClass());
+    // SupportedClasses.Add(UBlueprint::StaticClass());
 }
 
 
