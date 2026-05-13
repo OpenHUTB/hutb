@@ -155,7 +155,7 @@ UStaticMesh* UMujocoGenerationAction::AttemptMeshImport(const FString& SourcePat
         // Additional settings to fix degenerate geometry (especially from OBJ files)
         ImportUI->StaticMeshImportData->bAutoGenerateCollision = false; // We handle collision separately
         ImportUI->StaticMeshImportData->bBuildReversedIndexBuffer = true;
-        ImportUI->StaticMeshImportData->bBuildNanite = false; // Nanite requires clean geometry
+        // ImportUI->StaticMeshImportData->bBuildNanite = false; // Nanite requires clean geometry
 
         // Vertex welding - critical for fixing overlapping vertices that cause degenerate tangents
         // Note: There's no direct bWeldVertices in UE 5.7, but bRemoveDegenerates handles this
@@ -182,10 +182,10 @@ UStaticMesh* UMujocoGenerationAction::AttemptMeshImport(const FString& SourcePat
 
     // Retrieve Result
     TArray<UObject*> ImportedAssets;
-    for (UObject* Obj : ImportTask->GetObjects())
-    {
-        if (Obj) ImportedAssets.Add(Obj);
-    }
+    // for (UObject* Obj : ImportTask->GetObjects())
+    // {
+    //     if (Obj) ImportedAssets.Add(Obj);
+    // }
 
     // Log all imported assets for debugging
     UE_LOG(LogURLabEditor, Log, TEXT("[ImportSingleMesh] Import returned %d objects:"), ImportedAssets.Num());
@@ -242,16 +242,16 @@ UStaticMesh* UMujocoGenerationAction::AttemptMeshImport(const FString& SourcePat
 
             for (const FAssetData& Asset : Assets)
             {
-                UE_LOG(LogURLabEditor, Log, TEXT("  Registry: %s (%s)"), *Asset.AssetName.ToString(), *Asset.AssetClassPath.ToString());
-                if (Asset.AssetClassPath.GetAssetName() == TEXT("StaticMesh"))
-                {
-                    Mesh = Cast<UStaticMesh>(Asset.GetAsset());
-                    if (Mesh)
-                    {
-                        UE_LOG(LogURLabEditor, Log, TEXT("[ImportSingleMesh] Found mesh via registry: %s"), *Asset.GetObjectPathString());
-                        break;
-                    }
-                }
+                // UE_LOG(LogURLabEditor, Log, TEXT("  Registry: %s (%s)"), *Asset.AssetName.ToString(), *Asset.AssetClassPath.ToString());
+                // if (Asset.AssetClassPath.GetAssetName() == TEXT("StaticMesh"))
+                // {
+                //     Mesh = Cast<UStaticMesh>(Asset.GetAsset());
+                //     if (Mesh)
+                //     {
+                //         UE_LOG(LogURLabEditor, Log, TEXT("[ImportSingleMesh] Found mesh via registry: %s"), *Asset.GetObjectPathString());
+                //         break;
+                //     }
+                // }
             }
         }
     }
@@ -262,10 +262,10 @@ UStaticMesh* UMujocoGenerationAction::AttemptMeshImport(const FString& SourcePat
         // Our import pipeline assigns MI_ material instances on the SCS template,
         // but the static mesh asset retains Interchange materials in its slots.
         // These can crash the render thread when browsing/thumbnailing (UE-23902).
-        for (FStaticMaterial& Mat : Mesh->GetStaticMaterials())
-        {
-            Mat.MaterialInterface = UMaterial::GetDefaultMaterial(MD_Surface);
-        }
+        // for (FStaticMaterial& Mat : Mesh->GetStaticMaterials())
+        // {
+        //     Mat.MaterialInterface = UMaterial::GetDefaultMaterial(MD_Surface);
+        // }
 
         // Force rebuild bounds - critical for fixing 0x0x0 size issue
         Mesh->Build();
@@ -293,34 +293,34 @@ bool UMujocoGenerationAction::ValidateMesh(UStaticMesh* Mesh, const FString& Mes
     }
 
     // Check if mesh has render data
-    if (!Mesh->GetRenderData())
-    {
-        UE_LOG(LogURLabEditor, Error, TEXT("Mesh '%s' has no render data"), *MeshName);
-        return false;
-    }
+    // if (!Mesh->GetRenderData())
+    // {
+    //     UE_LOG(LogURLabEditor, Error, TEXT("Mesh '%s' has no render data"), *MeshName);
+    //     return false;
+    // }
 
     // Check LOD 0 exists
-    if (Mesh->GetRenderData()->LODResources.Num() == 0)
-    {
-        UE_LOG(LogURLabEditor, Error, TEXT("Mesh '%s' has no LOD resources"), *MeshName);
-        return false;
-    }
+    // if (Mesh->GetRenderData()->LODResources.Num() == 0)
+    // {
+    //     UE_LOG(LogURLabEditor, Error, TEXT("Mesh '%s' has no LOD resources"), *MeshName);
+    //     return false;
+    // }
 
-    const FStaticMeshLODResources& LOD0 = Mesh->GetRenderData()->LODResources[0];
-
-    // Check vertex buffer
-    if (LOD0.VertexBuffers.StaticMeshVertexBuffer.GetNumVertices() == 0)
-    {
-        UE_LOG(LogURLabEditor, Error, TEXT("Mesh '%s' has empty vertex buffer"), *MeshName);
-        return false;
-    }
-
-    // Check index buffer
-    if (LOD0.IndexBuffer.GetNumIndices() == 0)
-    {
-        UE_LOG(LogURLabEditor, Error, TEXT("Mesh '%s' has empty index buffer"), *MeshName);
-        return false;
-    }
+    // const FStaticMeshLODResources& LOD0 = Mesh->GetRenderData()->LODResources[0];
+// 
+    // // Check vertex buffer
+    // if (LOD0.VertexBuffers.StaticMeshVertexBuffer.GetNumVertices() == 0)
+    // {
+    //     UE_LOG(LogURLabEditor, Error, TEXT("Mesh '%s' has empty vertex buffer"), *MeshName);
+    //     return false;
+    // }
+// 
+    // // Check index buffer
+    // if (LOD0.IndexBuffer.GetNumIndices() == 0)
+    // {
+    //     UE_LOG(LogURLabEditor, Error, TEXT("Mesh '%s' has empty index buffer"), *MeshName);
+    //     return false;
+    // }
 
     // Log mesh statistics
     int32 NumVertices = LOD0.VertexBuffers.StaticMeshVertexBuffer.GetNumVertices();

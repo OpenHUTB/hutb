@@ -350,8 +350,8 @@ TSharedPtr<FMjOutlinerEntry> SMjArticulationOutliner::FilterTree(const TSharedPt
 
 	bool bSelfPasses = PassesFilter(Entry);
 
-	if (!bSelfPasses && FilteredChildren.IsEmpty())
-		return nullptr;
+	// if (!bSelfPasses && FilteredChildren.IsEmpty())
+	// 	return nullptr;
 
 	// Create a shallow copy with filtered children
 	TSharedPtr<FMjOutlinerEntry> Result = MakeShared<FMjOutlinerEntry>();
@@ -429,11 +429,11 @@ void SMjArticulationOutliner::OnSelectionChanged(
 		EditorInstance = Sub->FindEditorForAsset(BP, true);
 	}
 
-	if (FBlueprintEditor* BPEditor = static_cast<FBlueprintEditor*>(EditorInstance))
-	{
-		BPEditor->FindAndSelectSubobjectEditorTreeNode(
-			Cast<UActorComponent>(Entry->SCSNode->ComponentTemplate), /*IsCntrlDown=*/false);
-	}
+	// if (FBlueprintEditor* BPEditor = static_cast<FBlueprintEditor*>(EditorInstance))
+	// {
+	// 	BPEditor->FindAndSelectSubobjectEditorTreeNode(
+	// 		Cast<UActorComponent>(Entry->SCSNode->ComponentTemplate), /*IsCntrlDown=*/false);
+	// }
 }
 
 FString SMjArticulationOutliner::GetTypeLabel(UObject* Comp)
