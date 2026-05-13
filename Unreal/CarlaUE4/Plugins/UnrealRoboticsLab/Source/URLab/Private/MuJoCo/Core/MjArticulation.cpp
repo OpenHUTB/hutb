@@ -516,7 +516,7 @@ TArray<USceneComponent*> AMjArticulation::GetRuntimeComponentsOfClass(TSubclassO
 {
     TArray<USceneComponent*> Result;
     TArray<USceneComponent*> AllComponents;
-    GetComponents(ComponentClass, AllComponents);
+    // GetComponents(ComponentClass, AllComponents);
 
     UWorld* MyWorld = GetWorld();
     for (USceneComponent* Comp : AllComponents)
