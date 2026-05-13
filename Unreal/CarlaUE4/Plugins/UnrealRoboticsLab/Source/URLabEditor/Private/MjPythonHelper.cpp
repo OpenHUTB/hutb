@@ -260,7 +260,7 @@ FString FMjPythonHelper::EnsurePythonReady(bool& bOutCancelled)
                 *EnvLabel);
         }
 
-        EAppReturnType::Type Result; // = FMessageDialog::Open(EAppMsgType::YesNoCancel,
+        // EAppReturnType::Type Result; // = FMessageDialog::Open(EAppMsgType::YesNoCancel,
         //    FText::FromString(MessageStr), Title);
 
         // if (Result == EAppReturnType::Cancel)
