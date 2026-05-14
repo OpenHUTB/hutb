@@ -29,12 +29,9 @@ help:
 import: server
 	@"${CARLA_BUILD_TOOLS_FOLDER}/Import.py" $(ARGS)
 
-# CarlaUE4Editor: LibCarla osm2odr
-CarlaUE4Editor: 
+CarlaUE4Editor: LibCarla osm2odr
 	@"${CARLA_BUILD_TOOLS_FOLDER}/BuildCarlaUE4.bat" --build $(ARGS)
 
-
-# launch: 
 launch: CarlaUE4Editor
 	@"${CARLA_BUILD_TOOLS_FOLDER}/BuildCarlaUE4.bat" --launch $(ARGS)
 
@@ -114,8 +111,7 @@ client: setup
 LibCarla: setup
 	@"${CARLA_BUILD_TOOLS_FOLDER}/BuildLibCarla.bat" --server --client --generator "$(GENERATOR)" $(ARGS)
 
-# setup: downloadplugin
-setup: 
+setup: downloadplugin
 	@"${CARLA_BUILD_TOOLS_FOLDER}/Setup.bat" --boost-toolset msvc-14.3 --generator "$(GENERATOR)" $(ARGS)
 
 
