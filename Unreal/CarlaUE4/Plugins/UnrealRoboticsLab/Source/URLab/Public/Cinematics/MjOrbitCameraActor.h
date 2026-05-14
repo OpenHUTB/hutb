@@ -67,8 +67,8 @@ protected:
     // --- Orbit Parameters ---
 
     /** @brief Optional: manually assign the target articulation. If empty, auto-detects from overlap. */
-    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MuJoCo|Orbit Camera|Target")
-    AMjArticulation* ManualTarget = nullptr;
+    // UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MuJoCo|Orbit Camera|Target")
+    // AMjArticulation* ManualTarget = nullptr;
 
     /** @brief Orbit radius (distance from target) in cm. */
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MuJoCo|Orbit Camera|Orbit")

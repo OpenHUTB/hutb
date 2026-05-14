@@ -75,9 +75,9 @@ void AMjOrbitCameraActor::BeginPlay()
     }
 
     // Use manual target if set, otherwise auto-detect from overlap box
-    if (ManualTarget)
+    if (false) // ManualTarget
     {
-        SetTarget(ManualTarget);
+        // SetTarget(ManualTarget);
     }
     else
     {
