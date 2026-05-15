@@ -140,8 +140,8 @@ protected:
 public:
     // --- Public API ---
 
-    UFUNCTION(BlueprintCallable, Category = "MuJoCo|Orbit Camera")
-    void SetTarget(AMjArticulation* NewTarget);
+    // UFUNCTION(BlueprintCallable, Category = "MuJoCo|Orbit Camera")
+    // void SetTarget(AMjArticulation* NewTarget);
 
     /** @brief Toggle orbit on/off. */
     UFUNCTION(BlueprintCallable, CallInEditor, Category = "MuJoCo|Orbit Camera")

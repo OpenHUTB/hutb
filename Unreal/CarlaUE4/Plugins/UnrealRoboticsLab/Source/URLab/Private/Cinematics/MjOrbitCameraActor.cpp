@@ -87,7 +87,7 @@ void AMjOrbitCameraActor::BeginPlay()
         {
             if (AMjArticulation* Art = Cast<AMjArticulation>(Actor))
             {
-                SetTarget(Art);
+                // SetTarget(Art);
                 break;
             }
         }
@@ -101,59 +101,59 @@ void AMjOrbitCameraActor::OnBoxBeginOverlap(UPrimitiveComponent* OverlappedComp,
     {
         if (AMjArticulation* Art = Cast<AMjArticulation>(OtherActor))
         {
-            SetTarget(Art);
+            // SetTarget(Art);
         }
     }
 }
 
-void AMjOrbitCameraActor::SetTarget(AMjArticulation* NewTarget)
-{
-    TrackedBody = nullptr;
-    bIsOrbiting = false;
-
-    if (NewTarget)
-    {
-        TArray<UMjBody*> Bodies;
-        NewTarget->GetComponents<UMjBody>(Bodies);
-
-        // Prefer the root body (attached directly to the articulation root, not to another MjBody)
-        UMjBody* FirstNonDefault = nullptr;
-        for (UMjBody* B : Bodies)
-        {
-            if (B->bIsDefault) continue;
-            if (!FirstNonDefault) FirstNonDefault = B;
-
-            // Root body = its parent component is NOT an MjBody (it's the scene root or articulation root)
-            USceneComponent* Parent = B->GetAttachParent();
-            if (Parent && !Cast<UMjBody>(Parent))
-            {
-                TrackedBody = B;
-                UE_LOG(LogURLab, Log, TEXT("MjOrbitCamera: Selected root body '%s'"), *B->GetName());
-                break;
-            }
-        }
-        if (!TrackedBody) TrackedBody = FirstNonDefault;
-
-        if (!TrackedBody)
-        {
-            // Bodies not ready yet — don't commit target so overlap can retry later
-            UE_LOG(LogURLab, Log, TEXT("MjOrbitCamera: '%s' has no tracked body yet, will retry"),
-                *NewTarget->GetName());
-            CurrentTarget = nullptr;
-            return;
-        }
-
-        CurrentTarget = NewTarget;
-        bIsOrbiting = true;
-        UE_LOG(LogURLab, Log, TEXT("MjOrbitCamera: Locked onto '%s' (body: '%s')"),
-            *CurrentTarget->GetName(),
-            *TrackedBody->GetName());
-    }
-    else
-    {
-        CurrentTarget = nullptr;
-    }
-}
+// void AMjOrbitCameraActor::SetTarget(AMjArticulation* NewTarget)
+// {
+//     TrackedBody = nullptr;
+//     bIsOrbiting = false;
+// 
+//     if (NewTarget)
+//     {
+//         TArray<UMjBody*> Bodies;
+//         NewTarget->GetComponents<UMjBody>(Bodies);
+// 
+//         // Prefer the root body (attached directly to the articulation root, not to another MjBody)
+//         UMjBody* FirstNonDefault = nullptr;
+//         for (UMjBody* B : Bodies)
+//         {
+//             if (B->bIsDefault) continue;
+//             if (!FirstNonDefault) FirstNonDefault = B;
+// 
+//             // Root body = its parent component is NOT an MjBody (it's the scene root or articulation root)
+//             USceneComponent* Parent = B->GetAttachParent();
+//             if (Parent && !Cast<UMjBody>(Parent))
+//             {
+//                 TrackedBody = B;
+//                 UE_LOG(LogURLab, Log, TEXT("MjOrbitCamera: Selected root body '%s'"), *B->GetName());
+//                 break;
+//             }
+//         }
+//         if (!TrackedBody) TrackedBody = FirstNonDefault;
+// 
+//         if (!TrackedBody)
+//         {
+//             // Bodies not ready yet — don't commit target so overlap can retry later
+//             UE_LOG(LogURLab, Log, TEXT("MjOrbitCamera: '%s' has no tracked body yet, will retry"),
+//                 *NewTarget->GetName());
+//             CurrentTarget = nullptr;
+//             return;
+//         }
+// 
+//         CurrentTarget = NewTarget;
+//         bIsOrbiting = true;
+//         UE_LOG(LogURLab, Log, TEXT("MjOrbitCamera: Locked onto '%s' (body: '%s')"),
+//             *CurrentTarget->GetName(),
+//             *TrackedBody->GetName());
+//     }
+//     else
+//     {
+//         CurrentTarget = nullptr;
+//     }
+// }
 
 void AMjOrbitCameraActor::ActivateCamera()
 {
@@ -310,7 +310,7 @@ void AMjOrbitCameraActor::Tick(float DeltaTime)
         {
             if (AMjArticulation* Art = Cast<AMjArticulation>(Actor))
             {
-                SetTarget(Art);
+                // SetTarget(Art);
                 if (CurrentTarget) break;
             }
         }
