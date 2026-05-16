@@ -27,7 +27,7 @@
 
 class UCineCameraComponent;
 class UBoxComponent;
-class AMjArticulation;
+// class AMjArticulation;
 class UMjBody;
 class AMjReplayManager;
 
@@ -166,8 +166,8 @@ private:
     void OnBoxBeginOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,
         UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 
-    UPROPERTY()
-    AMjArticulation* CurrentTarget = nullptr;
+    // UPROPERTY()
+    // AMjArticulation* CurrentTarget = nullptr;
 
     UPROPERTY()
     UMjBody* TrackedBody = nullptr;
