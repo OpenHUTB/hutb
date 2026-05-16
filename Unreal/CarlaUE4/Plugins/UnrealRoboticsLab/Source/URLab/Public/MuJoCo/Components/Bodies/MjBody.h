@@ -140,8 +140,8 @@ public:
     /**
      * @brief Gets the body's spatial velocity in Unreal coordinates (cm/s and deg/s).
      */
-    UFUNCTION(BlueprintCallable, Category = "MuJoCo|Runtime")
-    FMuJoCoSpatialVelocity GetSpatialVelocity() const;
+    // UFUNCTION(BlueprintCallable, Category = "MuJoCo|Runtime")
+    // FMuJoCoSpatialVelocity GetSpatialVelocity() const;
 
     /**
      * @brief Applies an external wrench to this body for the next simulation step.
