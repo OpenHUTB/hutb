@@ -214,6 +214,6 @@ private:
     TArray<UMjSensor*> m_Sensors;
 
     // Generic Spec Elements for binding
-    UPROPERTY()
-    TArray<TScriptInterface<IMjSpecElement>> m_SpecElements;
+    // UPROPERTY()
+    // TArray<TScriptInterface<IMjSpecElement>> m_SpecElements;
 };

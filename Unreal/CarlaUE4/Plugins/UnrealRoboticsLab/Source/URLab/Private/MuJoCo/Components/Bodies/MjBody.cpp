@@ -199,7 +199,7 @@ void UMjBody::Setup(USceneComponent* Parent, mjsBody* ParentBody, FMujocoSpecWra
                      SpecElem->RegisterToSpec(*Wrapper, BodyToAttachTo);
                  }
 
-                 m_SpecElements.Emplace(CurrentComponent);
+                 // m_SpecElements.Emplace(CurrentComponent);
 
                  if (UMjGeom* Geom = Cast<UMjGeom>(CurrentComponent))
                  {

@@ -85,7 +85,7 @@ void UMjFrame::Setup(USceneComponent* Parent, mjsBody* ParentBody, FMujocoSpecWr
             if (SpecElem)
             {
                 SpecElem->RegisterToSpec(*Wrapper, ParentBody);
-                m_SpecElements.Emplace(CurrentComponent);
+                // m_SpecElements.Emplace(CurrentComponent);
             }
         }
     }

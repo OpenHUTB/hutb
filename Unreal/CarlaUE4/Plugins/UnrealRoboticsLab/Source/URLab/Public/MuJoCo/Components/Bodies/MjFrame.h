@@ -66,6 +66,6 @@ public:
 
 private:
     /** @brief Cached list of child elements for registration. */
-    UPROPERTY()
-    TArray<TScriptInterface<IMjSpecElement>> m_SpecElements;
+    // UPROPERTY()
+    // TArray<TScriptInterface<IMjSpecElement>> m_SpecElements;
 };
