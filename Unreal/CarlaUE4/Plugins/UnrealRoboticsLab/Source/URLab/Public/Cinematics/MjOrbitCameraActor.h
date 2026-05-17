@@ -27,7 +27,7 @@
 
 class UCineCameraComponent;
 class UBoxComponent;
-// class AMjArticulation;
+class AMjArticulation;
 class UMjBody;
 class AMjReplayManager;
 
@@ -67,8 +67,8 @@ protected:
     // --- Orbit Parameters ---
 
     /** @brief Optional: manually assign the target articulation. If empty, auto-detects from overlap. */
-    // UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MuJoCo|Orbit Camera|Target")
-    // AMjArticulation* ManualTarget = nullptr;
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MuJoCo|Orbit Camera|Target")
+    AMjArticulation* ManualTarget = nullptr;
 
     /** @brief Orbit radius (distance from target) in cm. */
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MuJoCo|Orbit Camera|Orbit")
@@ -140,8 +140,8 @@ protected:
 public:
     // --- Public API ---
 
-    // UFUNCTION(BlueprintCallable, Category = "MuJoCo|Orbit Camera")
-    // void SetTarget(AMjArticulation* NewTarget);
+    UFUNCTION(BlueprintCallable, Category = "MuJoCo|Orbit Camera")
+    void SetTarget(AMjArticulation* NewTarget);
 
     /** @brief Toggle orbit on/off. */
     UFUNCTION(BlueprintCallable, CallInEditor, Category = "MuJoCo|Orbit Camera")
@@ -166,8 +166,8 @@ private:
     void OnBoxBeginOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,
         UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 
-    // UPROPERTY()
-    // AMjArticulation* CurrentTarget = nullptr;
+    UPROPERTY()
+    AMjArticulation* CurrentTarget = nullptr;
 
     UPROPERTY()
     UMjBody* TrackedBody = nullptr;

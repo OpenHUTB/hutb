@@ -75,9 +75,9 @@ void AMjOrbitCameraActor::BeginPlay()
     }
 
     // Use manual target if set, otherwise auto-detect from overlap box
-    if (false) // ManualTarget
+    if (ManualTarget)
     {
-        // SetTarget(ManualTarget);
+        SetTarget(ManualTarget);
     }
     else
     {
@@ -87,7 +87,7 @@ void AMjOrbitCameraActor::BeginPlay()
         {
             if (AMjArticulation* Art = Cast<AMjArticulation>(Actor))
             {
-                // SetTarget(Art);
+                SetTarget(Art);
                 break;
             }
         }
@@ -97,63 +97,63 @@ void AMjOrbitCameraActor::BeginPlay()
 void AMjOrbitCameraActor::OnBoxBeginOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,
     UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-    // if (!CurrentTarget)
-    // {
-    //     if (AMjArticulation* Art = Cast<AMjArticulation>(OtherActor))
-    //     {
-    //         // SetTarget(Art);
-    //     }
-    // }
+    if (!CurrentTarget)
+    {
+        if (AMjArticulation* Art = Cast<AMjArticulation>(OtherActor))
+        {
+            SetTarget(Art);
+        }
+    }
 }
 
-// void AMjOrbitCameraActor::SetTarget(AMjArticulation* NewTarget)
-// {
-//     TrackedBody = nullptr;
-//     bIsOrbiting = false;
-// 
-//     if (NewTarget)
-//     {
-//         TArray<UMjBody*> Bodies;
-//         NewTarget->GetComponents<UMjBody>(Bodies);
-// 
-//         // Prefer the root body (attached directly to the articulation root, not to another MjBody)
-//         UMjBody* FirstNonDefault = nullptr;
-//         for (UMjBody* B : Bodies)
-//         {
-//             if (B->bIsDefault) continue;
-//             if (!FirstNonDefault) FirstNonDefault = B;
-// 
-//             // Root body = its parent component is NOT an MjBody (it's the scene root or articulation root)
-//             USceneComponent* Parent = B->GetAttachParent();
-//             if (Parent && !Cast<UMjBody>(Parent))
-//             {
-//                 TrackedBody = B;
-//                 UE_LOG(LogURLab, Log, TEXT("MjOrbitCamera: Selected root body '%s'"), *B->GetName());
-//                 break;
-//             }
-//         }
-//         if (!TrackedBody) TrackedBody = FirstNonDefault;
-// 
-//         if (!TrackedBody)
-//         {
-//             // Bodies not ready yet — don't commit target so overlap can retry later
-//             UE_LOG(LogURLab, Log, TEXT("MjOrbitCamera: '%s' has no tracked body yet, will retry"),
-//                 *NewTarget->GetName());
-//             CurrentTarget = nullptr;
-//             return;
-//         }
-// 
-//         CurrentTarget = NewTarget;
-//         bIsOrbiting = true;
-//         UE_LOG(LogURLab, Log, TEXT("MjOrbitCamera: Locked onto '%s' (body: '%s')"),
-//             *CurrentTarget->GetName(),
-//             *TrackedBody->GetName());
-//     }
-//     else
-//     {
-//         CurrentTarget = nullptr;
-//     }
-// }
+void AMjOrbitCameraActor::SetTarget(AMjArticulation* NewTarget)
+{
+    TrackedBody = nullptr;
+    bIsOrbiting = false;
+
+    if (NewTarget)
+    {
+        TArray<UMjBody*> Bodies;
+        NewTarget->GetComponents<UMjBody>(Bodies);
+
+        // Prefer the root body (attached directly to the articulation root, not to another MjBody)
+        UMjBody* FirstNonDefault = nullptr;
+        for (UMjBody* B : Bodies)
+        {
+            if (B->bIsDefault) continue;
+            if (!FirstNonDefault) FirstNonDefault = B;
+
+            // Root body = its parent component is NOT an MjBody (it's the scene root or articulation root)
+            USceneComponent* Parent = B->GetAttachParent();
+            if (Parent && !Cast<UMjBody>(Parent))
+            {
+                TrackedBody = B;
+                UE_LOG(LogURLab, Log, TEXT("MjOrbitCamera: Selected root body '%s'"), *B->GetName());
+                break;
+            }
+        }
+        if (!TrackedBody) TrackedBody = FirstNonDefault;
+
+        if (!TrackedBody)
+        {
+            // Bodies not ready yet — don't commit target so overlap can retry later
+            UE_LOG(LogURLab, Log, TEXT("MjOrbitCamera: '%s' has no tracked body yet, will retry"),
+                *NewTarget->GetName());
+            CurrentTarget = nullptr;
+            return;
+        }
+
+        CurrentTarget = NewTarget;
+        bIsOrbiting = true;
+        UE_LOG(LogURLab, Log, TEXT("MjOrbitCamera: Locked onto '%s' (body: '%s')"),
+            *CurrentTarget->GetName(),
+            *TrackedBody->GetName());
+    }
+    else
+    {
+        CurrentTarget = nullptr;
+    }
+}
 
 void AMjOrbitCameraActor::ActivateCamera()
 {
@@ -188,11 +188,11 @@ FRotator AMjOrbitCameraActor::GetCurrentCameraRotation() const
 
 float AMjOrbitCameraActor::ComputeAutoFrameRadius() const
 {
-    // if (!CurrentTarget) return OrbitRadius;
+    if (!CurrentTarget) return OrbitRadius;
 
     // Get the articulation's bounding box extent
     FVector Origin, Extent;
-    // CurrentTarget->GetActorBounds(false, Origin, Extent);
+    CurrentTarget->GetActorBounds(false, Origin, Extent);
 
     // Use the largest horizontal extent to determine distance
     float RobotSize = FMath::Max(Extent.X, Extent.Y) * 2.0f; // Full width
@@ -268,23 +268,23 @@ void AMjOrbitCameraActor::Tick(float DeltaTime)
 
                 // Apply RelPos offset if the target articulation has one
                 // This shifts the camera the same way the robot position is shifted
-                // if (CurrentTarget)
-                // {
-                //     TArray<FReplayArticulationBinding>& Bindings = ReplayMgr->GetArticulationBindings();
-                //     for (const FReplayArticulationBinding& B : Bindings)
-                //     {
-                //         if (B.Articulation == CurrentTarget && B.bRelativePosition && B.bInitialsCaptured)
-                //         {
-                //             FVector Offset(
-                //                 B.InitialMjPosition.X - B.CsvStartPosition.X,
-                //                 B.InitialMjPosition.Y - B.CsvStartPosition.Y,
-                //                 B.InitialMjPosition.Z - B.CsvStartPosition.Z);
-                //             // Convert MuJoCo meters offset to Unreal cm (x100)
-                //             TargetCamPos += Offset * 100.0;
-                //             break;
-                //         }
-                //     }
-                // }
+                if (CurrentTarget)
+                {
+                    TArray<FReplayArticulationBinding>& Bindings = ReplayMgr->GetArticulationBindings();
+                    for (const FReplayArticulationBinding& B : Bindings)
+                    {
+                        if (B.Articulation == CurrentTarget && B.bRelativePosition && B.bInitialsCaptured)
+                        {
+                            FVector Offset(
+                                B.InitialMjPosition.X - B.CsvStartPosition.X,
+                                B.InitialMjPosition.Y - B.CsvStartPosition.Y,
+                                B.InitialMjPosition.Z - B.CsvStartPosition.Z);
+                            // Convert MuJoCo meters offset to Unreal cm (x100)
+                            TargetCamPos += Offset * 100.0;
+                            break;
+                        }
+                    }
+                }
 
                 FVector CurrentPos = CineCamera->GetComponentLocation();
                 FRotator CurrentRot = CineCamera->GetComponentRotation();
@@ -302,19 +302,19 @@ void AMjOrbitCameraActor::Tick(float DeltaTime)
     }
 
     // --- Retry target acquisition if we don't have one yet ---
-    // if (!CurrentTarget)
-    // {
-    //     TArray<AActor*> OverlappingActors;
-    //     DetectionBox->GetOverlappingActors(OverlappingActors, AMjArticulation::StaticClass());
-    //     for (AActor* Actor : OverlappingActors)
-    //     {
-    //         if (AMjArticulation* Art = Cast<AMjArticulation>(Actor))
-    //         {
-    //             // SetTarget(Art);
-    //             if (CurrentTarget) break;
-    //         }
-    //     }
-    // }
+    if (!CurrentTarget)
+    {
+        TArray<AActor*> OverlappingActors;
+        DetectionBox->GetOverlappingActors(OverlappingActors, AMjArticulation::StaticClass());
+        for (AActor* Actor : OverlappingActors)
+        {
+            if (AMjArticulation* Art = Cast<AMjArticulation>(Actor))
+            {
+                SetTarget(Art);
+                if (CurrentTarget) break;
+            }
+        }
+    }
 
     // --- Live orbit mode ---
     if (!bIsOrbiting || !TrackedBody)
@@ -333,7 +333,7 @@ void AMjOrbitCameraActor::Tick(float DeltaTime)
     FVector TargetPos = TrackedBody->GetComponentLocation();
     {
         TArray<UMjBody*> Bodies;
-        // CurrentTarget->GetComponents<UMjBody>(Bodies);
+        CurrentTarget->GetComponents<UMjBody>(Bodies);
         if (Bodies.Num() > 1)
         {
             FVector Min(FLT_MAX), Max(-FLT_MAX);

@@ -130,8 +130,8 @@ private:
     float DelayTimer = 0.0f;
     bool bDelayPending = false;
 
-    // UPROPERTY()
-    // AMjArticulation* OwnerArticulation = nullptr;
+    UPROPERTY()
+    AMjArticulation* OwnerArticulation = nullptr;
 
     TArray<FString> ActuatorNames; // cached actuator names in order
 

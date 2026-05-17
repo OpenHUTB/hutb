@@ -152,6 +152,10 @@
 		{
 			"Name": "AirSim",
 			"Enabled": true
+		},
+		{
+			"Name": "UnrealRoboticsLab",
+			"Enabled": true
 		}
 	]
 }

@@ -199,7 +199,7 @@ void UMjBody::Setup(USceneComponent* Parent, mjsBody* ParentBody, FMujocoSpecWra
                      SpecElem->RegisterToSpec(*Wrapper, BodyToAttachTo);
                  }
 
-                 // m_SpecElements.Emplace(CurrentComponent);
+                 m_SpecElements.Emplace(CurrentComponent);
 
                  if (UMjGeom* Geom = Cast<UMjGeom>(CurrentComponent))
                  {
@@ -353,26 +353,26 @@ FQuat UMjBody::GetWorldRotation() const
     return MjUtils::MjToUERotation(m_BodyView.xquat);
 }
 
-// FMuJoCoSpatialVelocity UMjBody::GetSpatialVelocity() const
-// {
-//     FMuJoCoSpatialVelocity Result;
-//     if (m_BodyView.id < 0 || !m_BodyView.cvel) return Result;
-// 
-//     // MuJoCo cvel: [ang_x, ang_y, ang_z, lin_x, lin_y, lin_z] (MuJoCo Frame, m/s and rad/s)
-//     // Unreal Frame: X -> X, Y -> -Y, Z -> Z
-//     
-//     // Linear Velocity (m/s -> cm/s)
-//     Result.Linear.X = (float)m_BodyView.cvel[3] * 100.0f;
-//     Result.Linear.Y = -(float)m_BodyView.cvel[4] * 100.0f;
-//     Result.Linear.Z = (float)m_BodyView.cvel[5] * 100.0f;
-// 
-//     // Angular Velocity (rad/s -> deg/s)
-//     Result.Angular.X = FMath::RadiansToDegrees((float)m_BodyView.cvel[0]);
-//     Result.Angular.Y = -FMath::RadiansToDegrees((float)m_BodyView.cvel[1]);
-//     Result.Angular.Z = FMath::RadiansToDegrees((float)m_BodyView.cvel[2]);
-// 
-//     return Result;
-// }
+FMuJoCoSpatialVelocity UMjBody::GetSpatialVelocity() const
+{
+    FMuJoCoSpatialVelocity Result;
+    if (m_BodyView.id < 0 || !m_BodyView.cvel) return Result;
+
+    // MuJoCo cvel: [ang_x, ang_y, ang_z, lin_x, lin_y, lin_z] (MuJoCo Frame, m/s and rad/s)
+    // Unreal Frame: X -> X, Y -> -Y, Z -> Z
+    
+    // Linear Velocity (m/s -> cm/s)
+    Result.Linear.X = (float)m_BodyView.cvel[3] * 100.0f;
+    Result.Linear.Y = -(float)m_BodyView.cvel[4] * 100.0f;
+    Result.Linear.Z = (float)m_BodyView.cvel[5] * 100.0f;
+
+    // Angular Velocity (rad/s -> deg/s)
+    Result.Angular.X = FMath::RadiansToDegrees((float)m_BodyView.cvel[0]);
+    Result.Angular.Y = -FMath::RadiansToDegrees((float)m_BodyView.cvel[1]);
+    Result.Angular.Z = FMath::RadiansToDegrees((float)m_BodyView.cvel[2]);
+
+    return Result;
+}
 
 void UMjBody::ApplyForce(FVector Force, FVector Torque)
 {

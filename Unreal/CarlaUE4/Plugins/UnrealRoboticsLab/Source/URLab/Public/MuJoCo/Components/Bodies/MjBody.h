@@ -140,8 +140,8 @@ public:
     /**
      * @brief Gets the body's spatial velocity in Unreal coordinates (cm/s and deg/s).
      */
-    // UFUNCTION(BlueprintCallable, Category = "MuJoCo|Runtime")
-    // FMuJoCoSpatialVelocity GetSpatialVelocity() const;
+    UFUNCTION(BlueprintCallable, Category = "MuJoCo|Runtime")
+    FMuJoCoSpatialVelocity GetSpatialVelocity() const;
 
     /**
      * @brief Applies an external wrench to this body for the next simulation step.
@@ -214,6 +214,6 @@ private:
     TArray<UMjSensor*> m_Sensors;
 
     // Generic Spec Elements for binding
-    // UPROPERTY()
-    // TArray<TScriptInterface<IMjSpecElement>> m_SpecElements;
+    UPROPERTY()
+    TArray<TScriptInterface<IMjSpecElement>> m_SpecElements;
 };
