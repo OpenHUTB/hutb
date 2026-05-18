@@ -1,0 +1,3 @@
+zmq
+numpy
+dearpygui

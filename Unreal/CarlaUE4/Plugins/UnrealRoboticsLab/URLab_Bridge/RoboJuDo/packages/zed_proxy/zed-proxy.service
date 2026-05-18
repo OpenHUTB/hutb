@@ -1,0 +1,14 @@
+[Unit]
+Description=ZED Camera Proxy Service
+After=network.target
+
+[Service]
+ExecStart=/home/fudan/miniconda3/envs/zed/bin/python3 /home/fudan/Workspace/ZED-Proxy/zed_proxy_server.py
+Restart=always
+User=fudan
+WorkingDirectory=/home/fudan/Workspace/ZED-Proxy/
+StandardOutput=syslog
+StandardError=syslog
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,13 @@
+__pycache__/
+*.pyc
+.venv/
+logs/
+*.egg-info/
+dist/
+build/
+*.log
+*.csv
+uv.lock
+assets/models/**/*.jit
+assets/models/**/*.pt
+assets/models/**/*.onnx

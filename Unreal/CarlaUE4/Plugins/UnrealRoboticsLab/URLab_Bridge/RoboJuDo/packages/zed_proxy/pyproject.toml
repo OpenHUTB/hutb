@@ -1,0 +1,21 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "zed-proxy"
+version = "1.0.0"
+description = "ZED Proxy for Odometry"
+authors = [
+    { name = "GDDG08", email = "GDDG80@outlook.com" }
+]
+readme = "README.md"
+requires-python = ">=3.10"
+
+dependencies = []
+
+[tool.setuptools]
+packages = ["zed_proxy"]
+
+[tool.setuptools.dynamic]
+dependencies = {file = ["requirements.txt"]}

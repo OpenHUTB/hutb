@@ -1,0 +1,6 @@
+numpy
+zmq
+msgpack
+
+# ZED Python api
+# /usr/local/zed/get_python_api.py

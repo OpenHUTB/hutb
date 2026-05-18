@@ -1,0 +1,42 @@
+# Configuration file for optional submodules
+# Default as minimal installation, with only mujoco_viewer
+
+
+# For MujocoEnv and Kinematics Visualization
+# can be skipped on real robot
+mujoco_viewer: 
+  install: true
+  path: third_party/mujoco_viewer
+  patches: 
+    # Patch for visualization draw
+    - ../patches/mujoco_viewer.patch
+
+
+# Python binding for Unitree SDK2, https://github.com/HansZ8/unitree_cpp
+# need to install Unitree SDK2 first
+unitree_cpp:
+  install: false
+  path: packages/unitree_cpp
+
+
+# For OmniH2O, motionlib controller
+phc:
+  install: false
+  path: third_party/phc
+  patches: 
+    # Patch for useless import and bugfix
+    - ../patches/phc.patch
+    # [Optional] Windows Platform patch, for speed up multi-process
+    # - ../patches/phc-win.patch 
+  addons:
+    # Addon for 29 dof g1, as phc only support 23dof version
+    - ../patches/phc_addon_g1
+  extra_packages:
+    - third_party/phc/poselib
+
+
+# ZED Camera Odometry
+zed_proxy:
+  install: false
+  path: packages/zed_proxy
+
