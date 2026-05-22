@@ -156,6 +156,10 @@
 		{
 			"Name": "UnrealRoboticsLab",
 			"Enabled": true
+		},
+		{
+			"Name": "GLTFImporter",
+			"Enabled": true
 		}
 	]
 }
