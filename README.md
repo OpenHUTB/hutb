@@ -117,10 +117,7 @@ setup.bat -p
 ```
 
 该项目站在巨人的肩膀上，诚挚感谢以下开源项目的开发者：
-- [Carla](https://github.com/carla-simulator/carla) (MIT 许可证)
-- [AirSim](https://github.com/microsoft/AirSim) (MIT 许可证)
-- [DReyeVR](https://openhutb.github.io/doc/interbehavior/) (MIT 许可证)
-- [OpenSim](https://openhutb.github.io/doc/pedestrian/tuto_content_chrono_opensim/) (Apache 许可证)
+[Carla](https://github.com/carla-simulator/carla) (MIT 许可证)、[AirSim](https://github.com/microsoft/AirSim) (MIT 许可证)、[DReyeVR](https://openhutb.github.io/doc/interbehavior/) (MIT 许可证)、[CarlaAir](https://github.com/louiszengCN/CarlaAir)(MIT 许可证)、[OpenSim](https://openhutb.github.io/doc/pedestrian/tuto_content_chrono_opensim/) (Apache 许可证)。
 
 Carla 相关的资产遵循 CC-BY 许可证。
 其他相关资产（包括湖南工商大学大学、长沙中电软件园等地图场景）和代码基于 [MIT 许可证](./LICENSE) 开源。
