@@ -1,0 +1,12 @@
+# cd PythonAPI
+# pip install -r requirements_hutb.txt
+nose2
+numpy
+msgpack-rpc-python
+nose2
+pygame-ce
+backports.weakref
+backports.ssl_match_hostname
+GitPython
+pyinstaller
+./carla/dist/hutb-2.9.16-cp310-cp310-win_amd64.whl
