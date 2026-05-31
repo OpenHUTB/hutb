@@ -203,7 +203,7 @@ rem ============================================================================
 if %AIR_TESTS%==true (
     echo Running Carla-Air example tests...
     for /l %%i in (14,-1,7) do (
-        echo Running Carla-Air Python API for Python.%%i example tests.
+        echo Running Carla-Air Python API for Python %%i example tests.
         call conda activate hutb_3.%%i
         cd %ROOT_PATH:/=\%PythonAPI\examples\air\
         rem AirSim: python 3.7 - 3.11 is normal, but 3.12, 3.13, 3.14 is abnormal: No module named 'backports'
@@ -212,7 +212,7 @@ if %AIR_TESTS%==true (
         python 02_weather_control.py --port 3654
         python 03_spawn_traffic.py --port 3654
         python 04_sensor_capture.py --port 3654
-        echo Finished Carla-Air Python API for Python.%%i example tests.
+        echo Finished Carla-Air Python API for Python %%i example tests.
     )
 )
 

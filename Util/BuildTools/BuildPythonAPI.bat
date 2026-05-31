@@ -11,6 +11,11 @@ set FILE_N=-[%~n0]:
 rem Print batch params (debug purpose)
 echo %FILE_N% [Batch params]: %*
 
+rem get repository root directory
+for %%i in ("%LOCAL_PATH%\..\..") do set "hutb_root=%%~fi"
+echo hutb_root: %hutb_root%
+set patch_src_dir=%hutb_root%\Scripts\venv\
+
 rem ============================================================================
 rem -- Parse arguments ---------------------------------------------------------
 rem ============================================================================
@@ -102,7 +107,7 @@ if %errorlevel% neq 0 goto error_py
 
 for /l %%i in (14,-1,7) do (
     :: offline resource: https://repo.anaconda.com/pkgs/main/win-64/
-    echo "If conda viural environment hutb_3.%%i already exists, delete it"
+    echo "If conda virtual environment hutb_3.%%i already exists, delete it"
     call conda remove -n hutb_3.%%i --all --yes
     rem Remove residual virtual environment files to avoid "Permission denied" errors when creating virtual environments.
     rem get hutb_3.%%i virtual environment directory, if it exists, and remove it
@@ -114,8 +119,36 @@ for /l %%i in (14,-1,7) do (
             rmdir /s /q "%%a"
         )
     )
+    
+    rem fix: CondaToSNonInteractiveError: Terms of Service have not been accepted for the following channels. Please accept or remove them before proceeding:
+    call conda tos accept --override-channels --channel https://repo.anaconda.com/pkgs/main
+    call conda tos accept --override-channels --channel https://repo.anaconda.com/pkgs/r
+    call conda tos accept --override-channels --channel https://repo.anaconda.com/pkgs/msys2
     echo "Creating new conda environment hutb_3.%%i ..."
     call conda create -n hutb_3.%%i python=3.%%i --yes
+
+    rem fix pip error in Python 3.9
+    rem TypeError: dataclass() got an unexpected keyword argument 'slots'
+    if %%i==9 (
+        rem get Python.exe path
+        for /f "delims=" %%i in ('where python 2^>nul') do (
+            set "python_path=%%i"
+            goto :found
+        )
+        :found
+        echo Python path: %python_path%
+        rem get the directory of Python.exe
+        for %%i in ("%python_path%\..") do set "python_dir=%%~fi"
+        echo python_dir: %python_dir%
+
+        set patch_dst_dir=%python_dir%\Lib\site-packages\pip\_internal\models\
+        echo patch directory: !patch_dst_dir!
+        echo Replace patch files...
+
+        echo f | xcopy /y "!patch_src_dir!release_control.py"    "!patch_dst_dir!release_control.py"
+        echo f | xcopy /y "!patch_src_dir!scheme.py"             "!patch_dst_dir!scheme.py"
+        echo f | xcopy /y "!patch_src_dir!selection_prefs.py"    "!patch_dst_dir!selection_prefs.py"
+    )
 )
 
 
