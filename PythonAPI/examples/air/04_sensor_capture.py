@@ -46,7 +46,7 @@ camera = world.spawn_actor(cam_bp,
 img_queue = queue.Queue(10)
 camera.listen(lambda img: img_queue.put(img) if not img_queue.full() else None)
 
-print("采集 5 帧图像...")
+print("Acquire 5 frames of images...")
 time.sleep(2)
 
 for i in range(5):
@@ -56,9 +56,9 @@ for i in range(5):
         arr = np.frombuffer(img.raw_data, dtype=np.uint8)
         frame = arr.reshape(img.height, img.width, 4)[:, :, :3]
         cv2.imwrite(f'/tmp/carla_frame_{i}.png', frame)
-        print(f"  保存帧 {i}: {img.width}x{img.height}")
+        print(f"  Save Frame {i}: {img.width}x{img.height}")
     except queue.Empty:
-        print(f"  帧 {i}: 超时")
+        print(f"  Frame {i}: Timeout")
 
 camera.stop(); camera.destroy(); vehicle.destroy()
-print(f"采集完成! 图像: /tmp/carla_frame_*.png")
+print(f"Capture completed! Images: /tmp/carla_frame_*.png")

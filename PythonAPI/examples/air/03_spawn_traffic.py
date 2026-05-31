@@ -38,7 +38,7 @@ for sp in city_spawns:
     if v:
         v.set_autopilot(True)
         vehicles.append(v)
-print(f"已生成 {len(vehicles)} 辆自动驾驶车辆")
+print(f"{len(vehicles)} autonomous vehicles have been spawned.")
 
 # 生成静态行人
 walkers = []
@@ -51,11 +51,11 @@ for _ in range(15):
         w = world.try_spawn_actor(bp, carla.Transform(loc))
         if w:
             walkers.append(w)
-print(f"已生成 {len(walkers)} 个行人")
+print(f"{len(walkers)} pedestrians have been spawned.")
 
-print("观察交通运行... (20秒)")
+print("Observing traffic... (20 seconds)")
 time.sleep(20)
 
 for v in vehicles: v.destroy()
 for w in walkers: w.destroy()
-print("清理完成")
+print("Cleanup completed. All actors have been destroyed.")
