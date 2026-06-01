@@ -138,10 +138,10 @@ for /l %%i in (14,-1,7) do (
         :found
         echo Python path: %python_path%
         rem get the directory of Python.exe
-        for %%i in ("%python_path%\..") do set "python_dir=%%~fi"
-        echo python_dir: %python_dir%
+        for %%i in ("%python_path%\..\..") do set "envs_dir=%%~fi"
+        echo envs directory:: %envs_dir%
 
-        set patch_dst_dir=%python_dir%\Lib\site-packages\pip\_internal\models\
+        set patch_dst_dir=%envs_dir%\hutb_3.9\Lib\site-packages\pip\_internal\models\
         echo patch directory: !patch_dst_dir!
         echo Replace patch files...
 
