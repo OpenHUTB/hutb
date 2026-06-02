@@ -33,5 +33,5 @@ air.confirmConnection()
 print("AirSim connection successful: Drone is ready to fly.")
 
 weather = world.get_weather()
-print(f"Current weather: Sun altitude={weather.sun_altitude_angle:.1f}°, Cloudiness={weather.cloudiness:.1f}%")
+print(f"Current weather: Sun altitude={weather.sun_altitude_angle:.1f} degree, Cloudiness={weather.cloudiness:.1f}%")
 print("\nCarlaAir is ready! Both ground and aerial APIs are available.")

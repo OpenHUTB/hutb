@@ -126,30 +126,37 @@ for /l %%i in (14,-1,7) do (
     call conda tos accept --override-channels --channel https://repo.anaconda.com/pkgs/msys2
     echo "Creating new conda environment hutb_3.%%i ..."
     call conda create -n hutb_3.%%i python=3.%%i --yes
-
-    rem fix pip error in Python 3.9
-    rem TypeError: dataclass() got an unexpected keyword argument 'slots'
-    if %%i==9 (
-        rem get Python.exe path
-        for /f "delims=" %%i in ('where python 2^>nul') do (
-            set "python_path=%%i"
-            goto :found
-        )
-        :found
-        echo Python path: %python_path%
-        rem get the directory of Python.exe
-        for %%i in ("%python_path%\..\..") do set "envs_dir=%%~fi"
-        echo envs directory:: %envs_dir%
-
-        set patch_dst_dir=%envs_dir%\hutb_3.9\Lib\site-packages\pip\_internal\models\
-        echo patch directory: !patch_dst_dir!
-        echo Replace patch files...
-
-        echo f | xcopy /y "!patch_src_dir!release_control.py"    "!patch_dst_dir!release_control.py"
-        echo f | xcopy /y "!patch_src_dir!scheme.py"             "!patch_dst_dir!scheme.py"
-        echo f | xcopy /y "!patch_src_dir!selection_prefs.py"    "!patch_dst_dir!selection_prefs.py"
-    )
 )
+
+rem fix error in Python 3.7: ModuleNotFoundError: No module named 'pip._internal.models.release_control'
+rem get Python.exe path
+for /f "delims=" %%i in ('where python 2^>nul') do (
+    set "python_path=%%i"
+    goto :found
+)
+:found
+echo Python path: %python_path%
+rem get the directory of Python.exe
+for %%i in ("%python_path%\..\..") do set "envs_dir=%%~fi"
+echo envs directory:: %envs_dir%
+
+set patch_dst_dir=%envs_dir%\hutb_3.7\Lib\site-packages\pip\_internal\models\
+echo Python 3.7 patch destination directory: !patch_dst_dir!
+
+echo f | xcopy /y "!patch_src_dir!3.7\selection_prefs.py"    "!patch_dst_dir!selection_prefs.py"
+
+
+
+rem fix pip error in Python 3.9
+rem TypeError: dataclass() got an unexpected keyword argument 'slots'
+rem get Python.exe path
+set patch_dst_dir=%envs_dir%\hutb_3.9\Lib\site-packages\pip\_internal\models\
+echo Python 3.9 patch destination directory: !patch_dst_dir!
+
+echo f | xcopy /y "!patch_src_dir!release_control.py"    "!patch_dst_dir!release_control.py"
+echo f | xcopy /y "!patch_src_dir!scheme.py"             "!patch_dst_dir!scheme.py"
+echo f | xcopy /y "!patch_src_dir!selection_prefs.py"    "!patch_dst_dir!selection_prefs.py"
+
 
 
 rem Build for Python 2
