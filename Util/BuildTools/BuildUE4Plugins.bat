@@ -76,7 +76,7 @@ set ENGINE_PATH=%ROOT_PATH:/=\%Build\engine\
 set CONTENT_PATH=%ROOT_PATH:/=\%Unreal\CarlaUE4\Content\
 
 
-:: 下载并构建引擎
+:: Download and Build UE4 Engine
 if not exist "%ENGINE_PATH%" (
     echo %FILE_N% Engine directory: "%ENGINE_PATH%"
     if exist "%CACHE_DIR:/=\%engine\" (
@@ -125,6 +125,14 @@ if not exist "%CONTENT_PATH%" (
     rem git lfs pull
 )
 
+rem Replace default Unreal Engine logo with OpenHUTB logo
+if exist "%CONTENT_PATH%hutb_log.ico" (
+    echo copy /Y "%CONTENT_PATH%hutb_log.ico" "%ENGINE_PATH%Engine\Build\Windows\Resources\Default.ico"
+    copy /Y "%CONTENT_PATH%hutb_log.ico" "%ENGINE_PATH%Engine\Build\Windows\Resources\Default.ico"
+    echo %FILE_N% OpenHUTB logo replaced successfully.
+) else (
+    echo %FILE_N% Warning: OpenHUTB logo not found at "%CONTENT_PATH%\hutb_log.ico". Skipping logo replacement.
+)
 
 rem Build STREETMAP
 
