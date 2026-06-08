@@ -23,8 +23,7 @@ class TestSpawnpoints(SyncSmokeTest):
         blueprints = self.filter_vehicles_for_old_towns(blueprints)
 
         # get all available maps: 
-        # collision at spawn position with aircraft: 'Town03_Opt', 'Town04_Opt', 'Town05_Opt'
-        maps = ['Town01', 'Town01_Opt', 'Town02', 'Town02_Opt', 'Town03', 'Town04', 'Town04_Opt', 'Town05', 'Town06', 'Town06_Opt', 'Town07', 'Town10HD', 'Town10HD_Opt']
+        maps = ['Town01', 'Town01_Opt', 'Town02', 'Town02_Opt', 'Town03', 'Town03_Opt', 'Town04', 'Town04_Opt', 'Town05', 'Town05_Opt', 'Town06', 'Town06_Opt', 'Town07', 'Town07_Opt', 'Town10HD', 'Town10HD_Opt']
         for m in maps:
             # load the map
             self.client.load_world(m)
@@ -51,7 +50,7 @@ class TestSpawnpoints(SyncSmokeTest):
 
             # spawn all kind of vehicle
             for vehicle in blueprints:
-                print(f"Testing spawn points for {vehicle} in {m} with {len(spawn_points)} spawn points")
+                # print(f"Testing spawn points for {vehicle} in {m} with {len(spawn_points)} spawn points")
                 batch = [(vehicle, t) for t in spawn_points]
                 batch = [carla.command.SpawnActor(*args) for args in batch]
                 response = self.client.apply_batch_sync(batch, False)
