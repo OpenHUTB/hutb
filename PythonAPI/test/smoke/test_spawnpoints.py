@@ -23,7 +23,7 @@ class TestSpawnpoints(SyncSmokeTest):
         blueprints = self.filter_vehicles_for_old_towns(blueprints)
 
         # get all available maps: 
-        maps = ['Town01', 'Town01_Opt', 'Town02', 'Town02_Opt', 'Town03', 'Town03_Opt', 'Town04', 'Town04_Opt', 'Town05', 'Town05_Opt', 'Town06', 'Town06_Opt', 'Town07', 'Town07_Opt', 'Town10HD', 'Town10HD_Opt']
+        maps = ['Town01', 'Town01_Opt', 'Town02', 'Town02_Opt', 'Town03', 'Town03_Opt', 'Town04', 'Town04_Opt', 'Town05', 'Town05_Opt', 'Town06', 'Town06_Opt', 'Town07', 'Town07_Opt', 'Town10HD', 'Town10HD_Opt', 'Town15']
         for m in maps:
             # load the map
             self.client.load_world(m)
@@ -131,11 +131,11 @@ class TestSpawnpoints(SyncSmokeTest):
                             )
                         )
                         self.assertAlmostEqual(
-                            t0.location.x, t1.location.x, places=2,
+                            t0.location.y, t1.location.y, places=2,
                             msg=(
                                 "Y position mismatch.\n"
                                 f"actor_id={actor_id}\n"
-                                f"{TestSpawnpoints.diff_msg('x', t0.location.y, t1.location.y)}"
+                                f"{TestSpawnpoints.diff_msg('y', t0.location.y, t1.location.y)}"
                             )
                         )
                         self.assertAlmostEqual(
