@@ -11,6 +11,8 @@ from . import SyncSmokeTest
 
 
 class TestSpawnpoints(SyncSmokeTest):
+    is_debug = False
+
     @staticmethod
     def diff_msg(name, exp, got):
         return f"{name}: expected={exp:.4f}, got={got:.4f}, diff={abs(exp-got):.4f}"
@@ -23,10 +25,13 @@ class TestSpawnpoints(SyncSmokeTest):
         blueprints = self.filter_vehicles_for_old_towns(blueprints)
 
         # get all available maps: 
-        maps = ['Town01', 'Town01_Opt', 'Town02', 'Town02_Opt', 'Town03', 'Town03_Opt', 'Town04', 'Town04_Opt', 'Town05', 'Town05_Opt', 'Town06', 'Town06_Opt', 'Town07', 'Town07_Opt', 'Town10HD', 'Town10HD_Opt', 'Town15']
+        maps = ['Town01', 'Town01_Opt', 'Town02', 'Town02_Opt', 'Town03', 'Town03_Opt', 'Town04', 'Town04_Opt', 'Town05', 'Town05_Opt', 'Town06', 'Town06_Opt', 'Town07', 'Town07_Opt', 'Town10HD', 'Town10HD_Opt', 'Town15', 'HutbCarlaCity']
+        if self.is_debug:
+            maps = ['HutbCarlaCity']
         for m in maps:
             # load the map
-            self.client.load_world(m)
+            if self.is_debug == False:
+                self.client.load_world(m)
             # workaround: give time to UE4 to clean memory after loading (old assets)
             time.sleep(5)
             
@@ -38,8 +43,6 @@ class TestSpawnpoints(SyncSmokeTest):
             # get all spawn points
             spawn_points = self.world.get_map().get_spawn_points()
             
-
-
             # Check why the world settings aren't applied after a reload
             self.settings = self.world.get_settings()
             settings = carla.WorldSettings(
@@ -50,7 +53,8 @@ class TestSpawnpoints(SyncSmokeTest):
 
             # spawn all kind of vehicle
             for vehicle in blueprints:
-                # print(f"Testing spawn points for {vehicle} in {m} with {len(spawn_points)} spawn points")
+                if self.is_debug:
+                    print(f"Testing spawn points for {vehicle} in {m} with {len(spawn_points)} spawn points")
                 batch = [(vehicle, t) for t in spawn_points]
                 batch = [carla.command.SpawnActor(*args) for args in batch]
                 response = self.client.apply_batch_sync(batch, False)
