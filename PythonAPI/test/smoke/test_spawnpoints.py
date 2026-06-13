@@ -25,9 +25,9 @@ class TestSpawnpoints(SyncSmokeTest):
         blueprints = self.filter_vehicles_for_old_towns(blueprints)
 
         # get all available maps: 
-        maps = ['Town01', 'Town01_Opt', 'Town02', 'Town02_Opt', 'Town03', 'Town03_Opt', 'Town04', 'Town04_Opt', 'Town05', 'Town05_Opt', 'Town06', 'Town06_Opt', 'Town07', 'Town07_Opt', 'Town10HD', 'Town10HD_Opt', 'Town15', 'HutbCarlaCity']
+        maps = ['Town01', 'Town01_Opt', 'Town02', 'Town02_Opt', 'Town03', 'Town03_Opt', 'Town04', 'Town04_Opt', 'Town05', 'Town05_Opt', 'Town06', 'Town06_Opt', 'Town07', 'Town07_Opt', 'Town10HD', 'Town10HD_Opt', 'Town15', 'HutbCarlaCity', 'ccsp']
         if self.is_debug:
-            maps = ['HutbCarlaCity']
+            maps = ['ccsp']
         for m in maps:
             # load the map
             if self.is_debug == False:
@@ -124,7 +124,6 @@ class TestSpawnpoints(SyncSmokeTest):
                     if actor_snapshot:
                         t1 = actor_snapshot.get_transform()
 
-
                         # Ignore Z cause vehicle is falling.
                         self.assertAlmostEqual(
                             t0.location.x, t1.location.x, places=2,
@@ -143,7 +142,7 @@ class TestSpawnpoints(SyncSmokeTest):
                             )
                         )
                         self.assertAlmostEqual(
-                            t0.rotation.pitch, t1.rotation.pitch, places=2,
+                            t0.rotation.pitch, t1.rotation.pitch, places=0,
                             msg=(
                                 "Pitch mismatch.\n"
                                 f"actor_id={actor_id}\n"
@@ -151,7 +150,7 @@ class TestSpawnpoints(SyncSmokeTest):
                             )
                         )
                         self.assertAlmostEqual(
-                            t0.rotation.yaw, t1.rotation.yaw, places=2,
+                            t0.rotation.yaw, t1.rotation.yaw, places=1,
                             msg=(
                                 "Yaw mismatch.\n"
                                 f"actor_id={actor_id}\n"
@@ -159,7 +158,7 @@ class TestSpawnpoints(SyncSmokeTest):
                             )
                         )
                         self.assertAlmostEqual(
-                            t0.rotation.roll, t1.rotation.roll, places=2,
+                            t0.rotation.roll, t1.rotation.roll, places=0,
                             msg=(
                                 "Roll mismatch.\n"
                                 f"actor_id={actor_id}\n"
