@@ -25,9 +25,9 @@ class TestSpawnpoints(SyncSmokeTest):
         blueprints = self.filter_vehicles_for_old_towns(blueprints)
 
         # get all available maps: 
-        maps = ['Town01', 'Town01_Opt', 'Town02', 'Town02_Opt', 'Town03', 'Town03_Opt', 'Town04', 'Town04_Opt', 'Town05', 'Town05_Opt', 'Town06', 'Town06_Opt', 'Town07', 'Town07_Opt', 'Town10HD', 'Town10HD_Opt', 'Town15', 'HutbCarlaCity', 'ccsp']
+        maps = ['Town01', 'Town01_Opt', 'Town02', 'Town02_Opt', 'Town03', 'Town03_Opt', 'Town04', 'Town04_Opt', 'Town05', 'Town05_Opt', 'Town06', 'Town06_Opt', 'Town07', 'Town07_Opt', 'Town10HD', 'Town10HD_Opt', 'Town15', 'HutbCarlaCity', 'baidutest2test']
         if self.is_debug:
-            maps = ['ccsp']
+            maps = ['baidutest2test']
         for m in maps:
             # load the map
             if self.is_debug == False:
