@@ -1,8 +1,44 @@
 #!/usr/bin/env python3
+
+import ssl, base64, os, tempfile
+from _ssl import enum_certificates
+
+# 修复 Python 3.8 和 3.9 运行的错误: ssl.SSLError: [ASN1: NOT_ENOUGH_DATA] not enough data (_ssl.c:4192)
+# 当 cadata 加载失败时将 DER 转为 PEM 写入临时文件，再通过 cafile 参数加载
+# 参考：https://github.com/agentscope-ai/QwenPaw/issues/5086
+_orig_lv = ssl.SSLContext.load_verify_locations
+def _patched(self, *args, **kwargs):
+    try:
+        return _orig_lv(self, *args, **kwargs)
+    except ssl.SSLError:
+        cadata = kwargs.get("cadata") or (args[2] if len(args) > 2 else None)
+        if isinstance(cadata, (bytes, bytearray)):
+            purpose = ssl.Purpose.SERVER_AUTH
+            pem_certs = []
+            for storename in getattr(self, "_windows_cert_stores", ["ROOT", "CA"]):
+                try:
+                    for cert, encoding, trust in enum_certificates(storename):
+                        if encoding == "x509_asn" and (trust is True or purpose.oid in trust):
+                            pem_certs.append(b"-----BEGIN CERTIFICATE-----\n" + base64.encodebytes(cert) + b"-----END CERTIFICATE-----\n")
+                except PermissionError:
+                    pass
+            if pem_certs:
+                fd, path = tempfile.mkstemp(suffix=".pem")
+                try:
+                    os.write(fd, b"".join(pem_certs))
+                    os.close(fd)
+                    return _orig_lv(self, cafile=path)
+                finally:
+                    os.unlink(path)
+        raise
+ssl.SSLContext.load_verify_locations = _patched
+
+
 """CarlaAir Quick Start - Step 1: 连接验证"""
 import carla
 import airsim
 import argparse
+
 
 argparser = argparse.ArgumentParser(
     description=__doc__)
