@@ -1,0 +1,19 @@
+name: check pep8
+
+on: 
+  pull_request:
+  push:
+
+
+jobs:
+  check_pep8:
+    name: Check PEP8
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout 
+        uses: actions/checkout@v2
+        
+      - name: 'Run PEP8'
+        uses: quentinguidee/pep8-action@v1
+        with:
+          arguments: '--max-line-length=120'
