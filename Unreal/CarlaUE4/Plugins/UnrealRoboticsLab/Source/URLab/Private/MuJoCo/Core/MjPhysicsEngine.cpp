@@ -145,8 +145,8 @@ UMjPhysicsEngine::UMjPhysicsEngine()
 void UMjPhysicsEngine::PreCompile()
 {
     m_spec = mj_makeSpec();
-    m_spec->compiler.degree = false;
-    mj_defaultVFS(&m_vfs);
+    m_spec->compiler.degree = false;  // 使用弧度
+    mj_defaultVFS(&m_vfs);  // 初始化虚拟文件系统，为 mujoco 读取外部资源做准备
 
     UWorld* World = GetWorld();
     if (!World) return;
@@ -154,7 +154,7 @@ void UMjPhysicsEngine::PreCompile()
     TArray<AActor*> FoundActors;
     UGameplayStatics::GetAllActorsOfClass(World, AActor::StaticClass(), FoundActors);
 
-    for (auto actor : FoundActors)
+    for (auto actor : FoundActors)  // 处理关卡中的 快速转换组件 UMjQuickConvertComponent、铰链 AMjArticulation、高度场参与者 AMjHeightfieldActor
     {
         if (actor->FindComponentByClass<UMjQuickConvertComponent>())
         {

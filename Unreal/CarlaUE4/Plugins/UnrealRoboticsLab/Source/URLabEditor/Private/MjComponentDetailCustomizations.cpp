@@ -39,7 +39,7 @@
 #include "MuJoCo/Components/Geometry/MjSite.h"
 #include "MuJoCo/Components/Tendons/MjTendon.h"
 
-// Detail customizations that hide internal properties from the editor UI.
+// 在编辑器用户界面中隐藏内部属性的详细自定义设置。
 
 // ============================================================================
 // Actuator — hide DefaultClass pointer

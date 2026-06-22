@@ -225,7 +225,7 @@ void UMujocoGenerationAction::ImportNodeRecursive(const FXmlNode* Node, USCS_Nod
              FXmlFile IncludedFile(IncludePath);
              if (IncludedFile.IsValid())
              {
-                 // Iterate children of included root
+                 // 遍历包含根的子节点
                  for (const FXmlNode* Child : IncludedFile.GetRootNode()->GetChildrenNodes())
                  {
                      ImportNodeRecursive(Child, ParentNode, BP, FPaths::GetPath(IncludePath), AssetImportPath, MeshAssets, MeshScales, TextureAssets, MaterialData, ImportedTextures, CompilerSettings, bIsDefaultContext, ReuseNode);
@@ -236,7 +236,7 @@ void UMujocoGenerationAction::ImportNodeRecursive(const FXmlNode* Node, USCS_Nod
                  UE_LOG(LogURLabEditor, Warning, TEXT("Failed to load include: %s"), *IncludePath);
              }
         }
-        return; // Done with include node itself
+        return; // 已完成包含节点本身的操作。
     }
 
     // --- BODY ---
@@ -289,8 +289,8 @@ void UMujocoGenerationAction::ImportNodeRecursive(const FXmlNode* Node, USCS_Nod
         }
     }
     // --- FRAME ---
-    // <frame> applies a pos/quat offset to nested children and is dissolved at compile time.
-    // We represent it as a UMjFrame SCS node whose children are attached to it.
+    // <frame> 会对嵌套的子元素应用位置/区偏移，并在编译时被解散。
+    // 我们将其表示为一个 UMjFrame SCS 节点，其子元素附加到该节点上。
     else if (Tag.Equals(TEXT("frame")))
     {
         FString Name = Node->GetAttribute(TEXT("name"));
@@ -309,7 +309,7 @@ void UMujocoGenerationAction::ImportNodeRecursive(const FXmlNode* Node, USCS_Nod
             if (!NameAttr.IsEmpty()) FrameComp->MjName = NameAttr;
         }
 
-        // Attach the frame node to its parent, then recurse its children onto it
+        // 将帧节点附加到其父节点，然后递归地将它的子节点附加到该父节点上。
         if (ParentNode) ParentNode->AddChildNode(CreatedNode);
         else BP->SimpleConstructionScript->GetDefaultSceneRootNode()->AddChildNode(CreatedNode);
 
@@ -318,16 +318,16 @@ void UMujocoGenerationAction::ImportNodeRecursive(const FXmlNode* Node, USCS_Nod
             ImportNodeRecursive(Child, CreatedNode, BP, XMLDir, AssetImportPath, MeshAssets, MeshScales,
                 TextureAssets, MaterialData, ImportedTextures, CompilerSettings, bIsDefaultContext);
         }
-        return; // Children already processed above
+        return; // 以上已处理子节点
     }
-    // --- GEOM ---
+    // --- 几何体 GEOM ---
     else if (Tag.Equals(TEXT("geom")))
     {
         FString Name = Node->GetAttribute(TEXT("name"));
         FString TypeStr = Node->GetAttribute(TEXT("type"));
         FString MeshAttr = Node->GetAttribute(TEXT("mesh"));
 
-        // If no explicit type but has a mesh attribute, it's a mesh geom
+        // 如果没有显式类型但具有网格属性，则它是网格几何体（geom）。
         if (TypeStr.IsEmpty() && !MeshAttr.IsEmpty())
         {
             TypeStr = TEXT("mesh");
@@ -353,13 +353,13 @@ void UMujocoGenerationAction::ImportNodeRecursive(const FXmlNode* Node, USCS_Nod
             GeomComp->ImportFromXml(Node, CompilerSettings);
             GeomComp->bIsDefault = bIsDefaultContext;
 
-            // Preserve the MJCF 'name' so other components (tendons wrapping the
-            // geom, contact pairs referencing it) can resolve by the original
-            // name, not our auto-generated SCS variable name.
+            // 保留 MJCF 的“名称”，
+            // 以便其他组件（包裹几何体的肌腱、引用它的接触对）
+            // 可以通过原始名称而不是我们自动生成的 SCS 变量名称（Simple Construction Script 中用于标识这些组件节点的变量名（即组件在蓝图中的字段/变量名））来解析。
             FString NameAttr = Node->GetAttribute(TEXT("name"));
             if (!NameAttr.IsEmpty()) GeomComp->MjName = NameAttr;
 
-            // Resolve DefaultClass from the class attribute
+            // 从类属性解析默认类
             {
                 FString ClassAttr = Node->GetAttribute(TEXT("class"));
                 if (ClassAttr.IsEmpty()) ClassAttr = TEXT("main");
@@ -373,11 +373,11 @@ void UMujocoGenerationAction::ImportNodeRecursive(const FXmlNode* Node, USCS_Nod
                 }
             }
 
-            // Resolve default class transform for visual mesh placement.
-            // Walk the default class hierarchy (child -> parent -> ... -> main) to find
-            // the first default geom with a transform override.
-            // The MjGeom component itself is NOT modified (that would double-apply in ExportTo).
-            // We only apply the offset to the visual StaticMeshComponent child.
+            // 解析用于视觉网格放置的默认类变换。
+            // 遍历默认类层次结构（子类 -> 父类 -> ... -> 主类），
+            // 找到第一个具有变换覆盖的默认几何体。
+            // MjGeom 组件本身不会被修改（否则会在 ExportTo 中重复应用）。
+            // 我们仅将偏移量应用于视觉 StaticMeshComponent 子组件。
             FTransform DefaultVisualOffset = FTransform::Identity;
             {
                 FString SearchClassName = Node->GetAttribute(TEXT("class"));
@@ -386,7 +386,7 @@ void UMujocoGenerationAction::ImportNodeRecursive(const FXmlNode* Node, USCS_Nod
                 bool bFoundRot = GeomComp->bOverride_Quat;
                 bool bFoundPos = GeomComp->bOverride_Pos;
 
-                // Walk up the default hierarchy
+                // 按照默认层级结构向上走
                 while ((!bFoundRot || !bFoundPos) && !SearchClassName.IsEmpty())
                 {
                     if (CreatedDefaultNodes.Contains(SearchClassName))
@@ -394,7 +394,7 @@ void UMujocoGenerationAction::ImportNodeRecursive(const FXmlNode* Node, USCS_Nod
                         USCS_Node* DefNode = CreatedDefaultNodes[SearchClassName];
                         if (DefNode)
                         {
-                            // Find the default geom component under this default class
+                            // 在此默认类下找到默认的 geom 组件
                             for (USCS_Node* DefChild : DefNode->GetChildNodes())
                             {
                                 UMjGeom* DefGeom = Cast<UMjGeom>(DefChild->ComponentTemplate);
@@ -418,7 +418,7 @@ void UMujocoGenerationAction::ImportNodeRecursive(const FXmlNode* Node, USCS_Nod
                                 }
                             }
 
-                            // Walk up to parent class
+                            // 向上走到父类
                             UMjDefault* DefComp = Cast<UMjDefault>(DefNode->ComponentTemplate);
                             if (DefComp && !DefComp->ParentClassName.IsEmpty())
                             {
@@ -426,7 +426,7 @@ void UMujocoGenerationAction::ImportNodeRecursive(const FXmlNode* Node, USCS_Nod
                             }
                             else
                             {
-                                break; // No parent, stop
+                                break; // 没有父类，则停止
                             }
                         }
                         else
@@ -436,12 +436,12 @@ void UMujocoGenerationAction::ImportNodeRecursive(const FXmlNode* Node, USCS_Nod
                     }
                     else
                     {
-                        break; // Class not found
+                        break; // 类没有找到
                     }
                 }
             }
 
-            // Handle Mesh Visual
+            // 处理网格视觉
             if (GeomComp->Type == EMjGeomType::Mesh)
             {
                  FString MeshName = Node->GetAttribute(TEXT("mesh"));
@@ -469,14 +469,14 @@ void UMujocoGenerationAction::ImportNodeRecursive(const FXmlNode* Node, USCS_Nod
                                  MeshTemplate->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
                                  MeshTemplate->SetCollisionResponseToAllChannels(ECR_Overlap);
 
-                                 // Check if parent Geom has Group=3 (collision/hidden)
+                                 // 检查父级几何体是否具有 Group=3（碰撞/隐藏）
                                  if (GeomComp && GeomComp->Group == 3)
                                  {
                                      MeshTemplate->SetVisibility(false);
                                      MeshTemplate->bHiddenInGame = true;
                                  }
 
-                                 // Apply Scale if present
+                                 // 如果存在，请应用 缩放（Scale）
                                  if (MeshScales.Contains(MeshName))
                                  {
                                      FVector Scale = MeshScales[MeshName];
@@ -487,9 +487,9 @@ void UMujocoGenerationAction::ImportNodeRecursive(const FXmlNode* Node, USCS_Nod
                                      }
                                  }
 
-                                 // Apply default class visual offset (e.g., visual_zflip rotation)
-                                 // This only affects the visual mesh, NOT the MjGeom component,
-                                 // so ExportTo won't double-apply the default.
+                                 // 应用默认类视觉偏移（例如，visual_zflip 旋转）
+                                 // 这只会影响视觉网格，不会影响 MjGeom 组件，
+                                 // 因此 ExportTo 不会重复应用默认值。
                                  if (!DefaultVisualOffset.GetRotation().IsIdentity(SMALL_NUMBER))
                                  {
                                      MeshTemplate->SetRelativeRotation(DefaultVisualOffset.GetRotation());
@@ -501,11 +501,11 @@ void UMujocoGenerationAction::ImportNodeRecursive(const FXmlNode* Node, USCS_Nod
                                      UE_LOG(LogURLabEditor, Log, TEXT("Applied default visual position to mesh '%s'"), *MeshName);
                                  }
 
-                                 // Create and assign material instance
+                                 // 创建并分配材质实例
                                  FMuJoCoMaterialData MatData;
-                                 MatData.Rgba = GeomComp->Rgba; // Use geom color as default
+                                 MatData.Rgba = GeomComp->Rgba; // 默认使用几何体颜色
 
-                                 // Key by material name (resolved through default chain) if referenced, else fall back to mesh name
+                                 // 如果引用了材质名称（通过默认链解析），则使用材质名称作为键；否则，回退到网格名称。
                                  FString ResolvedMat = ResolveMaterialFromDefaults(GeomComp, BP);
                                  FString MaterialKey = MeshName;
                                  if (!ResolvedMat.IsEmpty() && MaterialData.Contains(ResolvedMat))
@@ -515,7 +515,7 @@ void UMujocoGenerationAction::ImportNodeRecursive(const FXmlNode* Node, USCS_Nod
                                      UE_LOG(LogURLabEditor, Log, TEXT("Using shared material '%s' for mesh '%s'"), *ResolvedMat, *MeshName);
                                  }
 
-                                 // Create or reuse material instance
+                                 // 创建或重用材质实例
                                  UMaterialInstanceConstant* MaterialInstance = CreateMaterialInstance(
                                      MaterialKey,
                                      MatData,
@@ -537,16 +537,16 @@ void UMujocoGenerationAction::ImportNodeRecursive(const FXmlNode* Node, USCS_Nod
                           *MeshName, MeshAssets.Num());
                  }
             }
-            // Handle Primitive Visuals (Built-in)
+            // 处理原始（Primitive）视觉效果（内置）
             else if (UStaticMeshComponent* BuiltInViz = GeomComp->GetVisualizerMesh())
             {
                  UE_LOG(LogURLabEditor, Log, TEXT("Applying visual properties to built-in visualizer for '%s'"), *Name);
 
-                 // Create and assign material instance
+                 // 创建并分配材质实例
                  FMuJoCoMaterialData MatData;
-                 MatData.Rgba = GeomComp->Rgba; // Use geom color as default
+                 MatData.Rgba = GeomComp->Rgba; // 默认使用几何体颜色
 
-                 // Key by material name (resolved through default chain) if referenced, else fall back to geom name
+                 // 如果引用了材质（通过默认链解析），则使用材料名称作为键；否则，回退到几何体名称。
                  FString ResolvedMat = ResolveMaterialFromDefaults(GeomComp, BP);
                  FString MaterialKey = Name;
                  if (!ResolvedMat.IsEmpty() && MaterialData.Contains(ResolvedMat))
@@ -555,7 +555,7 @@ void UMujocoGenerationAction::ImportNodeRecursive(const FXmlNode* Node, USCS_Nod
                      MaterialKey = ResolvedMat;
                  }
 
-                 // Create or reuse material instance
+                 // 创建或重用材质实例
                  UMaterialInstanceConstant* MaterialInstance = CreateMaterialInstance(
                      MaterialKey,
                      MatData,
@@ -577,7 +577,7 @@ void UMujocoGenerationAction::ImportNodeRecursive(const FXmlNode* Node, USCS_Nod
             }
         }
     }
-    // --- JOINT ---
+    // --- 关节（JOINT） ---
     else if (Tag.Equals(TEXT("joint")))
     {
         FString Name = Node->GetAttribute(TEXT("name"));
@@ -601,13 +601,13 @@ void UMujocoGenerationAction::ImportNodeRecursive(const FXmlNode* Node, USCS_Nod
             JointComp->ImportFromXml(Node, CompilerSettings);
             JointComp->bIsDefault = bIsDefaultContext;
 
-            // Preserve the MJCF 'name' so actuators / equality / tendons that
-            // reference this joint by name continue to resolve after SCS
-            // uniqueness disambiguates the UE variable name (e.g. a Default
-            // class "waist" already owning the SCS name "waist" forces the
-            // joint's variable name to "waist1"). Without this, the joint's
-            // spec name would be the disambiguated UE name and the actuator's
-            // joint="waist" reference would fail at compile.
+            // 保留 MJCF 的“名称”，以便在 SCS 唯一性消除 UE 变量名称的歧义后，
+            // 引用此关节的执行器/等式/肌腱仍能继续解析
+            // （例如，默认类“waist”已拥有 SCS 名称“waist”，
+            // 则强制关节的变量名称为“waist1”）。
+            // 否则，
+            // 关节的规范名称将是消除歧义后的 UE 名称，
+            // 并且执行器的 joint="waist" 引用将在编译时失败。
             FString NameAttr = Node->GetAttribute(TEXT("name"));
             if (!NameAttr.IsEmpty()) JointComp->MjName = NameAttr;
 
@@ -629,8 +629,8 @@ void UMujocoGenerationAction::ImportNodeRecursive(const FXmlNode* Node, USCS_Nod
         UMjJoint* JointComp = Cast<UMjJoint>(CreatedNode->ComponentTemplate);
         if (JointComp)
         {
-            // Note: Standalone <freejoint/> has no attributes.
-            // We skip ImportFromXml to avoid any unwanted movement or axis overrides.
+            // 注意：独立的 `<freejoint/>` 没有属性。
+            // 我们省略了 `ImportFromXml` 导入步骤，以避免任何不必要的移动或轴覆盖。
             JointComp->bIsDefault = bIsDefaultContext;
             FString NameAttr = Node->GetAttribute(TEXT("name"));
             if (!NameAttr.IsEmpty()) JointComp->MjName = NameAttr;
@@ -648,15 +648,15 @@ void UMujocoGenerationAction::ImportNodeRecursive(const FXmlNode* Node, USCS_Nod
         {
             FlexComp->ImportFromXml(Node);
 
-            // For mesh type, import the mesh file and create a child UStaticMeshComponent
+            // 对于网格类型，导入网格文件并创建一个子类 UStaticMeshComponent。
             FString FlexMeshFile = Node->GetAttribute(TEXT("file"));
             if (FlexComp->Type == EMjFlexcompType::Mesh && !FlexMeshFile.IsEmpty())
             {
                 FString MeshName = FPaths::GetBaseFilename(FlexMeshFile);
 
-                // Flexcomp references the mesh file directly (not via <asset><mesh>).
-                // The Python preprocessor converts it to GLB alongside the original.
-                // Try GLB first (preprocessed), then fall back to raw file.
+                // Flexcomp 直接引用网格文件（而非通过 `<asset><mesh>` 标签）。
+                // Python 预处理器会将其转换为 GLB 格式，并与原始文件一起转换。
+                // 首先尝试使用 GLB 格式（预处理后），如果失败则回退到原始文件。
                 FString MeshFilePath;
                 if (MeshAssets.Contains(MeshName))
                 {
@@ -664,7 +664,7 @@ void UMujocoGenerationAction::ImportNodeRecursive(const FXmlNode* Node, USCS_Nod
                 }
                 else
                 {
-                    // Try GLB in meshdir, then XMLDir
+                    // 先在 meshdir 中尝试 GLB，然后在 XMLDir 中尝试。
                     FString GlbName = FPaths::GetBaseFilename(FlexMeshFile) + TEXT(".glb");
                     FString GlbPath = FPaths::Combine(XMLDir, TEXT("asset"), GlbName);
                     if (FPaths::FileExists(GlbPath))
@@ -680,7 +680,7 @@ void UMujocoGenerationAction::ImportNodeRecursive(const FXmlNode* Node, USCS_Nod
                         }
                         else
                         {
-                            // Fall back to original file
+                            // 恢复到原始文件
                             MeshFilePath = FPaths::Combine(XMLDir, TEXT("asset"), FlexMeshFile);
                             if (!FPaths::FileExists(MeshFilePath))
                             {
@@ -725,7 +725,7 @@ void UMujocoGenerationAction::ImportNodeRecursive(const FXmlNode* Node, USCS_Nod
             }
         }
     }
-    // --- SITE ---
+    // --- 位点（SITE） ---
     else if (Tag.Equals(TEXT("site")))
     {
         FString Name = Node->GetAttribute(TEXT("name"));
@@ -760,7 +760,7 @@ void UMujocoGenerationAction::ImportNodeRecursive(const FXmlNode* Node, USCS_Nod
             if (!NameAttr.IsEmpty()) InertialComp->MjName = NameAttr;
         }
     }
-    // --- SENSOR ---
+    // --- 传感器（SENSOR） ---
     else if (Tag.Equals(TEXT("sensor")) || Tag.EndsWith(TEXT("sensor")) ||
              Tag == "touch" || Tag == "accelerometer" || Tag == "velocimeter" ||
              Tag == "gyro" || Tag == "force" || Tag == "torque" ||
@@ -853,7 +853,7 @@ void UMujocoGenerationAction::ImportNodeRecursive(const FXmlNode* Node, USCS_Nod
             }
          }
     }
-    // --- CAMERA ---
+    // --- 相机（CAMERA） ---
     else if (Tag.Equals(TEXT("camera")))
     {
          FString Name = Node->GetAttribute(TEXT("name"));
@@ -869,11 +869,11 @@ void UMujocoGenerationAction::ImportNodeRecursive(const FXmlNode* Node, USCS_Nod
              if (!NameAttr.IsEmpty()) CamComp->MjName = NameAttr;
          }
     }
-    // --- ACTUATOR ---
+    // --- 执行器（ACTUATOR） ---
     else if (Tag.Equals(TEXT("actuator")))
     {
-         // The <actuator> container itself is just a wrapper — recurse into each
-         // per-type child (motor, muscle, position, etc.) to create components.
+         // <actuator> 容器本身只是一个包装器
+         // ——递归地遍历每个类型的子项（电机、肌肉、位置等）来创建组件。
          for (const FXmlNode* Child : Node->GetChildrenNodes())
          {
              ImportNodeRecursive(Child, ParentNode, BP, XMLDir, AssetImportPath, MeshAssets, MeshScales, TextureAssets, MaterialData, ImportedTextures, CompilerSettings, bIsDefaultContext);
@@ -919,7 +919,7 @@ void UMujocoGenerationAction::ImportNodeRecursive(const FXmlNode* Node, USCS_Nod
             }
          }
     }
-    // --- TENDON ---
+    // --- 肌腱（TENDON） ---
     else if (Tag.Equals(TEXT("tendon")) || Tag.Equals(TEXT("fixed")) || Tag.Equals(TEXT("spatial")))
     {
          if (Tag.Equals(TEXT("tendon")))
@@ -950,7 +950,7 @@ void UMujocoGenerationAction::ImportNodeRecursive(const FXmlNode* Node, USCS_Nod
          }
     }
 
-    // --- ATTACH & RECURSE ---
+    // --- 附着和递归（ATTACH & RECURSE） ---
     if (CreatedNode)
     {
         if (ParentNode) ParentNode->AddChildNode(CreatedNode);
@@ -961,8 +961,8 @@ void UMujocoGenerationAction::ImportNodeRecursive(const FXmlNode* Node, USCS_Nod
         {
             for (const FXmlNode* Child : Node->GetChildrenNodes())
             {
-                // If CreatedNode is NULL (e.g. reused root), use ParentNode? No, CreatedNode is the parent for children.
-                // If we reused root, CreatedNode is the root.
+                // 如果 CreatedNode 为 NULL（例如，重用了根节点），是否使用 ParentNode？否，CreatedNode 是子节点的父节点。
+                // 如果我们重用了根节点，则 CreatedNode 就是根节点。
                 ImportNodeRecursive(Child, CreatedNode, BP, XMLDir, AssetImportPath, MeshAssets, MeshScales, TextureAssets, MaterialData, ImportedTextures, CompilerSettings, bIsDefaultContext);
             }
         }
@@ -972,7 +972,7 @@ void UMujocoGenerationAction::ImportNodeRecursive(const FXmlNode* Node, USCS_Nod
 void UMujocoGenerationAction::CollectDefaultMeshScales(const FXmlNode* Node, const FString& CurrentClass)
 {
     if (!Node) return;
-    const FString Tag = Node->GetTag();
+    const FString Tag = Node->GetTag();  // 获取根节点的标签，比如：mujoco、compiler
 
     if (Tag.Equals(TEXT("default")))
     {
@@ -991,7 +991,7 @@ void UMujocoGenerationAction::CollectDefaultMeshScales(const FXmlNode* Node, con
                     if (Parts.Num() >= 3)
                     {
                         FVector Scale(FCString::Atof(*Parts[0]), FCString::Atof(*Parts[1]), FCString::Atof(*Parts[2]));
-                        DefaultMeshScales.Add(ClassName, Scale);
+                        DefaultMeshScales.Add(ClassName, Scale);  // 如果 XML 里有 <default class="xxx">，且它下面有<mesh scale = "a b c">，就把这个缩放记录到 DefaultMeshScales
                         UE_LOG(LogURLabEditor, Log, TEXT("[Default Mesh Scale] class='%s' scale=%s"), *ClassName, *Scale.ToString());
                     }
                 }
@@ -1006,8 +1006,8 @@ void UMujocoGenerationAction::CollectDefaultMeshScales(const FXmlNode* Node, con
     {
         for (const FXmlNode* Child : Node->GetChildrenNodes())
         {
-            CollectDefaultMeshScales(Child, CurrentClass);
-        }
+            CollectDefaultMeshScales(Child, CurrentClass);  // 如果节点的标签不是default，则递归进入它的每一个子节点
+        }  // 没有子节点则正常结束该层递归
     }
 }
 
@@ -1016,12 +1016,12 @@ void UMujocoGenerationAction::ParseAssetsRecursive(const FXmlNode* Node, const F
     if (!Node) return;
     const FString Tag = Node->GetTag();
 
-    // Directory overrides for this context (current or inherited)
+    // 此上下文的目录覆盖（当前或继承的）
     FString CurrentMeshDir = MeshDir;
     FString CurrentTextureDir = TextureDir;
     FString CurrentAssetDir = AssetDir;
 
-    // If this is a container, look for compiler tag among immediate children to set directory overrides for all siblings
+    // 如果这是一个容器，则在其直接子元素中查找编译器（compiler）标签，以便为所有同级元素设置目录覆盖。
     if (Tag.Equals(TEXT("mujoco")) || Tag.Equals(TEXT("include")) || Tag.Equals(TEXT("asset")))
     {
         for (const FXmlNode* Child : Node->GetChildrenNodes())
@@ -1036,12 +1036,12 @@ void UMujocoGenerationAction::ParseAssetsRecursive(const FXmlNode* Node, const F
 
                 FString AttributeAssetDir = Child->GetAttribute(TEXT("assetdir"));
                 if (!AttributeAssetDir.IsEmpty()) CurrentAssetDir = AttributeAssetDir;
-                break; // Assume only one compiler tag per section
+                break; // 假设每个节只有一个编译器（compiler）标签
             }
         }
     }
 
-    // <include>
+    // <include>：如果包含其他文件，则调用 ParseAssetsRecursive 进行递归解析
     if (Tag.Equals(TEXT("include")))
     {
         FString FileAttr = Node->GetAttribute(TEXT("file"));
@@ -1055,7 +1055,7 @@ void UMujocoGenerationAction::ParseAssetsRecursive(const FXmlNode* Node, const F
              }
         }
     }
-    // <asset>
+    // 解析 <asset> 标签内的内容
     else if (Tag.Equals(TEXT("asset")))
     {
         for (const FXmlNode* Child : Node->GetChildrenNodes())
@@ -1063,7 +1063,7 @@ void UMujocoGenerationAction::ParseAssetsRecursive(const FXmlNode* Node, const F
             ParseAssetsRecursive(Child, XMLDir, OutMeshAssets, OutMeshScales, OutTextureAssets, OutMaterialData, CurrentMeshDir, CurrentTextureDir, CurrentAssetDir);
         }
     }
-    // <mesh>
+    // 将网格 <mesh> 内容解析为映射表
     else if (Tag.Equals(TEXT("mesh")))
     {
         FString MeshName = Node->GetAttribute(TEXT("name"));
@@ -1072,9 +1072,9 @@ void UMujocoGenerationAction::ParseAssetsRecursive(const FXmlNode* Node, const F
 
         if (!MeshFile.IsEmpty())
         {
-            if (MeshName.IsEmpty()) MeshName = FPaths::GetBaseFilename(MeshFile);
+            if (MeshName.IsEmpty()) MeshName = FPaths::GetBaseFilename(MeshFile);  // 如果网格的名字标签缺失，则默认网格名为不带后缀名的文件名
 
-            // Priority: meshdir > assetdir > current directory (XMLDir)
+            // 优先级：meshdir > assetdir > xml 当前目录（XMLDir）
             FString EffectiveMeshBase = XMLDir;
             if (!CurrentMeshDir.IsEmpty())
             {
@@ -1092,9 +1092,9 @@ void UMujocoGenerationAction::ParseAssetsRecursive(const FXmlNode* Node, const F
                 UE_LOG(LogURLabEditor, Log, TEXT("[Mesh Map] Adding mesh: name='%s' -> file='%s'"), *MeshName, *FullPath);
                 OutMeshAssets.Add(MeshName, FullPath);
 
-                // Scale: explicit attribute > default class > main default > (1,1,1)
-                FVector Scale(1.0f);
-                FString ScaleStr = Node->GetAttribute(TEXT("scale"));
+                // 缩放：显式属性 > 默认类 > 主要默认值 > (1,1,1) 
+                FVector Scale(1.0f);  // 3. 默认值
+                FString ScaleStr = Node->GetAttribute(TEXT("scale"));  // 1. 显示 scale 属性
                 if (!ScaleStr.IsEmpty())
                 {
                     TArray<FString> Parts;
@@ -1108,8 +1108,8 @@ void UMujocoGenerationAction::ParseAssetsRecursive(const FXmlNode* Node, const F
                 }
                 else
                 {
-                    // Fall back to default mesh scale
-                    FString MeshClass = Node->GetAttribute(TEXT("class"));
+                    // 恢复到默认网格比例
+                    FString MeshClass = Node->GetAttribute(TEXT("class"));  // 2. 默认类
                     if (MeshClass.IsEmpty()) MeshClass = TEXT("main");
                     if (DefaultMeshScales.Contains(MeshClass))
                     {
@@ -1122,7 +1122,7 @@ void UMujocoGenerationAction::ParseAssetsRecursive(const FXmlNode* Node, const F
             }
         }
     }
-    // <texture>
+    // 将纹理 <texture> 内容解析为映射表
     else if (Tag.Equals(TEXT("texture")))
     {
         FString TexName = Node->GetAttribute(TEXT("name"));
@@ -1133,15 +1133,15 @@ void UMujocoGenerationAction::ParseAssetsRecursive(const FXmlNode* Node, const F
         {
             if (TexName.IsEmpty()) TexName = FPaths::GetBaseFilename(TexFile);
 
-            // Priority: texturedir > assetdir > current directory (XMLDir)
-            FString EffectiveTextureBase = XMLDir;
+            // 优先级：texturedir > assetdir > 当前目录（XMLDir）
+            FString EffectiveTextureBase = XMLDir;  // 3. 当前目录
             if (!CurrentTextureDir.IsEmpty())
             {
-                EffectiveTextureBase = FPaths::Combine(XMLDir, CurrentTextureDir);
+                EffectiveTextureBase = FPaths::Combine(XMLDir, CurrentTextureDir);  // 1. 使用纹理目录
             }
             else if (!CurrentAssetDir.IsEmpty())
             {
-                EffectiveTextureBase = FPaths::Combine(XMLDir, CurrentAssetDir);
+                EffectiveTextureBase = FPaths::Combine(XMLDir, CurrentAssetDir);  // 2. 使用资产目录
             }
 
             FString FullPath = FPaths::Combine(EffectiveTextureBase, TexFile);
@@ -1153,7 +1153,7 @@ void UMujocoGenerationAction::ParseAssetsRecursive(const FXmlNode* Node, const F
             }
         }
     }
-    // <material>
+    // 将材质 <material> 内容解析为映射表 
     else if (Tag.Equals(TEXT("material")))
     {
         FString MatName = Node->GetAttribute(TEXT("name"));
@@ -1162,7 +1162,7 @@ void UMujocoGenerationAction::ParseAssetsRecursive(const FXmlNode* Node, const F
         {
             FMuJoCoMaterialData MatData;
 
-            // Parse RGBA color
+            // 解析 RGBA 颜色
             FString RgbaStr = Node->GetAttribute(TEXT("rgba"));
             if (!RgbaStr.IsEmpty())
             {
@@ -1177,14 +1177,14 @@ void UMujocoGenerationAction::ParseAssetsRecursive(const FXmlNode* Node, const F
                 }
             }
 
-            // Parse texture references
+            // 解析纹理引用
             FString TexName = Node->GetAttribute(TEXT("texture"));
             if (!TexName.IsEmpty())
             {
                 MatData.BaseColorTextureName = TexName;
             }
 
-            // MuJoCo doesn't have explicit normal/ORM in XML typically, but we support it
+            // MuJoCo 通常不会在 XML 中显式地使用 normal/ORM，但我们支持它。
             FString NormalTex = Node->GetAttribute(TEXT("texnormal"));
             if (!NormalTex.IsEmpty())
             {
@@ -1214,7 +1214,7 @@ void UMujocoGenerationAction::ParseAssetsRecursive(const FXmlNode* Node, const F
                 *MatName, *MatData.Rgba.ToString(), *MatData.BaseColorTextureName);
         }
     }
-    // Recurse for top-level containers (excluding tags handled above like include/asset)
+    // 递归查找顶级容器（不包括上面已处理的标签，例如 include/asset）
     else if (Tag.Equals(TEXT("mujoco")))
     {
          for (const FXmlNode* Child : Node->GetChildrenNodes())

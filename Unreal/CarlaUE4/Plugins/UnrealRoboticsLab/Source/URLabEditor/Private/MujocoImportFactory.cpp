@@ -124,31 +124,31 @@ UObject* UMujocoImportFactory::FactoryCreateFile(UClass* InClass, UObject* InPar
             }
         }
 
-        SlowTask.EnterProgressFrame(1.f, NSLOCTEXT("URLab", "ImportStep1", "Reading XML..."));
+        SlowTask.EnterProgressFrame(1.f, NSLOCTEXT("URLab", "ImportStep1", "Reading XML..."));  // 在编辑器弹出的进度条下方显示文字（有延迟）
 
-        // Set XML Path in CDO so it persists (use original path, not _ue variant)
+        // 在类默认对象（Class Default Object, CDO）中设置 XML 路径使其持久化（使用原始路径，而不是生成的 _ue 变体）
         AMjArticulation* CDO = Cast<AMjArticulation>(NewBP->GeneratedClass->GetDefaultObject());
         if (CDO)
         {
             CDO->MuJoCoXMLFile.FilePath = Filename;
-            CDO->MarkPackageDirty();
+            CDO->MarkPackageDirty();  // 通知编辑器：该蓝图默认对象已经改变，否则编辑器不会认为资源需要保存
         }
 
         SlowTask.EnterProgressFrame(1.f, NSLOCTEXT("URLab", "ImportStep2", "Building Blueprint components..."));
 
-        // Generate Components using the (potentially prepared) XML
+        // 使用（可能已准备好的）XML 生成组件
         UMujocoGenerationAction* Generator = NewObject<UMujocoGenerationAction>();
         Generator->GenerateForBlueprint(NewBP, ActualXmlPath);
 
         SlowTask.EnterProgressFrame(1.f, NSLOCTEXT("URLab", "ImportStep3", "Compiling Blueprint..."));
 
-        // Compile to save changes and ensure components are valid
+        // 编译以保存更改并确保组件有效
         FKismetEditorUtilities::CompileBlueprint(NewBP);
 
-        // Wait for all shaders to finish compiling and flush render commands.
-        // Material instances created during import trigger async shader compilation.
-        // If the content browser renders thumbnails before shaders are ready,
-        // the render thread crashes (UE-23902).
+        // 等待所有着色器编译完成并刷新渲染命令。
+        // 导入过程中创建的材质实例会触发异步着色器编译。
+        // 如果内容浏览器在着色器准备就绪之前渲染缩略图，
+        // 则渲染线程会崩溃 (UE-23902)。
         if (GShaderCompilingManager)
         {
             GShaderCompilingManager->FinishAllCompilation();

@@ -41,61 +41,64 @@
 #include "XmlNode.h"
 #include "mujoco/mujoco.h"
 
-// ProcessDefault removed — default class creation handled by UMjDefault + mjs_addDefault API.
+// ProcessDefault 已移除 — 默认类的创建由 UMjDefault + mjs_addDefault API处理。
 
 
 UMujocoGenerationAction::UMujocoGenerationAction()
 {
-    // SupportedClasses.Add(UBlueprint::StaticClass());
+    // SupportedClasses.Add(UBlueprint::StaticClass()); // 将 UBlueprint 类型的 UClass* 类型注册到当前对象维护的“支持的类”集合里
 }
 
 
+// 从编辑器选中的资产（机器人蓝图）生成 MuJoCo 相关的组件
 void UMujocoGenerationAction::GenerateMuJoCoComponents()
 {
-    // Clear defaults cache
+    // 清除内部默认的节点缓存
     CreatedDefaultNodes.Empty();
 
     UE_LOG(LogURLabEditor, Log, TEXT("Generating MuJoCo model components"));
-    TArray<UObject*> SelectedAssets = UEditorUtilityLibrary::GetSelectedAssets();
+    TArray<UObject*> SelectedAssets = UEditorUtilityLibrary::GetSelectedAssets();  // 获取当前在编辑器中选中的资产
 
     for (UObject* Asset : SelectedAssets)
     {
         UBlueprint* BP = Cast<UBlueprint>(Asset);
-        if (!BP || !BP->GeneratedClass->IsChildOf(AMjArticulation::StaticClass()))
+        if (!BP || !BP->GeneratedClass->IsChildOf(AMjArticulation::StaticClass()))  // 找出是 UBlueprint 的资产，并且其生成类是 AMjArticulation 的子类（即期望的 MuJoCo 铰链蓝图）
         {
             continue;
         }
 
-        AMjArticulation* CDO = Cast<AMjArticulation>(BP->GeneratedClass->GetDefaultObject());
-        if (!CDO || CDO->MuJoCoXMLFile.FilePath.IsEmpty())
+        AMjArticulation* CDO = Cast<AMjArticulation>(BP->GeneratedClass->GetDefaultObject());  // 取得每个符合条件蓝图的 类默认对象（Class Default Object, CDO）
+        if (!CDO || CDO->MuJoCoXMLFile.FilePath.IsEmpty())  // 每个蓝图类都应该有对应的 xml 文件路径
         {
             UE_LOG(LogURLabEditor, Error, TEXT("No XML File Path set in Blueprint Defaults for %s"), *BP->GetName());
             continue;
         }
 
-        GenerateForBlueprint(BP, CDO->MuJoCoXMLFile.FilePath);
+        GenerateForBlueprint(BP, CDO->MuJoCoXMLFile.FilePath);  // 编译蓝图，使其生效
     }
 }
 
+
+// 对指定蓝图执行基于 MuJoCo XML 的生成工作
 void UMujocoGenerationAction::GenerateForBlueprint(UBlueprint* BP, const FString& XMLPath)
 {
     if (!BP || XMLPath.IsEmpty()) return;
 
-    // Optional: Basic MuJoCo XML Verification (can be removed if total purity desired, but safe to keep)
+    // 可选：MuJoCo XML 基本校验（如果追求完全纯净，可以移除，但保留也无妨）
     mjModel* M = nullptr;
     char Error[1000];
-    M = mj_loadXML(TCHAR_TO_UTF8(*XMLPath), nullptr, Error, 1000);
+    M = mj_loadXML(TCHAR_TO_UTF8(*XMLPath), nullptr, Error, 1000);  // 用 mj_loadXML 尝试加载 XML
     if (!M) {
         UE_LOG(LogURLabEditor, Error, TEXT("MuJoCo Load/Validation Error: %s"), UTF8_TO_TCHAR(Error));
-        // We can choose to return or proceed. If XML is invalid, pure parsing might also fail or yield garbage.
+        // 我们可以选择返回或继续。如果XML无效，纯解析也可能失败或产生无用结果。
         return;
     }
-    mj_deleteModel(M);
+    mj_deleteModel(M);  // 校验成功立即用 mj_deleteModel 释放临时模型
 
-    // Pure XML Strategy
+    // 执行纯 XML 解析、资产导入与 SCS 节点/组件创建等具体生成逻辑
     GenerateForBlueprintXml(BP, XMLPath);
 
-    FKismetEditorUtilities::CompileBlueprint(BP);
+    FKismetEditorUtilities::CompileBlueprint(BP);  // 对蓝图所做的修改写入并生效
 }
 
 void UMujocoGenerationAction::GenerateForBlueprintXml(UBlueprint* BP, const FString& XMLPath)
@@ -116,30 +119,30 @@ void UMujocoGenerationAction::GenerateForBlueprintXml(UBlueprint* BP, const FStr
 {
     if (!BP || !InXmlFile || !InXmlFile->IsValid()) return;
 
-    const FXmlNode* Root = InXmlFile->GetRootNode();
+    const FXmlNode* Root = InXmlFile->GetRootNode();  // 获取 xml 文件的根节点：mujoco
     if (!Root) return;
 
     FString XMLDir = FPaths::GetPath(XMLPath);
-    USCS_Node* SceneRoot = BP->SimpleConstructionScript->GetDefaultSceneRootNode();
+    USCS_Node* SceneRoot = BP->SimpleConstructionScript->GetDefaultSceneRootNode();  // 获取场景的根节点
 
     FString BaseContentPath = TEXT("/Game/MuJoCoImports/");
     FString BaseName = FPaths::GetBaseFilename(XMLPath);
     if (BaseName.IsEmpty()) BaseName = TEXT("MemModel");
 
-    FString AssetImportPath = BaseContentPath + BaseName + TEXT("_Assets");
+    FString AssetImportPath = BaseContentPath + BaseName + TEXT("_Assets");  // 资产导入后的路径：hutb/Unreal/CarlaUE4/Content/MuJoCoImports/g1_29dof_rev_1_0_ue_Assets/
     AssetImportPath = UPackageTools::SanitizePackageName(AssetImportPath);
 
-    // 0. Pre-scan: collect default mesh scales so asset parsing can inherit them
+    // 0. 预扫描：收集默认网格缩放，以便资产解析可以继承它们
     CollectDefaultMeshScales(Root);
 
-    // 1. Pass: Resolved Assets
-    TMap<FString, FString> MeshAssets;
-    TMap<FString, FVector> MeshScales;
-    TMap<FString, FString> TextureAssets;
-    TMap<FString, FMuJoCoMaterialData> MaterialData;
-    ParseAssetsRecursive(Root, XMLDir, MeshAssets, MeshScales, TextureAssets, MaterialData);
+    // 1. 为后面的步骤传递已解析的资产：网格资产MeshAssets、网格缩放MeshScales、纹理资产TextureAssets、材质数据MaterialData
+    TMap<FString, FString> MeshAssets;  // 35个
+    TMap<FString, FVector> MeshScales;  // 35个
+    TMap<FString, FString> TextureAssets;  // 纹理 1 个：g1\groundplane
+    TMap<FString, FMuJoCoMaterialData> MaterialData;  // 材质 1 个：groundplane
+    ParseAssetsRecursive(Root, XMLDir, MeshAssets, MeshScales, TextureAssets, MaterialData);  // 递归遍历 MuJoCo XML 中和资源相关的节点，把 mesh（网格资产35个） / texture（可以引用材质） / material（反光等） 等资产信息解析出来，并整理成映射表（键、值），供后续导入 Unreal 使用
 
-    // 1b. Import Textures
+    // 1b. 导入纹理
     TMap<FString, UTexture2D*> ImportedTextures;
     for (const auto& TexPair : TextureAssets)
     {
@@ -158,7 +161,7 @@ void UMujocoGenerationAction::GenerateForBlueprintXml(UBlueprint* BP, const FStr
         }
     }
 
-    // 2. Create organizational nodes dynamically
+    // 2. 动态创建有组织的节点
     FArticulationHierarchy Hierarchy = CreateOrganizationalHierarchy(BP);
 
     USCS_Node* DefinitionsNode = Hierarchy.DefinitionsRoot;
@@ -170,31 +173,31 @@ void UMujocoGenerationAction::GenerateForBlueprintXml(UBlueprint* BP, const FStr
     USCS_Node* EqualitiesNode  = Hierarchy.EqualitiesRoot;
     USCS_Node* KeyframesNode   = Hierarchy.KeyframesRoot;
 
-    // 2. Parse compiler settings first (angle, eulerseq) so they can be
-    //    propagated into <default>-block imports — joint ranges inside a
-    //    default class depend on the compiler-level `angle` setting.
+    // 2. 首先解析编译器设置（角度 angle、解析欧拉角时轴的顺序 eulerseq），
+    //    以便将其传播到<default>-block导入中
+    //    ——默认类中的关节范围依赖于编译器级别的`angle`设置。
     FMjCompilerSettings CompilerSettings = MjOrientationUtils::ParseCompilerSettings(Root);
 
-    // 2a. Pass: Defaults
+    // 2a. 解析：默认
     ParseDefaultsRecursive(Root, BP, DefaultsNode, XMLDir, CompilerSettings, TEXT(""));
 
-    // 2b. Pass: Contact pairs and excludes
+    // 2b. 解析：接触对、排除项
     ParseContactSection(Root, BP, ContactsNode, XMLDir);
 
-    // 2c. Pass: Equality constraints
+    // 2c. 解析（传递）：等式约束
     ParseEqualitySection(Root, BP, EqualitiesNode, XMLDir);
 
-    // 2d. Pass: Keyframes
+    // 2d. 解析（传递）：关键帧
     ParseKeyframeSection(Root, BP, KeyframesNode, XMLDir);
 
-    // 3. Pass: Structure Traversal
+    // 3. 传递：结构遍历
     USCS_Node* WorldBodyNode = nullptr;
     for (const FXmlNode* Child : Root->GetChildrenNodes())
     {
          FString Tag = Child->GetTag();
          if (Tag.Equals(TEXT("worldbody")))
          {
-             // Create worldbody node only once — merge subsequent <worldbody> sections into it
+             // 仅创建一次 worldbody 节点 — 将后续的 <worldbody> 部分合并到其中
              if (!WorldBodyNode)
              {
                  WorldBodyNode = BP->SimpleConstructionScript->CreateNode(UMjWorldBody::StaticClass(), TEXT("worldbody"));
@@ -202,7 +205,7 @@ void UMujocoGenerationAction::GenerateForBlueprintXml(UBlueprint* BP, const FStr
                  BP->SimpleConstructionScript->AddNode(WorldBodyNode);
              }
 
-             // Iterate worldbody children
+             // 递归导入世界体（worldbody）子节点
              for (const FXmlNode* WBChild : Child->GetChildrenNodes())
              {
                  ImportNodeRecursive(WBChild, WorldBodyNode, BP, XMLDir, AssetImportPath, MeshAssets, MeshScales, TextureAssets, MaterialData, ImportedTextures, CompilerSettings, false);
@@ -235,7 +238,7 @@ void UMujocoGenerationAction::GenerateForBlueprintXml(UBlueprint* BP, const FStr
          }
     }
 
-    // 4. Parse <option> and store on articulation CDO so AAMjManager can apply them at runtime
+    // 4. 解析 <option> 并存储在铰链的类默认对象（Class Default Object，CDO）中，以便 Mujoco 管理器（AAMjManager）能够在运行时应用它们
     for (const FXmlNode* Child : Root->GetChildrenNodes())
     {
         if (Child->GetTag().Equals(TEXT("option")))
@@ -303,11 +306,11 @@ void UMujocoGenerationAction::GenerateForBlueprintXml(UBlueprint* BP, const FStr
                 V = Child->GetAttribute(TEXT("sleep")).ToLower();
                 if      (V == TEXT("enable"))  Opts.bEnableSleep = true;
                 else if (V == TEXT("disable")) Opts.bEnableSleep = false;
-                // sleep_tolerance is a direct option attribute (not inside <flag>)
+                // sleep_tolerance是一个直接选项属性（不在<flag>中）
                 V = Child->GetAttribute(TEXT("sleep_tolerance"));
                 if (!V.IsEmpty()) Opts.SleepTolerance = FCString::Atof(*V);
 
-                // Also check inside child <flag> nodes (MuJoCo XML spec allows both)
+                // 也检查子 <flag> 节点内部（MuJoCo XML 规范两者都允许）
                 for (const FXmlNode* FlagNode : Child->GetChildrenNodes())
                 {
                     if (FlagNode->GetTag().Equals(TEXT("flag"), ESearchCase::IgnoreCase))

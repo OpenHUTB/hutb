@@ -39,7 +39,7 @@ UObject* UMjArticulationFactory::FactoryCreateNew(UClass* InClass, UObject* InPa
 {
     UClass* ParentClass = AMjArticulation::StaticClass();
 
-    // Create the Blueprint Asset using AMjArticulation as base
+    // 使用 Mujoco 铰链作为基础创建蓝图资产
     UBlueprint* NewBP = FKismetEditorUtilities::CreateBlueprint(
         ParentClass,
         InParent,
@@ -51,11 +51,11 @@ UObject* UMjArticulationFactory::FactoryCreateNew(UClass* InClass, UObject* InPa
 
     if (NewBP)
     {
-        // Pre-populate with organizational roots and a main body
+        // 预先填充有组织的根和主要刚体
         UMujocoGenerationAction* Generator = NewObject<UMujocoGenerationAction>();
         Generator->SetupEmptyArticulation(NewBP);
         
-        // Final compile
+        // 最终的编译
         FKismetEditorUtilities::CompileBlueprint(NewBP);
     }
 

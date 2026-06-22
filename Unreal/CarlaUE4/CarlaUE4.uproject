@@ -104,8 +104,7 @@
 			"SupportedTargetPlatforms": [
 				"Win32",
 				"Win64",
-				"Linux",
-				"Mac"
+				"Linux"
 			]
 		},
 		{
@@ -167,6 +166,50 @@
 		},
 		{
 			"Name": "RuntimeTests",
+			"Enabled": true
+		},
+		{
+			"Name": "DatasmithGLTFImporter",
+			"Enabled": true
+		},
+		{
+			"Name": "CesiumForUnreal",
+			"Enabled": true,
+			"MarketplaceURL": "com.epicgames.launcher://ue/marketplace/content/87b0d05800a545d49bf858ef3458c4f7",
+			"SupportedTargetPlatforms": [
+				"Win64",
+				"Mac",
+				"Linux",
+				"Android",
+				"IOS"
+			]
+		},
+		{
+			"Name": "RoadRunnerCarlaIntegration",
+			"Enabled": true
+		},
+		{
+			"Name": "RoadRunnerImporter",
+			"Enabled": true
+		},
+		{
+			"Name": "StreetMap",
+			"Enabled": true
+		},
+		{
+			"Name": "RoadRunnerCarlaDatasmith",
+			"Enabled": true
+		},
+		{
+			"Name": "RoadRunnerDatasmith",
+			"Enabled": true
+		},
+		{
+			"Name": "RoadRunnerRuntime",
+			"Enabled": true
+		},
+		{
+			"Name": "LogitechWheelPlugin",
 			"Enabled": true
 		}
 	]

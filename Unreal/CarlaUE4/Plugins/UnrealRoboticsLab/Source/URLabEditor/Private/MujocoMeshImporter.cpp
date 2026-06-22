@@ -118,25 +118,30 @@ UStaticMesh* UMujocoGenerationAction::AttemptMeshImport(const FString& SourcePat
 {
     IAssetTools& AssetTools = FModuleManager::LoadModuleChecked<FAssetToolsModule>("AssetTools").Get();
 
-    // Configure Automated Import Task
+    // 配置自动导入任务
     UAssetImportTask* ImportTask = NewObject<UAssetImportTask>();
-    ImportTask->Filename = SourcePath;
-    ImportTask->DestinationPath = DestinationPath;
+	// Normalize slashes and make absolute
+	FString NormalizedSourcePath = SourcePath;
+	FPaths::MakeStandardFilename(NormalizedSourcePath);                             // 使用标准分隔符（'/'）
+	NormalizedSourcePath = FPaths::ConvertRelativePathToFull(NormalizedSourcePath); // 变为绝对路径
+	FPaths::NormalizeFilename(NormalizedSourcePath);                                // 清理重复分隔符、末尾斜杠等
+	ImportTask->Filename = NormalizedSourcePath;
+    ImportTask->DestinationPath = DestinationPath;  // 导入的资产生成在：/Game/MuJoCoImports/g1_29dof_rev_1_0_ue_Assets/Meshes
     ImportTask->bAutomated = true;
     ImportTask->bSave = true;
     ImportTask->bReplaceExisting = true;
     ImportTask->bReplaceExistingSettings = true;
 
-    // Configure FBX Factory only for FBX/OBJ
+    // 仅配置 FBX 工厂以支持 FBX/OBJ
     FString Extension = FPaths::GetExtension(SourcePath).ToLower();
 
     if (Extension == "fbx" || Extension == "obj" || Extension == "t3d")
     {
-        // Configure FBX Factory
+        // 配置 FBX 工厂
         UFbxFactory* FbxFactory = NewObject<UFbxFactory>();
         ImportTask->Factory = FbxFactory;
 
-        // Configure FBX Import UI settings
+        // 配置 FBX 导入 UI 设置
         UFbxImportUI* ImportUI = NewObject<UFbxImportUI>();
         ImportUI->bImportMesh = true;
         ImportUI->bImportTextures = false;
@@ -144,7 +149,7 @@ UStaticMesh* UMujocoGenerationAction::AttemptMeshImport(const FString& SourcePat
         ImportUI->bAutomatedImportShouldDetectType = false;
         ImportUI->MeshTypeToImport = FBXIT_StaticMesh;
 
-        // Robust Static Mesh Settings
+        // 鲁棒的的静态网格设置
         ImportUI->StaticMeshImportData->bCombineMeshes = true;
         ImportUI->StaticMeshImportData->bRemoveDegenerates = true;
         ImportUI->StaticMeshImportData->bComputeWeightedNormals = true;
@@ -152,42 +157,42 @@ UStaticMesh* UMujocoGenerationAction::AttemptMeshImport(const FString& SourcePat
         ImportUI->StaticMeshImportData->NormalImportMethod = EFBXNormalImportMethod::FBXNIM_ComputeNormals;
         ImportUI->StaticMeshImportData->NormalGenerationMethod = NormalMethod;
 
-        // Additional settings to fix degenerate geometry (especially from OBJ files)
-        ImportUI->StaticMeshImportData->bAutoGenerateCollision = false; // We handle collision separately
+        // 用于修复退化几何体（特别是来自 OBJ 文件）的其他设置
+        ImportUI->StaticMeshImportData->bAutoGenerateCollision = false; // 我们单独处理碰撞。
         ImportUI->StaticMeshImportData->bBuildReversedIndexBuffer = true;
-        // ImportUI->StaticMeshImportData->bBuildNanite = false; // Nanite requires clean geometry
+        // ImportUI->StaticMeshImportData->bBuildNanite = false; // Nanite 需要清晰的几何结构（UE4中没有Nanite）
 
-        // Vertex welding - critical for fixing overlapping vertices that cause degenerate tangents
-        // Note: There's no direct bWeldVertices in UE 5.7, but bRemoveDegenerates handles this
+        // 顶点焊接——对于修复导致切线退化的重叠顶点至关重要。
+        // 注意：UE 5.7 中没有直接的 bWeldVertices 函数，但 bRemoveDegenerates 函数可以处理这个问题。
 
-        // Apply UI to Factory
+        // 将 UI 应用于工厂
         FbxFactory->ImportUI = ImportUI;
         FbxFactory->EnableShowOption();
     }
     else
     {
-        // For other formats (GLTF, GLB, etc.), let Unreal's asset tools find the appropriate factory.
-        // We don't manually set the factory, so ImportAssetTasks will automatically detect the correct one.
-        // Note: We lose the fine-grained settings (like NormalGenerationMethod), but GLTF importers
-        // usually rely on the file's inherent data which is often cleaner than OBJ.
-        ImportTask->Factory = nullptr;
+        // 对于其他格式（GLTF、GLB 等），让虚幻引擎的资源工具自动查找合适的工厂。
+        // 我们无需手动设置工厂，因此 ImportAssetTasks 会自动检测正确的工厂。
+        // 注意：我们会丢失一些细粒度的设置（例如 NormalGenerationMethod），
+        // 但 GLTF 导入器通常依赖于文件本身的数据，这些数据通常比 OBJ 格式更清晰。
+        // ImportTask->Factory = nullptr;
 
         UE_LOG(LogURLabEditor, Log, TEXT("Using automated factory detection for mesh: %s"), *SourcePath);
     }
 
-    // Run Import
+    // 运行导入
     TArray<UAssetImportTask*> ImportTasks;
     ImportTasks.Add(ImportTask);
     AssetTools.ImportAssetTasks(ImportTasks);
 
-    // Retrieve Result
+    // 获取结果
     TArray<UObject*> ImportedAssets;
-    // for (UObject* Obj : ImportTask->GetObjects())
-    // {
-    //     if (Obj) ImportedAssets.Add(Obj);
-    // }
+    for (UObject* Obj : ImportTask->Result)  // for (UObject* Obj : ImportTask->GetObjects())
+    {
+        if (Obj) ImportedAssets.Add(Obj);
+    }
 
-    // Log all imported assets for debugging
+    // 记录所有导入的资产以进行调试
     UE_LOG(LogURLabEditor, Log, TEXT("[ImportSingleMesh] Import returned %d objects:"), ImportedAssets.Num());
     for (int32 i = 0; i < ImportedAssets.Num(); ++i)
     {
@@ -196,7 +201,7 @@ UStaticMesh* UMujocoGenerationAction::AttemptMeshImport(const FString& SourcePat
             i, *Obj->GetName(), *Obj->GetClass()->GetName(), *Obj->GetPathName());
     }
 
-    // Search all imported assets for a StaticMesh (GLB imports may return textures first)
+    // 在所有导入的资源中搜索 StaticMesh（GLB 导入可能首先返回纹理）
     UStaticMesh* Mesh = nullptr;
     for (UObject* Obj : ImportedAssets)
     {
@@ -204,12 +209,12 @@ UStaticMesh* UMujocoGenerationAction::AttemptMeshImport(const FString& SourcePat
         if (Mesh) break;
     }
 
-    // If not found in direct results, search subfolder paths that Interchange may use
+    // 如果在直接搜索结果中找不到，请搜索 Interchange 可能使用的子文件夹路径。
     if (!Mesh)
     {
         FString MeshName = FPaths::GetBaseFilename(SourcePath);
 
-        // Try various subfolder patterns Interchange uses
+        // 尝试不同的子文件夹模式，互换使用
         TArray<FString> SearchPaths = {
             FString::Printf(TEXT("%s/%s/StaticMeshes/%s.%s"), *DestinationPath, *MeshName, *MeshName, *MeshName),
             FString::Printf(TEXT("%s/%s/StaticMeshes/%s"), *DestinationPath, *MeshName, *MeshName),
@@ -230,7 +235,7 @@ UStaticMesh* UMujocoGenerationAction::AttemptMeshImport(const FString& SourcePat
             }
         }
 
-        // Last resort: use asset registry to find any StaticMesh in the destination folder
+        // 最后手段：使用资源注册表查找目标文件夹中的任何 StaticMesh 文件
         if (!Mesh)
         {
             FString SearchDir = FString::Printf(TEXT("%s/%s"), *DestinationPath, *MeshName);
@@ -258,16 +263,16 @@ UStaticMesh* UMujocoGenerationAction::AttemptMeshImport(const FString& SourcePat
 
     if (Mesh)
     {
-        // Clear Interchange-created materials that may reference stripped textures.
-        // Our import pipeline assigns MI_ material instances on the SCS template,
-        // but the static mesh asset retains Interchange materials in its slots.
-        // These can crash the render thread when browsing/thumbnailing (UE-23902).
+        // 清除可能引用已剥离纹理的 Interchange 创建的材质。
+        // 我们的导入流程会在 SCS 模板上分配 MI_ 材质实例，
+        // 但静态网格资源会在其槽位中保留 Interchange 材质。
+        // 这可能会导致在浏览/生成缩略图时渲染线程崩溃 (UE-23902)。
         // for (FStaticMaterial& Mat : Mesh->GetStaticMaterials())
         // {
         //     Mat.MaterialInterface = UMaterial::GetDefaultMaterial(MD_Surface);
         // }
 
-        // Force rebuild bounds - critical for fixing 0x0x0 size issue
+        // 强制重建边界 - 对于修复 0x0x0 大小问题至关重要
         Mesh->Build();
         Mesh->CalculateExtendedBounds();
 
