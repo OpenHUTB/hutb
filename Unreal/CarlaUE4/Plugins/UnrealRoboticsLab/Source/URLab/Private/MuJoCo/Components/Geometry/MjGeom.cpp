@@ -530,20 +530,20 @@ void UMjGeom::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent
 
 void UMjGeom::ApplyOverrideMaterial(UMaterialInterface* Material)
 {
-    // Base implementation is a no-op. Mesh geoms should not have their imported
-    // materials overwritten — they already have materials from the import pipeline.
-    // Primitive subclasses (Box, Sphere, Cylinder) override this with direct
-    // VisualizerMesh access.
+    // 基础实现是无操作的。
+    // 网格几何体的导入材质不应该被覆盖
+    // ——它们已经有了从导入流程来的材质。
+    // 原始子类（Box、Sphere、Cylinder）通过直接访问 VisualizerMesh 来重写这一点。
 }
 
 void UMjGeom::RegisterToSpec(FMujocoSpecWrapper& Wrapper, mjsBody* ParentBody)
 {
     if (!ParentBody) return;
-    if (bDisabledByDecomposition) return; // Decomposed source geom — hull sub-geoms register instead
+    if (bDisabledByDecomposition) return; // 分解的源几何体 — 改为注册 hull 子几何体
 
-    // When MjClassName is empty, pass nullptr so MuJoCo applies the parent body's
-    // childclass default automatically (MuJoCo 3.x spec API behaviour).
-    // Only resolve an explicit default when a class name was explicitly set.
+    // 当 MjClassName 为空时，
+    // 传递 nullptr 以使 MuJoCo 自动应用父体的子类默认值（MuJoCo 3.x spec API 行为）。
+    // 只有在显式设置类名时才解决显式默认。
     mjsDefault* SpecDef = nullptr;
     if (!MjClassName.IsEmpty())
     {
@@ -565,8 +565,8 @@ void UMjGeom::RegisterToSpec(FMujocoSpecWrapper& Wrapper, mjsBody* ParentBody)
     {
         if (bIsDecomposedHull && !MeshName.IsEmpty())
         {
-            // Hull sub-geom: OBJ files already exist from editor decomposition.
-            // MeshName format: "{AssetName}_{index}" → file: "Complex_{AssetName}_sub_{index}.obj"
+            // Hull sub-geom: 编辑器分解中已经存在 OBJ 文件。
+            // MeshName 格式："{AssetName}_{index}" → 文件："Complex_{AssetName}_sub_{index}.obj"
             int32 LastUnderscore;
             FString BaseAssetName = MeshName;
             FString IndexStr = TEXT("0");
@@ -587,8 +587,8 @@ void UMjGeom::RegisterToSpec(FMujocoSpecWrapper& Wrapper, mjsBody* ParentBody)
             }
             else
             {
-                // Fallback: export the child visualization SMC as a simple convex mesh.
-                // This re-exports the already-decomposed hull geometry, NOT re-running CoACD.
+                // 回退：将子可视化 SMC 导出为简单的凸网格。
+                // 这会重新导出已经分解的外壳几何体，而不是重新运行 CoACD。
                 UE_LOG(LogURLab, Warning, TEXT("[MjGeom] Hull OBJ not found at '%s'. Re-exporting from child SMC."), *ObjFullPath);
                 TArray<USceneComponent*> FallbackChildren;
                 GetChildrenComponents(true, FallbackChildren);
@@ -608,7 +608,7 @@ void UMjGeom::RegisterToSpec(FMujocoSpecWrapper& Wrapper, mjsBody* ParentBody)
         }
         else
         {
-            // Normal geom: find child SMC and prepare mesh (may run CoACD for complex)
+            // Normal geom：找到子 SMC 并准备网格（复杂情况下可能运行CoACD）
             TArray<USceneComponent*> Children;
             GetChildrenComponents(true, Children);
 
@@ -630,10 +630,10 @@ void UMjGeom::RegisterToSpec(FMujocoSpecWrapper& Wrapper, mjsBody* ParentBody)
 
     ExportTo(geom, SpecDef);
 
-    // Extra mesh names from complex decomposition — hull sub-geoms should already
-    // exist as persistent components (created by DecomposeMesh editor action).
-    // They register themselves via their own RegisterToSpec calls.
-    // Log a warning if we have extra meshes but no hull sub-geoms.
+    // 来自复杂分解的额外网格名称
+    // — hull 子几何体应该已经作为持久组件存在（由 DecomposeMesh 编辑器操作创建）。
+    // 它们通过自己的 RegisterToSpec 调用来注册自己。
+    // 如果我们有额外的网格但没有 hull 子几何体，就记录一个警告。
     if (ExtraMeshNames.Num() > 0)
     {
         UE_LOG(LogURLab, Warning, TEXT("[MjGeom] '%s' has %d extra mesh parts from complex decomposition. "
@@ -675,12 +675,12 @@ void UMjGeom::DecomposeMesh()
         return;
     }
 
-    // Find the child StaticMeshComponent.
-    // In the Blueprint editor, GetChildrenComponents() doesn't work on SCS templates —
-    // we must walk the SCS node tree instead.
+    // 找到子级 StaticMeshComponent。
+    // 在蓝图编辑器里，GetChildrenComponents() 对 SCS 模板不起作用
+    // — 我们必须遍历 SCS 节点树。
     UStaticMeshComponent* SMC = nullptr;
 
-    // Try runtime attachment hierarchy first (works on placed instances)
+    // 先试试运行时附加层级（适用于已放置的实例）
     TArray<USceneComponent*> Children;
     GetChildrenComponents(true, Children);
     for (USceneComponent* Child : Children)
@@ -692,14 +692,14 @@ void UMjGeom::DecomposeMesh()
         }
     }
 
-    // If not found, try SCS node tree (Blueprint editor context).
-    // SCS templates aren't attached via the runtime hierarchy, so we walk
-    // the outer chain to find the Blueprint and its SCS node tree.
+    // 如果没找到，试试 SCS 节点树（蓝图编辑器的上下文）。
+    // SCS 模板不会通过运行时层级附加，
+    // 所以我们沿着外部链去找到蓝图及其 SCS 节点树。
     if (!SMC)
     {
         UBlueprint* BP = nullptr;
 
-        // Walk outer chain to find the Blueprint
+        // 沿着外链走去找蓝图
         for (UObject* Outer = GetOuter(); Outer; Outer = Outer->GetOuter())
         {
             if (UBlueprint* Found = Cast<UBlueprint>(Outer))
@@ -758,14 +758,14 @@ void UMjGeom::DecomposeMesh()
     }
 
     UStaticMesh* Mesh = SMC->GetStaticMesh();
-    // UBodySetup* BodySetup; // Mesh->GetBodySetup();
-    // if (!BodySetup) // || BodySetup->TriMeshGeometries.Num() == 0)
-    // {
-    //     UE_LOG(LogURLab, Warning, TEXT("[MjGeom] DecomposeMesh: '%s' has no collision geometry."), *GetName());
-    //     return;
-    // }
+	UBodySetup* BodySetup = Mesh->BodySetup;
+	if (!BodySetup || BodySetup->TriMeshes.Num() == 0)
+	{
+		UE_LOG(LogURLab, Warning, TEXT("[MjGeom] DecomposeMesh: '%s' has no collision geometry."), *GetName());
+		return;
+	}
 
-    // Remove any existing decomposition first
+    // 先移除任何现有的分解
     RemoveDecomposition();
 
     FScopedSlowTask SlowTask(2.f, NSLOCTEXT("URLab", "DecomposingMesh", "Running CoACD mesh decomposition..."));
@@ -773,7 +773,7 @@ void UMjGeom::DecomposeMesh()
 
     SlowTask.EnterProgressFrame(1.f, NSLOCTEXT("URLab", "DecompStep1", "Decomposing mesh with CoACD..."));
 
-    // Export and decompose
+    // 导出并分解
     FString AssetName = Mesh->GetName();
     FString OwnerDir = GetOwner() ? GetOwner()->GetClass()->GetName() : TEXT("Shared");
     FString FilePath = FString::Printf(TEXT("%s/URLab/ConvertedMeshes/%s/Complex_%s.obj"),
@@ -781,207 +781,245 @@ void UMjGeom::DecomposeMesh()
     FString FullFilePath = FPaths::ConvertRelativePathToFull(FilePath);
 
     const int32 GeometryIndex = 0;
-    // // auto& TriGeom; // = BodySetup->TriMeshGeometries[GeometryIndex];
-    // auto& Vertices; // = TriGeom.GetReference()->Particles().X();
-// 
-    // int MeshCount = 0;
-    // IO::DeleteMeshCache(FullFilePath, true);
-// 
-    // if (TriGeom.GetReference()->Elements().RequiresLargeIndices())
-    // {
-    //     const auto& Indices = TriGeom.GetReference()->Elements().GetLargeIndexBuffer();
-    //     MeshCount = MeshUtils::SaveMesh(FullFilePath, Vertices, Indices, true, CoACDThreshold);
-    //     { FString Hash = IO::ComputeMeshHash(Vertices, Indices) + FString::Printf(TEXT("_complex_%.4f"), CoACDThreshold);
-    //     IO::SaveMeshHash(FullFilePath, Hash); }
-    // }
-    // else
-    // {
-    //     const auto& Indices = TriGeom.GetReference()->Elements().GetSmallIndexBuffer();
-    //     MeshCount = MeshUtils::SaveMesh(FullFilePath, Vertices, Indices, true, CoACDThreshold);
-    //     { FString Hash = IO::ComputeMeshHash(Vertices, Indices) + FString::Printf(TEXT("_complex_%.4f"), CoACDThreshold);
-    //     IO::SaveMeshHash(FullFilePath, Hash); }
-    // }
-// 
-    // if (MeshCount == 0)
-    // {
-    //     UE_LOG(LogURLab, Error, TEXT("[MjGeom] DecomposeMesh: CoACD produced 0 hulls for '%s'."), *GetName());
-    //     return;
-    // }
-// 
-    // SlowTask.EnterProgressFrame(1.f, FText::Format(
-    //     NSLOCTEXT("URLab", "DecompStep2", "Creating {0} hull components..."),
-    //     FText::AsNumber(MeshCount)));
-// 
-    // // Create hull sub-geom components.
-    // // In the BP editor we must create SCS nodes; at runtime we use instance components.
-    // UBlueprint* BP = nullptr;
-    // USCS_Node* MyNode = nullptr;
-    // for (UObject* Outer = GetOuter(); Outer; Outer = Outer->GetOuter())
-    // {
-    //     if (UBlueprint* Found = Cast<UBlueprint>(Outer)) { BP = Found; break; }
-    //     if (UBlueprintGeneratedClass* BPGC = Cast<UBlueprintGeneratedClass>(Outer))
-    //     { BP = Cast<UBlueprint>(BPGC->ClassGeneratedBy); break; }
-    // }
-    // if (BP && BP->SimpleConstructionScript)
-    // {
-    //     for (USCS_Node* Node : BP->SimpleConstructionScript->GetAllNodes())
-    //     {
-    //         if (Node->ComponentTemplate == this) { MyNode = Node; break; }
-    //     }
-    // }
-// 
-    // // Find the parent node (hull siblings go under the same parent as this geom)
-    // USCS_Node* ParentNode = nullptr;
-    // if (MyNode && BP)
-    // {
-    //     for (USCS_Node* Node : BP->SimpleConstructionScript->GetAllNodes())
-    //     {
-    //         if (Node->ChildNodes.Contains(MyNode)) { ParentNode = Node; break; }
-    //     }
-    // }
-// 
-    // // Runtime fallback
-    // USceneComponent* ParentComp = GetAttachParent();
-    // bool bIsSCSContext = (MyNode != nullptr && ParentNode != nullptr);
-// 
-    // if (!bIsSCSContext && !ParentComp)
-    // {
-    //     UE_LOG(LogURLab, Error, TEXT("[MjGeom] DecomposeMesh: '%s' has no parent to attach hulls to."), *GetName());
-    //     return;
-    // }
-// 
-    // if (BP) BP->Modify(); // UE undo for Blueprint
-// 
-    // for (int32 i = 0; i < MeshCount; ++i)
-    // {
-    //     FString HullNameStr = FString::Printf(TEXT("%s_hull_%d"), *GetName(), i);
-// 
-    //     UMjGeom* Hull = nullptr;
-// 
-    //     if (bIsSCSContext)
-    //     {
-    //         // Blueprint editor: create an SCS node
-    //         USCS_Node* HullNode = BP->SimpleConstructionScript->CreateNode(UMjGeom::StaticClass(), *HullNameStr);
-    //         Hull = Cast<UMjGeom>(HullNode->ComponentTemplate);
-    //         ParentNode->AddChildNode(HullNode);
-    //     }
-    //     else
-    //     {
-    //         // Runtime: create instance component
-    //         Hull = NewObject<UMjGeom>(GetOwner(), UMjGeom::StaticClass(),
-    //             MakeUniqueObjectName(GetOwner(), UMjGeom::StaticClass(), *HullNameStr));
-    //         Hull->CreationMethod = EComponentCreationMethod::Instance;
-    //         GetOwner()->AddInstanceComponent(Hull);
-    //         Hull->RegisterComponent();
-    //         Hull->AttachToComponent(ParentComp, FAttachmentTransformRules::KeepRelativeTransform);
-    //     }
-// 
-    //     if (!Hull) continue;
-// 
-    //     Hull->bIsDecomposedHull = true;
-    //     Hull->bOverride_Type = true;
-    //     Hull->Type = EMjGeomType::Mesh;
-    //     Hull->MeshName = FString::Printf(TEXT("%s_%d"), *AssetName, i);
-    //     Hull->MjName = FString::Printf(TEXT("%s_hull_%d"), *(MjName.IsEmpty() ? GetName() : MjName), i);
-// 
-    //     // Copy physics properties from source geom
-    //     Hull->Friction = Friction;           Hull->bOverride_Friction = bOverride_Friction;
-    //     Hull->SolRef = SolRef;               Hull->bOverride_SolRef = bOverride_SolRef;
-    //     Hull->SolImp = SolImp;               Hull->bOverride_SolImp = bOverride_SolImp;
-    //     Hull->Density = Density;             Hull->bOverride_Density = bOverride_Density;
-    //     Hull->Mass = Mass;                   Hull->bOverride_Mass = bOverride_Mass;
-    //     Hull->Margin = Margin;               Hull->bOverride_Margin = bOverride_Margin;
-    //     Hull->Gap = Gap;                     Hull->bOverride_Gap = bOverride_Gap;
-    //     Hull->Condim = Condim;               Hull->bOverride_Condim = bOverride_Condim;
-    //     Hull->Contype = Contype;             Hull->bOverride_Contype = bOverride_Contype;
-    //     Hull->Conaffinity = Conaffinity;     Hull->bOverride_Conaffinity = bOverride_Conaffinity;
-    //     Hull->Priority = Priority;           Hull->bOverride_Priority = bOverride_Priority;
-    //     Hull->Group = 3;                     Hull->bOverride_Group = true;
-    //     Hull->Rgba = Rgba;                   Hull->bOverride_Rgba = bOverride_Rgba;
-    //     Hull->MjClassName = MjClassName;
-// 
-    //     // Import the OBJ file as a UStaticMesh asset for editor visualization
-    //     FString SubObjPath = FString::Printf(TEXT("%s/URLab/ConvertedMeshes/%s/Complex_%s_sub_%d.obj"),
-    //         *FPaths::ProjectSavedDir(), *OwnerDir, *AssetName, i);
-    //     FString SubObjFullPath = FPaths::ConvertRelativePathToFull(SubObjPath);
-// 
-    //     if (FPaths::FileExists(SubObjFullPath))
-    //     {
-    //         // Use articulation name as subfolder for organization
-    //         FString ArticName = GetOwner() ? GetOwner()->GetName() : TEXT("Unknown");
-    //         FString DestPath = FString::Printf(TEXT("/Game/URLab/DecomposedMeshes/%s"), *ArticName);
-// 
-    //         UAutomatedAssetImportData* ImportData = NewObject<UAutomatedAssetImportData>();
-    //         ImportData->Filenames.Add(SubObjFullPath);
-    //         ImportData->DestinationPath = DestPath;
-    //         ImportData->bReplaceExisting = true;
-    //         ImportData->bSkipReadOnly = true;
-// 
-    //         IAssetTools& AssetTools = FModuleManager::LoadModuleChecked<FAssetToolsModule>("AssetTools").Get();
-    //         TArray<UObject*> ImportedAssets = AssetTools.ImportAssetsAutomated(ImportData);
-// 
-    //         UStaticMesh* ImportedMesh = nullptr;
-    //         for (UObject* Asset : ImportedAssets)
-    //         {
-    //             if (UStaticMesh* SM = Cast<UStaticMesh>(Asset))
-    //             {
-    //                 ImportedMesh = SM;
-    //                 break;
-    //             }
-    //         }
-// 
-    //         if (ImportedMesh)
-    //         {
-    //             // Create a child StaticMeshComponent on the hull for visualization
-    //             FString SMCName = FString::Printf(TEXT("%s_vis"), *HullNameStr);
-// 
-    //             if (bIsSCSContext && BP)
-    //             {
-    //                 USCS_Node* HullNode = nullptr;
-    //                 // Find the hull's SCS node we just created
-    //                 for (USCS_Node* Node : BP->SimpleConstructionScript->GetAllNodes())
-    //                 {
-    //                     if (Node->ComponentTemplate == Hull) { HullNode = Node; break; }
-    //                 }
-    //                 if (HullNode)
-    //                 {
-    //                     USCS_Node* SMCNode = BP->SimpleConstructionScript->CreateNode(UStaticMeshComponent::StaticClass(), *SMCName);
-    //                     UStaticMeshComponent* VisMesh = Cast<UStaticMeshComponent>(SMCNode->ComponentTemplate);
-    //                     if (VisMesh)
-    //                     {
-    //                         VisMesh->SetStaticMesh(ImportedMesh);
-    //                         VisMesh->SetRelativeScale3D(FVector(100.0f)); // OBJ is in meters, UE in cm
-    //                     }
-    //                     HullNode->AddChildNode(SMCNode);
-    //                 }
-    //             }
-    //             else
-    //             {
-    //                 UStaticMeshComponent* VisMesh = NewObject<UStaticMeshComponent>(GetOwner(), *SMCName);
-    //                 VisMesh->SetStaticMesh(ImportedMesh);
-    //                 VisMesh->SetRelativeScale3D(FVector(100.0f));
-    //                 VisMesh->CreationMethod = EComponentCreationMethod::Instance;
-    //                 GetOwner()->AddInstanceComponent(VisMesh);
-    //                 VisMesh->RegisterComponent();
-    //                 VisMesh->AttachToComponent(Hull, FAttachmentTransformRules::KeepRelativeTransform);
-    //             }
-// 
-    //             UE_LOG(LogURLab, Log, TEXT("[MjGeom] Imported hull mesh '%s' for visualization"), *ImportedMesh->GetName());
-    //         }
-    //     }
-// 
-    //     UE_LOG(LogURLab, Log, TEXT("[MjGeom] Created hull '%s' (mesh: %s)"), *Hull->GetName(), *Hull->MeshName);
-    // }
-// 
-    // if (BP)
-    // {
-    //     FBlueprintEditorUtils::MarkBlueprintAsStructurallyModified(BP);
-    // }
-// 
-    // // Disable source geom
-    // bDisabledByDecomposition = true;
-// 
-    // UE_LOG(LogURLab, Log, TEXT("[MjGeom] Decomposed '%s' into %d hull sub-geoms."), *GetName(), MeshCount);
+	// auto& TriGeom = BodySetup->TriMeshGeometries[GeometryIndex];
+	auto& TriGeom = BodySetup->TriMeshes[GeometryIndex];
+	// auto& Vertices = TriGeom->GetReference()->Particles().X();
+
+	int MeshCount = 0;
+	IO::DeleteMeshCache(FullFilePath, true);
+
+	// if (TriGeom.GetReference()->Elements().RequiresLargeIndices())
+	// {
+	// 	const auto& Indices = TriGeom.GetReference()->Elements().GetLargeIndexBuffer();
+	// 	MeshCount = MeshUtils::SaveMesh(FullFilePath, Vertices, Indices, true, CoACDThreshold);
+	// 	{
+	// 		FString Hash = IO::ComputeMeshHash(Vertices, Indices) + FString::Printf(TEXT("_complex_%.4f"), CoACDThreshold);
+	// 		IO::SaveMeshHash(FullFilePath, Hash);
+	// 	}
+	// }
+	// else
+	// {
+	// 	const auto& Indices = TriGeom.GetReference()->Elements().GetSmallIndexBuffer();
+	// 	MeshCount = MeshUtils::SaveMesh(FullFilePath, Vertices, Indices, true, CoACDThreshold);
+	// 	{
+	// 		FString Hash = IO::ComputeMeshHash(Vertices, Indices) + FString::Printf(TEXT("_complex_%.4f"), CoACDThreshold);
+	// 		IO::SaveMeshHash(FullFilePath, Hash);
+	// 	}
+	// }
+
+	if (MeshCount == 0)
+	{
+		UE_LOG(LogURLab, Error, TEXT("[MjGeom] DecomposeMesh: CoACD produced 0 hulls for '%s'."), *GetName());
+		return;
+	}
+
+	SlowTask.EnterProgressFrame(
+	    1.f, FText::Format(NSLOCTEXT("URLab", "DecompStep2", "Creating {0} hull components..."), FText::AsNumber(MeshCount)));
+
+	// Create hull sub-geom components.
+	// In the BP editor we must create SCS nodes; at runtime we use instance components.
+	UBlueprint* BP = nullptr;
+	USCS_Node* MyNode = nullptr;
+	for (UObject* Outer = GetOuter(); Outer; Outer = Outer->GetOuter())
+	{
+		if (UBlueprint* Found = Cast<UBlueprint>(Outer))
+		{
+			BP = Found;
+			break;
+		}
+		if (UBlueprintGeneratedClass* BPGC = Cast<UBlueprintGeneratedClass>(Outer))
+		{
+			BP = Cast<UBlueprint>(BPGC->ClassGeneratedBy);
+			break;
+		}
+	}
+	if (BP && BP->SimpleConstructionScript)
+	{
+		for (USCS_Node* Node : BP->SimpleConstructionScript->GetAllNodes())
+		{
+			if (Node->ComponentTemplate == this)
+			{
+				MyNode = Node;
+				break;
+			}
+		}
+	}
+
+	// Find the parent node (hull siblings go under the same parent as this geom)
+	USCS_Node* ParentNode = nullptr;
+	if (MyNode && BP)
+	{
+		for (USCS_Node* Node : BP->SimpleConstructionScript->GetAllNodes())
+		{
+			if (Node->ChildNodes.Contains(MyNode))
+			{
+				ParentNode = Node;
+				break;
+			}
+		}
+	}
+
+	// Runtime fallback
+	USceneComponent* ParentComp = GetAttachParent();
+	bool bIsSCSContext = (MyNode != nullptr && ParentNode != nullptr);
+
+	if (!bIsSCSContext && !ParentComp)
+	{
+		UE_LOG(LogURLab, Error, TEXT("[MjGeom] DecomposeMesh: '%s' has no parent to attach hulls to."), *GetName());
+		return;
+	}
+
+	if (BP)
+		BP->Modify(); // UE undo for Blueprint
+
+	for (int32 i = 0; i < MeshCount; ++i)
+	{
+		FString HullNameStr = FString::Printf(TEXT("%s_hull_%d"), *GetName(), i);
+
+		UMjGeom* Hull = nullptr;
+
+		if (bIsSCSContext)
+		{
+			// Blueprint editor: create an SCS node
+			USCS_Node* HullNode = BP->SimpleConstructionScript->CreateNode(UMjGeom::StaticClass(), *HullNameStr);
+			Hull = Cast<UMjGeom>(HullNode->ComponentTemplate);
+			ParentNode->AddChildNode(HullNode);
+		}
+		else
+		{
+			// Runtime: create instance component
+			Hull = NewObject<UMjGeom>(GetOwner(), UMjGeom::StaticClass(),
+			                          MakeUniqueObjectName(GetOwner(), UMjGeom::StaticClass(), *HullNameStr));
+			Hull->CreationMethod = EComponentCreationMethod::Instance;
+			GetOwner()->AddInstanceComponent(Hull);
+			Hull->RegisterComponent();
+			Hull->AttachToComponent(ParentComp, FAttachmentTransformRules::KeepRelativeTransform);
+		}
+
+		if (!Hull)
+			continue;
+
+		Hull->bIsDecomposedHull = true;
+		Hull->bOverride_Type = true;
+		Hull->Type = EMjGeomType::Mesh;
+		Hull->MeshName = FString::Printf(TEXT("%s_%d"), *AssetName, i);
+		Hull->MjName = FString::Printf(TEXT("%s_hull_%d"), *(MjName.IsEmpty() ? GetName() : MjName), i);
+
+		// Copy physics properties from source geom
+		Hull->Friction = Friction;
+		Hull->bOverride_Friction = bOverride_Friction;
+		Hull->SolRef = SolRef;
+		Hull->bOverride_SolRef = bOverride_SolRef;
+		Hull->SolImp = SolImp;
+		Hull->bOverride_SolImp = bOverride_SolImp;
+		Hull->Density = Density;
+		Hull->bOverride_Density = bOverride_Density;
+		Hull->Mass = Mass;
+		Hull->bOverride_Mass = bOverride_Mass;
+		Hull->Margin = Margin;
+		Hull->bOverride_Margin = bOverride_Margin;
+		Hull->Gap = Gap;
+		Hull->bOverride_Gap = bOverride_Gap;
+		Hull->Condim = Condim;
+		Hull->bOverride_Condim = bOverride_Condim;
+		Hull->Contype = Contype;
+		Hull->bOverride_Contype = bOverride_Contype;
+		Hull->Conaffinity = Conaffinity;
+		Hull->bOverride_Conaffinity = bOverride_Conaffinity;
+		Hull->Priority = Priority;
+		Hull->bOverride_Priority = bOverride_Priority;
+		Hull->Group = 3;
+		Hull->bOverride_Group = true;
+		Hull->Rgba = Rgba;
+		Hull->bOverride_Rgba = bOverride_Rgba;
+		Hull->MjClassName = MjClassName;
+
+		// Import the OBJ file as a UStaticMesh asset for editor visualization
+		FString SubObjPath = FString::Printf(TEXT("%s/URLab/ConvertedMeshes/%s/Complex_%s_sub_%d.obj"), *FPaths::ProjectSavedDir(),
+		                                     *OwnerDir, *AssetName, i);
+		FString SubObjFullPath = FPaths::ConvertRelativePathToFull(SubObjPath);
+
+		if (FPaths::FileExists(SubObjFullPath))
+		{
+			// Use articulation name as subfolder for organization
+			FString ArticName = GetOwner() ? GetOwner()->GetName() : TEXT("Unknown");
+			FString DestPath = FString::Printf(TEXT("/Game/URLab/DecomposedMeshes/%s"), *ArticName);
+
+			UAutomatedAssetImportData* ImportData = NewObject<UAutomatedAssetImportData>();
+			ImportData->Filenames.Add(SubObjFullPath);
+			ImportData->DestinationPath = DestPath;
+			ImportData->bReplaceExisting = true;
+			ImportData->bSkipReadOnly = true;
+
+			IAssetTools& AssetTools = FModuleManager::LoadModuleChecked<FAssetToolsModule>("AssetTools").Get();
+			TArray<UObject*> ImportedAssets = AssetTools.ImportAssetsAutomated(ImportData);
+
+			UStaticMesh* ImportedMesh = nullptr;
+			for (UObject* Asset : ImportedAssets)
+			{
+				if (UStaticMesh* SM = Cast<UStaticMesh>(Asset))
+				{
+					ImportedMesh = SM;
+					break;
+				}
+			}
+
+			if (ImportedMesh)
+			{
+				// Create a child StaticMeshComponent on the hull for visualization
+				FString SMCName = FString::Printf(TEXT("%s_vis"), *HullNameStr);
+
+				if (bIsSCSContext && BP)
+				{
+					USCS_Node* HullNode = nullptr;
+					// Find the hull's SCS node we just created
+					for (USCS_Node* Node : BP->SimpleConstructionScript->GetAllNodes())
+					{
+						if (Node->ComponentTemplate == Hull)
+						{
+							HullNode = Node;
+							break;
+						}
+					}
+					if (HullNode)
+					{
+						USCS_Node* SMCNode = BP->SimpleConstructionScript->CreateNode(UStaticMeshComponent::StaticClass(), *SMCName);
+						UStaticMeshComponent* VisMesh = Cast<UStaticMeshComponent>(SMCNode->ComponentTemplate);
+						if (VisMesh)
+						{
+							VisMesh->SetStaticMesh(ImportedMesh);
+							VisMesh->SetRelativeScale3D(FVector(100.0f)); // OBJ is in meters, UE in cm
+						}
+						HullNode->AddChildNode(SMCNode);
+					}
+				}
+				else
+				{
+					UStaticMeshComponent* VisMesh = NewObject<UStaticMeshComponent>(GetOwner(), *SMCName);
+					VisMesh->SetStaticMesh(ImportedMesh);
+					VisMesh->SetRelativeScale3D(FVector(100.0f));
+					VisMesh->CreationMethod = EComponentCreationMethod::Instance;
+					GetOwner()->AddInstanceComponent(VisMesh);
+					VisMesh->RegisterComponent();
+					VisMesh->AttachToComponent(Hull, FAttachmentTransformRules::KeepRelativeTransform);
+				}
+
+				UE_LOG(LogURLab, Log, TEXT("[MjGeom] Imported hull mesh '%s' for visualization"), *ImportedMesh->GetName());
+			}
+		}
+
+		UE_LOG(LogURLab, Log, TEXT("[MjGeom] Created hull '%s' (mesh: %s)"), *Hull->GetName(), *Hull->MeshName);
+	}
+
+	if (BP)
+	{
+		FBlueprintEditorUtils::MarkBlueprintAsStructurallyModified(BP);
+	}
+
+	// Disable source geom
+	bDisabledByDecomposition = true;
+
+	UE_LOG(LogURLab, Log, TEXT("[MjGeom] Decomposed '%s' into %d hull sub-geoms."), *GetName(), MeshCount);
 }
 
 void UMjGeom::RemoveDecomposition()
@@ -989,7 +1027,7 @@ void UMjGeom::RemoveDecomposition()
     FString SourceName = MjName.IsEmpty() ? GetName() : MjName;
     int32 Removed = 0;
 
-    // Try SCS path first (Blueprint editor)
+    // 先尝试 SCS 路径（蓝图编辑器）
     UBlueprint* BP = nullptr;
     for (UObject* Outer = GetOuter(); Outer; Outer = Outer->GetOuter())
     {
@@ -1029,7 +1067,7 @@ void UMjGeom::RemoveDecomposition()
     }
     else if (GetOwner())
     {
-        // Runtime path: destroy instance components
+        // TRuntime 路径：销毁实例组件
         TArray<UMjGeom*> AllGeoms;
         GetOwner()->GetComponents<UMjGeom>(AllGeoms);
 
