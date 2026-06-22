@@ -69,19 +69,19 @@ void UMjBody::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponen
                 return;
             }
 
-            // Thread safety: xpos/xquat reads are lock-free. On x86-64, aligned double
-            // reads are atomic (no tearing). Worst case is a 1-frame position/rotation
-            // desync which is visually imperceptible. This matches MuJoCo Simulate's
-            // own threading model.
+            // 线程安全：xpos/xquat 读取操作无需加锁。
+            // 在 x86-64 架构上，对齐的双读操作是原子性的（不会出现撕裂）。
+            // 最坏的情况是 1 帧的位置/旋转不同步，这种不同步在视觉上是无法察觉的。
+            // 这与 MuJoCo Simulate 自身的线程模型相符。
     	    FVector MuJoCoWorldPos = MjUtils::MjToUEPosition(m_BodyView.xpos);
     	    FQuat MuJoCoWorldQuat = MjUtils::MjToUERotation(m_BodyView.xquat);
     	    
             FVector CorrectedPos = MuJoCoWorldPos;
             
-            // Apply mesh pivot offset correction ONLY if QuickConverted (Unreal -> MuJoCo flow pivot issues)
+            // 仅当使用快速转换（Unreal -> MuJoCo 流程枢轴问题）时才应用网格枢轴偏移校正。
             if (bIsQuickConverted)
             {
-    	        // MuJoCo's xpos is at body center, but UE mesh may have off-center pivot
+    	        // MuJoCo 的 xpos 位于身体中心，但 UE 网格可能存在偏离中心的枢轴点。
         	    FVector OffsetVector = MuJoCoWorldQuat.RotateVector(m_MeshPivotOffset);
         	    CorrectedPos = MuJoCoWorldPos - OffsetVector;
             }
@@ -129,10 +129,10 @@ void UMjBody::Setup(USceneComponent* Parent, mjsBody* ParentBody, FMujocoSpecWra
         BodyToAttachTo->mocap = 1;
     }
 
-    // Sleep policy (MuJoCo 3.4+). Only written when non-default so the global option takes effect otherwise.
+    // 睡眠策略（MuJoCo 3.4+）。仅在非默认设置下写入，否则全局选项生效。
     if (BodyToAttachTo && SleepPolicy != EMjBodySleepPolicy::Default)
     {
-        // BodyToAttachTo->sleep = static_cast<mjtSleepPolicy>(static_cast<uint8>(SleepPolicy));
+        BodyToAttachTo->sleep = static_cast<mjtSleepPolicy>(static_cast<uint8>(SleepPolicy));
     }
     
     if (bOverride_ChildClassName)
@@ -253,13 +253,13 @@ void UMjBody::ImportFromXml(const FXmlNode* Node, const FMjCompilerSettings& Com
     if (MjXmlUtils::ReadAttrString(Node, TEXT("childclass"), ChildClassName))
         bOverride_ChildClassName = true;
 
-    // mocap="true" marks this body as a kinematic reference driven from outside simulation
+    // mocap="true" 将此身体标记为由外部模拟驱动的运动学参考。
     bool bMocap = false;
     bool bDummyMocap = false;
     if (MjXmlUtils::ReadAttrBool(Node, TEXT("mocap"), bMocap, bDummyMocap) && bMocap)
         bDrivenByUnreal = true;
 
-    // sleep policy (MuJoCo 3.4+): "never" | "allowed" | "init"
+    // 睡眠策略 (MuJoCo 3.4+): "never" | "allowed" | "init"
     FString SleepAttr;
     if (MjXmlUtils::ReadAttrString(Node, TEXT("sleep"), SleepAttr))
     {
@@ -269,7 +269,7 @@ void UMjBody::ImportFromXml(const FXmlNode* Node, const FMjCompilerSettings& Com
         else if (SleepAttr == TEXT("init"))    SleepPolicy = EMjBodySleepPolicy::InitAsleep;
     }
 
-    // name attribute → store in MjName for explicit override
+    // 名称属性 → 存储在 MjName 中以便显式覆盖
     MjXmlUtils::ReadAttrString(Node, TEXT("name"), MjName);
 }
 
@@ -314,19 +314,19 @@ void UMjBody::Bind(mjModel* Model, mjData* Data, const FString& Prefix)
 			UStaticMesh* Mesh = SMC->GetStaticMesh();
 			if (Mesh)
 			{
-				// UBodySetup* BodySetup = Mesh->GetBodySetup();
-				// if (BodySetup)
-				// {
-				// 	FVector LocalCenter = BodySetup->AggGeom.CalcAABB(FTransform::Identity).GetCenter();
-				// 	m_MeshPivotOffset = LocalCenter;
-				// 	break; 
-				// }
+				UBodySetup* BodySetup = Mesh->BodySetup;
+				if (BodySetup)
+				{
+					FVector LocalCenter = BodySetup->AggGeom.CalcAABB(FTransform::Identity).GetCenter();
+					m_MeshPivotOffset = LocalCenter;
+					break;
+				}
 			}
 		}
 	}
 
-    // Child binding is handled by PostSetup's flat iteration over all components.
-    // Calling Bind() here as well caused each child to be bound twice.
+    // 子组件绑定由 PostSetup 对所有组件进行扁平化迭代来处理。
+    // 如果在这里也调用 Bind()，会导致每个子组件被绑定两次。
     // for (const auto& SpecElem : m_SpecElements)
     // {
     //     if (SpecElem)
@@ -358,15 +358,15 @@ FMuJoCoSpatialVelocity UMjBody::GetSpatialVelocity() const
     FMuJoCoSpatialVelocity Result;
     if (m_BodyView.id < 0 || !m_BodyView.cvel) return Result;
 
-    // MuJoCo cvel: [ang_x, ang_y, ang_z, lin_x, lin_y, lin_z] (MuJoCo Frame, m/s and rad/s)
-    // Unreal Frame: X -> X, Y -> -Y, Z -> Z
+    // MuJoCo cvel: [ang_x, ang_y, ang_z, lin_x, lin_y, lin_z] (MuJoCo 帧, m/s 和 rad/s)
+    // Unreal 帧: X -> X, Y -> -Y, Z -> Z
     
-    // Linear Velocity (m/s -> cm/s)
+    // 线速度 (m/s -> cm/s)
     Result.Linear.X = (float)m_BodyView.cvel[3] * 100.0f;
     Result.Linear.Y = -(float)m_BodyView.cvel[4] * 100.0f;
     Result.Linear.Z = (float)m_BodyView.cvel[5] * 100.0f;
 
-    // Angular Velocity (rad/s -> deg/s)
+    // 角速度 (rad/s -> deg/s)
     Result.Angular.X = FMath::RadiansToDegrees((float)m_BodyView.cvel[0]);
     Result.Angular.Y = -FMath::RadiansToDegrees((float)m_BodyView.cvel[1]);
     Result.Angular.Z = FMath::RadiansToDegrees((float)m_BodyView.cvel[2]);
@@ -377,15 +377,15 @@ FMuJoCoSpatialVelocity UMjBody::GetSpatialVelocity() const
 void UMjBody::ApplyForce(FVector Force, FVector Torque)
 {
     if (m_BodyView.id < 0 || !m_BodyView.xfrc_applied) return;
-    // xfrc_applied layout: [torque_x, torque_y, torque_z, force_x, force_y, force_z] in MuJoCo frame
-    // Convert UE (cm, Y-flip) -> MuJoCo (m, right-hand)
+    // xfrc_applied 布局: 在 Mujoco 帧中 [torque_x, torque_y, torque_z, force_x, force_y, force_z]
+    // 转换 UE (厘米, Y 轴翻转) -> MuJoCo (米，右手系)
     const float InvScale = 0.01f; // cm -> m
     mjtNum* xfrc = m_BodyView.xfrc_applied;
-    // Torque: UE X -> Mj X, UE Y -> -Mj Y, UE Z -> Mj Z
+    // 力矩：UE X -> Mj X, UE Y -> -Mj Y, UE Z -> Mj Z
     xfrc[0] = (mjtNum)(Torque.X);
     xfrc[1] = (mjtNum)(-Torque.Y);
     xfrc[2] = (mjtNum)(Torque.Z);
-    // Force: same convention
+    // 力：相同的约定
     xfrc[3] = (mjtNum)(Force.X * InvScale);
     xfrc[4] = (mjtNum)(-Force.Y * InvScale);
     xfrc[5] = (mjtNum)(Force.Z * InvScale);
@@ -402,22 +402,22 @@ bool UMjBody::IsAwake() const
 {
     // body_awake: mjtSleepState — mjS_ASLEEP=0, mjS_AWAKE=1
     if (m_BodyView.id < 0 || !m_BodyView._d) return true;  // unbound → treat as awake
-    return true;
-    // return m_BodyView._d->body_awake[m_BodyView.id] != 0;
+    // return true;
+    return m_BodyView._d->body_awake[m_BodyView.id] != 0;
 }
 
 void UMjBody::Wake()
 {
     if (m_BodyView.id < 0 || !m_BodyView._d || !m_BodyView._m) return;
 
-    // m_BodyView._d->body_awake[m_BodyView.id] = 1;  // mjS_AWAKE
+    m_BodyView._d->body_awake[m_BodyView.id] = 1;  // mjS_AWAKE
 
-    // Also wake the kinematic tree so the physics step propagates the wake.
+    // 同时唤醒运动学树，以便物理步传播唤醒
     int32 TreeId = m_BodyView._m->body_treeid[m_BodyView.id];
     if (TreeId >= 0 && TreeId < m_BodyView._m->ntree)
     {
-        // m_BodyView._d->tree_asleep[TreeId] = -1;  // <0 → awake
-        // m_BodyView._d->tree_awake[TreeId]  = 1;
+        m_BodyView._d->tree_asleep[TreeId] = -1;  // <0 → awake
+        m_BodyView._d->tree_awake[TreeId]  = 1;
     }
 }
 
@@ -425,24 +425,24 @@ void UMjBody::Sleep()
 {
     if (m_BodyView.id < 0 || !m_BodyView._d || !m_BodyView._m) return;
 
-    // m_BodyView._d->body_awake[m_BodyView.id] = 0;  // mjS_ASLEEP
+    m_BodyView._d->body_awake[m_BodyView.id] = 0;  // mjS_ASLEEP
 
-    // Also mark the kinematic tree as sleeping.
+    // 同时将运动树标记为休眠状态。
     int32 TreeId = m_BodyView._m->body_treeid[m_BodyView.id];
     if (TreeId >= 0 && TreeId < m_BodyView._m->ntree)
     {
-        // tree_asleep >= 0 means the tree is sleeping (value is an index in the sleep cycle).
-        //  if (m_BodyView._d->tree_asleep[TreeId] < 0)
-        //     m_BodyView._d->tree_asleep[TreeId] = 0;
-        // m_BodyView._d->tree_awake[TreeId] = 0;
+        // tree_asleep >= 0 表示该树处于睡眠状态（值为睡眠周期中的索引）。
+         if (m_BodyView._d->tree_asleep[TreeId] < 0)
+            m_BodyView._d->tree_asleep[TreeId] = 0;
+        m_BodyView._d->tree_awake[TreeId] = 0;
     }
 }
 
 void UMjBody::RegisterToSpec(FMujocoSpecWrapper& Wrapper, mjsBody* ParentBody)
 {
-    // MjBody is handled recursively via Setup() in the parent MjBody.
-    // This interface method is provided to satisfy IMjSpecElement but is not used in the standard flow.
-    // If called explicitly, we warn and attempt to delegate to Setup, though this path is unusual.
+    // MjBody 通过父 MjBody 中的 Setup() 方法递归处理。
+    // 此接口方法是为了满足 IMjSpecElement 规范而提供的，但在标准流程中并不使用。
+    // 如果显式调用此方法，我们会发出警告并尝试委托给 Setup 方法，尽管这种做法并不常见。
     UE_LOG(LogURLab, Warning, TEXT("MjBody::RegisterToSpec called for %s. This path is liable to double-create bodies if not careful. Prefer Setup()."), *GetName());
     if (ParentBody && !m_IsSetup)
     {

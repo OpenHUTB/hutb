@@ -41,7 +41,7 @@ UMjFrame::UMjFrame()
 
 void UMjFrame::Setup(USceneComponent* Parent, mjsBody* ParentBody, FMujocoSpecWrapper* Wrapper)
 {
-    // Frames directly under worldbody receive a null ParentBody; resolve it now.
+    // 世界主体(worldbody)正下方的帧接收到空的 ParentBody；立即解决它。
     if (!ParentBody && Wrapper && Wrapper->Spec)
         ParentBody = mjs_findBody(Wrapper->Spec, "world");
 
@@ -63,22 +63,22 @@ void UMjFrame::Setup(USceneComponent* Parent, mjsBody* ParentBody, FMujocoSpecWr
 
     for (USceneComponent* CurrentComponent : DirectChildren)
     {
-        // 1. Recursive Frames
+        // 1. 递归帧
         if (UMjFrame* MjFrameComp = Cast<UMjFrame>(CurrentComponent))
         {
             MjFrameComp->Setup(this, ParentBody, Wrapper);
             continue;
         }
 
-        // 2. Check for child Bodies (attached to the parent body, not the frame directly, 
-        // but we respect Unreal hierarchy for coordinate lookup)
+        // 2. 检查子体(Bodies)（附加到父体上，而不是直接附加到帧上，
+        // 但我们遵循虚幻引擎的层级结构进行坐标查找）
         if (UMjBody* MjBodyComp = Cast<UMjBody>(CurrentComponent))
         {
             MjBodyComp->Setup(this, ParentBody, Wrapper);
             continue;
         }
 
-        // 3. Register standard Spec Elements (Geoms, Sites, etc.) to the frame's element.
+        // 3. 将标准规范元素（几何体、站点等）注册到帧元素。
         if (CurrentComponent->GetClass()->ImplementsInterface(UMjSpecElement::StaticClass()))
         {
             IMjSpecElement* SpecElem = Cast<IMjSpecElement>(CurrentComponent);
@@ -93,18 +93,18 @@ void UMjFrame::Setup(USceneComponent* Parent, mjsBody* ParentBody, FMujocoSpecWr
 
 void UMjFrame::Bind(mjModel* Model, mjData* Data, const FString& Prefix)
 {
-    // Frames are compiled away by MuJoCo, so they don't have IDs in mjModel/mjData.
-    // They don't need runtime binding or ticking.
+    // MuJoCo 会将帧编译掉，因此 mjModel/mjData 中没有帧 ID。
+    // 它们不需要运行时绑定或节拍机制。
     m_Model = Model;
     m_Data = Data;
-    m_ID = -1; // Not targetable at runtime by ID
+    m_ID = -1; // 运行时无法通过 ID 定位
 }
 
 void UMjFrame::ImportFromXml(const FXmlNode* Node, const FMjCompilerSettings& CompilerSettings)
 {
     if (!Node) return;
 
-    // Position — same as body: scale ×100, negate Y
+    // 位置——与身体相同：缩放×100，Y轴取反。
     FString PosStr = Node->GetAttribute(TEXT("pos"));
     if (!PosStr.IsEmpty())
     {
@@ -112,7 +112,7 @@ void UMjFrame::ImportFromXml(const FXmlNode* Node, const FMjCompilerSettings& Co
         SetRelativeLocation(MjUtils::MjToUEPosition(&MjPos.X));
     }
 
-    // Orientation (quat/axisangle/euler/xyaxes/zaxis in priority order)
+    // 朝向 (按优先级顺序为：quat/axisangle/euler/xyaxes/zaxis)
     double MjQuat[4];
     if (MjOrientationUtils::OrientationToMjQuat(Node, CompilerSettings, MjQuat))
     {
@@ -122,7 +122,7 @@ void UMjFrame::ImportFromXml(const FXmlNode* Node, const FMjCompilerSettings& Co
 
 void UMjFrame::RegisterToSpec(FMujocoSpecWrapper& Wrapper, mjsBody* ParentBody)
 {
-    // MjFrame is handled recursively via Setup().
+    // MjFrame 通过 Setup() 递归处理。
     if (ParentBody)
     {
         Setup(GetAttachParent(), ParentBody, &Wrapper);

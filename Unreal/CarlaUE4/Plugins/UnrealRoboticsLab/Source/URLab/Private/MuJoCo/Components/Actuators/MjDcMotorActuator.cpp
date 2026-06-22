@@ -33,7 +33,7 @@ UMjDcMotorActuator::UMjDcMotorActuator()
 
 namespace
 {
-    /** Copy UE TArray<float> into a double[N] buffer, zero-padding the tail. */
+    /** 将UE的TArray<float>复制到double[N]缓冲区中，并对尾部进行零填充。 */
     template <int N>
     void FillDouble(double (&Out)[N], const TArray<float>& In)
     {
@@ -68,10 +68,10 @@ void UMjDcMotorActuator::ParseSpecifics(const FXmlNode* Node)
 
 void UMjDcMotorActuator::ExtractSpecifics(const mjsActuator* /*Actuator*/)
 {
-    // DC motor parameters are packed across gainprm/biasprm/dynprm with a
-    // non-trivial layout (see `engine/engine_xml_native_reader.cc::dcmotor`).
-    // Extracting them cleanly on the reverse path isn't needed for the XML
-    // import flow (that goes through ParseSpecifics) and isn't wired up yet.
+    // DC 运动参数以非平凡布局打包在 gainprm/biasprm/dynprm中
+    // （见`engine/engine_xml_native_reader.cc::dcmotor`）。
+    // 在反向路径上清晰提取这些参数对于XML导入流程（通过ParseSpecifics）来说并非必需，
+    // 且尚未实现。
 }
 
 void UMjDcMotorActuator::ExportTo(mjsActuator* Actuator, mjsDefault* Default)
@@ -80,10 +80,10 @@ void UMjDcMotorActuator::ExportTo(mjsActuator* Actuator, mjsDefault* Default)
 
     Super::ExportTo(Actuator, Default);
 
-    // mjs_setToDCMotor treats null array pointers as "don't override, keep
-    // whatever the default / inherited class set". Pass nullptr for any group
-    // the user hasn't opted into so muscles of defaults-chains keep their
-    // inherited values.
+    // mjs_setToDCMotor 会把空数组指针当作“不要覆盖，
+    // 保留默认/继承类设置”。
+    // 对于用户没有选择的任何组，传入 nullptr，
+    // 这样默认链条里的肌肉就能保持它们继承的值。
     double MotorConstBuf [2]; FillDouble(MotorConstBuf, MotorConst);
     double NominalBuf    [3]; FillDouble(NominalBuf,    Nominal);
     double SaturationBuf [3]; FillDouble(SaturationBuf, Saturation);
@@ -97,18 +97,18 @@ void UMjDcMotorActuator::ExportTo(mjsActuator* Actuator, mjsDefault* Default)
     const int    InputModeArg  = bOverride_Input ? (int)Input : 0;
 
     const char* err = nullptr;
-    //mjs_setToDCMotor(
-    //    Actuator,
-    //    bOverride_MotorConst  ? MotorConstBuf  : nullptr,
-    //    ResistanceArg,
-    //    bOverride_Nominal     ? NominalBuf     : nullptr,
-    //    bOverride_Saturation  ? SaturationBuf  : nullptr,
-    //    bOverride_Inductance  ? InductanceBuf  : nullptr,
-    //    bOverride_Cogging     ? CoggingBuf     : nullptr,
-    //    bOverride_Controller  ? ControllerBuf  : nullptr,
-    //    bOverride_Thermal     ? ThermalBuf     : nullptr,
-    //    bOverride_LuGre       ? LuGreBuf       : nullptr,
-    //    InputModeArg);
+    mjs_setToDCMotor(
+        Actuator,
+        bOverride_MotorConst  ? MotorConstBuf  : nullptr,
+        ResistanceArg,
+        bOverride_Nominal     ? NominalBuf     : nullptr,
+        bOverride_Saturation  ? SaturationBuf  : nullptr,
+        bOverride_Inductance  ? InductanceBuf  : nullptr,
+        bOverride_Cogging     ? CoggingBuf     : nullptr,
+        bOverride_Controller  ? ControllerBuf  : nullptr,
+        bOverride_Thermal     ? ThermalBuf     : nullptr,
+        bOverride_LuGre       ? LuGreBuf       : nullptr,
+        InputModeArg);
 
     if (err && err[0])
     {

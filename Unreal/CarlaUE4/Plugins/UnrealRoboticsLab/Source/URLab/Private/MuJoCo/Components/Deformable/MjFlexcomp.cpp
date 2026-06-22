@@ -281,7 +281,7 @@ FString UMjFlexcomp::ExportMeshToVFS(FMujocoSpecWrapper& Wrapper)
     if (!SMC || !SMC->GetStaticMesh()) return FString();
 
     UE_LOG(LogURLab, Warning,
-        TEXT("[MjFlexcomp] Mesh export requires UE5 GeometryFramework or a pre-exported OBJ. UE4 build skips runtime mesh export."));
+        TEXT("[MjFlexcomp] Mesh export requires UE5 GeometryFramework or a pre-exported OBJ. UE4 build skips runtime mesh export.")); // 网格导出需要 UE5 的 GeometryFramework 或预先导出的 OBJ。UE4 版本会跳过运行时网格导出。
     return FString();
 }
 
@@ -603,7 +603,7 @@ void UMjFlexcomp::CreateProceduralMesh()
     AActor* Owner = GetOwner();
     if (!Owner) return;
 
-    // Find source static mesh (we'll build the dynamic mesh from its render data)
+    // 找到源静态网格（我们将从它的渲染数据构建动态网格）
     TArray<USceneComponent*> Children;
     GetChildrenComponents(false, Children);
     UStaticMeshComponent* SourceSMC = nullptr;
@@ -621,13 +621,59 @@ void UMjFlexcomp::CreateProceduralMesh()
     DynamicMesh->RegisterComponent();
     DynamicMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 
-    // Reuse the source mesh's material
+    // 重用源网格的材质
     if (UMaterialInterface* SourceMat = SourceSMC->GetMaterial(0))
     {
         DynamicMesh->SetMaterial(0, SourceMat);
     }
     SourceSMC->SetVisibility(false);
     SourceSMC->SetHiddenInGame(true);
+
+    // 从静态网格的渲染数据（顶点、索引、UV、法线、切线）构建动态网格
+    // const FStaticMeshLODResources& LOD = SourceSMC->GetStaticMesh()->GetRenderData()->LODResources[0];
+    // const FStaticMeshVertexBuffer& VB = LOD.VertexBuffers.StaticMeshVertexBuffer;
+    // const FPositionVertexBuffer& PB = LOD.VertexBuffers.PositionVertexBuffer;
+    // FIndexArrayView Indices = LOD.IndexBuffer.GetArrayView();
+    // bool bHasUVs = VB.GetNumTexCoords() > 0;
+    // 
+    // DynamicMesh->EditMesh([&](UE::Geometry::FDynamicMesh3& Mesh)
+    // {
+    //     Mesh.Clear();
+    //     Mesh.EnableAttributes();
+    //     Mesh.Attributes()->SetNumNormalLayers(1);
+    //     if (bHasUVs) Mesh.Attributes()->SetNumUVLayers(1);
+    // 
+    //     UE::Geometry::FDynamicMeshNormalOverlay* NormalOverlay = Mesh.Attributes()->PrimaryNormals();
+    //     UE::Geometry::FDynamicMeshUVOverlay* UVOverlay = bHasUVs ? Mesh.Attributes()->PrimaryUV() : nullptr;
+    // 
+    //     // Add vertices (positions in UE local space; at t=0 these come from the static mesh directly)
+    //     for (int32 i = 0; i < NumRenderVerts; i++)
+    //     {
+    //         FVector3f P = PB.VertexPosition(i);
+    //         Mesh.AppendVertex(FVector3d(P.X, P.Y, P.Z));
+    // 
+    //         FVector4f Nz = VB.VertexTangentZ(i);
+    //         NormalOverlay->AppendElement(FVector3f(Nz.X, Nz.Y, Nz.Z));
+    //         if (UVOverlay)
+    //         {
+    //             FVector2f UV = VB.GetVertexUV(i, 0);
+    //             UVOverlay->AppendElement(FVector2f(UV.X, UV.Y));
+    //         }
+    //     }
+    // 
+    //     // 添加三角形——使用原始 UE 索引，并将覆盖层设置为相同的元素索引
+    //     for (int32 i = 0; i + 2 < Indices.Num(); i += 3)
+    //     {
+    //         int32 A = Indices[i], B = Indices[i + 1], C = Indices[i + 2];
+    //         if (A == B || B == C || A == C) continue;
+    //         int32 TriId = Mesh.AppendTriangle(A, B, C);
+    //         if (TriId >= 0)
+    //         {
+    //             NormalOverlay->SetTriangle(TriId, UE::Geometry::FIndex3i(A, B, C));
+    //             if (UVOverlay) UVOverlay->SetTriangle(TriId, UE::Geometry::FIndex3i(A, B, C));
+    //         }
+    //     }
+    // }, EDynamicMeshComponentRenderUpdateMode::FullUpdate);
 
     DynamicMesh->CreateMeshSection(0,
         TArray<FVector>(),

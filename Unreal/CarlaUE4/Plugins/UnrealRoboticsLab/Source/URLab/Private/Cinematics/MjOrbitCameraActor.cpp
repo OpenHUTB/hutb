@@ -59,13 +59,13 @@ void AMjOrbitCameraActor::BeginPlay()
         CineCamera->CurrentFocalLength = FocalLength;
         CineCamera->CurrentAperture = Aperture;
         CineCamera->FocusSettings.FocusMethod = ECameraFocusMethod::Disable;
-        // Prevent aspect ratio letterboxing which offsets debug draws from the rendered image
+        // 防止宽高比信箱效应，该效应会偏移渲染图像中的调试绘制内容
         CineCamera->SetConstraintAspectRatio(false);
     }
 
     CachedPC = GetWorld()->GetFirstPlayerController();
 
-    // Find replay manager
+    // 查找回放管理器
     ReplayMgr = Cast<AMjReplayManager>(
         UGameplayStatics::GetActorOfClass(GetWorld(), AMjReplayManager::StaticClass()));
 
@@ -74,7 +74,7 @@ void AMjOrbitCameraActor::BeginPlay()
         ActivateCamera();
     }
 
-    // Use manual target if set, otherwise auto-detect from overlap box
+    // 如果已设置手动目标，则使用手动目标；否则，从重叠框中自动检测
     if (ManualTarget)
     {
         SetTarget(ManualTarget);
@@ -116,14 +116,14 @@ void AMjOrbitCameraActor::SetTarget(AMjArticulation* NewTarget)
         TArray<UMjBody*> Bodies;
         NewTarget->GetComponents<UMjBody>(Bodies);
 
-        // Prefer the root body (attached directly to the articulation root, not to another MjBody)
+        // 首选根体(root body)（直接附着于关节根部，而非附着于另一个MjBody）
         UMjBody* FirstNonDefault = nullptr;
         for (UMjBody* B : Bodies)
         {
             if (B->bIsDefault) continue;
             if (!FirstNonDefault) FirstNonDefault = B;
 
-            // Root body = its parent component is NOT an MjBody (it's the scene root or articulation root)
+            // Root body = 其父组件不是 MjBody (它是场景根或铰链的根)
             USceneComponent* Parent = B->GetAttachParent();
             if (Parent && !Cast<UMjBody>(Parent))
             {
@@ -136,7 +136,7 @@ void AMjOrbitCameraActor::SetTarget(AMjArticulation* NewTarget)
 
         if (!TrackedBody)
         {
-            // Bodies not ready yet — don't commit target so overlap can retry later
+            // 身体还没准备好——不要设定目标，这样以后还可以重试
             UE_LOG(LogURLab, Log, TEXT("MjOrbitCamera: '%s' has no tracked body yet, will retry"),
                 *NewTarget->GetName());
             CurrentTarget = nullptr;
@@ -190,16 +190,16 @@ float AMjOrbitCameraActor::ComputeAutoFrameRadius() const
 {
     if (!CurrentTarget) return OrbitRadius;
 
-    // Get the articulation's bounding box extent
+    // 获取铰链的边界框范围
     FVector Origin, Extent;
     CurrentTarget->GetActorBounds(false, Origin, Extent);
 
-    // Use the largest horizontal extent to determine distance
+    // 使用最大的水平范围来确定距离
     float RobotSize = FMath::Max(Extent.X, Extent.Y) * 2.0f; // Full width
     float RobotHeight = Extent.Z * 2.0f;
     float MaxExtent = FMath::Max(RobotSize, RobotHeight);
 
-    // Compute distance needed based on FOV
+    // 根据视场（FOV）计算所需距离
     float HalfFOVRad = FMath::DegreesToRadians(CineCamera ? CineCamera->FieldOfView * 0.5f : 45.0f);
     float RequiredDistance = (MaxExtent * FramingPadding) / FMath::Tan(HalfFOVRad);
 
@@ -210,7 +210,7 @@ void AMjOrbitCameraActor::WriteCameraToReplayFrame()
 {
     if (!bRecordCameraPath) return;
 
-    // Lazy lookup — ReplayManager may be auto-created after our BeginPlay
+    // 延迟查找 — ReplayManager 可能会在我们的 BeginPlay 之后自动创建
     if (!ReplayMgr)
     {
         ReplayMgr = Cast<AMjReplayManager>(
@@ -221,13 +221,13 @@ void AMjOrbitCameraActor::WriteCameraToReplayFrame()
     TArray<FMjReplayFrame>& LiveFrames = ReplayMgr->Sessions.FindOrAdd(AMjReplayManager::LiveSessionName).Frames;
     if (LiveFrames.Num() == 0) { LastCameraWriteFrameIdx = 0; return; }
 
-    // Reset if recording restarted (frame count dropped)
+    // 如果录制重新开始（帧数下降），则重置
     if (LiveFrames.Num() < LastCameraWriteFrameIdx) LastCameraWriteFrameIdx = 0;
 
     FVector CamPos = GetCurrentCameraPosition();
     FRotator CamRot = GetCurrentCameraRotation();
 
-    // Fill all frames since the last write (physics runs faster than game tick)
+    // 填充自上次写入以来的所有帧（物理运行速度比游戏帧速率快）
     int32 StartIdx = FMath::Max(LastCameraWriteFrameIdx, 0);
     for (int32 i = StartIdx; i < LiveFrames.Num(); ++i)
     {
@@ -244,13 +244,13 @@ void AMjOrbitCameraActor::Tick(float DeltaTime)
 
     if (!CineCamera) return;
 
-    // --- Playback mode: read camera transforms from replay ---
+    // --- 回放模式：从回放中读取摄像机的变换数据 ---
     if (bPlaybackCameraPath && ReplayMgr && ReplayMgr->bIsReplaying)
     {
         TArray<FMjReplayFrame>& Frames = ReplayMgr->Sessions.FindOrAdd(ReplayMgr->ActiveSessionName).Frames;
         if (Frames.Num() > 0)
         {
-            // Find frame at current playback time (same logic as OnReplayStep)
+            // 在当前播放时间找到帧（逻辑与OnReplayStep相同）
             double StartTime = Frames[0].Timestamp;
             double TargetTime = StartTime + (double)ReplayMgr->PlaybackTime;
 
@@ -266,8 +266,8 @@ void AMjOrbitCameraActor::Tick(float DeltaTime)
             {
                 FVector TargetCamPos = Frame.CameraPosition;
 
-                // Apply RelPos offset if the target articulation has one
-                // This shifts the camera the same way the robot position is shifted
+                // 如果目标关节有一个 RelPos 偏移，则应用该偏移
+                // 这会使摄像机的位置发生移动，其方式与机器人位置的移动方式相同
                 if (CurrentTarget)
                 {
                     TArray<FReplayArticulationBinding>& Bindings = ReplayMgr->GetArticulationBindings();
@@ -279,7 +279,7 @@ void AMjOrbitCameraActor::Tick(float DeltaTime)
                                 B.InitialMjPosition.X - B.CsvStartPosition.X,
                                 B.InitialMjPosition.Y - B.CsvStartPosition.Y,
                                 B.InitialMjPosition.Z - B.CsvStartPosition.Z);
-                            // Convert MuJoCo meters offset to Unreal cm (x100)
+                            // 将MuJoCo中的米偏移量转换为虚幻引擎中的厘米（x100）
                             TargetCamPos += Offset * 100.0;
                             break;
                         }
@@ -296,12 +296,12 @@ void AMjOrbitCameraActor::Tick(float DeltaTime)
 
                 CineCamera->CurrentFocalLength = FocalLength;
                 CineCamera->CurrentAperture = Aperture;
-                return; // Skip live orbit computation
+                return; // 跳过实时轨道计算
             }
         }
     }
 
-    // --- Retry target acquisition if we don't have one yet ---
+    // --- 如果我们还没有获取到目标，则重试目标获取 ---
     if (!CurrentTarget)
     {
         TArray<AActor*> OverlappingActors;
@@ -316,10 +316,10 @@ void AMjOrbitCameraActor::Tick(float DeltaTime)
         }
     }
 
-    // --- Live orbit mode ---
+    // --- 实时轨道模式 ---
     if (!bIsOrbiting || !TrackedBody)
     {
-        // Still write camera data even if not orbiting (records whatever view is active)
+        // 即使未进行环绕，也仍然写入相机数据（记录当前活动的任何视图）
         WriteCameraToReplayFrame();
         return;
     }
@@ -329,7 +329,7 @@ void AMjOrbitCameraActor::Tick(float DeltaTime)
 
     float AngleRad = FMath::DegreesToRadians(CurrentAngle);
 
-    // Compute center from actual MjBody component positions (actor origin doesn't move)
+    // 根据实际的 MjBody 组件位置计算中心（角色原点不移动）
     FVector TargetPos = TrackedBody->GetComponentLocation();
     {
         TArray<UMjBody*> Bodies;
@@ -350,27 +350,27 @@ void AMjOrbitCameraActor::Tick(float DeltaTime)
         }
     }
 
-    // Auto-frame: compute radius to keep robot in frame
+    // 自动帧：计算半径以使机器人保持在框选范围内
     float EffectiveRadius = bAutoFrameRobot ? ComputeAutoFrameRadius() : OrbitRadius;
     EffectiveRadius = FMath::FInterpTo(
         CineCamera->GetComponentLocation().Size2D() > 0 ? (CineCamera->GetComponentLocation() - TargetPos).Size2D() : EffectiveRadius,
         EffectiveRadius, DeltaTime, SmoothingSpeed * 0.5f);
 
-    // Compute desired camera position on the orbit circle
+    // 计算轨道圆上所需的摄像机位置
     float X = TargetPos.X + EffectiveRadius * FMath::Cos(AngleRad);
     float Y = TargetPos.Y + EffectiveRadius * FMath::Sin(AngleRad);
 
-    // Height with oscillation
+    // 跟随振荡的高度
     float OscillationPhase = AngleRad * HeightOscillationFrequency;
     float Z = TargetPos.Z + HeightOffset + HeightOscillationAmplitude * FMath::Sin(OscillationPhase);
 
     FVector DesiredPos(X, Y, Z);
 
-    // Smooth interpolation
+    // 平滑插值
     FVector CurrentPos = CineCamera->GetComponentLocation();
     FVector NewPos = FMath::VInterpTo(CurrentPos, DesiredPos, DeltaTime, SmoothingSpeed);
 
-    // Look at target body
+    // 观察目标身体
     FVector LookAtPoint = TargetPos + FVector(0, 0, LookAtHeightOffset);
     FRotator LookAtRot = (LookAtPoint - NewPos).Rotation();
 
@@ -382,6 +382,6 @@ void AMjOrbitCameraActor::Tick(float DeltaTime)
     CineCamera->CurrentFocalLength = FocalLength;
     CineCamera->CurrentAperture = Aperture;
 
-    // Write camera path AFTER position is computed
+    // 在计算出位置之后再写入相机路径。
     WriteCameraToReplayFrame();
 }

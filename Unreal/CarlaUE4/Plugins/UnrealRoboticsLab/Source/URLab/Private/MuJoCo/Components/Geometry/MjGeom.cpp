@@ -76,7 +76,7 @@ void UMjGeom::ImportFromXml(const FXmlNode* Node, const FMjCompilerSettings& Com
     if (!Node) return;
 
 
-    // Physics
+    // 物理
     MjXmlUtils::ReadAttrFloatArray(Node, TEXT("friction"), Friction, bOverride_Friction);
     MjXmlUtils::ReadAttrFloatArray(Node, TEXT("solref"), SolRef, bOverride_SolRef);
     MjXmlUtils::ReadAttrFloatArray(Node, TEXT("solimp"), SolImp, bOverride_SolImp);
@@ -90,7 +90,7 @@ void UMjGeom::ImportFromXml(const FXmlNode* Node, const FMjCompilerSettings& Com
     MjXmlUtils::ReadAttrInt(Node, TEXT("priority"), Priority, bOverride_Priority);
     MjXmlUtils::ReadAttrInt(Node, TEXT("group"), Group, bOverride_Group);
 
-    // Visuals
+    // 视觉
     TArray<float> RgbaParts;
     if (MjXmlUtils::ReadAttrFloatArray(Node, TEXT("rgba"), RgbaParts, bOverride_Rgba))
     {
@@ -98,7 +98,7 @@ void UMjGeom::ImportFromXml(const FXmlNode* Node, const FMjCompilerSettings& Com
             Rgba = FLinearColor(RgbaParts[0], RgbaParts[1], RgbaParts[2], RgbaParts[3]);
     }
     
-    // Type & Size
+    // 类型 & 大小
     FString TypeStr = Node->GetAttribute(TEXT("type"));
     bOverride_Type = !TypeStr.IsEmpty();
     if (bOverride_Type)
@@ -114,16 +114,16 @@ void UMjGeom::ImportFromXml(const FXmlNode* Node, const FMjCompilerSettings& Com
         else if (TypeStr == "sdf") Type = EMjGeomType::SDF;
     }
     
-    // Class Name
+    // 类名
     MjXmlUtils::ReadAttrString(Node, TEXT("class"), MjClassName);
 
-    // Mesh Name & Implicit Detection
+    // 网格名称 & 隐式检测
     FString MeshAttr;
     if (MjXmlUtils::ReadAttrString(Node, TEXT("mesh"), MeshAttr))
     {
         MeshName = MeshAttr;
         
-        // If Type wasn't explicitly set in the XML, but we have a mesh attribute, assume Mesh
+        // 如果在 XML 中没有明确设置 Type，但我们有一个 mesh 属性，就假设为 Mesh
         if (!bOverride_Type)
         {
             Type = EMjGeomType::Mesh;
@@ -136,16 +136,16 @@ void UMjGeom::ImportFromXml(const FXmlNode* Node, const FMjCompilerSettings& Com
     if (MjXmlUtils::ReadAttrFloatArray(Node, TEXT("size"), SizeParts, bOverride_Size))
     {
         SizeParamsCount = SizeParts.Num();
-        // Populate Size directly from the parsed parts so 1- and 2-element
-        // size strings (sphere, capsule/cylinder) are stored correctly.
-        // ParseVector requires 3 values and returns zero for shorter strings.
+        // 直接从解析的部分填充大小，
+        // 这样 1 或 2 元素的大小字符串（球体、胶囊/圆柱体）就能被正确存储。
+        // ParseVector 需要 3 个值，对较短的字符串会返回零。
         Size = FVector::ZeroVector;
         if (SizeParts.Num() >= 1) Size.X = SizeParts[0];
         if (SizeParts.Num() >= 2) Size.Y = SizeParts[1];
         if (SizeParts.Num() >= 3) Size.Z = SizeParts[2];
     }
     
-    // Support for "fromto" (overrides pos/quat/size)
+    // 支持 "fromto" (覆盖 pos/quat/size)
     FString FromToStr = Node->GetAttribute(TEXT("fromto"));
     
     UE_LOG(LogURLabImport, Verbose, TEXT("[MjGeom::ImportFromXml] '%s' TypeStr='%s' bOverride_Type=%s bOverride_Size=%s Size=%s"),
@@ -158,7 +158,7 @@ void UMjGeom::ImportFromXml(const FXmlNode* Node, const FMjCompilerSettings& Com
 
          if (MjUtils::ParseFromTo(FromToStr, FromToStart, FromToEnd))
          {
-             // Resolve fromto into explicit pos, quat, size — same decomposition MuJoCo does internally.
+             // 把 fromto 分解成明确的位姿、四元数、大小——和 MuJoCo 内部做的分解一样。
              FVector Midpoint = (FromToStart + FromToEnd) * 0.5f;
              SetRelativeLocation(Midpoint);
              bOverride_Pos = true;
@@ -183,9 +183,9 @@ void UMjGeom::ImportFromXml(const FXmlNode* Node, const FMjCompilerSettings& Com
                  Size.Y = HalfLength;
                  SizeParamsCount = FMath::Max(SizeParamsCount, 2);
              }
-             // Only mark size as overridden if the element also had an explicit size attr.
-             // The half-length from fromto is stored in Size.Y/Z but the radius (Size.X)
-             // may come from a parent default — don't clobber it by writing size[0]=0.
+             // 只有在元素也有明确的尺寸属性时，才标记尺寸为被覆盖。
+             // fromto 的半长度存储在 Size.Y/Z 中，
+             // 但半径（Size.X）可能来自父级默认值——不要通过写 size[0]=0 来覆盖它。
              bFromToResolvedHalfLength = true;
              bOverride_FromTo = false;
 
@@ -210,7 +210,7 @@ void UMjGeom::ImportFromXml(const FXmlNode* Node, const FMjCompilerSettings& Com
             bOverride_Pos = false;
         }
 
-        // Orientation (quat, axisangle, euler, xyaxes, zaxis — priority order)
+        // 朝向（四元数、轴角、欧拉角、XY轴、Z轴 — 优先顺序）
         double MjQuat[4];
         bOverride_Quat = MjOrientationUtils::OrientationToMjQuat(Node, CompilerSettings, MjQuat);
         if (bOverride_Quat)
@@ -224,7 +224,7 @@ void UMjGeom::ImportFromXml(const FXmlNode* Node, const FMjCompilerSettings& Com
         }
     }
 
-    // Name
+    // 名称
     FString NameStr = Node->GetAttribute(TEXT("name"));
     if (!NameStr.IsEmpty())
     {
@@ -241,9 +241,9 @@ void UMjGeom::ImportFromXml(const FXmlNode* Node, const FMjCompilerSettings& Com
         bOverride_Contype ? TEXT("Set") : TEXT("Inherited"), Contype,
         bOverride_Conaffinity ? TEXT("Set") : TEXT("Inherited"), Conaffinity);
 
-    // Mark this geom as having been produced by XML import.
-    // User-authored components (bWasImported=false) use ShouldOverrideSize() to always
-    // export their UE scale, even when bOverride_Size was never set.
+    // 将这个几何体标记为通过 XML 导入生成。
+    // 用户创建的组件（bWasImported=false）使用 ShouldOverrideSize() 来始终导出它们的 UE 缩放，
+    // 即使从未设置 bOverride_Size。
     bWasImported = true;
 }
 
@@ -285,8 +285,8 @@ void UMjGeom::ExportTo(mjsGeom* Geom, mjsDefault* Default)
 
     if (bOverride_FromTo)
     {
-        // Legacy path: if someone manually set fromto in the editor (not from import),
-        // pass it through to MuJoCo raw.
+        // 遗留路径：如果有人在编辑器中手动设置了 fromto（不是通过导入），
+        // 就直接传递给 MuJoCo 原始数据。
         double Start[3], End[3];
         MjUtils::UEToMjPosition(FromToStart, Start);
         MjUtils::UEToMjPosition(FromToEnd, End);
@@ -321,7 +321,7 @@ void UMjGeom::ExportTo(mjsGeom* Geom, mjsDefault* Default)
 
     if (bFromToResolvedHalfLength && !bOverride_Size)
     {
-        // FromTo was resolved: only write the half-length slot
+        // FromTo 已解析：只写半长槽
         if (Type == EMjGeomType::Box || Type == EMjGeomType::Ellipsoid)
         {
             Geom->size[2] = Size.Z;
@@ -428,7 +428,7 @@ void UMjGeom::UpdateGlobalTransform()
 {
     if (m_GeomView._m && m_GeomView._d && m_GeomView.id >= 0)
     {
-        // Get world position from MuJoCo
+        // 从 MuJoCo 获取世界位置
         FVector WorldPos = MjUtils::MjToUEPosition(m_GeomView.xpos);
         FQuat WorldRot;
         mjtNum quat[4];
@@ -454,7 +454,7 @@ void UMjGeom::SetFriction(float NewFriction)
     else Friction[0] = NewFriction;
     bOverride_Friction = true;
     
-    // Update runtime model if bound
+    // 如果已绑定，更新运行时模型
     if (m_GeomView._m && m_GeomView._d && m_GeomView.id >= 0 && m_GeomView.friction)
     {
         m_GeomView.friction[0] = NewFriction;
@@ -463,7 +463,7 @@ void UMjGeom::SetFriction(float NewFriction)
 
 void UMjGeom::SyncUnrealTransformFromMj()
 {
-    // Base implementation does nothing, specialized in primitive subtypes.
+    // 基础实现什么也不做，专门针对原始子类型。
 }
 
 FString UMjGeom::GetResolvedMaterialName() const
@@ -471,7 +471,7 @@ FString UMjGeom::GetResolvedMaterialName() const
     // Explicit material on this geom wins
     if (!MaterialName.IsEmpty()) return MaterialName;
 
-    // Walk the default class chain
+    // 遍历默认类链
     if (UMjDefault* Def = FindEditorDefault())
     {
         TSet<FString> Visited;
@@ -488,7 +488,7 @@ FString UMjGeom::GetResolvedMaterialName() const
         }
     }
 
-    return FString(); // No material found
+    return FString(); // 未找到材质
 }
 
 #if WITH_EDITOR
@@ -499,10 +499,10 @@ void UMjGeom::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent
     FName PropertyName = (PropertyChangedEvent.Property != nullptr) ? PropertyChangedEvent.Property->GetFName() : NAME_None;
     FName MemberPropertyName = (PropertyChangedEvent.MemberProperty != nullptr) ? PropertyChangedEvent.MemberProperty->GetFName() : NAME_None;
 
-    // If the user manually changes the scale in the editor, mark it as an override.
+    // 如果用户在编辑器中手动更改了缩放比例，就标记为覆盖。
     if (PropertyName == FName(TEXT("RelativeScale3D")) || MemberPropertyName == FName(TEXT("RelativeScale3D")))
     {
-        // Don't auto-override if the scale hasn't actually changed meaningfully
+        // 如果比例没有真正发生实质性变化，就不要自动覆盖
         if (!GetRelativeScale3D().Equals(FVector(1.0f)))
         {
             bOverride_Size = true;
@@ -510,7 +510,7 @@ void UMjGeom::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent
         }
     }
 
-    // Sync MjClassName when DefaultClass changes
+    // 当 DefaultClass 变化时同步 MjClassName
     if (PropertyName == GET_MEMBER_NAME_CHECKED(UMjGeom, DefaultClass))
     {
         if (DefaultClass)
@@ -519,7 +519,7 @@ void UMjGeom::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent
             MjClassName.Empty();
     }
 
-    // Apply OverrideMaterial to the visual mesh
+    // 将 OverrideMaterial 应用到可视网格上
     if (PropertyName == GET_MEMBER_NAME_CHECKED(UMjGeom, OverrideMaterial) ||
         MemberPropertyName == GET_MEMBER_NAME_CHECKED(UMjGeom, OverrideMaterial))
     {
