@@ -71,24 +71,24 @@ void UMjGeom::ImportFromXml(const FXmlNode* Node)
     ImportFromXml(Node, DefaultSettings);
 }
 
+// 把 MuJoCo 的 <geom> XML 节点解析并导入到 Unreal 里的 UMjGeom 组件实例中
 void UMjGeom::ImportFromXml(const FXmlNode* Node, const FMjCompilerSettings& CompilerSettings)
 {
     if (!Node) return;
 
-
-    // 物理
-    MjXmlUtils::ReadAttrFloatArray(Node, TEXT("friction"), Friction, bOverride_Friction);
-    MjXmlUtils::ReadAttrFloatArray(Node, TEXT("solref"), SolRef, bOverride_SolRef);
-    MjXmlUtils::ReadAttrFloatArray(Node, TEXT("solimp"), SolImp, bOverride_SolImp);
-    MjXmlUtils::ReadAttrFloat(Node, TEXT("density"), Density, bOverride_Density);
-    MjXmlUtils::ReadAttrFloat(Node, TEXT("mass"), Mass, bOverride_Mass);
-    MjXmlUtils::ReadAttrFloat(Node, TEXT("margin"), Margin, bOverride_Margin);
-    MjXmlUtils::ReadAttrFloat(Node, TEXT("gap"), Gap, bOverride_Gap);
-    MjXmlUtils::ReadAttrInt(Node, TEXT("condim"), Condim, bOverride_Condim);
-    MjXmlUtils::ReadAttrInt(Node, TEXT("contype"), Contype, bOverride_Contype);
-    MjXmlUtils::ReadAttrInt(Node, TEXT("conaffinity"), Conaffinity, bOverride_Conaffinity);
-    MjXmlUtils::ReadAttrInt(Node, TEXT("priority"), Priority, bOverride_Priority);
-    MjXmlUtils::ReadAttrInt(Node, TEXT("group"), Group, bOverride_Group);
+    // 物理参数：https://mujoco.readthedocs.io/en/stable/XMLreference.html
+    MjXmlUtils::ReadAttrFloatArray(Node, TEXT("friction"), Friction, bOverride_Friction);  // 摩擦
+    MjXmlUtils::ReadAttrFloatArray(Node, TEXT("solref"), SolRef, bOverride_SolRef);        // 约束求解器参数: 求解器参考（solver reference），比如 参考加速度
+    MjXmlUtils::ReadAttrFloatArray(Node, TEXT("solimp"), SolImp, bOverride_SolImp);        // 约束求解器参数：求解器实现（solver imp？）
+    MjXmlUtils::ReadAttrFloat(Node, TEXT("density"), Density, bOverride_Density);          // 密度
+    MjXmlUtils::ReadAttrFloat(Node, TEXT("mass"), Mass, bOverride_Mass);                   // 质量
+    MjXmlUtils::ReadAttrFloat(Node, TEXT("margin"), Margin, bOverride_Margin);             // 范围
+    MjXmlUtils::ReadAttrFloat(Node, TEXT("gap"), Gap, bOverride_Gap);                      // 间隙
+    MjXmlUtils::ReadAttrInt(Node, TEXT("condim"), Condim, bOverride_Condim);               // Contact dimensionality：接触坐标系中接触力/扭矩的维度：https://mujoco.readthedocs.io/en/stable/computation/index.html#cocontact
+    MjXmlUtils::ReadAttrInt(Node, TEXT("contype"), Contype, bOverride_Contype);            // contact type
+    MjXmlUtils::ReadAttrInt(Node, TEXT("conaffinity"), Conaffinity, bOverride_Conaffinity);  // contact affinity
+    MjXmlUtils::ReadAttrInt(Node, TEXT("priority"), Priority, bOverride_Priority);         // 
+    MjXmlUtils::ReadAttrInt(Node, TEXT("group"), Group, bOverride_Group);                  // 位点所属的整数数组，可视化工具可以使用此属性来启用和禁用整个位点组的渲染
 
     // 视觉
     TArray<float> RgbaParts;

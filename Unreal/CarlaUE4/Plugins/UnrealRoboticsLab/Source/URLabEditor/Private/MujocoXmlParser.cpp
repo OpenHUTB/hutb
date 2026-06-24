@@ -1266,21 +1266,21 @@ void UMujocoGenerationAction::ParseDefaultsRecursive(const FXmlNode* Node, UBlue
             DefComp->bIsDefault = bIsDefaultContext;
         }
 
-        // Cache the node for future reference (optional, matches ProcessDefault logic)
+        // 缓存节点以供将来引用（可选，与 ProcessDefault 逻辑一致）
         CreatedDefaultNodes.Add(ClassName, DefNode);
 
-        // Recurse for nested tags (geoms, joints, actuators, AND nested defaults)
+        // 对嵌套标签（几何体、关节、执行器以及嵌套默认值）进行递归
         for (const FXmlNode* Child : Node->GetChildrenNodes())
         {
             FString ChildTag = Child->GetTag();
 
-            // Recurse for nested <default>
+            // 递归处理嵌套的 <default>
             if (ChildTag.Equals(TEXT("default")))
             {
-                // Pass DefNode as RootNode to establish hierarchy
+                // 将 DefNode 作为 RootNode 传递以建立层次结构
                 ParseDefaultsRecursive(Child, BP, DefNode, XMLDir, CompilerSettings, ClassName, true);
             }
-            // Handle Child Components
+            // 处理子组件
             else if (ChildTag.Equals(TEXT("geom")))
             {
                 FString GeomName = Child->GetAttribute(TEXT("name"));

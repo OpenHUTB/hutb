@@ -45,7 +45,7 @@ void UMjSite::ExportTo(mjsSite* site, mjsDefault* def)
     if (!site) return;
     UE_LOG(LogURLabExport, Log, TEXT("Exporting site %s"), *this->GetName());
     
-    // Type
+    // 类型
     switch(Type)
     {
         case EMjSiteType::Sphere: site->type = mjGEOM_SPHERE; break;
@@ -55,18 +55,18 @@ void UMjSite::ExportTo(mjsSite* site, mjsDefault* def)
         case EMjSiteType::Box: site->type = mjGEOM_BOX; break;
     }
 
-    // Size
+    // 大小
     site->size[0] = Size.X;
     site->size[1] = Size.Y;
     site->size[2] = Size.Z;
 
-    // Transform
+    // 变换
     FTransform RelTrans = GetRelativeTransform();
     
     MjUtils::UEToMjPosition(RelTrans.GetLocation(), site->pos);
     MjUtils::UEToMjRotation(RelTrans.GetRotation(), site->quat);
     
-    // Override FromTo
+    // 覆盖 FromTo
     if (bOverride_FromTo)
     {
         double Start[3], End[3];
