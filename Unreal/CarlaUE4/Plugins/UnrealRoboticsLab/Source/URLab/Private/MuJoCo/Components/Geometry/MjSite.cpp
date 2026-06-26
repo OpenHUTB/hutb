@@ -73,16 +73,16 @@ void UMjSite::ExportTo(mjsSite* site, mjsDefault* def)
         MjUtils::UEToMjPosition(FromToStart, Start);
         MjUtils::UEToMjPosition(FromToEnd, End);
         
-        // Write to site->fromto (assuming mjsSite has 'fromto')
+        // 写入 site->fromto（假设 mjsSite 有 'fromto' 属性）
         site->fromto[0] = Start[0]; site->fromto[1] = Start[1]; site->fromto[2] = Start[2];
         site->fromto[3] = End[0];   site->fromto[4] = End[1];   site->fromto[5] = End[2];
         
-        // Zero out pos/quat to prioritize fromto
+        // 将 pos/quat 清零以优先使用 fromto
         for(int i=0; i<3; ++i) site->pos[i] = 0.0;
         site->quat[0] = 1.0; site->quat[1] = 0.0; site->quat[2] = 0.0; site->quat[3] = 0.0;
     }
 
-    // Visuals & Group (Conditional)
+    // 可视化 & 组（条件）
     if (!def || Group != def->site->group)
         site->group = Group;
 
@@ -109,7 +109,7 @@ void UMjSite::ImportFromXml(const FXmlNode* Node, const FMjCompilerSettings& Com
 {
     if (!Node) return;
 
-    // Type
+    // 类型
     FString TypeStr = Node->GetAttribute(TEXT("type"));
     if (TypeStr == "sphere") Type = EMjSiteType::Sphere;
     else if (TypeStr == "capsule") Type = EMjSiteType::Capsule;
@@ -117,7 +117,7 @@ void UMjSite::ImportFromXml(const FXmlNode* Node, const FMjCompilerSettings& Com
     else if (TypeStr == "cylinder") Type = EMjSiteType::Cylinder;
     else if (TypeStr == "box") Type = EMjSiteType::Box;
 
-    // Size
+    // 大小
     {
         TArray<float> SizeArr;
         bool bSizeOverride = false;
@@ -138,7 +138,7 @@ void UMjSite::ImportFromXml(const FXmlNode* Node, const FMjCompilerSettings& Com
             Rgba = FLinearColor(RgbaArr[0], RgbaArr[1], RgbaArr[2], RgbaArr[3]);
     }
 
-    // Transform - Position
+    // 变换 - 位置
     FString PosStr = Node->GetAttribute(TEXT("pos"));
     if (!PosStr.IsEmpty())
     {
@@ -151,28 +151,28 @@ void UMjSite::ImportFromXml(const FXmlNode* Node, const FMjCompilerSettings& Com
         }
     }
     
-    // Orientation (quat, axisangle, euler, xyaxes, zaxis — priority order)
+    // 朝向 (quat, axisangle, euler, xyaxes, zaxis — 优先顺序)
     double MjQuat[4];
     if (MjOrientationUtils::OrientationToMjQuat(Node, CompilerSettings, MjQuat))
     {
         SetRelativeRotation(MjUtils::MjToUERotation(MjQuat));
     }
 
-    // Group
+    // 组
     bool bOverride_Group = false;
     MjXmlUtils::ReadAttrInt(Node, TEXT("group"), Group, bOverride_Group);
 
-    // FromTo (Site can be cylinders etc) — resolve to pos/quat/size
+    // FromTo（位点可以是圆柱体等）- 解析为 pos/quat/size
     FString FromToStr = Node->GetAttribute(TEXT("fromto"));
     if (!FromToStr.IsEmpty())
     {
          if (MjUtils::ParseFromTo(FromToStr, FromToStart, FromToEnd))
          {
-             // Position = midpoint
+             // 位置 = 中点
              FVector Midpoint = (FromToStart + FromToEnd) * 0.5f;
              SetRelativeLocation(Midpoint);
 
-             // Rotation = align local +Z with fromto direction
+             // 旋转 = 将 局部 +Z 轴 与起始方向对齐
              FVector Dir = (FromToEnd - FromToStart).GetSafeNormal();
              if (!Dir.IsNearlyZero())
              {
@@ -180,21 +180,21 @@ void UMjSite::ImportFromXml(const FXmlNode* Node, const FMjCompilerSettings& Com
                  SetRelativeRotation(Rot);
              }
 
-             // Half-length from fromto distance (UE cm -> MuJoCo m)
+             // 半长度 = fromto 距离的一半 (UE cm -> MuJoCo m)
              float HalfLength = (FromToEnd - FromToStart).Size() * 0.5f / 100.0f;
 
-             // Site types follow same convention as geoms
+             // 位点类型遵循与几何体相同的约定
              if (Type == EMjSiteType::Box || Type == EMjSiteType::Ellipsoid)
              {
                  Size.Z = HalfLength;
              }
              else
              {
-                 // Capsule, Cylinder, Sphere
+                 // 胶囊、圆柱体、球体
                  Size.Y = HalfLength;
              }
 
-             // Resolved — don't pass raw fromto to spec
+             // 已解决——不要将原始 fromto 传递给 spec
              bOverride_FromTo = false;
 
              UE_LOG(LogURLabImport, Log, TEXT("[MjSite::ImportFromXml] '%s' FromTo resolved: pos=%s, halfLen=%.4f m"),
