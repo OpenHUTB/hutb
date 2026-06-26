@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <link rel="shortcut icon" href="../img/favicon.ico" />
+    <title>carlaviz - CARLA Simulator</title>
+    <link rel="stylesheet" href="../css/theme.css" />
+    <link rel="stylesheet" href="../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+        <link href="../extra.css" rel="stylesheet" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "carlaviz";
+        var mkdocs_page_input_path = "plugins_carlaviz.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href=".." class="icon icon-home"> CARLA Simulator
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+      <input type="text" name="q" placeholder="搜索文档" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="..">Home</a>
+                </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Getting started</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../start_introduction/">Introduction</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../start_quickstart/">Quick start package installation</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_first_steps/">First steps</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../build_carla/">Building CARLA</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Next steps</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_content_authoring_maps/">Content authoring - maps</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_content_authoring_vehicles/">Content authoring - vehicles</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../content_authoring_props/">Content authoring - props</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">CARLA topics</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../coordinates/">Coordinates and transformations</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../foundations/">Foundations</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../core_actors/">Actors</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../core_map/">Maps</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../core_sensors/">Sensors and data</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../ts_traffic_simulation_overview/">Traffic</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../ai_rendering/">AI rendering</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../development_tutorials/">Development</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../custom_assets_tutorials/">Custom assets</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Resources</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../python_api/">Python API</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../catalogue/">Catalogue</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../ref_cpp/">C++ reference</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../bp_library/">Blueprint library</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tutorials/">Tutorials</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../ext_docs/">Extended documentation</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../download/">Downloads</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">CARLA Ecosystem</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../ecosys_ansys/">ANSYS</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_G_rllib_integration/">AWS</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_G_carsim_integration/">CarSIM</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_G_chrono/">Chrono</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../large_map_roadrunner/">MathWorks</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../inverted_ai/">Inverted AI</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../nvidia/">NVIDIA</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../adv_opendrive/">ASAM OpenDRIVE</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../adv_ptv/">PTV Vissim</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../adv_rss/">RSS</a>
+                  </li>
+                  <li class="toctree-l1"><a class="" href="https://carla.readthedocs.io/projects/ros-bridge/en/latest/">ROS</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_G_scenic/">Scenic</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../adv_sumo/">SUMO</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../ecosys_synkrotron/">SYNKROTRON</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Contributing</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../cont_contribution_guidelines/">Guidelines</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../cont_coding_standard/">Coding standards</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../cont_doc_standard/">Documentation standard</a>
+                  </li>
+                  <li class="toctree-l1"><a class="" href=".."></a>
+                  </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="..">CARLA Simulator</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href=".." class="icon icon-home" aria-label="Docs"></a></li>
+      <li class="breadcrumb-item active">carlaviz</li>
+    <li class="wy-breadcrumbs-aside">
+          <a href="https://github.com/carla-simulator/carla/edit/master/Docs/plugins_carlaviz.md" class="icon icon-github"> 在 GitHub 上编辑</a>
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="carlaviz">carlaviz</h1>
+<p>The carlaviz plugin is used to visualize the simulation in a web browser. A windows with some basic representation of the scene is created. Actors are updated on-the-fly, sensor data can be retrieved, and additional text, lines and polylines can be drawn in the scene.  </p>
+<ul>
+<li><a href="#general-information"><strong>General information</strong></a>  <ul>
+<li><a href="#support">Support</a>  </li>
+</ul>
+</li>
+<li><a href="#get-carlaviz"><strong>Get carlaviz</strong></a>  <ul>
+<li><a href="#prerequisites">Prerequisites</a>  </li>
+<li><a href="#download-the-plugin">Download the plugin</a>  </li>
+</ul>
+</li>
+<li><a href="#utilities"><strong>Utilities</strong></a>  </li>
+</ul>
+<hr />
+<h2 id="general-information">General information</h2>
+<ul>
+<li><strong>Contributor</strong> — Minjun Xu, also known as <a href="https://github.com/wx9698">wx9698</a>.  </li>
+<li><strong>License</strong> — <a href="https://en.wikipedia.org/wiki/MIT_License">MIT</a>.  </li>
+</ul>
+<h3 id="support">Support</h3>
+<ul>
+<li><strong>Linux</strong> — CARLA 0.9.6, 0.9.7, 0.9.8, 0.9.9, 0.9.10.  </li>
+<li><strong>Windows</strong> — CARLA 0.9.9, 0.9.10.  </li>
+<li><strong>Build from source</strong> — Latest updates.  </li>
+</ul>
+<hr />
+<h2 id="get-carlaviz">Get carlaviz</h2>
+<h3 id="prerequisites">Prerequisites</h3>
+<ul>
+<li><strong>Docker</strong> — Visit the docs and <a href="https://docs.docker.com/get-docker/">install Docker</a>.  </li>
+<li><strong>Operative system</strong> — Any OS able to run CARLA should work.  </li>
+<li><strong>Websocket-client</strong> — <code>python3 -m pip install websocket_client</code>. Install <a href="https://pip.pypa.io/en/stable/installing/">pip</a> if it is not already in the system.  </li>
+</ul>
+<h3 id="download-the-plugin">Download the plugin</h3>
+<p>Open a terminal and pull the Docker image of carlaviz, based on the CARLA version to be run.  </p>
+<pre><code class="language-bash"># Pull only the image that matches the CARLA package being used
+docker pull mjxu96/carlaviz:0.9.6
+docker pull mjxu96/carlaviz:0.9.7
+docker pull mjxu96/carlaviz:0.9.8
+docker pull mjxu96/carlaviz:0.9.9
+docker pull mjxu96/carlaviz:0.9.10
+
+# Pull this image if working on a CARLA build from source
+docker pull mjxu96/carlaviz:latest
+</code></pre>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>Currently in Windows there is only support for 0.9.9 and 0.9.10.  </p>
+</div>
+<p>CARLA up to 0.9.9 (included) is set to be single-stream. For later versions, multi-streaming for sensors is implemented.  </p>
+<ul>
+<li>
+<p><strong>In single-stream</strong>, a sensor can only be heard by one client. When a sensor is already being heard by another client, for example when running <code>manual_control.py</code>, carlaviz is forced to duplicate the sensor in order to retrieve the data, and performance may suffer.  </p>
+</li>
+<li>
+<p><strong>In multi-stream</strong>, a sensor can be heard by multiple clients. carlaviz has no need to duplicate these and performance does not suffer.  </p>
+</li>
+</ul>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Alternatively on Linux, users can build carlaviz following the instructions <a href="https://github.com/carla-simulator/carlaviz/blob/master/docs/build.md">here</a>, but using a Docker image will make things much easier.  </p>
+</div>
+<hr />
+<h2 id="run-carlaviz">Run carlaviz</h2>
+<p><strong>1. Run CARLA.</strong></p>
+<ul>
+<li>
+<p><strong>a) In a CARLA package</strong> — Go to the CARLA folder and start the simulation with <code>CarlaUE4.exe</code> (Windows) or <code>./CarlaUE4.sh</code> (Linux).  </p>
+</li>
+<li>
+<p><strong>b) In a build from source</strong> — Go to the CARLA folder, run the UE editor with <code>make launch</code> and press <code>Play</code>.  </p>
+</li>
+</ul>
+<p><strong>2. Run carlaviz.</strong> In another terminal run the following command according to the Docker image that has been downloaded.  </p>
+<p>Change <code>&lt;name_of_Docker_image&gt;</code> for the name of the image previously downloaded, e.g. <code>mjxu96/carlaviz:latest</code> or <code>mjxu96/carlaviz:0.9.10</code>.  </p>
+<pre><code class="language-sh"># On Linux system
+docker run -it --network=&quot;host&quot; -e CARLAVIZ_HOST_IP=localhost -e CARLA_SERVER_IP=localhost -e CARLA_SERVER_PORT=2000 &lt;name_of_Docker_image&gt;
+
+# On Windows/MacOS system
+docker run -it -e CARLAVIZ_HOST_IP=localhost -e CARLA_SERVER_IP=host.docker.internal -e CARLA_SERVER_PORT=2000 -p 8080-8081:8080-8081 -p 8089:8089 &lt;name_of_Docker_image&gt;
+</code></pre>
+<p>If the everything has been properly set, carlaviz will show a successful message similar to the following.  </p>
+<p><img alt="carlaviz_run" src="../img/plugins_carlaviz_run.jpg" /></p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Remember to edit the previous command to match the Docker image being used.  </p>
+</div>
+<p><strong>3. Open the localhost</strong> Open your web browser and go to <code>http://127.0.0.1:8080/</code>. carlaviz runs by default in port <code>8080</code>. The output should be similar to the following.  </p>
+<p><img alt="carlaviz_empty" src="../img/plugins_carlaviz_empty.jpg" /></p>
+<hr />
+<h2 id="utilities">Utilities</h2>
+<p>Once the plugin is operative, it can be used to visualize the simulation, the actors that live in it, and the data the sensors retrieve. The plugin shows a visualization window on the right, were the scene is updated in real-tme, and a sidebar on the left with a list of items to be shown. Some of these items will appear in the visualization window, others (mainly sensor and game data) appear just above the items list.<br />
+Here is a list of options available for visualization. Additional elements may show, such as  </p>
+<ul>
+<li>
+<p><strong>View Mode</strong> — Change the point of view in the visualization window.  </p>
+<ul>
+<li><code>Top Down</code> — Aerial point of view.  </li>
+<li><code>Perspective</code> — Free point of view.  </li>
+<li><code>Driver</code> — First person point of view.  </li>
+</ul>
+</li>
+<li>
+<p><strong>/vehicle</strong> — Show properties of the ego vehicle. Includes a speedometer and accelerometer in the visualization window, and the data retrieved by IMU, GNSS and collision detector sensors.  </p>
+<ul>
+<li><code>/velocity</code> — Velocity of the ego vehicle.  </li>
+<li><code>/acceleration</code> — Acceleration of the ego vehicle.  </li>
+</ul>
+</li>
+<li><strong>/drawing</strong> — Show additional elements in the visualization window drawn with <a href="https://github.com/wx9698/carlaviz/blob/master/examples/carla_painter.py">CarlaPainter</a>.  <ul>
+<li><code>/texts</code> — Text elements.  </li>
+<li><code>/points</code> — Point elements.  </li>
+<li><code>/polylines</code> — Polyline elements.  </li>
+</ul>
+</li>
+<li><strong>/objects</strong>  — Show actors in the visualization window.  <ul>
+<li><code>/walkers</code> — Update walkers.  </li>
+<li><code>/vehicles</code> — Update vehicles.  </li>
+</ul>
+</li>
+<li><strong>/game</strong>  — Show game data.  <ul>
+<li><code>/time</code> — Current simulation time and frame.  </li>
+</ul>
+</li>
+<li><strong>/lidar</strong> — LIDAR sensor data.  <ul>
+<li><code>/points</code> — Cloud of points detected by a LIDAR sensor.  </li>
+</ul>
+</li>
+<li><strong>/radar</strong> — LIDAR sensor data.  <ul>
+<li><code>/points</code> — Cloud of points detected by a RADAR sensor.  </li>
+</ul>
+</li>
+<li><strong>/traffic</strong>  — Landmark data.  <ul>
+<li><code>/traffic_light</code> — Show the map's traffic lights in the visualization window.  </li>
+<li><code>/stop_sign</code> — Show the map's stop signs in the visualization window.  </li>
+</ul>
+</li>
+</ul>
+<p>Try to spawn some actors. These will be automatically updated in the visualization window.</p>
+<pre><code class="language-sh">cd PythonAPI/examples
+# Spawns actors in a synchronous mode simulation
+python3 generate_traffic.py -n 10 -w 5
+</code></pre>
+<p><img alt="carlaviz_full" src="../img/plugins_carlaviz_full.jpg" /></p>
+<p>Spawn an ego vehicle with manual control and move around, to see how the plugin updates sensor data.  </p>
+<pre><code class="language-sh">cd PythonAPI/examples
+python3 manual_control.py
+</code></pre>
+<p><img alt="carlaviz_data" src="../img/plugins_carlaviz_data.jpg" /></p>
+<p>The contributor (<a href="https://github.com/wx9698">wx9698</a>), created an additional class, <a href="https://github.com/wx9698/carlaviz/blob/master/examples/carla_painter.py">CarlaPainter</a>, that allows the user to draw elements to be shown in the visualization window. These include text, points and polylines. Follow <a href="https://github.com/carla-simulator/carlaviz/blob/master/examples/example.py">this example</a> to spawn an ego vehicle with a LIDAR, and draw the LIDAR data, the trajectory and velocity of the vehicle.  </p>
+<p><img alt="carlaviz_demo" src="../img/plugins_carlaviz_demo.jpg" /></p>
+<hr />
+<p>That is all there is to know about the carlaviz plugin. If there are any doubts, feel free to post these in the forum. </p>
+<div class="build-buttons">
+<p>
+<a href="https://github.com/carla-simulator/carla/discussions/" target="_blank" class="btn btn-neutral" title="Go to the CARLA forum">
+CARLA forum</a>
+</p>
+</div>
+              
+            </div>
+          </div><footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+        <span>
+          <a href="https://github.com/carla-simulator/carla" class="fa fa-github" style="color: #fcfcfc"> GitHub</a>
+        </span>
+    
+    
+    
+  </span>
+</div>
+    <script src="../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "..";</script>
+    <script src="../js/theme_extra.js"></script>
+    <script src="../js/theme.js"></script>
+      <script src="../extra.js"></script>
+      <script src="../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>

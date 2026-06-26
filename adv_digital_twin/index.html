@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <link rel="shortcut icon" href="../img/favicon.ico" />
+    <title>Adv digital twin - CARLA Simulator</title>
+    <link rel="stylesheet" href="../css/theme.css" />
+    <link rel="stylesheet" href="../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+        <link href="../extra.css" rel="stylesheet" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "Adv digital twin";
+        var mkdocs_page_input_path = "adv_digital_twin.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href=".." class="icon icon-home"> CARLA Simulator
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+      <input type="text" name="q" placeholder="搜索文档" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="..">Home</a>
+                </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Getting started</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../start_introduction/">Introduction</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../start_quickstart/">Quick start package installation</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_first_steps/">First steps</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../build_carla/">Building CARLA</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Next steps</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_content_authoring_maps/">Content authoring - maps</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_content_authoring_vehicles/">Content authoring - vehicles</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../content_authoring_props/">Content authoring - props</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">CARLA topics</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../coordinates/">Coordinates and transformations</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../foundations/">Foundations</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../core_actors/">Actors</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../core_map/">Maps</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../core_sensors/">Sensors and data</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../ts_traffic_simulation_overview/">Traffic</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../ai_rendering/">AI rendering</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../development_tutorials/">Development</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../custom_assets_tutorials/">Custom assets</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Resources</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../python_api/">Python API</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../catalogue/">Catalogue</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../ref_cpp/">C++ reference</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../bp_library/">Blueprint library</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tutorials/">Tutorials</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../ext_docs/">Extended documentation</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../download/">Downloads</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">CARLA Ecosystem</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../ecosys_ansys/">ANSYS</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_G_rllib_integration/">AWS</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_G_carsim_integration/">CarSIM</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_G_chrono/">Chrono</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../large_map_roadrunner/">MathWorks</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../inverted_ai/">Inverted AI</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../nvidia/">NVIDIA</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../adv_opendrive/">ASAM OpenDRIVE</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../adv_ptv/">PTV Vissim</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../adv_rss/">RSS</a>
+                  </li>
+                  <li class="toctree-l1"><a class="" href="https://carla.readthedocs.io/projects/ros-bridge/en/latest/">ROS</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_G_scenic/">Scenic</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../adv_sumo/">SUMO</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../ecosys_synkrotron/">SYNKROTRON</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Contributing</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../cont_contribution_guidelines/">Guidelines</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../cont_coding_standard/">Coding standards</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../cont_doc_standard/">Documentation standard</a>
+                  </li>
+                  <li class="toctree-l1"><a class="" href=".."></a>
+                  </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="..">CARLA Simulator</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href=".." class="icon icon-home" aria-label="Docs"></a></li>
+      <li class="breadcrumb-item active">Adv digital twin</li>
+    <li class="wy-breadcrumbs-aside">
+          <a href="https://github.com/carla-simulator/carla/edit/master/Docs/adv_digital_twin.md" class="icon icon-github"> 在 GitHub 上编辑</a>
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The <strong>Digital Twin Tool</strong> is currently an <strong>experimental feature</strong> and is not considered <em>production ready</em> at this stage. Some parts of maps may be undecorated or untextured. Hence it should only be used for experimental research projects.</p>
+</div>
+<h1 id="digital-twin-tool">Digital Twin Tool</h1>
+<p><img alt="digital_twin_pipeline" src="../img/pipeline.jpg" /></p>
+<ul>
+<li><a href="#downloading-and-preparing-osm-map-data"><strong>Downloading and preparing OSM map data</strong></a></li>
+<li><a href="#openstreetmap-browser"><strong>OpenStreetMap browser</strong></a></li>
+<li><a href="#procedural-environment-generation"><strong>Procedural environment generation</strong></a><ul>
+<li><a href="#overview">Road decoration</a></li>
+<li><a href="#alsm">Buildings</a></li>
+</ul>
+</li>
+<li><a href="#generate-the-map"><strong>Generate the map</strong></a></li>
+<li><a href="#save-the-map"><strong>Save the map</strong></a></li>
+</ul>
+<p>The <strong>Digital Twin Tool</strong> enables procedural generation of unique 3D environments based on road networks derived from the <a href="https://www.openstreetmap.org">OpenStreetMap</a> (OSM) service. Through the Digital Twin Tool interface in CARLA's Unreal Engine editor a user can select a region of map from OSM and download the road network as the basis for a new CARLA map. The tool then fills the spaces between the roads with procedurally generated 3D buildings that adjust to the layout of the road, creating a realistic 3D road environment with high variability.</p>
+<iframe width="100%" height="400px" src="https://www.youtube.com/embed/gTutXdS2UkQ?si=hssM3YRCAjSIzdXM" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+
+<h2 id="building-the-osm-renderer">Building the OSM renderer</h2>
+<p>If you are using Linux, you have the option of using the OSM renderer in the CARLA interface to navigate a large OSM map region that you have downloaded. You first need to build the OSM renderer before proceeding to build CARLA. Run <code>make osmrenderer</code> inside the CARLA root directory. You may need to upgrade your version of CMake to v3.2 or above in order for this to work. This will create two folders in your build directory called <code>libosmcout-source</code> and <code>libosmcout-build</code>. Before proceeding to build CARLA, you need to then edit the <code>Build.sh</code> file in the directory <code>$CARLA_ROOT/Build/libosmcout-source/maps</code> like so, to ensure the executable is found:</p>
+<pre><code class="language-bash">if [[ -x ../Import/src/Import ]]; then
+  importExe=../Import/src/Import
+elif [[ -x ../debug/Import/Import ]]; then
+  importExe=../debug/Import/Import
+elif [[ -x ../build/Import/Import ]]; then
+  importExe=../build/Import/Import
+###################  Add this line ####################
+elif [ -x ../../libosmscout-build/Import/Import ]; then
+  importExe=../../libosmscout-build/Import/Import
+#######################################################
+else
+  echo &quot;Cannot find Import executable!&quot;
+  exit 1
+fi
+</code></pre>
+<p>Then continue to build CARLA in the normal way. Windows users do not have the option of using the OSM renderer and must directly the URL. </p>
+<h2 id="downloading-and-preparing-osm-map-data">Downloading and preparing OSM map data</h2>
+<p><img alt="osm_website" src="../img/osm_export.png" /></p>
+<p>In a web-browser, go to the <a href="https:/www.openstreetmap.org">OpenStreetMap website</a> and choose an area of the map which you would like to use. Define your region and then export the data as an <code>.osm</code> file, or you can use a URL, as explained later. Alternatively, you could use other tools based on the OpenStreetMap service such as <a href="https://download.geofabrik.de/">GeoFabrik</a>, which allows specific map regions such as states or territories to be extracted from the OSM data.</p>
+<p>There are two ways to use the OSM data. Using a URL or downloading an OSM file: </p>
+<h3 id="using-a-url">Using a URL</h3>
+<p>In the <a href="https:/www.openstreetmap.org">OpenStreetMap website</a> website, navigate to an area of interest, then press <code>Export</code>, you may also want to use the <code>Manually select a different area</code> option. Then, right click on <code>Overpass API</code> and select <code>Copy link</code> from the context menu. You must ensure that the file will be no bigger than 1 Gb. Take this link and paste it into the URL field of the interface.</p>
+<h3 id="downloading-an-osm-file-and-navigating-in-the-interface">Downloading an OSM file and navigating in the interface</h3>
+<p>This option is only available to Linux users. You may download a larger region of map, for example an entire state or territory, then use the OSM interface in CARLA to navigate the map using the arrow and zoom buttons. Download your desired region of OSM data as a <code>.osm</code> file, then place this file in the <code>{CARLA_ROOT}/Build/libosmcout-source/maps/</code> folder. Open a terminal inside this folder and run the following command:</p>
+<pre><code class="language-sh">cd {CARLA_ROOT}/Build/libosmcout-source/maps/
+./build.sh &lt;path_to_osm_file&gt;
+</code></pre>
+<h2 id="openstreetmap-browser">OpenStreetMap browser</h2>
+<p>To open the OSM browser, open the content browser and navigate to <code>CarlaToolsContent/OnroadMapGenerator</code>. Right click on <em>UW_OnRoadMainWidget</em> and select <em>Launch Editor Utility Widget</em> from the context menu. This will open the tool's interface. </p>
+<p><img alt="osm_interface_open" src="../img/digital_twins_widget.png" /></p>
+<p>The interface enables browsing of a region of OSM map that has been downloaded from the OSM database and baked. First, you should enter the directory location where you stored the processed OSM data in the previous step in the <em>Select OSM Database</em> field in the interface. If you are using a URL directly, paste it into the <code>OSM URL</code> field, you will not be able to use the navigator in this case. </p>
+<p><img alt="osm_interface" src="../img/digital_twins_interface.png" /></p>
+<p>Use the directional arrows and the zoom icons to navigate the map and find a part of the road network you want to turn into a CARLA map. The square region you see in the preview will be the extent of your map. Enter an appropriate name in the <code>File Name</code> field and then press <em>generate</em> to start the procedural generation process. The map generation process may take several minutes, or more if you are using a large region.</p>
+<h2 id="procedural-environment-generation">Procedural environment generation</h2>
+<h3 id="road-decoration">Road decoration</h3>
+<p>The tool extracts the road network from the OSM data as the basis of the map. The road surface is decorated with realistic surface irregularities, road markings and textures. </p>
+<p><img alt="road_markings" src="../img/road_surface.jpg" /></p>
+<h3 id="buildings">Buildings</h3>
+<p>The empty spaces between the roads are populated with buildings or open areas that will adjust their shape and dimensions to fill the space between the roads. </p>
+<p><img alt="procedural_buildings" src="../img/procedural_building_generation.jpg" /></p>
+<p>The procedural generation tool extracts the building footprints and height information from the OSM data to generate virtual buildings with similar dimensions. Detailed cladding is applied to simulate windows, doors and balconies. Different decoration styles are applied depending upon the dimensions of the building, with the tallest buildings having an office style, smaller buildings have a commercial or residential style applied according to the area of the building footprint.</p>
+<p><img alt="procedural_cities" src="../img/digital_twins_vegetation.jpg" /></p>
+<p>Vegetation is also added to the pavements in the next step step for additional detail.</p>
+<p><img alt="residential_building_style" src="../img/digital_twins_buildings.jpg" />
+<em>Digital Twin Tool building styles</em></p>
+<p>The buildings are in a variety of styles that are randomly distributed throughout the city, the architectural style of an area is chosen based on the characteristic dimensions of the buildings extracted from the OSM data.</p>
+<h2 id="generate-the-map">Generate the map</h2>
+<p>The generation step will take around 10 minutes for a 2x2 km<sup>2</sup> region, larger regions will take longer. Once the generation process has finished, you can examine the map in 3D in the Unreal Engine editor. </p>
+<h2 id="save-the-map">Save the map</h2>
+<p>If you are satisfied with the generated map then you can press <em>Save Map</em> button to save the map. <strong>This step will take a significant amount of time</strong>, it may take over an hour and could take several. You should prepare to leave your computer running for several hours while this step is completed. Once this step is completed, the map will be available through the Unreal Engine editor or through the CARLA API, the same as any other map. </p>
+              
+            </div>
+          </div><footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+        <span>
+          <a href="https://github.com/carla-simulator/carla" class="fa fa-github" style="color: #fcfcfc"> GitHub</a>
+        </span>
+    
+    
+    
+  </span>
+</div>
+    <script src="../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "..";</script>
+    <script src="../js/theme_extra.js"></script>
+    <script src="../js/theme.js"></script>
+      <script src="../extra.js"></script>
+      <script src="../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>

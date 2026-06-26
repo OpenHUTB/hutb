@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <link rel="shortcut icon" href="../img/favicon.ico" />
+    <title>CarSIM - CARLA Simulator</title>
+    <link rel="stylesheet" href="../css/theme.css" />
+    <link rel="stylesheet" href="../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+        <link href="../extra.css" rel="stylesheet" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "CarSIM";
+        var mkdocs_page_input_path = "tuto_G_carsim_integration.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href=".." class="icon icon-home"> CARLA Simulator
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+      <input type="text" name="q" placeholder="搜索文档" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="..">Home</a>
+                </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Getting started</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../start_introduction/">Introduction</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../start_quickstart/">Quick start package installation</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_first_steps/">First steps</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../build_carla/">Building CARLA</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Next steps</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_content_authoring_maps/">Content authoring - maps</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_content_authoring_vehicles/">Content authoring - vehicles</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../content_authoring_props/">Content authoring - props</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">CARLA topics</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../coordinates/">Coordinates and transformations</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../foundations/">Foundations</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../core_actors/">Actors</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../core_map/">Maps</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../core_sensors/">Sensors and data</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../ts_traffic_simulation_overview/">Traffic</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../ai_rendering/">AI rendering</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../development_tutorials/">Development</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../custom_assets_tutorials/">Custom assets</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Resources</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../python_api/">Python API</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../catalogue/">Catalogue</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../ref_cpp/">C++ reference</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../bp_library/">Blueprint library</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tutorials/">Tutorials</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../ext_docs/">Extended documentation</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../download/">Downloads</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">CARLA Ecosystem</span></p>
+              <ul class="current">
+                  <li class="toctree-l1"><a class="reference internal" href="../ecosys_ansys/">ANSYS</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_G_rllib_integration/">AWS</a>
+                  </li>
+                  <li class="toctree-l1 current"><a class="reference internal current" href="#">CarSIM</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#before-you-begin">Before you begin</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#set-up-carsim">Set up CarSim</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#generate-the-sim-file">Generate the .sim file</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#on-windows">On Windows</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#on-ubuntu">On Ubuntu</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#vehicle-sizes">Vehicle sizes</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#run-the-simulation">Run the simulation</a>
+    </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_G_chrono/">Chrono</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../large_map_roadrunner/">MathWorks</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../inverted_ai/">Inverted AI</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../nvidia/">NVIDIA</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../adv_opendrive/">ASAM OpenDRIVE</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../adv_ptv/">PTV Vissim</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../adv_rss/">RSS</a>
+                  </li>
+                  <li class="toctree-l1"><a class="" href="https://carla.readthedocs.io/projects/ros-bridge/en/latest/">ROS</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_G_scenic/">Scenic</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../adv_sumo/">SUMO</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../ecosys_synkrotron/">SYNKROTRON</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Contributing</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../cont_contribution_guidelines/">Guidelines</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../cont_coding_standard/">Coding standards</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../cont_doc_standard/">Documentation standard</a>
+                  </li>
+                  <li class="toctree-l1"><a class="" href=".."></a>
+                  </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="..">CARLA Simulator</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href=".." class="icon icon-home" aria-label="Docs"></a></li>
+          <li class="breadcrumb-item">CARLA Ecosystem</li>
+      <li class="breadcrumb-item active">CarSIM</li>
+    <li class="wy-breadcrumbs-aside">
+          <a href="https://github.com/carla-simulator/carla/edit/master/Docs/tuto_G_carsim_integration.md" class="icon icon-github"> 在 GitHub 上编辑</a>
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="carsim-integration">CarSim Integration</h1>
+<p>CARLA's integration with CarSim allows vehicle controls in CARLA to be forwarded to CarSim. CarSim will do all required physics calculations of the vehicle and return the new state to CARLA. </p>
+<p>This page shows you how to generate a <code>.sim</code> file, explains how vehicle dimensions relate between CARLA and CarSim and how to run a simulation on CARLA using the CarSim integration.</p>
+<ul>
+<li><a href="#before-you-begin"><strong>Before you begin</strong></a>  </li>
+<li><a href="#set-up-carsim"><strong>Set up CarSim</strong></a>  <ul>
+<li><a href="#generate-the-sim-file"><strong>Generate the .sim file</strong></a>  <ul>
+<li><a href="#on-windows"><strong>On Windows</strong></a></li>
+<li><a href="#on-ubuntu"><strong>On Ubuntu</strong></a></li>
+</ul>
+</li>
+<li><a href="#vehicle-sizes"><strong>Vehicle sizes</strong></a>  </li>
+</ul>
+</li>
+<li><a href="#run-the-simulation"><strong>Run the simulation</strong></a>  </li>
+</ul>
+<hr />
+<h2 id="before-you-begin">Before you begin</h2>
+<ol>
+<li>You will need a license for CarSim and to have the software up and running. If you don't currently have a license for CarSim, you can contact the team <a href="https://www.carsim.com/forms/additional_information.php">here</a> for information.</li>
+<li>
+<p>To allow communication with Unreal Engine you will need to install the VehicleSim Dynamics plugin (version 2020.0) for Unreal Engine 4.24. For information on finding specific versions of the plugin, check this <a href="https://www.carsim.com/products/supporting/unreal/index.php">link</a>. Installation of the plugin will depend on your operating system:</p>
+<p><strong>For Windows</strong>:</p>
+<p>Get the plugin <a href="https://www.unrealengine.com/marketplace/en-US/product/carsim-vehicle-dynamics">here</a>.</p>
+<p><strong>For Ubuntu</strong>:</p>
+<ol>
+<li>Download the plugin <a href="https://www.carsim.com/users/unreal_plugin/unreal_plugin_2020_0.php">here</a>.</li>
+<li>Replace the file <code>CarSim.Build.cs</code> with the file found <a href="https://carla-assets.s3.us-east-005.backblazeb2.com/Backup/CarSim.Build.cs">here</a> in order to use the correct solver for Ubuntu.</li>
+</ol>
+</li>
+<li>
+<p>This step can be skipped if you are using the packaged version of CARLA. The packaged version has already been compiled using this flag but if you are building CARLA from source then you will need to compile the server with the <code>--carsim</code> flag.  </p>
+<p>If you are building CARLA from source, run the following command in the root folder to compile the server with the <code>--carsim</code> flag:</p>
+</li>
+</ol>
+<pre><code class="language-sh">    make launch ARGS=&quot;--carsim&quot;
+</code></pre>
+<h2 id="set-up-carsim">Set up CarSim</h2>
+<p>The following section details how to generate the <code>.sim</code> file which is required to run the simulation. There is also important information detailed regarding the relationship of vehicle sizes between CARLA and CarSim. </p>
+<h4 id="generate-the-sim-file">Generate the .sim file</h4>
+<p>The <code>.sim</code> file describes the simulation to be run in both CARLA and CarSim. This file is required by the plugin to run the simulation. There is currently no way to generate this file on Ubuntu, however we will describe below how to use a previously generated file to run the simulation on Ubuntu. </p>
+<h5 id="on-windows">On Windows</h5>
+<p>After you have configured all the parameters on CarSim, use the GUI to generate the <code>.sim</code> file as highlighted below:</p>
+<p><img alt="generate .sim file" src="../img/carsim_generate.jpg" /></p>
+<p>The resulting <code>.sim</code> file should look something like this:</p>
+<pre><code>SIMFILE
+
+SET_MACRO $(ROOT_FILE_NAME)$ Run_dd7a828d-4b14-4c77-9d09-1974401d6b25
+SET_MACRO $(OUTPUT_PATH)$ D:\carsim\Data\Results
+SET_MACRO $(WORK_DIR)$ D:\carsim\Data\
+SET_MACRO $(OUTPUT_FILE_PREFIX)$ $(WORK_DIR)$Results\Run_dd7a828d-4b14-4c77-9d09-1974401d6b25\LastRun
+
+FILEBASE $(OUTPUT_FILE_PREFIX)$
+INPUT $(WORK_DIR)$Results\$(ROOT_FILE_NAME)$\Run_all.par
+INPUTARCHIVE $(OUTPUT_FILE_PREFIX)$_all.par
+ECHO $(OUTPUT_FILE_PREFIX)$_echo.par
+FINAL $(OUTPUT_FILE_PREFIX)$_end.par
+LOGFILE $(OUTPUT_FILE_PREFIX)$_log.txt
+ERDFILE $(OUTPUT_FILE_PREFIX)$.vs
+PROGDIR D:\carsim\
+DATADIR D:\carsim\Data\
+GUI_REFRESH_V CarSim_RefreshEvent_7760
+RESOURCEDIR D:\carsim\\Resources\
+PRODUCT_ID CarSim
+PRODUCT_VER 2020.0
+ANIFILE D:\carsim\Data\runs\animator.par
+VEHICLE_CODE i_i
+EXT_MODEL_STEP 0.00050000
+PORTS_IMP 0
+PORTS_EXP 0
+
+DLLFILE D:\carsim\Programs\solvers\carsim_64.dll
+END
+</code></pre>
+<h5 id="on-ubuntu">On Ubuntu</h5>
+<p>There is no way to create the <code>.sim</code> file via GUI on Ubuntu. In order to proceed you will need to follow these steps:</p>
+<ol>
+<li>Generate the <code>.sim</code> file in Windows or use the file template below.</li>
+<li>Modify the <code>.sim</code> file so the variables <code>INPUT</code>, <code>INPUTARCHIVE</code>, <code>LOGFILE</code> and so on point towards the corresponding files in your Ubuntu 
+system.</li>
+<li>Replace the <code>DLLFILE</code> line to point towards the CarSim solver which, in the default installation, will be <code>SOFILE /opt/carsim_2020.0/lib64/libcarsim.so.2020.0</code>. </li>
+</ol>
+<p>The resulting file should be similar to this:</p>
+<pre><code>SIMFILE
+
+FILEBASE /path/to/LastRun
+INPUT /path/to/Run_all.par
+INPUTARCHIVE /path/to/LastRun_all.par
+ECHO /path/to/LastRun_echo.par
+FINAL /path/to/LastRun_end.par
+LOGFILE /path/to/LastRun_log.txt
+ERDFILE /path/to/LastRun.vs
+PROGDIR /opt/carsim_2020.0/lib64/
+DATADIR .
+PRODUCT_ID CarSim
+PRODUCT_VER 2020.0
+VEHICLE_CODE i_i
+
+SOFILE /opt/carsim_2020.0/lib64/libcarsim.so.2020.0
+END
+</code></pre>
+<h4 id="vehicle-sizes">Vehicle sizes</h4>
+<p>Although CarSim lets you specify the dimensions of the vehicle to use in the simulation, there is currently no correlation between a CarSim vehicle and a CARLA 
+vehicle. This means that the vehicles in both programmes will have different dimensions. The role of the CARLA vehicle is only to act as a placeholder during the simulation.</p>
+<p><img alt="carsim vehicle sizes" src="../img/carsim_vehicle_sizes.jpg" /></p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>There is no correlation between vehicle size in CARLA and CarSim. The CARLA vehicle is only a simulation placeholder.</p>
+</div>
+<h2 id="run-the-simulation">Run the simulation</h2>
+<p>All that is needed when running the simulation is to enable CarSim when you spawn a vehicle. This can be done by passing the path to the <code>.sim</code> file to the following <a href="https://carla.readthedocs.io/en/latest/python_api/#carla.Vehicle.enable_carsim">method</a> of the Python API:</p>
+<pre><code class="language-sh">vehicle.enable_carsim(&lt;path_to_ue4simfile.sim&gt;)
+</code></pre>
+<p>All input controls sent to the vehicle will be forwarded to CarSim. CarSim will update the 
+physics and send back the status of the vehicle (the transform) to the CARLA vehicle. </p>
+<p>Once the simulation has finished you can analyze all the data in CarSim as usual. </p>
+<p><img alt="carsim analysis" src="../img/carsim_analysis.jpg" /></p>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="../tuto_G_rllib_integration/" class="btn btn-neutral float-left" title="AWS"><span class="icon icon-circle-arrow-left"></span> 前一页</a>
+        <a href="../tuto_G_chrono/" class="btn btn-neutral float-right" title="Chrono">后一页 <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+        <span>
+          <a href="https://github.com/carla-simulator/carla" class="fa fa-github" style="color: #fcfcfc"> GitHub</a>
+        </span>
+    
+    
+      <span><a href="../tuto_G_rllib_integration/" style="color: #fcfcfc">&laquo; 前一页</a></span>
+    
+    
+      <span><a href="../tuto_G_chrono/" style="color: #fcfcfc">后一页 &raquo;</a></span>
+    
+  </span>
+</div>
+    <script src="../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "..";</script>
+    <script src="../js/theme_extra.js"></script>
+    <script src="../js/theme.js"></script>
+      <script src="../extra.js"></script>
+      <script src="../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>

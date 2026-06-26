@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <link rel="shortcut icon" href="../img/favicon.ico" />
+    <title>Traffic manager - CARLA Simulator</title>
+    <link rel="stylesheet" href="../css/theme.css" />
+    <link rel="stylesheet" href="../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+        <link href="../extra.css" rel="stylesheet" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "Traffic manager";
+        var mkdocs_page_input_path = "tuto_G_traffic_manager.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href=".." class="icon icon-home"> CARLA Simulator
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+      <input type="text" name="q" placeholder="搜索文档" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="..">Home</a>
+                </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Getting started</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../start_introduction/">Introduction</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../start_quickstart/">Quick start package installation</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_first_steps/">First steps</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../build_carla/">Building CARLA</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Next steps</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_content_authoring_maps/">Content authoring - maps</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_content_authoring_vehicles/">Content authoring - vehicles</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../content_authoring_props/">Content authoring - props</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">CARLA topics</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../coordinates/">Coordinates and transformations</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../foundations/">Foundations</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../core_actors/">Actors</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../core_map/">Maps</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../core_sensors/">Sensors and data</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../ts_traffic_simulation_overview/">Traffic</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../ai_rendering/">AI rendering</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../development_tutorials/">Development</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../custom_assets_tutorials/">Custom assets</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Resources</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../python_api/">Python API</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../catalogue/">Catalogue</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../ref_cpp/">C++ reference</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../bp_library/">Blueprint library</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tutorials/">Tutorials</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../ext_docs/">Extended documentation</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../download/">Downloads</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">CARLA Ecosystem</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../ecosys_ansys/">ANSYS</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_G_rllib_integration/">AWS</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_G_carsim_integration/">CarSIM</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_G_chrono/">Chrono</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../large_map_roadrunner/">MathWorks</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../inverted_ai/">Inverted AI</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../nvidia/">NVIDIA</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../adv_opendrive/">ASAM OpenDRIVE</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../adv_ptv/">PTV Vissim</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../adv_rss/">RSS</a>
+                  </li>
+                  <li class="toctree-l1"><a class="" href="https://carla.readthedocs.io/projects/ros-bridge/en/latest/">ROS</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_G_scenic/">Scenic</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../adv_sumo/">SUMO</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../ecosys_synkrotron/">SYNKROTRON</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Contributing</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../cont_contribution_guidelines/">Guidelines</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../cont_coding_standard/">Coding standards</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../cont_doc_standard/">Documentation standard</a>
+                  </li>
+                  <li class="toctree-l1"><a class="" href=".."></a>
+                  </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="..">CARLA Simulator</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href=".." class="icon icon-home" aria-label="Docs"></a></li>
+      <li class="breadcrumb-item active">Traffic manager</li>
+    <li class="wy-breadcrumbs-aside">
+          <a href="https://github.com/carla-simulator/carla/edit/master/Docs/tuto_G_traffic_manager.md" class="icon icon-github"> 在 GitHub 上编辑</a>
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="traffic-manager">Traffic manager</h1>
+<p>When we train neural networks to control autonomous vehicles, one of the key challenges the autonomous driving agent has to contend with is other road users. On top of the task of recognising and navigating the topology of the road network and maintaining lane discipline, the autonomous driving agent must also recognise other vehicles and anticipate the impact on its planned course of action. CARLA's Traffic Manager (TM) enables the management of an ensemble of vehicles navigating through the simulation and creating obstacles and challenges for the vehicle of interest, i.e. the vehicle we are training or controlling. In the CARLA literature, we refer to this vehicle as the "Ego vehicle" to distinguish it. </p>
+<p>The TM manages the behavior and lifecycles of Non Player Character (NPC) vehicles within the map, populating the simulation with vehicles that act as other road users do on the real road network. In this tutorial, we will cover some of the functionality of the TM and how to use it in your simulations to create and control NPCs.</p>
+<h2 id="setting-up-the-simulator-and-initialising-traffic-manager">Setting up the simulator and initialising traffic manager</h2>
+<p>First, we will initialise the TM and create some traffic randomly distributed around the city.</p>
+<pre><code class="language-py">import carla
+import random
+
+# Connect to the client and retrieve the world object
+client = carla.Client('localhost', 2000)
+world = client.get_world()
+
+# Set up the simulator in synchronous mode
+settings = world.get_settings()
+settings.synchronous_mode = True # Enables synchronous mode
+settings.fixed_delta_seconds = 0.05
+world.apply_settings(settings)
+
+# Set up the TM in synchronous mode
+traffic_manager = client.get_trafficmanager()
+traffic_manager.set_synchronous_mode(True)
+
+# Set a seed so behaviour can be repeated if necessary
+traffic_manager.set_random_device_seed(0)
+random.seed(0)
+
+# We will aslo set up the spectator so we can see what we do
+spectator = world.get_spectator()
+
+</code></pre>
+<h2 id="spawning-vehicles">Spawning vehicles</h2>
+<p>When we create TM vehicles, they need a map location at which to spawn. We can define these ourselves using our own chosen map coordinates. However, to help with this, each CARLA map has a set of pre-defined spawn points spread evenly throughout the road network. We can use these spawn points to spawn our vehicles. </p>
+<pre><code class="language-py">spawn_points = world.get_map().get_spawn_points()
+</code></pre>
+<p>We can use CARLA's debug functions to see where the spawn points are. Run the following code then fly through the map and inspect where the spawn points are. This will come in handy when we want to choose more specific points to use for spawning or guiding vehicles. </p>
+<pre><code class="language-py"># Draw the spawn point locations as numbers in the map
+for i, spawn_point in enumerate(spawn_points):
+    world.debug.draw_string(spawn_point.location, str(i), life_time=10)
+
+# In synchronous mode, we need to run the simulation to fly the spectator
+while True:
+    world.tick()
+</code></pre>
+<p>Now let's spawn some vehicles. </p>
+<pre><code class="language-py"># Select some models from the blueprint library
+models = ['dodge', 'audi', 'model3', 'mini', 'mustang', 'lincoln', 'prius', 'nissan', 'crown', 'impala']
+blueprints = []
+for vehicle in world.get_blueprint_library().filter('*vehicle*'):
+    if any(model in vehicle.id for model in models):
+        blueprints.append(vehicle)
+
+# Set a max number of vehicles and prepare a list for those we spawn
+max_vehicles = 50
+max_vehicles = min([max_vehicles, len(spawn_points)])
+vehicles = []
+
+# Take a random sample of the spawn points and spawn some vehicles
+for i, spawn_point in enumerate(random.sample(spawn_points, max_vehicles)):
+    temp = world.try_spawn_actor(random.choice(blueprints), spawn_point)
+    if temp is not None:
+        vehicles.append(temp)
+
+# Run the simulation so we can inspect the results with the spectator
+while True:
+    world.tick()
+
+
+</code></pre>
+<p>If you fly through the map with the spectator now, you should see stationary vehicles occupying the roads in the map.</p>
+<h2 id="controlling-vehicles-with-traffic-manager">Controlling vehicles with Traffic Manager</h2>
+<p>We can now give the TM control over our vehicles and let the simulation run. Once the TM takes control of the vehicles, they will move around the roads autonomously, following features of the road network like lanes and traffic lights and avoiding collisions with other vehicles.</p>
+<p>The TM has a number of functions that allow specific behaviors to be modified for each vehicle. In the following example, we set each vehicle with a random probability of ignoring traffic lights, so some vehicles will tend to ignore traffic lights, while others will obey them. There are a number of different behaviours that can be set, refer to the Python API reference for details.</p>
+<pre><code class="language-py"># Parse the list of spawned vehicles and give control to the TM through set_autopilot()
+for vehicle in vehicles:
+    vehicle.set_autopilot(True)
+    # Randomly set the probability that a vehicle will ignore traffic lights
+    traffic_manager.ignore_lights_percentage(vehicle, random.randint(0,50))
+
+while True:
+    world.tick()
+
+</code></pre>
+<p>If you now fly through the map with the spectator, you will see vehicles driving autonomously around the map.</p>
+<p><img alt="intersection_traffic" src="../img/tuto_G_traffic_manager/traffic.gif" /></p>
+<h2 id="specify-routes-for-vehicles">Specify routes for vehicles</h2>
+<p>In the previous steps, we saw how to spawn a collection of vehicles into a map, then hand control of them over to the TM to create a busy town full of moving traffic. The TM has deeper functionality to control the behavior of vehicles more closely. </p>
+<p>We will now use the <code>traffic_manager.set_path()</code> function to guide TM vehicles along specific paths. In this case, we will create two converging streams of traffic that will converge in the center of town and create congestion. </p>
+<p>Firstly, we'll choose some waypoints to construct our path. Spawn points are convenient waypoints and in the same way as earlier we can use CARLA's debug tools to draw the locations of the spawn points on the map. By flying through the map with the spectator, we can choose the indices of the spawn points we want to use for our path. The <code>set_path()</code> function uses a list of coordinates specified as <a href="../python_api/#carla.Location">carla.Locations</a>.</p>
+<pre><code class="language-py"># Draw the spawn point locations as numbers in the map
+for i, spawn_point in enumerate(spawn_points):
+    world.debug.draw_string(spawn_point.location, str(i), life_time=10)
+
+# In synchronous mode, we need to run the simulation to fly the spectator
+while True:
+    world.tick()
+</code></pre>
+<p>We choose our spawn points and waypoints to create two converging streams of traffic within the town, creating congestion, which might be an interesting scenario to present to an autonomous driving agent. </p>
+<pre><code class="language-py">spawn_points = world.get_map().get_spawn_points()
+
+# Route 1
+spawn_point_1 =  spawn_points[32]
+# Create route 1 from the chosen spawn points
+route_1_indices = [129, 28, 124, 33, 97, 119, 58, 154, 147]
+route_1 = []
+for ind in route_1_indices:
+    route_1.append(spawn_points[ind].location)
+
+# Route 2
+spawn_point_2 =  spawn_points[149]
+# Create route 2 from the chosen spawn points
+route_2_indices = [21, 76, 38, 34, 90, 3]
+route_2 = []
+for ind in route_2_indices:
+    route_2.append(spawn_points[ind].location)
+
+# Now let's print them in the map so we can see our routes
+world.debug.draw_string(spawn_point_1.location, 'Spawn point 1', life_time=30, color=carla.Color(255,0,0))
+world.debug.draw_string(spawn_point_2.location, 'Spawn point 2', life_time=30, color=carla.Color(0,0,255))
+
+for ind in route_1_indices:
+    spawn_points[ind].location
+    world.debug.draw_string(spawn_points[ind].location, str(ind), life_time=60, color=carla.Color(255,0,0))
+
+for ind in route_2_indices:
+    spawn_points[ind].location
+    world.debug.draw_string(spawn_points[ind].location, str(ind), life_time=60, color=carla.Color(0,0,255))
+
+while True:
+    world.tick()
+
+</code></pre>
+<p><img alt="routes" src="../img/tuto_G_traffic_manager/set_paths.png" /></p>
+<p>Now that we have chosen our spawn points and way points, we can now start spawning traffic and setting the spawned vehicles to follow our waypoint lists.</p>
+<pre><code class="language-py">
+# Set delay to create gap between spawn times
+spawn_delay = 20
+counter = spawn_delay
+
+# Set max vehicles (set smaller for low hardward spec)
+max_vehicles = 200
+# Alternate between spawn points
+alt = False
+
+spawn_points = world.get_map().get_spawn_points()
+while True:
+    world.tick()
+
+    n_vehicles = len(world.get_actors().filter('*vehicle*'))
+    vehicle_bp = random.choice(blueprints)
+
+    # Spawn vehicle only after delay
+    if counter == spawn_delay and n_vehicles &lt; max_vehicles:
+        # Alternate spawn points
+        if alt:
+            vehicle = world.try_spawn_actor(vehicle_bp, spawn_point_1)
+        else:
+            vehicle = world.try_spawn_actor(vehicle_bp, spawn_point_2)
+
+        if vehicle: # IF vehicle is succesfully spawned
+            vehicle.set_autopilot(True) # Give TM control over vehicle
+
+            # Set parameters of TM vehicle control, we don't want lane changes
+            traffic_manager.update_vehicle_lights(vehicle, True)
+            traffic_manager.random_left_lanechange_percentage(vehicle, 0)
+            traffic_manager.random_right_lanechange_percentage(vehicle, 0)
+            traffic_manager.auto_lane_change(vehicle, False)
+
+            # Alternate between routes
+            if alt:
+                traffic_manager.set_path(vehicle, route_1)
+                alt = False
+            else:
+                traffic_manager.set_path(vehicle, route_2)
+                alt = True
+
+            vehicle = None
+
+        counter -= 1
+    elif counter &gt; 0:
+        counter -= 1
+    elif counter == 0:
+        counter = spawn_delay
+
+</code></pre>
+<p>With the above code, we have created two converging streams of traffic originating from opposite sides of the map, guided by the <code>set_path()</code> function of the TM. This results in congestion on a road in the center of town. This kind of technique could be used on a larger scale to simulate multiple tricky cases for autonomous vehicles, such as a busy roundabout or highway intersection.</p>
+<p><img alt="converging_paths" src="../img/tuto_G_traffic_manager/converging_paths.gif" /></p>
+              
+            </div>
+          </div><footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+        <span>
+          <a href="https://github.com/carla-simulator/carla" class="fa fa-github" style="color: #fcfcfc"> GitHub</a>
+        </span>
+    
+    
+    
+  </span>
+</div>
+    <script src="../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "..";</script>
+    <script src="../js/theme_extra.js"></script>
+    <script src="../js/theme.js"></script>
+      <script src="../extra.js"></script>
+      <script src="../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>

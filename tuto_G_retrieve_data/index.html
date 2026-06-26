@@ -1,0 +1,1430 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <link rel="shortcut icon" href="../img/favicon.ico" />
+    <title>Retrieve simulation data - CARLA Simulator</title>
+    <link rel="stylesheet" href="../css/theme.css" />
+    <link rel="stylesheet" href="../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+        <link href="../extra.css" rel="stylesheet" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "Retrieve simulation data";
+        var mkdocs_page_input_path = "tuto_G_retrieve_data.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href=".." class="icon icon-home"> CARLA Simulator
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+      <input type="text" name="q" placeholder="搜索文档" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="..">Home</a>
+                </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Getting started</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../start_introduction/">Introduction</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../start_quickstart/">Quick start package installation</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_first_steps/">First steps</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../build_carla/">Building CARLA</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Next steps</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_content_authoring_maps/">Content authoring - maps</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_content_authoring_vehicles/">Content authoring - vehicles</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../content_authoring_props/">Content authoring - props</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">CARLA topics</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../coordinates/">Coordinates and transformations</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../foundations/">Foundations</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../core_actors/">Actors</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../core_map/">Maps</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../core_sensors/">Sensors and data</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../ts_traffic_simulation_overview/">Traffic</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../ai_rendering/">AI rendering</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../development_tutorials/">Development</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../custom_assets_tutorials/">Custom assets</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Resources</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../python_api/">Python API</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../catalogue/">Catalogue</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../ref_cpp/">C++ reference</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../bp_library/">Blueprint library</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tutorials/">Tutorials</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../ext_docs/">Extended documentation</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../download/">Downloads</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">CARLA Ecosystem</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../ecosys_ansys/">ANSYS</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_G_rllib_integration/">AWS</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_G_carsim_integration/">CarSIM</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_G_chrono/">Chrono</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../large_map_roadrunner/">MathWorks</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../inverted_ai/">Inverted AI</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../nvidia/">NVIDIA</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../adv_opendrive/">ASAM OpenDRIVE</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../adv_ptv/">PTV Vissim</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../adv_rss/">RSS</a>
+                  </li>
+                  <li class="toctree-l1"><a class="" href="https://carla.readthedocs.io/projects/ros-bridge/en/latest/">ROS</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_G_scenic/">Scenic</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../adv_sumo/">SUMO</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../ecosys_synkrotron/">SYNKROTRON</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Contributing</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../cont_contribution_guidelines/">Guidelines</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../cont_coding_standard/">Coding standards</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../cont_doc_standard/">Documentation standard</a>
+                  </li>
+                  <li class="toctree-l1"><a class="" href=".."></a>
+                  </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="..">CARLA Simulator</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href=".." class="icon icon-home" aria-label="Docs"></a></li>
+      <li class="breadcrumb-item active">Retrieve simulation data</li>
+    <li class="wy-breadcrumbs-aside">
+          <a href="https://github.com/carla-simulator/carla/edit/master/Docs/tuto_G_retrieve_data.md" class="icon icon-github"> 在 GitHub 上编辑</a>
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="retrieve-simulation-data">Retrieve simulation data</h1>
+<p>Learning an efficient way to retrieve simulation data is essential in CARLA. This holistic tutorial is advised for both, newcomers and more experienced users. It starts from the very beginning, and gradually dives into the many options available in CARLA.  </p>
+<p>First, the simulation is initialized with custom settings and traffic. An ego vehicle is set to roam around the city, optionally with some basic sensors. The simulation is recorded, so that later it can be queried to find the highlights. After that, the original simulation is played back, and exploited to the limit. New sensors can be added to retrieve consistent data. The weather conditions can be changed. The recorder can even be used to test specific scenarios with different outputs.  </p>
+<ul>
+<li><a href="#overview"><strong>Overview</strong></a>  </li>
+<li><a href="#set-the-simulation"><strong>Set the simulation</strong></a>  <ul>
+<li><a href="#map-setting">Map setting</a>  </li>
+<li><a href="#weather-setting">Weather setting</a>  </li>
+</ul>
+</li>
+<li><a href="#set-traffic"><strong>Set traffic</strong></a>  <ul>
+<li><a href="#carla-traffic-and-pedestrians">CARLA traffic and pedestrians</a>  </li>
+<li><a href="#sumo-co-simulation-traffic">SUMO co-simulation traffic</a>  </li>
+</ul>
+</li>
+<li><a href="#set-the-ego-vehicle"><strong>Set the ego vehicle</strong></a>  <ul>
+<li><a href="#spawn-the-ego-vehicle">Spawn the ego vehicle</a>  </li>
+<li><a href="#place-the-spectator">Place the spectator</a>  </li>
+</ul>
+</li>
+<li><a href="#set-basic-sensors"><strong>Set basic sensors</strong></a>  <ul>
+<li><a href="#rgb-camera">RGB camera</a>  </li>
+<li><a href="#detectors">Detectors</a>  </li>
+<li><a href="#other-sensors">Other sensors</a>  </li>
+</ul>
+</li>
+<li><a href="#set-advanced-sensors"><strong>Set advanced sensors</strong></a>  <ul>
+<li><a href="#depth-camera">Depth camera</a>  </li>
+<li><a href="#semantic-segmentation-camera">Semantic segmentation camera</a>  </li>
+<li><a href="#lidar-raycast-sensor">LIDAR raycast sensor</a>  </li>
+<li><a href="#radar-sensor">Radar sensor</a>  </li>
+</ul>
+</li>
+<li><a href="#no-rendering-mode"><strong>No-rendering-mode</strong></a>  <ul>
+<li><a href="#simulate-at-a-fast-pace">Simulate at a fast pace</a>  </li>
+<li><a href="#manual-control-without-rendering">Manual control without rendering</a>  </li>
+</ul>
+</li>
+<li><a href="#record-and-retrieve-data"><strong>Record and retrieve data</strong></a>  <ul>
+<li><a href="#start-recording">Start recording</a>  </li>
+<li><a href="#capture-and-record">Capture and record</a>  </li>
+<li><a href="#stop-recording">Stop recording</a>  </li>
+</ul>
+</li>
+<li><a href="#exploit-the-recording"><strong>Exploit the recording</strong></a>  <ul>
+<li><a href="#query-the-events">Query the events</a>  </li>
+<li><a href="#choose-a-fragment">Choose a fragment</a>  </li>
+<li><a href="#retrieve-more-data">Retrieve more data</a>  </li>
+<li><a href="#change-the-weather">Change the weather</a>  </li>
+<li><a href="#try-new-outcomes">Try new outcomes</a>  </li>
+</ul>
+</li>
+<li><a href="#tutorial-scripts"><strong>Tutorial scripts</strong></a>  </li>
+</ul>
+<hr />
+<h2 id="overview">Overview</h2>
+<p>There are some common mistakes in the process of retrieving simulation data. Flooding the simulator with sensors, storing useless data, or struggling to find a specific event are some examples. However, some outlines to this process can be provided. The goal is to ensure that data can be retrieved and replicated, and the simulation can be examined and altered at will.  </p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This tutorial uses the <a href="../start_quickstart/"><strong>CARLA 0.9.8 deb package</strong></a>. There may be minor changes depending on your CARLA version and installation, specially regarding paths.</p>
+</div>
+<p>The tutorial presents a wide set of options for the differents steps. All along, different scripts will be mentioned. Not all of them will be used, it depends on the specific use cases. Most of them are already provided in CARLA for generic purposes.  </p>
+<ul>
+<li><strong>config.py</strong> changes the simulation settings. Map, rendering options, set a fixed time-step...  <ul>
+<li><code>carla/PythonAPI/util/config.py</code></li>
+</ul>
+</li>
+<li><strong>dynamic_weather.py</strong> creates interesting weather conditions.  <ul>
+<li><code>carla/PythonAPI/examples/dynamic_weather.py</code></li>
+</ul>
+</li>
+<li><strong>spawn_npc.py</strong> spawns some AI controlled vehicles and walkers.  <ul>
+<li><code>carla/PythonAPI/examples/spawn_npc.py</code></li>
+</ul>
+</li>
+<li><strong>manual_control.py</strong> spawns an ego vehicle, and provides control over it.  <ul>
+<li><code>carla/PythonAPI/examples/manual_control.py</code></li>
+</ul>
+</li>
+</ul>
+<p>However, there are two scripts mentioned along the tutorial that cannot be found in CARLA. They contain the fragments of code cited. This serves a twofold purpose. First of all, to encourage users to build their own scripts. It is important to have full understanding of what the code is doing. In addition to this, the tutorial is only an outline that may, and should, vary a lot depending on user preferences. These two scripts are just an example.  </p>
+<ul>
+<li><strong>tutorial_ego.py</strong> spawns an ego vehicle with some basic sensors, and enables autopilot. The spectator is placed at the spawning position. The recorder starts at the very beginning, and stops when the script is finished.  </li>
+<li><strong>tutorial_replay.py</strong> reenacts the simulation that <strong>tutorial_ego.py</strong> recorded. There are different fragments of code to query the recording, spawn some advanced sensors, change weather conditions, and reenact fragments of the recording.  </li>
+</ul>
+<p>The full code can be found in the last section of the tutorial. Remember these are not strict, but meant to be customized. Retrieving data in CARLA is as powerful as users want it to be. </p>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>This tutorial requires some knowledge of Python.</p>
+</div>
+<hr />
+<h2 id="set-the-simulation">Set the simulation</h2>
+<p>The first thing to do is set the simulation ready to a desired environment.  </p>
+<p>Run CARLA. </p>
+<pre><code class="language-sh">cd /opt/carla/bin
+./CarlaUE.sh
+</code></pre>
+<h3 id="map-setting">Map setting</h3>
+<p>Choose a map for the simulation to run. Take a look at the <a href="../core_map/#carla-maps">map documentation</a> to learn more about their specific attributes. For the sake of this tutorial, <strong>Town07</strong> is chosen. </p>
+<p>Open a new terminal. Change the map using the <strong>config.py</strong> script. </p>
+<pre><code>cd /opt/carla/PythonAPI/utils
+python3 config.py --map Town01
+</code></pre>
+<p>This script can enable different settings. Some of them will be mentioned during the tutorial, others will not. Hereunder there is a brief summary.  </p>
+<details>
+<summary> Optional arguments in <b>config.py</b> </summary>
+
+
+<pre><code class="language-sh">  -h, --help            show this help message and exit
+  --host H              IP of the host CARLA Simulator (default: localhost)
+  -p P, --port P        TCP port of CARLA Simulator (default: 2000)
+  -d, --default         set default settings
+  -m MAP, --map MAP     load a new map, use --list to see available maps
+  -r, --reload-map      reload current map
+  --delta-seconds S     set fixed delta seconds, zero for variable frame rate
+  --fps N               set fixed FPS, zero for variable FPS (similar to
+                        --delta-seconds)
+  --rendering           enable rendering
+  --no-rendering        disable rendering
+  --no-sync             disable synchronous mode
+  --weather WEATHER     set weather preset, use --list to see available
+                        presets
+  -i, --inspect         inspect simulation
+  -l, --list            list available options
+  -b FILTER, --list-blueprints FILTER
+                        list available blueprints matching FILTER (use '*' to
+                        list them all)
+  -x XODR_FILE_PATH, --xodr-path XODR_FILE_PATH
+                        load a new map with a minimum physical road
+                        representation of the provided OpenDRIVE
+</code></pre>
+
+</details>
+<p><br></p>
+<p><img alt="tuto_map" src="../img/tuto_map.jpg" /></p>
+<div style="text-align: right"><i>Aerial view of Town07</i></div>
+
+<h3 id="weather-setting">Weather setting</h3>
+<p>Each town is loaded with a specific weather that fits it, however this can be set at will. There are two scripts that offer different approaches to the matter. The first one sets a dynamic weather that changes conditions over time. The other sets custom weather conditions. It is also possible to code weather conditions. This will be covered later when <a href="#change-the-weather">changing weather conditions</a>.  </p>
+<ul>
+<li><strong>To set a dynamic weather</strong>. Open a new terminal and run <strong>dynamic_weather.py</strong>. This script allows to set the ratio at which the weather changes, being <code>1.0</code> the default setting. </li>
+</ul>
+<pre><code class="language-sh">cd /opt/carla/PythonAPI/examples
+
+python3 dynamic_weather.py --speed 1.0
+</code></pre>
+<ul>
+<li><strong>To set custom conditions</strong>. Use the script <strong>environment.py</strong>. There are quite a lot of possible settings. Take a look at the optional arguments, and the documentation for <a href="../python_api/#carla.WeatherParameters">carla.WeatherParameters</a>.</li>
+</ul>
+<pre><code class="language-sh">cd /opt/carla/PythonAPI/util
+python3 environment.py --clouds 100 --rain 80 --wetness 100 --puddles 60 --wind 80 --fog 50
+
+</code></pre>
+<details>
+<summary> Optional arguments in <b>environment.py</b> </summary>
+
+
+<pre><code class="language-sh">  -h, --help            show this help message and exit
+  --host H              IP of the host server (default: 127.0.0.1)
+  -p P, --port P        TCP port to listen to (default: 2000)
+  --sun SUN             Sun position presets [sunset | day | night]
+  --weather WEATHER     Weather condition presets [clear | overcast | rain]
+  --altitude A, -alt A  Sun altitude [-90.0, 90.0]
+  --azimuth A, -azm A   Sun azimuth [0.0, 360.0]
+  --clouds C, -c C      Clouds amount [0.0, 100.0]
+  --rain R, -r R        Rain amount [0.0, 100.0]
+  --puddles Pd, -pd Pd  Puddles amount [0.0, 100.0]
+  --wind W, -w W        Wind intensity [0.0, 100.0]
+  --fog F, -f F         Fog intensity [0.0, 100.0]
+  --fogdist Fd, -fd Fd  Fog Distance [0.0, inf)
+  --wetness Wet, -wet Wet
+                        Wetness intensity [0.0, 100.0]
+</code></pre>
+
+</details>
+<p><br></p>
+<p><img alt="tuto_weather" src="../img/tuto_weather.jpg" /></p>
+<div style="text-align: right"><i>Weather changes applied</i></div>
+
+<hr />
+<h2 id="set-traffic">Set traffic</h2>
+<p>Simulating traffic is one of the best ways to bring the map to life. It is also necessary to retrieve data for urban environments. There are different options to do so in CARLA.  </p>
+<h3 id="carla-traffic-and-pedestrians">CARLA traffic and pedestrians</h3>
+<p>The CARLA traffic is managed by the <a href="../adv_traffic_manager/">Traffic Manager</a> module. As for pedestrians, each of them has their own <a href="../python_api/#carla.WalkerAIController">carla.WalkerAIController</a>. </p>
+<p>Open a new terminal, and run <strong>spawn_npc.py</strong> to spawn vehicles and walkers. Let's just spawn 50 vehicles and the same amount of walkers. </p>
+<pre><code class="language-sh">cd /opt/carla/PythonAPI/examples
+python3 spawn_npc.py -n 50 -w 50 --safe
+</code></pre>
+<details>
+<summary> Optional arguments in <b>spawn_npc.py</b> </summary>
+
+
+<pre><code class="language-sh">  -h, --help            show this help message and exit
+  --host H              IP of the host server (default: 127.0.0.1)
+  -p P, --port P        TCP port to listen to (default: 2000)
+  -n N, --number-of-vehicles N
+                        number of vehicles (default: 10)
+  -w W, --number-of-walkers W
+                        number of walkers (default: 50)
+  --safe                avoid spawning vehicles prone to accidents
+  --filterv PATTERN     vehicles filter (default: &quot;vehicle.*&quot;)
+  --filterw PATTERN     pedestrians filter (default: &quot;walker.pedestrian.*&quot;)
+  -tm_p P, --tm-port P  port to communicate with TM (default: 8000)
+  --async               Asynchronous mode execution
+</code></pre>
+
+</details>
+<p><br>
+<img alt="tuto_spawning" src="../img/tuto_spawning.jpg" /></p>
+<div style="text-align: right"><i>Vehicles spawned to simulate traffic.</i></div>
+
+<h3 id="sumo-co-simulation-traffic">SUMO co-simulation traffic</h3>
+<p>CARLA can run a co-simulation with SUMO. This allows for creating traffic in SUMO that will be propagated to CARLA. This co-simulation is bidirectional. Spawning vehicles in CARLA will do so in SUMO. Specific docs on this feature can be found <a href="../adv_sumo/">here</a>.  </p>
+<p>This feature is available for CARLA 0.9.8 and later, in <strong>Town01</strong>, <strong>Town04</strong>, and <strong>Town05</strong>. The first one is the most stable.  </p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The co-simulation will enable synchronous mode in CARLA. Read the <a href="../adv_synchrony_timestep/">documentation</a> to find out more about this. </p>
+</div>
+<ul>
+<li>First of all, install SUMO. </li>
+</ul>
+<pre><code class="language-sh">sudo add-apt-repository ppa:sumo/stable
+sudo apt-get update
+sudo apt-get install sumo sumo-tools sumo-doc
+</code></pre>
+<ul>
+<li>Set the environment variable SUMO_HOME.</li>
+</ul>
+<pre><code class="language-sh">echo &quot;export SUMO_HOME=/usr/share/sumo&quot; &gt;&gt; ~/.bashrc &amp;&amp; source ~/.bashrc
+</code></pre>
+<ul>
+<li>With the CARLA server on, run the <a href="https://github.com/carla-simulator/carla/blob/master/Co-Simulation/Sumo/run_synchronization.py">SUMO-CARLA synchrony script</a>. </li>
+</ul>
+<pre><code class="language-sh">cd ~/carla/Co-Simulation/Sumo
+python3 run_synchronization.py examples/Town01.sumocfg --sumo-gui
+</code></pre>
+<ul>
+<li>A SUMO window should have opened. <strong>Press Play</strong> in order to start traffic in both simulations. </li>
+</ul>
+<pre><code>&gt; &quot;Play&quot; on SUMO window.
+</code></pre>
+<p>The traffic generated by this script is an example created by the CARLA team. By default it spawns the same vehicles following the same routes. These can be changed by the user in SUMO. </p>
+<p><img alt="tuto_sumo" src="../img/tuto_sumo.jpg" /></p>
+<div style="text-align: right"><i>SUMO and CARLA co-simulating traffic.</i></div>
+
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Right now, SUMO co-simulation is a beta feature. Vehicles do not have physics nor take into account CARLA traffic lights. </p>
+</div>
+<hr />
+<h2 id="set-the-ego-vehicle">Set the ego vehicle</h2>
+<p>From now up to the moment the recorder is stopped, there will be some fragments of code belonging to <strong>tutorial_ego.py</strong>. This script spawns the ego vehicle, optionally some sensors, and records the simulation until the user finishes the script. </p>
+<h3 id="spawn-the-ego-vehicle">Spawn the ego vehicle</h3>
+<p>Vehicles controlled by the user are commonly differenciated in CARLA by setting the attribute <code>role_name</code> to <code>ego</code>. Other attributes can be set, some with recommended values.  </p>
+<p>Hereunder, a Tesla model is retrieved from the <a href="../bp_library/">blueprint library</a>, and spawned with a random recommended colour. One of the recommended spawn points by the map is chosen to place the ego vehicle.  </p>
+<pre><code class="language-py"># --------------
+# Spawn ego vehicle
+# --------------
+ego_bp = world.get_blueprint_library().find('vehicle.tesla.model3')
+ego_bp.set_attribute('role_name','ego')
+print('\nEgo role_name is set')
+ego_color = random.choice(ego_bp.get_attribute('color').recommended_values)
+ego_bp.set_attribute('color',ego_color)
+print('\nEgo color is set')
+
+spawn_points = world.get_map().get_spawn_points()
+number_of_spawn_points = len(spawn_points)
+
+if 0 &lt; number_of_spawn_points:
+    random.shuffle(spawn_points)
+    ego_transform = spawn_points[0]
+    ego_vehicle = world.spawn_actor(ego_bp,ego_transform)
+    print('\nEgo is spawned')
+else: 
+    logging.warning('Could not found any spawn points')
+</code></pre>
+<h3 id="place-the-spectator">Place the spectator</h3>
+<p>The spectator actor controls the simulation view. Moving it via script is optional, but it may facilitate finding the ego vehicle. </p>
+<pre><code class="language-py"># --------------
+# Spectator on ego position
+# --------------
+spectator = world.get_spectator()
+world_snapshot = world.wait_for_tick() 
+spectator.set_transform(ego_vehicle.get_transform())
+</code></pre>
+<hr />
+<h2 id="set-basic-sensors">Set basic sensors</h2>
+<p>The process to spawn any sensor is quite similar.  </p>
+<p><strong>1.</strong> Use the library to find sensor blueprints.<br />
+<strong>2.</strong> Set specific attributes for the sensor. This is crucial. Attributes will shape the data retrieved.<br />
+<strong>3.</strong> Attach the sensor to the ego vehicle. <strong>The transform is relative to its parent</strong>. The <a href="../python_api/#carlaattachmenttype">carla.AttachmentType</a> will determine how the position of the sensor is updated.<br />
+<strong>4.</strong> Add a <code>listen()</code> method. This is the key element. A <a href="https://www.w3schools.com/python/python_lambda.asp"><strong>lambda</strong></a> method that will be called each time the sensor listens for data. The argument is the sensor data retrieved.  </p>
+<p>Having this basic guideline in mind, let's set some basic sensors for the ego vehicle. </p>
+<h3 id="rgb-camera">RGB camera</h3>
+<p>The <a href="../ref_sensors/#rgb-camera">RGB camera</a> generates realistic pictures of the scene. It is the sensor with more settable attributes of them all, but it is also a fundamental one. It should be understood as a real camera, with attributtes such as <code>focal_distance</code>, <code>shutter_speed</code> or <code>gamma</code> to determine how it would work internally. There is also a specific set of attributtes to define the lens distorsion, and lots of advanced attributes. For example, the <code>lens_circle_multiplier</code> can be used to achieve an effect similar to an eyefish lens. Learn more about them in the <a href="../ref_sensors/#rgb-camera">documentation</a>. </p>
+<p>For the sake of simplicity, the script only sets the most commonly used attributes of this sensor.  </p>
+<ul>
+<li><strong><code>image_size_x</code> and <code>image_size_y</code></strong> will change the resolution of the output image.  </li>
+<li><strong><code>fov</code></strong> is the horizontal field of view of the camera.  </li>
+</ul>
+<p>After setting the attributes, it is time to spawn the sensor. The script places the camera in the hood of the car, and pointing forward. It will capture the front view of the car. </p>
+<p>The data is retrieved as a <a href="../python_api/#carla.Image">carla.Image</a> on every step. The listen method saves these to disk. The path can be altered at will. The name of each image is coded to be based on the simulation frame where the shot was taken.  </p>
+<pre><code class="language-py"># --------------
+# Spawn attached RGB camera
+# --------------
+cam_bp = None
+cam_bp = world.get_blueprint_library().find('sensor.camera.rgb')
+cam_bp.set_attribute(&quot;image_size_x&quot;,str(1920))
+cam_bp.set_attribute(&quot;image_size_y&quot;,str(1080))
+cam_bp.set_attribute(&quot;fov&quot;,str(105))
+cam_location = carla.Location(2,0,1)
+cam_rotation = carla.Rotation(0,180,0)
+cam_transform = carla.Transform(cam_location,cam_rotation)
+ego_cam = world.spawn_actor(cam_bp,cam_transform,attach_to=ego_vehicle, attachment_type=carla.AttachmentType.Rigid)
+ego_cam.listen(lambda image: image.save_to_disk('tutorial/output/%.6d.jpg' % image.frame))
+</code></pre>
+<p><img alt="tuto_rgb" src="../img/tuto_rgb.jpg" /></p>
+<div style="text-align: right"><i>RGB camera output</i></div>
+
+<h3 id="detectors">Detectors</h3>
+<p>These sensors retrieve data when the object they are attached to registers a specific event. There are three type of detector sensors, each one describing one type of event.  </p>
+<ul>
+<li><a href="../ref_sensors/#collision-detector"><strong>Collision detector.</strong></a> Retrieves collisions between its parent and other actors.</li>
+<li><a href="../ref_sensors/#lane-invasion-detector"><strong>Lane invasion detector.</strong></a> Registers when its parent crosses a lane marking.</li>
+<li><a href="../ref_sensors/#obstacle-detector"><strong>Obstacle detector.</strong></a> Detects possible obstacles ahead of its parent.</li>
+</ul>
+<p>The data they retrieve will be helpful later when deciding which part of the simulation is going to be reenacted. In fact, the collisions can be explicitely queried using the recorder. This is prepared to be printed.  </p>
+<p>Only the obstacle detector blueprint has attributes to be set. Here are some important ones. </p>
+<ul>
+<li><strong><code>sensor_tick</code></strong> sets the sensor to retrieve data only after <code>x</code> seconds pass. It is a common attribute for sensors that retrieve data on every step.  </li>
+<li><strong><code>distance</code> and <code>hit-radius</code></strong> shape the debug line used to detect obstacles ahead. </li>
+<li><strong><code>only_dynamics</code></strong> determines if static objects should be taken into account or not. By default, any object is considered. </li>
+</ul>
+<p>The script sets the obstacle detector to only consider dynamic objects. If the vehicle collides with any static object, it will be detected by the collision sensor.  </p>
+<pre><code class="language-py"># --------------
+# Add collision sensor to ego vehicle. 
+# --------------
+
+col_bp = world.get_blueprint_library().find('sensor.other.collision')
+col_location = carla.Location(0,0,0)
+col_rotation = carla.Rotation(0,0,0)
+col_transform = carla.Transform(col_location,col_rotation)
+ego_col = world.spawn_actor(col_bp,col_transform,attach_to=ego_vehicle, attachment_type=carla.AttachmentType.Rigid)
+def col_callback(colli):
+    print(&quot;Collision detected:\n&quot;+str(colli)+'\n')
+ego_col.listen(lambda colli: col_callback(colli))
+
+# --------------
+# Add Lane invasion sensor to ego vehicle. 
+# --------------
+
+lane_bp = world.get_blueprint_library().find('sensor.other.lane_invasion')
+lane_location = carla.Location(0,0,0)
+lane_rotation = carla.Rotation(0,0,0)
+lane_transform = carla.Transform(lane_location,lane_rotation)
+ego_lane = world.spawn_actor(lane_bp,lane_transform,attach_to=ego_vehicle, attachment_type=carla.AttachmentType.Rigid)
+def lane_callback(lane):
+    print(&quot;Lane invasion detected:\n&quot;+str(lane)+'\n')
+ego_lane.listen(lambda lane: lane_callback(lane))
+
+# --------------
+# Add Obstacle sensor to ego vehicle. 
+# --------------
+
+obs_bp = world.get_blueprint_library().find('sensor.other.obstacle')
+obs_bp.set_attribute(&quot;only_dynamics&quot;,str(True))
+obs_location = carla.Location(0,0,0)
+obs_rotation = carla.Rotation(0,0,0)
+obs_transform = carla.Transform(obs_location,obs_rotation)
+ego_obs = world.spawn_actor(obs_bp,obs_transform,attach_to=ego_vehicle, attachment_type=carla.AttachmentType.Rigid)
+def obs_callback(obs):
+    print(&quot;Obstacle detected:\n&quot;+str(obs)+'\n')
+ego_obs.listen(lambda obs: obs_callback(obs))
+</code></pre>
+<p><img alt="tuto_detectors" src="../img/tuto_detectors.jpg" /></p>
+<div style="text-align: right"><i>Output for detector sensors</i></div>
+
+<h3 id="other-sensors">Other sensors</h3>
+<p>Only two sensors of this category will be considered for the time being.  </p>
+<ul>
+<li><a href="../ref_sensors/#gnss-sensor"><strong>GNSS sensor.</strong></a> Retrieves the geolocation of the sensor.</li>
+<li><a href="../ref_sensors/#imu-sensor"><strong>IMU sensor.</strong></a> Comprises an accelerometer, a gyroscope, and a compass.</li>
+</ul>
+<p>To get general measures for the vehicle object, these two sensors are spawned centered to it. </p>
+<p>The attributes available for these sensors mostly set the mean or standard deviation parameter in the noise model of the measure. This is useful to get more realistic measures. However, in <strong>tutorial_ego.py</strong> only one attribute is set.  </p>
+<ul>
+<li><strong><code>sensor_tick</code></strong>. As this measures are not supposed to vary significantly between steps, it is okay to retrieve the data every so often. In this case, it is set to be printed every three seconds.  </li>
+</ul>
+<pre><code class="language-py"># --------------
+# Add GNSS sensor to ego vehicle. 
+# --------------
+
+gnss_bp = world.get_blueprint_library().find('sensor.other.gnss')
+gnss_location = carla.Location(0,0,0)
+gnss_rotation = carla.Rotation(0,0,0)
+gnss_transform = carla.Transform(gnss_location,gnss_rotation)
+gnss_bp.set_attribute(&quot;sensor_tick&quot;,str(3.0))
+ego_gnss = world.spawn_actor(gnss_bp,gnss_transform,attach_to=ego_vehicle, attachment_type=carla.AttachmentType.Rigid)
+def gnss_callback(gnss):
+    print(&quot;GNSS measure:\n&quot;+str(gnss)+'\n')
+ego_gnss.listen(lambda gnss: gnss_callback(gnss))
+
+# --------------
+# Add IMU sensor to ego vehicle. 
+# --------------
+
+imu_bp = world.get_blueprint_library().find('sensor.other.imu')
+imu_location = carla.Location(0,0,0)
+imu_rotation = carla.Rotation(0,0,0)
+imu_transform = carla.Transform(imu_location,imu_rotation)
+imu_bp.set_attribute(&quot;sensor_tick&quot;,str(3.0))
+ego_imu = world.spawn_actor(imu_bp,imu_transform,attach_to=ego_vehicle, attachment_type=carla.AttachmentType.Rigid)
+def imu_callback(imu):
+    print(&quot;IMU measure:\n&quot;+str(imu)+'\n')
+ego_imu.listen(lambda imu: imu_callback(imu))
+</code></pre>
+<p><img alt="tuto_other" src="../img/tuto_other.jpg" /></p>
+<div style="text-align: right"><i>GNSS and IMU sensors output</i></div>
+
+<hr />
+<h2 id="set-advanced-sensors">Set advanced sensors</h2>
+<p>The script <strong>tutorial_replay.py</strong>, among other things, contains definitions for more sensors. They work in the same way as the basic ones, but their comprehension may be a bit harder.</p>
+<h3 id="depth-camera">Depth camera</h3>
+<p>The <a href="../ref_sensors/#depth-camera">depth camera</a> generates pictures of the scene that map every pixel in a grayscale depth map. However, the output is not straightforward. The depth buffer of the camera is mapped using a RGB color space. This has to be translated to grayscale to be comprehensible.  </p>
+<p>In order to do this, simply save the image as with the RGB camera, but apply a <a href="../python_api/#carla.ColorConverter">carla.ColorConverter</a> to it. There are two conversions available for depth cameras.  </p>
+<ul>
+<li><strong>carla.ColorConverter.Depth</strong> translates the original depth with milimetric precision.  </li>
+<li><strong>carla.ColorConverter.LogarithmicDepth</strong> also has milimetric granularity, but provides better results in close distances and a little worse for further elements.  </li>
+</ul>
+<p>The attributes for the depth camera only set elements previously stated in the RGB camera: <code>fov</code>, <code>image_size_x</code>, <code>image_size_y</code> and <code>sensor_tick</code>. The script sets this sensor to match the previous RGB camera used. </p>
+<pre><code class="language-py"># --------------
+# Add a Depth camera to ego vehicle. 
+# --------------
+depth_cam = None
+depth_bp = world.get_blueprint_library().find('sensor.camera.depth')
+depth_location = carla.Location(2,0,1)
+depth_rotation = carla.Rotation(0,180,0)
+depth_transform = carla.Transform(depth_location,depth_rotation)
+depth_cam = world.spawn_actor(depth_bp,depth_transform,attach_to=ego_vehicle, attachment_type=carla.AttachmentType.Rigid)
+# This time, a color converter is applied to the image, to get the semantic segmentation view
+depth_cam.listen(lambda image: image.save_to_disk('tutorial/new_depth_output/%.6d.jpg' % image.frame,carla.ColorConverter.LogarithmicDepth))
+</code></pre>
+<p><img alt="tuto_depths" src="../img/tuto_depths.jpg" /></p>
+<div style="text-align: right"><i>Depth camera output. Simple conversion on the left, logarithmic on the right.</i></div>
+
+<h3 id="semantic-segmentation-camera">Semantic segmentation camera</h3>
+<p>The <a href="../ref_sensors/#semantic-segmentation-camera">semantic segmentation camera</a> renders elements in scene with a different color depending on how these have been tagged. The tags are created by the simulator depending on the path of the asset used for spawning. For example, meshes tagged as <code>Pedestrians</code> are spawned with content stored in <code>Unreal/CarlaUE4/Content/Static/Pedestrians</code>.  </p>
+<p>The output is an image, as any camera, but each pixel contains the tag encoded in the red channel. This original image must be converted using <strong>ColorConverter.CityScapesPalette</strong>. New tags can be created, read more in the <a href="../ref_sensors/#semantic-segmentation-camera">documentation</a>.  </p>
+<p>The attributes available for this camera are exactly the same as the depth camera. The script also sets this to match the original RGB camera. </p>
+<pre><code class="language-py"># --------------
+# Add a new semantic segmentation camera to my ego
+# --------------
+sem_cam = None
+sem_bp = world.get_blueprint_library().find('sensor.camera.semantic_segmentation')
+sem_bp.set_attribute(&quot;image_size_x&quot;,str(1920))
+sem_bp.set_attribute(&quot;image_size_y&quot;,str(1080))
+sem_bp.set_attribute(&quot;fov&quot;,str(105))
+sem_location = carla.Location(2,0,1)
+sem_rotation = carla.Rotation(0,180,0)
+sem_transform = carla.Transform(sem_location,sem_rotation)
+sem_cam = world.spawn_actor(sem_bp,sem_transform,attach_to=ego_vehicle, attachment_type=carla.AttachmentType.Rigid)
+# This time, a color converter is applied to the image, to get the semantic segmentation view
+sem_cam.listen(lambda image: image.save_to_disk('tutorial/new_sem_output/%.6d.jpg' % image.frame,carla.ColorConverter.CityScapesPalette))
+</code></pre>
+<p><img alt="tuto_sem" src="../img/tuto_sem.jpg" /></p>
+<div style="text-align: right"><i>Semantic segmentation camera output</i></div>
+
+<h3 id="lidar-raycast-sensor">LIDAR raycast sensor</h3>
+<p>The <a href="../ref_sensors/#lidar-raycast-sensor">LIDAR sensor</a> simulates a rotating LIDAR. It creates a cloud of points that maps the scene in 3D. The LIDAR contains a set of lasers that rotate at a certain frequency. The lasers raycast the distance to impact, and store every shot as one single point.  </p>
+<p>The way the array of lasers is disposed can be set using different sensor attributes. </p>
+<ul>
+<li><strong><code>upper_fov</code> and <code>lower_fov</code></strong> the angle of the highest and the lowest laser respectively.</li>
+<li><strong><code>channels</code></strong> sets the amount of lasers to be used. These are distributed along the desired <em>fov</em>. </li>
+</ul>
+<p>Other attributes set the way this points are calculated. They determine the amount of points that each laser calculates every step: <code>points_per_second / (FPS * channels)</code>.  </p>
+<ul>
+<li><strong><code>range</code></strong> is the maximum distance to capture.  </li>
+<li><strong><code>points_per_second</code></strong> is the amount of points that will be obtained every second. This quantity is divided between the amount of <code>channels</code>.  </li>
+<li><strong><code>rotation_frequency</code></strong> is the amount of times the LIDAR will rotate every second. </li>
+</ul>
+<p>The point cloud output is described as a [carla.LidarMeasurement]. It can be iterated as a list of [carla.Location] or saved to a <em>.ply</em> standart file format.  </p>
+<pre><code class="language-py"># --------------
+# Add a new LIDAR sensor to my ego
+# --------------
+lidar_cam = None
+lidar_bp = world.get_blueprint_library().find('sensor.lidar.ray_cast')
+lidar_bp.set_attribute('channels',str(32))
+lidar_bp.set_attribute('points_per_second',str(90000))
+lidar_bp.set_attribute('rotation_frequency',str(40))
+lidar_bp.set_attribute('range',str(20))
+lidar_location = carla.Location(0,0,2)
+lidar_rotation = carla.Rotation(0,0,0)
+lidar_transform = carla.Transform(lidar_location,lidar_rotation)
+lidar_sen = world.spawn_actor(lidar_bp,lidar_transform,attach_to=ego_vehicle)
+lidar_sen.listen(lambda point_cloud: point_cloud.save_to_disk('tutorial/new_lidar_output/%.6d.ply' % point_cloud.frame))
+</code></pre>
+<p>The <em>.ply</em> output can be visualized using <strong>Meshlab</strong>.  </p>
+<p><strong>1.</strong> Install <a href="http://www.meshlab.net/#download">Meshlab</a>.</p>
+<pre><code class="language-sh">sudo apt-get update -y
+sudo apt-get install -y meshlab
+</code></pre>
+<p><strong>2.</strong> Open Meshlab.</p>
+<pre><code class="language-sh">meshlab
+</code></pre>
+<p><strong>3.</strong> Open one of the <em>.ply</em> files. <code>File &gt; Import mesh...</code> </p>
+<p><img alt="tuto_lidar" src="../img/tuto_lidar.jpg" /></p>
+<div style="text-align: right"><i>LIDAR output after being processed in Meshlab.</i></div>
+
+<h3 id="radar-sensor">Radar sensor</h3>
+<p>The <a href="../ref_sensors/#radar-sensor">radar sensor</a> is similar to de LIDAR. It creates a conic view, and shoots lasers inside to raycast their impacts. The output is a <a href="../python_api/#carlaradarmeasurement">carla.RadarMeasurement</a>. It contains a list of the <a href="../python_api/#carlaradardetection">carla.RadarDetection</a> retrieved by the lasers. These are not points in space, but detections with data regarding the sensor: <code>azimuth</code>, <code>altitude</code>, <code>sensor</code> and <code>velocity</code>. </p>
+<p>The attributes of this sensor mostly set the way the lasers are located.</p>
+<ul>
+<li><strong><code>horizontal_fov</code> and <code>vertical_fov</code></strong> determine the amplitude of the conic view.</li>
+<li><strong><code>channels</code></strong> sets the amount of lasers to be used. These are distributed along the desired <code>fov</code>. </li>
+<li><strong><code>range</code></strong> is the maximum distance for the lasers to raycast. </li>
+<li><strong><code>points_per_second</code></strong> sets the the amount of points to be captured, that will be divided between the channels stated. </li>
+</ul>
+<p>The script places the sensor on the hood of the car, and rotated a bit upwards. That way, the output will map the front view of the car. The <code>horizontal_fov</code> is incremented, and the <code>vertical_fov</code> diminished. The area of interest is specially the height where vehicles and walkers usually move on. The <code>range</code> is also changed from 100m to 10m, in order to retrieve data only right ahead of the vehicle. </p>
+<p>The callback is a bit more complex this time, showing more of its capabilities. It will draw the points captured by the radar on the fly. The points will be colored depending on their velocity regarding the ego vehicle.  </p>
+<ul>
+<li><strong>Blue</strong> for points approaching the vehicle.  </li>
+<li><strong>Red</strong> for points moving away from it. </li>
+<li><strong>White</strong> for points static regarding the ego vehicle. </li>
+</ul>
+<pre><code class="language-py"># --------------
+# Add a new radar sensor to my ego
+# --------------
+rad_cam = None
+rad_bp = world.get_blueprint_library().find('sensor.other.radar')
+rad_bp.set_attribute('horizontal_fov', str(35))
+rad_bp.set_attribute('vertical_fov', str(20))
+rad_bp.set_attribute('range', str(20))
+rad_location = carla.Location(x=2.0, z=1.0)
+rad_rotation = carla.Rotation(pitch=5)
+rad_transform = carla.Transform(rad_location,rad_rotation)
+rad_ego = world.spawn_actor(rad_bp,rad_transform,attach_to=ego_vehicle, attachment_type=carla.AttachmentType.Rigid)
+def rad_callback(radar_data):
+    velocity_range = 7.5 # m/s
+    current_rot = radar_data.transform.rotation
+    for detect in radar_data:
+        azi = math.degrees(detect.azimuth)
+        alt = math.degrees(detect.altitude)
+        # The 0.25 adjusts a bit the distance so the dots can
+        # be properly seen
+        fw_vec = carla.Vector3D(x=detect.depth - 0.25)
+        carla.Transform(
+            carla.Location(),
+            carla.Rotation(
+                pitch=current_rot.pitch + alt,
+                yaw=current_rot.yaw + azi,
+                roll=current_rot.roll)).transform(fw_vec)
+
+        def clamp(min_v, max_v, value):
+            return max(min_v, min(value, max_v))
+
+        norm_velocity = detect.velocity / velocity_range # range [-1, 1]
+        r = int(clamp(0.0, 1.0, 1.0 - norm_velocity) * 255.0)
+        g = int(clamp(0.0, 1.0, 1.0 - abs(norm_velocity)) * 255.0)
+        b = int(abs(clamp(- 1.0, 0.0, - 1.0 - norm_velocity)) * 255.0)
+        world.debug.draw_point(
+            radar_data.transform.location + fw_vec,
+            size=0.075,
+            life_time=0.06,
+            persistent_lines=False,
+            color=carla.Color(r, g, b))
+rad_ego.listen(lambda radar_data: rad_callback(radar_data))
+</code></pre>
+<p><img alt="tuto_radar" src="../img/tuto_radar.jpg" /></p>
+<div style="text-align: right"><i>Radar output. The vehicle is stopped at a traffic light, so the static elements in front of it appear in white.</i></div>
+
+<hr />
+<h2 id="no-rendering-mode">No-rendering mode</h2>
+<p>The <a href="../adv_rendering_options/">no-rendering mode</a> can be useful to run an initial simulation that will be later played again to retrieve data. Especially if this simulation has some extreme conditions, such as dense traffic.  </p>
+<h3 id="simulate-at-a-fast-pace">Simulate at a fast pace</h3>
+<p>Disabling the rendering will save up a lot of work to the simulation. As the GPU is not used, the server can work at full speed. This could be useful to simulate complex conditions at a fast pace. The best way to do so would be by setting a fixed time-step. Running an asynchronous server with a fixed time-step and no rendering, the only limitation for the simulation would be the inner logic of the server.  </p>
+<p>The same <code>config.py</code> used to <a href="#map-setting">set the map</a> can disable rendering, and set a fixed time-step. </p>
+<pre><code>cd /opt/carla/PythonAPI/utils
+python3 config.py --no-rendering --delta-seconds 0.05 # Never greater than 0.1s
+</code></pre>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Read the <a href="../adv_synchrony_timestep/">documentation</a> before messing around with with synchrony and time-step.</p>
+</div>
+<h3 id="manual-control-without-rendering">Manual control without rendering</h3>
+<p>The script <code>PythonAPI/examples/no_rendering_mode.py</code> provides an overview of the simulation. It creates a minimalistic aerial view with Pygame, that will follow the ego vehicle. This could be used along with <strong>manual_control.py</strong> to generate a route with barely no cost, record it, and then play it back and exploit it to gather data. </p>
+<pre><code>cd /opt/carla/PythonAPI/examples
+python3 manual_control.py
+</code></pre>
+<pre><code>cd /opt/carla/PythonAPI/examples
+python3 no_rendering_mode.py --no-rendering
+</code></pre>
+<details>
+<summary> Optional arguments in <b>no_rendering_mode.py</b> </summary>
+
+
+<pre><code class="language-sh">  -h, --help           show this help message and exit
+  -v, --verbose        print debug information
+  --host H             IP of the host server (default: 127.0.0.1)
+  -p P, --port P       TCP port to listen to (default: 2000)
+  --res WIDTHxHEIGHT   window resolution (default: 1280x720)
+  --filter PATTERN     actor filter (default: &quot;vehicle.*&quot;)
+  --map TOWN           start a new episode at the given TOWN
+  --no-rendering       switch off server rendering
+  --show-triggers      show trigger boxes of traffic signs
+  --show-connections   show waypoint connections
+  --show-spawn-points  show recommended spawn points
+</code></pre>
+
+</details>
+<p><br></p>
+<p><img alt="tuto_no_rendering" src="../img/tuto_no_rendering.jpg" /></p>
+<div style="text-align: right"><i>no_rendering_mode.py working in Town07</i></div>
+
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>In this mode, GPU-based sensors will retrieve empty data. Cameras are useless, but other sensors such as detectors will work properly. </p>
+</div>
+<hr />
+<h2 id="record-and-retrieve-data">Record and retrieve data</h2>
+<h3 id="start-recording">Start recording</h3>
+<p>The <a href="../adv_recorder/"><strong>recorder</strong></a> can be started at anytime. The script does it at the very beginning, in order to capture everything, including the spawning of the first actors. If no path is detailed, the log will be saved into <code>CarlaUE4/Saved</code>. </p>
+<pre><code class="language-py"># --------------
+# Start recording
+# --------------
+client.start_recorder('~/tutorial/recorder/recording01.log')
+</code></pre>
+<h3 id="capture-and-record">Capture and record</h3>
+<p>There are many different ways to do this. Mostly it goes down as either let it roam around or control it manually. The data for the sensors spawned will be retrieved on the fly. Make sure to check it while recording, to make sure everything is set properly.  </p>
+<ul>
+<li><strong>Enable the autopilot.</strong> This will register the vehicle to the <a href="../adv_traffic_manager/">Traffic Manager</a>. It will roam around the city endlessly. The script does this, and creates a loop to prevent the script from finishing. The recording will go on until the user finishes the script. Alternatively, a timer could be set to finish the script after a certain time.  </li>
+</ul>
+<pre><code class="language-py"># --------------
+# Capture data
+# --------------
+ego_vehicle.set_autopilot(True)
+print('\nEgo autopilot enabled')
+
+while True:
+    world_snapshot = world.wait_for_tick()
+</code></pre>
+<ul>
+<li><strong>Manual control.</strong> Run the script <code>PythonAPI/examples/manual_control.py</code> in a client, and the recorder in another one. Drive the ego vehicle around to create the desired route, and stop the recorder when finished. The <strong>tutorial_ego.py</strong> script can be used to manage the recorder, but make sure to comment other fragments of code.  </li>
+</ul>
+<pre><code>cd /opt/carla/PythonAPI/examples
+python3 manual_control.py
+</code></pre>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>To avoid rendering and save up computational cost, enable <a href="../adv_rendering_options/#no-rendering-mode"><strong>no rendering mode</strong></a>. The script <code>/PythonAPI/examples/no_rendering_mode.py</code> does this while creating a simple aerial view.  </p>
+</div>
+<h3 id="stop-recording">Stop recording</h3>
+<p>The stop call is even simpler than the start call was. When the recorder is done, the recording will be saved in the path stated previously. </p>
+<pre><code class="language-py"># --------------
+# Stop recording
+# --------------
+client.stop_recorder()
+</code></pre>
+<hr />
+<h2 id="exploit-the-recording">Exploit the recording</h2>
+<p>So far, a simulation has been recorded. Now, it is time to examine the recording, find the most remarkable moments, and work with them. These steps are gathered in the script, <strong>tutorial_replay.py</strong>.  The outline is structured in different segments of code commented.  </p>
+<p>It is time to run a new simulation. </p>
+<pre><code class="language-sh">./CarlaUE4.sh
+</code></pre>
+<p>To reenact the simulation, <a href="#choose-a-fragment">choose a fragment</a> and run the script containing the code for the playback.  </p>
+<pre><code class="language-sh">python3 tuto_replay.py
+</code></pre>
+<h3 id="query-the-events">Query the events</h3>
+<p>The different queries are detailed in the <a href="../adv_recorder/"><strong>recorder documentation</strong></a>. In summary, they retrieve data for specific events or frames. Use the queries to study the recording. Find the spotlight moments, and trace what can be of interest.  </p>
+<pre><code class="language-py"># --------------
+# Query the recording
+# --------------
+# Show only the most important events in the recording.  
+print(client.show_recorder_file_info(&quot;~/tutorial/recorder/recording01.log&quot;,False))
+# Show actors not moving 1 meter in 10 seconds.  
+print(client.show_recorder_actors_blocked(&quot;~/tutorial/recorder/recording01.log&quot;,10,1))
+# Filter collisions between vehicles 'v' and 'a' any other type of actor.  
+print(client.show_recorder_collisions(&quot;~/tutorial/recorder/recording01.log&quot;,'v','a'))
+</code></pre>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The recorder does not need to be on, in order to do the queries.</p>
+</div>
+<p><img alt="tuto_query_frames" src="../img/tuto_query_frames.jpg" /></p>
+<div style="text-align: right"><i>Query showing important events. This is the frame where the ego vehicle was spawned.</i></div>
+
+<p><img alt="tuto_query_blocked" src="../img/tuto_query_blocked.jpg" /></p>
+<div style="text-align: right"><i>Query showing actors blocked. In this simulation, the ego vehicle remained blocked for 100 seconds.</i></div>
+
+<p><img alt="tuto_query_collisions" src="../img/tuto_query_collisions.jpg" /></p>
+<div style="text-align: right"><i>Query showing a collision between the ego vehicle and an object of type "other".</i></div>
+
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Getting detailed file info for every frame can be overwhelming. Use it after other queries to know where to look at. </p>
+</div>
+<h3 id="choose-a-fragment">Choose a fragment</h3>
+<p>After the queries, it may be a good idea play some moments of the simulation back, before messing around. It is very simple to do so, and it could be really helpful. Know more about the simulation. It is the best way to save time later.  </p>
+<p>The method allows to choose the beginning and ending point of the playback, and an actor to follow. </p>
+<pre><code class="language-py"># --------------
+# Reenact a fragment of the recording
+# --------------
+client.replay_file(&quot;~/tutorial/recorder/recording01.log&quot;,45,10,0)
+</code></pre>
+<p>Here is a list of possible things to do now. </p>
+<ul>
+<li><strong>Use the information from the queries.</strong> Find out the moment and the actors involved in an event, and play that again. Start the recorder a few seconds before the event.  </li>
+<li><strong>Follow different actors.</strong> Different perspectives will show new events that are not included in the queries.  </li>
+<li><strong>Rom around with a free spectator view.</strong> Set the <code>actor_id</code> to <code>0</code>, and get a general view of the simulation. Be wherever and whenever wanted thanks to the recording.  </li>
+</ul>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>When the recording stops, the simulation doesn't. Walkers will stand still, and vehicles will continue roaming around. This may happen either if the log ends, or the playback gets to the ending point stated. </p>
+</div>
+<h3 id="retrieve-more-data">Retrieve more data</h3>
+<p>The recorder will recreate in this simulation, the exact same conditions as the original. That ensures consistent data within different playbacks.  </p>
+<p>Gather a list of the important moments, actors and events. Add sensors whenever needed and play the simulation back. The process is exactly the same as before. The script <strong>tutorial_replay.py</strong> provides different examples that have been thoroughly explained in the <a href="#set-advanced-sensors"><strong>Set advanced sensors</strong></a> section. Others have been explained in the section <a href="#set-basic-sensors"><strong>Set basic sensors</strong></a>. </p>
+<p>Add as many sensors as needed, wherever they are needed. Play the simulation back as many times as desired and retrieve as much data as desired.  </p>
+<h3 id="change-the-weather">Change the weather</h3>
+<p>The recording will recreate the original weather conditions. However, these can be altered at will. This may be interesting to compare how does it affect sensors, while mantaining the rest of events the same.  </p>
+<p>Get the current weather and modify it freely. Remember that <a href="../python_api/#carla.WeatherParameters">carla.WeatherParameters</a> has some presets available. The script will change the environment to a foggy sunset. </p>
+<pre><code class="language-py"># --------------
+# Change weather for playback
+# --------------
+weather = world.get_weather()
+weather.sun_altitude_angle = -30
+weather.fog_density = 65
+weather.fog_distance = 10
+world.set_weather(weather)
+</code></pre>
+<h3 id="try-new-outcomes">Try new outcomes</h3>
+<p>The new simulation is not strictly linked to the recording. It can be modified anytime, and even when the recorder stops, the simulation goes on. </p>
+<p>This can be profitable for the user. For instance, collisions can be forced or avoided by playing back the simulation a few seconds before, and spawning or destroying an actor. Ending the recording at a specific moment can also be useful. Doing so, vehicles may take different paths. </p>
+<p>Change the conditions and mess with the simulation. There is nothing to lose, as the recorder grants that the initial simulation can always be reenacted. This is the key to exploit the full potential of CARLA. </p>
+<hr />
+<h2 id="tutorial-scripts">Tutorial scripts</h2>
+<p>Hereunder are the two scripts gathering the fragments of code for this tutorial. Most of the code is commented, as it is meant to be modified to fit specific purposes.</p>
+<details>
+<summary><b>tutorial_ego.py</b> </summary>
+
+
+<pre><code class="language-py">import carla
+
+import argparse
+import time
+import logging
+import random
+
+
+def main():
+    argparser = argparse.ArgumentParser(
+        description=__doc__)
+    argparser.add_argument(
+        '--host',
+        metavar='H',
+        default='127.0.0.1',
+        help='IP of the host server (default: 127.0.0.1)')
+    argparser.add_argument(
+        '-p', '--port',
+        metavar='P',
+        default=2000,
+        type=int,
+        help='TCP port to listen to (default: 2000)')
+    args = argparser.parse_args()
+
+    logging.basicConfig(format='%(levelname)s: %(message)s', level=logging.INFO)
+
+    client = carla.Client(args.host, args.port)
+    client.set_timeout(10.0)
+
+    try:
+
+        world = client.get_world()
+        ego_vehicle = None
+        ego_cam = None
+        ego_col = None
+        ego_lane = None
+        ego_obs = None
+        ego_gnss = None
+        ego_imu = None
+
+        # --------------
+        # Start recording
+        # --------------
+        &quot;&quot;&quot;
+        client.start_recorder('~/tutorial/recorder/recording01.log')
+        &quot;&quot;&quot;
+
+        # --------------
+        # Spawn ego vehicle
+        # --------------
+        &quot;&quot;&quot;
+        ego_bp = world.get_blueprint_library().find('vehicle.tesla.model3')
+        ego_bp.set_attribute('role_name','ego')
+        print('\nEgo role_name is set')
+        ego_color = random.choice(ego_bp.get_attribute('color').recommended_values)
+        ego_bp.set_attribute('color',ego_color)
+        print('\nEgo color is set')
+
+        spawn_points = world.get_map().get_spawn_points()
+        number_of_spawn_points = len(spawn_points)
+
+        if 0 &lt; number_of_spawn_points:
+            random.shuffle(spawn_points)
+            ego_transform = spawn_points[0]
+            ego_vehicle = world.spawn_actor(ego_bp,ego_transform)
+            print('\nEgo is spawned')
+        else: 
+            logging.warning('Could not found any spawn points')
+        &quot;&quot;&quot;
+
+        # --------------
+        # Add a RGB camera sensor to ego vehicle. 
+        # --------------
+        &quot;&quot;&quot;
+        cam_bp = None
+        cam_bp = world.get_blueprint_library().find('sensor.camera.rgb')
+        cam_bp.set_attribute(&quot;image_size_x&quot;,str(1920))
+        cam_bp.set_attribute(&quot;image_size_y&quot;,str(1080))
+        cam_bp.set_attribute(&quot;fov&quot;,str(105))
+        cam_location = carla.Location(2,0,1)
+        cam_rotation = carla.Rotation(0,180,0)
+        cam_transform = carla.Transform(cam_location,cam_rotation)
+        ego_cam = world.spawn_actor(cam_bp,cam_transform,attach_to=ego_vehicle, attachment_type=carla.AttachmentType.Rigid)
+        ego_cam.listen(lambda image: image.save_to_disk('~/tutorial/output/%.6d.jpg' % image.frame))
+        &quot;&quot;&quot;
+
+        # --------------
+        # Add collision sensor to ego vehicle. 
+        # --------------
+        &quot;&quot;&quot;
+        col_bp = world.get_blueprint_library().find('sensor.other.collision')
+        col_location = carla.Location(0,0,0)
+        col_rotation = carla.Rotation(0,0,0)
+        col_transform = carla.Transform(col_location,col_rotation)
+        ego_col = world.spawn_actor(col_bp,col_transform,attach_to=ego_vehicle, attachment_type=carla.AttachmentType.Rigid)
+        def col_callback(colli):
+            print(&quot;Collision detected:\n&quot;+str(colli)+'\n')
+        ego_col.listen(lambda colli: col_callback(colli))
+        &quot;&quot;&quot;
+
+        # --------------
+        # Add Lane invasion sensor to ego vehicle. 
+        # --------------
+        &quot;&quot;&quot;
+        lane_bp = world.get_blueprint_library().find('sensor.other.lane_invasion')
+        lane_location = carla.Location(0,0,0)
+        lane_rotation = carla.Rotation(0,0,0)
+        lane_transform = carla.Transform(lane_location,lane_rotation)
+        ego_lane = world.spawn_actor(lane_bp,lane_transform,attach_to=ego_vehicle, attachment_type=carla.AttachmentType.Rigid)
+        def lane_callback(lane):
+            print(&quot;Lane invasion detected:\n&quot;+str(lane)+'\n')
+        ego_lane.listen(lambda lane: lane_callback(lane))
+        &quot;&quot;&quot;
+
+        # --------------
+        # Add Obstacle sensor to ego vehicle. 
+        # --------------
+        &quot;&quot;&quot;
+        obs_bp = world.get_blueprint_library().find('sensor.other.obstacle')
+        obs_bp.set_attribute(&quot;only_dynamics&quot;,str(True))
+        obs_location = carla.Location(0,0,0)
+        obs_rotation = carla.Rotation(0,0,0)
+        obs_transform = carla.Transform(obs_location,obs_rotation)
+        ego_obs = world.spawn_actor(obs_bp,obs_transform,attach_to=ego_vehicle, attachment_type=carla.AttachmentType.Rigid)
+        def obs_callback(obs):
+            print(&quot;Obstacle detected:\n&quot;+str(obs)+'\n')
+        ego_obs.listen(lambda obs: obs_callback(obs))
+        &quot;&quot;&quot;
+
+        # --------------
+        # Add GNSS sensor to ego vehicle. 
+        # --------------
+        &quot;&quot;&quot;
+        gnss_bp = world.get_blueprint_library().find('sensor.other.gnss')
+        gnss_location = carla.Location(0,0,0)
+        gnss_rotation = carla.Rotation(0,0,0)
+        gnss_transform = carla.Transform(gnss_location,gnss_rotation)
+        gnss_bp.set_attribute(&quot;sensor_tick&quot;,str(3.0))
+        ego_gnss = world.spawn_actor(gnss_bp,gnss_transform,attach_to=ego_vehicle, attachment_type=carla.AttachmentType.Rigid)
+        def gnss_callback(gnss):
+            print(&quot;GNSS measure:\n&quot;+str(gnss)+'\n')
+        ego_gnss.listen(lambda gnss: gnss_callback(gnss))
+        &quot;&quot;&quot;
+
+        # --------------
+        # Add IMU sensor to ego vehicle. 
+        # --------------
+        &quot;&quot;&quot;
+        imu_bp = world.get_blueprint_library().find('sensor.other.imu')
+        imu_location = carla.Location(0,0,0)
+        imu_rotation = carla.Rotation(0,0,0)
+        imu_transform = carla.Transform(imu_location,imu_rotation)
+        imu_bp.set_attribute(&quot;sensor_tick&quot;,str(3.0))
+        ego_imu = world.spawn_actor(imu_bp,imu_transform,attach_to=ego_vehicle, attachment_type=carla.AttachmentType.Rigid)
+        def imu_callback(imu):
+            print(&quot;IMU measure:\n&quot;+str(imu)+'\n')
+        ego_imu.listen(lambda imu: imu_callback(imu))
+        &quot;&quot;&quot;
+
+        # --------------
+        # Place spectator on ego spawning
+        # --------------
+        &quot;&quot;&quot;
+        spectator = world.get_spectator()
+        world_snapshot = world.wait_for_tick() 
+        spectator.set_transform(ego_vehicle.get_transform())
+        &quot;&quot;&quot;
+
+        # --------------
+        # Enable autopilot for ego vehicle
+        # --------------
+        &quot;&quot;&quot;
+        ego_vehicle.set_autopilot(True)
+        &quot;&quot;&quot;
+
+        # --------------
+        # Game loop. Prevents the script from finishing.
+        # --------------
+        while True:
+            world_snapshot = world.wait_for_tick()
+
+    finally:
+        # --------------
+        # Stop recording and destroy actors
+        # --------------
+        client.stop_recorder()
+        if ego_vehicle is not None:
+            if ego_cam is not None:
+                ego_cam.stop()
+                ego_cam.destroy()
+            if ego_col is not None:
+                ego_col.stop()
+                ego_col.destroy()
+            if ego_lane is not None:
+                ego_lane.stop()
+                ego_lane.destroy()
+            if ego_obs is not None:
+                ego_obs.stop()
+                ego_obs.destroy()
+            if ego_gnss is not None:
+                ego_gnss.stop()
+                ego_gnss.destroy()
+            if ego_imu is not None:
+                ego_imu.stop()
+                ego_imu.destroy()
+            ego_vehicle.destroy()
+
+if __name__ == '__main__':
+
+    try:
+        main()
+    except KeyboardInterrupt:
+        pass
+    finally:
+        print('\nDone with tutorial_ego.')
+
+</code></pre>
+
+</details>
+<p><br></p>
+<details>
+<summary><b>tutorial_replay.py</b></summary>
+
+
+<pre><code class="language-py">import time
+import math
+import weakref
+
+import carla
+
+import argparse
+import logging
+import random
+
+def main():
+    client = carla.Client('127.0.0.1', 2000)
+    client.set_timeout(10.0)
+
+    try:
+
+        world = client.get_world() 
+        ego_vehicle = None
+        ego_cam = None
+        depth_cam = None
+        depth_cam02 = None
+        sem_cam = None
+        rad_ego = None
+        lidar_sen = None
+
+        # --------------
+        # Query the recording
+        # --------------
+        &quot;&quot;&quot;
+        # Show the most important events in the recording.  
+        print(client.show_recorder_file_info(&quot;~/tutorial/recorder/recording05.log&quot;,False))
+        # Show actors not moving 1 meter in 10 seconds.  
+        #print(client.show_recorder_actors_blocked(&quot;~/tutorial/recorder/recording04.log&quot;,10,1))
+        # Show collisions between any type of actor.  
+        #print(client.show_recorder_collisions(&quot;~/tutorial/recorder/recording04.log&quot;,'v','a'))
+        &quot;&quot;&quot;
+
+        # --------------
+        # Reenact a fragment of the recording
+        # --------------
+        &quot;&quot;&quot;
+        client.replay_file(&quot;~/tutorial/recorder/recording03.log&quot;,0,30,0)
+        &quot;&quot;&quot;
+
+        # --------------
+        # Set playback simulation conditions
+        # --------------
+        &quot;&quot;&quot;
+        ego_vehicle = world.get_actor(322) #Store the ID from the simulation or query the recording to find out
+        &quot;&quot;&quot;
+
+        # --------------
+        # Place spectator on ego spawning
+        # --------------
+        &quot;&quot;&quot;
+        spectator = world.get_spectator()
+        world_snapshot = world.wait_for_tick() 
+        spectator.set_transform(ego_vehicle.get_transform())
+        &quot;&quot;&quot;
+
+        # --------------
+        # Change weather conditions
+        # --------------
+        &quot;&quot;&quot;
+        weather = world.get_weather()
+        weather.sun_altitude_angle = -30
+        weather.fog_density = 65
+        weather.fog_distance = 10
+        world.set_weather(weather)
+        &quot;&quot;&quot;
+
+        # --------------
+        # Add a RGB camera to ego vehicle.
+        # --------------
+        &quot;&quot;&quot;
+        cam_bp = None
+        cam_bp = world.get_blueprint_library().find('sensor.camera.rgb')
+        cam_location = carla.Location(2,0,1)
+        cam_rotation = carla.Rotation(0,180,0)
+        cam_transform = carla.Transform(cam_location,cam_rotation)
+        cam_bp.set_attribute(&quot;image_size_x&quot;,str(1920))
+        cam_bp.set_attribute(&quot;image_size_y&quot;,str(1080))
+        cam_bp.set_attribute(&quot;fov&quot;,str(105))
+        ego_cam = world.spawn_actor(cam_bp,cam_transform,attach_to=ego_vehicle, attachment_type=carla.AttachmentType.Rigid)
+        ego_cam.listen(lambda image: image.save_to_disk('~/tutorial/new_rgb_output/%.6d.jpg' % image.frame))
+        &quot;&quot;&quot;
+
+        # --------------
+        # Add a Logarithmic Depth camera to ego vehicle. 
+        # --------------
+        &quot;&quot;&quot;
+        depth_cam = None
+        depth_bp = world.get_blueprint_library().find('sensor.camera.depth')
+        depth_bp.set_attribute(&quot;image_size_x&quot;,str(1920))
+        depth_bp.set_attribute(&quot;image_size_y&quot;,str(1080))
+        depth_bp.set_attribute(&quot;fov&quot;,str(105))
+        depth_location = carla.Location(2,0,1)
+        depth_rotation = carla.Rotation(0,180,0)
+        depth_transform = carla.Transform(depth_location,depth_rotation)
+        depth_cam = world.spawn_actor(depth_bp,depth_transform,attach_to=ego_vehicle, attachment_type=carla.AttachmentType.Rigid)
+        # This time, a color converter is applied to the image, to get the semantic segmentation view
+        depth_cam.listen(lambda image: image.save_to_disk('~/tutorial/de_log/%.6d.jpg' % image.frame,carla.ColorConverter.LogarithmicDepth))
+        &quot;&quot;&quot;
+        # --------------
+        # Add a Depth camera to ego vehicle. 
+        # --------------
+        &quot;&quot;&quot;
+        depth_cam02 = None
+        depth_bp02 = world.get_blueprint_library().find('sensor.camera.depth')
+        depth_bp02.set_attribute(&quot;image_size_x&quot;,str(1920))
+        depth_bp02.set_attribute(&quot;image_size_y&quot;,str(1080))
+        depth_bp02.set_attribute(&quot;fov&quot;,str(105))
+        depth_location02 = carla.Location(2,0,1)
+        depth_rotation02 = carla.Rotation(0,180,0)
+        depth_transform02 = carla.Transform(depth_location02,depth_rotation02)
+        depth_cam02 = world.spawn_actor(depth_bp02,depth_transform02,attach_to=ego_vehicle, attachment_type=carla.AttachmentType.Rigid)
+        # This time, a color converter is applied to the image, to get the semantic segmentation view
+        depth_cam02.listen(lambda image: image.save_to_disk('~/tutorial/de/%.6d.jpg' % image.frame,carla.ColorConverter.Depth))
+        &quot;&quot;&quot;
+
+        # --------------
+        # Add a new semantic segmentation camera to ego vehicle
+        # --------------
+        &quot;&quot;&quot;
+        sem_cam = None
+        sem_bp = world.get_blueprint_library().find('sensor.camera.semantic_segmentation')
+        sem_bp.set_attribute(&quot;image_size_x&quot;,str(1920))
+        sem_bp.set_attribute(&quot;image_size_y&quot;,str(1080))
+        sem_bp.set_attribute(&quot;fov&quot;,str(105))
+        sem_location = carla.Location(2,0,1)
+        sem_rotation = carla.Rotation(0,180,0)
+        sem_transform = carla.Transform(sem_location,sem_rotation)
+        sem_cam = world.spawn_actor(sem_bp,sem_transform,attach_to=ego_vehicle, attachment_type=carla.AttachmentType.Rigid)
+        # This time, a color converter is applied to the image, to get the semantic segmentation view
+        sem_cam.listen(lambda image: image.save_to_disk('~/tutorial/new_sem_output/%.6d.jpg' % image.frame,carla.ColorConverter.CityScapesPalette))
+        &quot;&quot;&quot;
+
+        # --------------
+        # Add a new radar sensor to ego vehicle
+        # --------------
+        &quot;&quot;&quot;
+        rad_cam = None
+        rad_bp = world.get_blueprint_library().find('sensor.other.radar')
+        rad_bp.set_attribute('horizontal_fov', str(35))
+        rad_bp.set_attribute('vertical_fov', str(20))
+        rad_bp.set_attribute('range', str(20))
+        rad_location = carla.Location(x=2.8, z=1.0)
+        rad_rotation = carla.Rotation(pitch=5)
+        rad_transform = carla.Transform(rad_location,rad_rotation)
+        rad_ego = world.spawn_actor(rad_bp,rad_transform,attach_to=ego_vehicle, attachment_type=carla.AttachmentType.Rigid)
+        def rad_callback(radar_data):
+            velocity_range = 7.5 # m/s
+            current_rot = radar_data.transform.rotation
+            for detect in radar_data:
+                azi = math.degrees(detect.azimuth)
+                alt = math.degrees(detect.altitude)
+                # The 0.25 adjusts a bit the distance so the dots can
+                # be properly seen
+                fw_vec = carla.Vector3D(x=detect.depth - 0.25)
+                carla.Transform(
+                    carla.Location(),
+                    carla.Rotation(
+                        pitch=current_rot.pitch + alt,
+                        yaw=current_rot.yaw + azi,
+                        roll=current_rot.roll)).transform(fw_vec)
+
+                def clamp(min_v, max_v, value):
+                    return max(min_v, min(value, max_v))
+
+                norm_velocity = detect.velocity / velocity_range # range [-1, 1]
+                r = int(clamp(0.0, 1.0, 1.0 - norm_velocity) * 255.0)
+                g = int(clamp(0.0, 1.0, 1.0 - abs(norm_velocity)) * 255.0)
+                b = int(abs(clamp(- 1.0, 0.0, - 1.0 - norm_velocity)) * 255.0)
+                world.debug.draw_point(
+                    radar_data.transform.location + fw_vec,
+                    size=0.075,
+                    life_time=0.06,
+                    persistent_lines=False,
+                    color=carla.Color(r, g, b))
+        rad_ego.listen(lambda radar_data: rad_callback(radar_data))
+        &quot;&quot;&quot;
+
+        # --------------
+        # Add a new LIDAR sensor to ego vehicle
+        # --------------
+        &quot;&quot;&quot;
+        lidar_cam = None
+        lidar_bp = world.get_blueprint_library().find('sensor.lidar.ray_cast')
+        lidar_bp.set_attribute('channels',str(32))
+        lidar_bp.set_attribute('points_per_second',str(90000))
+        lidar_bp.set_attribute('rotation_frequency',str(40))
+        lidar_bp.set_attribute('range',str(20))
+        lidar_location = carla.Location(0,0,2)
+        lidar_rotation = carla.Rotation(0,0,0)
+        lidar_transform = carla.Transform(lidar_location,lidar_rotation)
+        lidar_sen = world.spawn_actor(lidar_bp,lidar_transform,attach_to=ego_vehicle,attachment_type=carla.AttachmentType.Rigid)
+        lidar_sen.listen(lambda point_cloud: point_cloud.save_to_disk('/home/adas/Desktop/tutorial/new_lidar_output/%.6d.ply' % point_cloud.frame))
+        &quot;&quot;&quot;
+
+        # --------------
+        # Game loop. Prevents the script from finishing.
+        # --------------
+        while True:
+            world_snapshot = world.wait_for_tick()
+
+    finally:
+        # --------------
+        # Destroy actors
+        # --------------
+        if ego_vehicle is not None:
+            if ego_cam is not None:
+                ego_cam.stop()
+                ego_cam.destroy()
+            if depth_cam is not None:
+                depth_cam.stop()
+                depth_cam.destroy()
+            if sem_cam is not None:
+                sem_cam.stop()
+                sem_cam.destroy()
+            if rad_ego is not None:
+                rad_ego.stop()
+                rad_ego.destroy()
+            if lidar_sen is not None:
+                lidar_sen.stop()
+                lidar_sen.destroy()
+            ego_vehicle.destroy()
+        print('\nNothing to be done.')
+
+
+if __name__ == '__main__':
+
+    try:
+        main()
+    except KeyboardInterrupt:
+        pass
+    finally:
+        print('\nDone with tutorial_replay.')
+</code></pre>
+
+</details>
+<p><br></p>
+<hr />
+<p>That is a wrap on how to properly retrieve data from the simulation. Make sure to play around, change the conditions of the simulator, experiment with sensor settings. The possibilities are endless. </p>
+<p>Visit the forum to post any doubts or suggestions that have come to mind during this reading.  </p>
+<div text-align: center>
+<div class="build-buttons">
+<p>
+<a href="https://github.com/carla-simulator/carla/discussions/" target="_blank" class="btn btn-neutral" title="CARLA forum">
+CARLA forum</a>
+</p>
+</div>
+</div>
+              
+            </div>
+          </div><footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+        <span>
+          <a href="https://github.com/carla-simulator/carla" class="fa fa-github" style="color: #fcfcfc"> GitHub</a>
+        </span>
+    
+    
+    
+  </span>
+</div>
+    <script src="../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "..";</script>
+    <script src="../js/theme_extra.js"></script>
+    <script src="../js/theme.js"></script>
+      <script src="../extra.js"></script>
+      <script src="../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>

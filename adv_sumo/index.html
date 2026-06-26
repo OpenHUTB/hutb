@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <link rel="shortcut icon" href="../img/favicon.ico" />
+    <title>SUMO - CARLA Simulator</title>
+    <link rel="stylesheet" href="../css/theme.css" />
+    <link rel="stylesheet" href="../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+        <link href="../extra.css" rel="stylesheet" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "SUMO";
+        var mkdocs_page_input_path = "adv_sumo.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href=".." class="icon icon-home"> CARLA Simulator
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+      <input type="text" name="q" placeholder="搜索文档" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="..">Home</a>
+                </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Getting started</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../start_introduction/">Introduction</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../start_quickstart/">Quick start package installation</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_first_steps/">First steps</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../build_carla/">Building CARLA</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Next steps</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_content_authoring_maps/">Content authoring - maps</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_content_authoring_vehicles/">Content authoring - vehicles</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../content_authoring_props/">Content authoring - props</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">CARLA topics</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../coordinates/">Coordinates and transformations</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../foundations/">Foundations</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../core_actors/">Actors</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../core_map/">Maps</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../core_sensors/">Sensors and data</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../ts_traffic_simulation_overview/">Traffic</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../ai_rendering/">AI rendering</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../development_tutorials/">Development</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../custom_assets_tutorials/">Custom assets</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Resources</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../python_api/">Python API</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../catalogue/">Catalogue</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../ref_cpp/">C++ reference</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../bp_library/">Blueprint library</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tutorials/">Tutorials</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../ext_docs/">Extended documentation</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../download/">Downloads</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">CARLA Ecosystem</span></p>
+              <ul class="current">
+                  <li class="toctree-l1"><a class="reference internal" href="../ecosys_ansys/">ANSYS</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_G_rllib_integration/">AWS</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_G_carsim_integration/">CarSIM</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_G_chrono/">Chrono</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../large_map_roadrunner/">MathWorks</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../inverted_ai/">Inverted AI</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../nvidia/">NVIDIA</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../adv_opendrive/">ASAM OpenDRIVE</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../adv_ptv/">PTV Vissim</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../adv_rss/">RSS</a>
+                  </li>
+                  <li class="toctree-l1"><a class="" href="https://carla.readthedocs.io/projects/ros-bridge/en/latest/">ROS</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_G_scenic/">Scenic</a>
+                  </li>
+                  <li class="toctree-l1 current"><a class="reference internal current" href="#">SUMO</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#requisites">Requisites</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#run-a-custom-co-simulation">Run a custom co-simulation</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#create-carla-vtypes">Create carla vtypes</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#create-the-sumo-net">Create the SUMO net</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#run-the-synchronization">Run the synchronization</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#spawn-npcs-controlled-by-sumo">Spawn NPCs controlled by SUMO</a>
+    </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../ecosys_synkrotron/">SYNKROTRON</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Contributing</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../cont_contribution_guidelines/">Guidelines</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../cont_coding_standard/">Coding standards</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../cont_doc_standard/">Documentation standard</a>
+                  </li>
+                  <li class="toctree-l1"><a class="" href=".."></a>
+                  </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="..">CARLA Simulator</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href=".." class="icon icon-home" aria-label="Docs"></a></li>
+          <li class="breadcrumb-item">CARLA Ecosystem</li>
+      <li class="breadcrumb-item active">SUMO</li>
+    <li class="wy-breadcrumbs-aside">
+          <a href="https://github.com/carla-simulator/carla/edit/master/Docs/adv_sumo.md" class="icon icon-github"> 在 GitHub 上编辑</a>
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="sumo-co-simulation">SUMO co-simulation</h1>
+<p>CARLA has developed a co-simulation feature with SUMO. This allows to distribute the tasks at will, and exploit the capabilities of each simulation in favour of the user.</p>
+<ul>
+<li><a href="#requisites"><strong>Requisites</strong></a>  </li>
+<li><a href="#run-a-custom-co-simulation"><strong>Run a custom co-simulation</strong></a>  <ul>
+<li><a href="#create-carla-vtypes">Create CARLA vtypes</a>  </li>
+<li><a href="#create-the-sumo-net">Create the SUMO net</a>  </li>
+<li><a href="#run-the-synchronization">Run the synchronization</a>  </li>
+</ul>
+</li>
+<li><a href="#spawn-npcs-controlled-by-sumo"><strong>Spawn NPCs controlled by SUMO</strong></a>  </li>
+</ul>
+<hr />
+<h2 id="requisites">Requisites</h2>
+<p>First and foremost, it is necessary to <a href="https://sumo.dlr.de/docs/Installing.html"><strong>install SUMO</strong></a> to run the co-simulation. Building from source is recommended over a simple installation, as there are new features and fixes that will improve the co-simulation. </p>
+<p>Once that is done, set the SUMO environment variable.  </p>
+<pre><code class="language-sh">echo &quot;export SUMO_HOME=/usr/share/sumo&quot; &gt;&gt; ~/.bashrc &amp;&amp; source ~/.bashrc
+</code></pre>
+<p>SUMO is ready to run the co-simulations. There are some examples in <code>Co-Simulation/Sumo/examples</code> for <strong>Town01</strong>, <strong>Town04</strong>, and <strong>Town05</strong>. These <code>.sumocfg</code> files describe the configuration of the simulation (e.g., net, routes, vehicle types...). Use one of these to test the co-simulation. The script has different options that are detailed <a href="#run-the-synchronization">below</a>. For the time being, let's run a simple example for <strong>Town04</strong>.  </p>
+<p>Run a CARLA simulation with <strong>Town04</strong>.  </p>
+<pre><code class="language-sh">cd ~/carla
+./CarlaUE4.sh
+cd PythonAPI/util
+python3 config.py --map Town04
+</code></pre>
+<p>Then, run the SUMO co-simulation example.  </p>
+<pre><code class="language-sh">cd ~/carla/Co-Simulation/Sumo
+python3 run_synchronization.py examples/Town04.sumocfg  --sumo-gui
+</code></pre>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+</div>
+<hr />
+<h2 id="run-a-custom-co-simulation">Run a custom co-simulation</h2>
+<h3 id="create-carla-vtypes">Create carla vtypes</h3>
+<p>With the script <code>Co-Simulation/Sumo/util/create_sumo_vtypes.py</code> the user can create sumo <em>vtypes</em>, the equivalent to CARLA blueprints, based on the CARLA blueprint library.  </p>
+<ul>
+<li><strong><code>--carla-host</code></strong> <em>(default: 127.0.0.1)</em> — IP of the carla host server.  </li>
+<li><strong><code>--carla-port</code></strong> <em>(default: 2000)</em> — TCP port to listen to.  </li>
+<li><strong><code>--output-file</code></strong> <em>(default: carlavtypes.rou.xml)</em> — The generated file containing the <em>vtypes</em>.  </li>
+</ul>
+<p>This script uses the information stored in <code>data/vtypes.json</code> to create the SUMO <em>vtypes</em>. These can be modified by editing said file.  </p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>A CARLA simulation must be running to execute the script.</p>
+</div>
+<h3 id="create-the-sumo-net">Create the SUMO net</h3>
+<p>The recommended way to create a SUMO net that synchronizes with CARLA is using the script <code>Co-Simulation/Sumo/util/netconvert_carla.py</code>. This will draw on the <a href="https://sumo.dlr.de/docs/NETCONVERT.html">netconvert</a> tool provided by SUMO. In order to run the script, some arguments are needed.  </p>
+<ul>
+<li><strong><code>xodr_file</code></strong> — OpenDRIVE file <code>.xodr</code>.</li>
+<li><strong><code>--output'</code></strong> <em>(default:<code>net.net.xml</code>)</em> — output file <code>.net.xml</code>.</li>
+<li><strong><code>--guess-tls</code></strong> <em>(default:false)</em> — SUMO can set traffic lights only for specific lanes in a road, but CARLA can't. If set to <strong>True</strong>, SUMO will not differenciate traffic lights for specific lanes, and these will be in sync with CARLA.  </li>
+</ul>
+<p>The output of the script will be a <code>.net.xml</code> that can be edited using <strong><a href="https://sumo.dlr.de/docs/NETEDIT.html">NETEDIT</a></strong>. Use it to edit the routes, add demand, and eventually, prepare a simulation that can be saved as <code>.sumocfg</code>.  </p>
+<p>The examples provided may be helpful during this process. Take a look at <code>Co-Simulation/Sumo/examples</code>. For every <code>example.sumocfg</code> there are several related files under the same name. All of them comprise a co-simulation example.  </p>
+<h3 id="run-the-synchronization">Run the synchronization</h3>
+<p>Once a simulation is ready and saved as a <code>.sumocfg</code>, it is ready to run. There are some optional parameters to change the settings of the co-simulation. </p>
+<ul>
+<li><strong><code>sumo_cfg_file</code></strong> — The SUMO configuration file.  </li>
+<li><strong><code>--carla-host</code></strong> <em>(default: 127.0.0.1)</em> — IP of the carla host server  </li>
+<li><strong><code>--carla-port</code></strong> <em>(default: 2000)</em> — TCP port to listen to  </li>
+<li><strong><code>--sumo-host</code></strong> <em>(default: 127.0.0.1)</em> — IP of the SUMO host server.  </li>
+<li><strong><code>--sumo-port</code></strong> <em>(default: 8813)</em> — TCP port to listen to.  </li>
+<li><strong><code>--sumo-gui</code></strong> — Open a window to visualize the gui version of SUMO.</li>
+<li><strong><code>--step-length</code></strong> <em>(default: 0.05s)</em> — Set fixed delta seconds for the simulation time-step. </li>
+<li><strong><code>--sync-vehicle-lights</code></strong> <em>(default: False)</em> — Synchronize vehicle lights. </li>
+<li><strong><code>--sync-vehicle-color</code></strong> <em>(default: False)</em> — Synchronize vehicle color. </li>
+<li><strong><code>--sync-vehicle-all</code></strong> <em>(default: False)</em> — Synchronize all vehicle properties.  </li>
+<li><strong><code>--tls-manager</code></strong> <em>(default: none)</em> — Choose which simulator should manage the traffic lights. The other will update those accordingly. The options are <code>carla</code>, <code>sumo</code>, and <code>none</code>. If <code>none</code> is chosen, traffic lights will not be synchronized. Each vehicle would only obey the traffic lights in the simulator that spawn it. </li>
+</ul>
+<pre><code class="language-sh">python3 run_synchronization.py &lt;SUMOCFG FILE&gt; --tls-manager carla --sumo-gui
+</code></pre>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>To stop the co-simulation, press <code>Ctrl+C</code> in the terminal that run the script.  </p>
+</div>
+<hr />
+<h2 id="spawn-npcs-controlled-by-sumo">Spawn NPCs controlled by SUMO</h2>
+<p>The co-simulation with SUMO makes for an additional feature. Vehicles can be spawned in CARLA through SUMO, and managed by the later as the Traffi Manager would do.  </p>
+<p>The script <code>spawn_npc_sumo.py</code> is almost equivalent to the already-known <code>generate_traffic.py</code>. This script automatically generates a SUMO network in a temporal folder, based on the active town in CARLA. The script will create random routes and let the vehicles roam around.</p>
+<p>As the script runs a synchronous simulation, and spawns vehicles in it, the arguments are the same that appear in <code>run_synchronization.py</code> and <code>generate_traffic.py</code>.</p>
+<ul>
+<li><strong><code>--host</code></strong> <em>(default: 127.0.0.1)</em> — IP of the host server.  </li>
+<li><strong><code>--port</code></strong> <em>(default: 2000)</em> — TCP port to listen to.  </li>
+<li><strong><code>-n,--number-of-vehicles</code></strong> <em>(default: 10)</em> — Number of vehicles spawned.  </li>
+<li><strong><code>--safe</code></strong> — Avoid spawning vehicles prone to accidents.  </li>
+<li><strong><code>--filterv</code></strong> <em>(default: "vehicle.</em>")* — Filter the blueprint of the vehicles spawned.  </li>
+<li><strong><code>--sumo-gui</code></strong> — Open a window to visualize SUMO.  </li>
+<li><strong><code>--step-length</code></strong> <em>(default: 0.05s)</em> — Set fixed delta seconds for the simulation time-step.  </li>
+<li><strong><code>--sync-vehicle-lights</code></strong> <em>(default: False)</em> — Synchronize vehicle lights state.  </li>
+<li><strong><code>--sync-vehicle-color</code></strong> <em>(default: False)</em> — Synchronize vehicle color.  </li>
+<li><strong><code>--sync-vehicle-all</code></strong> <em>(default: False)</em> — Synchronize all vehicle properties.  </li>
+<li><strong><code>--tls-manager</code></strong> <em>(default: none)</em> — Choose which simulator will change the traffic lights' state. The other will update them accordingly. If <code>none</code>, traffic lights will not be synchronized.  </li>
+</ul>
+<pre><code class="language-sh"># Spawn 10 vehicles, that will be managed by SUMO instead of Traffic Manager.
+# CARLA in charge of traffic lights.
+# Open a window for SUMO visualization.
+python3 spawn_sumo_npc.py -n 10 --tls-manager carla --sumo-gui
+</code></pre>
+<hr />
+<p>That is all there is so far, regarding for the SUMO co-simulation with CARLA. </p>
+<p>Open CARLA and mess around for a while. If there are any doubts, feel free to post these in the forum. </p>
+<div class="build-buttons">
+<p>
+<a href="https://github.com/carla-simulator/carla/discussions/" target="_blank" class="btn btn-neutral" title="Go to the CARLA forum">
+CARLA forum</a>
+</p>
+</div>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="../tuto_G_scenic/" class="btn btn-neutral float-left" title="Scenic"><span class="icon icon-circle-arrow-left"></span> 前一页</a>
+        <a href="../ecosys_synkrotron/" class="btn btn-neutral float-right" title="SYNKROTRON">后一页 <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+        <span>
+          <a href="https://github.com/carla-simulator/carla" class="fa fa-github" style="color: #fcfcfc"> GitHub</a>
+        </span>
+    
+    
+      <span><a href="../tuto_G_scenic/" style="color: #fcfcfc">&laquo; 前一页</a></span>
+    
+    
+      <span><a href="../ecosys_synkrotron/" style="color: #fcfcfc">后一页 &raquo;</a></span>
+    
+  </span>
+</div>
+    <script src="../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "..";</script>
+    <script src="../js/theme_extra.js"></script>
+    <script src="../js/theme.js"></script>
+      <script src="../extra.js"></script>
+      <script src="../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <link rel="shortcut icon" href="../img/favicon.ico" />
+    <title>Material customization - CARLA Simulator</title>
+    <link rel="stylesheet" href="../css/theme.css" />
+    <link rel="stylesheet" href="../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+        <link href="../extra.css" rel="stylesheet" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "Material customization";
+        var mkdocs_page_input_path = "tuto_A_material_customization.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href=".." class="icon icon-home"> CARLA Simulator
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+      <input type="text" name="q" placeholder="搜索文档" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="..">Home</a>
+                </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Getting started</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../start_introduction/">Introduction</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../start_quickstart/">Quick start package installation</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_first_steps/">First steps</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../build_carla/">Building CARLA</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Next steps</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_content_authoring_maps/">Content authoring - maps</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_content_authoring_vehicles/">Content authoring - vehicles</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../content_authoring_props/">Content authoring - props</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">CARLA topics</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../coordinates/">Coordinates and transformations</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../foundations/">Foundations</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../core_actors/">Actors</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../core_map/">Maps</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../core_sensors/">Sensors and data</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../ts_traffic_simulation_overview/">Traffic</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../ai_rendering/">AI rendering</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../development_tutorials/">Development</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../custom_assets_tutorials/">Custom assets</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Resources</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../python_api/">Python API</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../catalogue/">Catalogue</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../ref_cpp/">C++ reference</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../bp_library/">Blueprint library</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tutorials/">Tutorials</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../ext_docs/">Extended documentation</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../download/">Downloads</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">CARLA Ecosystem</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../ecosys_ansys/">ANSYS</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_G_rllib_integration/">AWS</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_G_carsim_integration/">CarSIM</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_G_chrono/">Chrono</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../large_map_roadrunner/">MathWorks</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../inverted_ai/">Inverted AI</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../nvidia/">NVIDIA</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../adv_opendrive/">ASAM OpenDRIVE</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../adv_ptv/">PTV Vissim</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../adv_rss/">RSS</a>
+                  </li>
+                  <li class="toctree-l1"><a class="" href="https://carla.readthedocs.io/projects/ros-bridge/en/latest/">ROS</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_G_scenic/">Scenic</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../adv_sumo/">SUMO</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../ecosys_synkrotron/">SYNKROTRON</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Contributing</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../cont_contribution_guidelines/">Guidelines</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../cont_coding_standard/">Coding standards</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../cont_doc_standard/">Documentation standard</a>
+                  </li>
+                  <li class="toctree-l1"><a class="" href=".."></a>
+                  </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="..">CARLA Simulator</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href=".." class="icon icon-home" aria-label="Docs"></a></li>
+      <li class="breadcrumb-item active">Material customization</li>
+    <li class="wy-breadcrumbs-aside">
+          <a href="https://github.com/carla-simulator/carla/edit/master/Docs/tuto_A_material_customization.md" class="icon icon-github"> 在 GitHub 上编辑</a>
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="material-customization">Material customization</h1>
+<p>The CARLA team prepares every asset to run under certain default settings. However, users that work in a build from source can modify these to best suit their needs.  </p>
+<ul>
+<li><a href="#car-materials"><strong>Car materials</strong></a>  </li>
+<li><a href="#customize-car-materials"><strong>Customize car materials</strong></a>  <ul>
+<li><a href="#exterior-properties">Exterior properties</a>  </li>
+</ul>
+</li>
+<li><a href="#building-materials"><strong>Building materials</strong></a>  </li>
+<li><a href="#customize-a-building-material"><strong>Customize a building material</strong></a>  </li>
+</ul>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>This tutorial only applies to users that work with a build from source, and have access to the Unreal Editor.  </p>
+</div>
+<hr />
+<h2 id="car-materials">Car materials</h2>
+<p>In CARLA, there is a set of master materials that are used as templates for the different parts of the vehicle. An instance of these is created for each vehicle model, and then changed to the desired result.  The master materials can be found in <code>Content/Carla/Static/GenericMaterials/Vehicles</code>, and these are the following.  </p>
+<p><img alt="materials_master" src="../img/material_customization/Materials_Master.jpg" /></p>
+<div style="text-align: right"><i>Master materials applied to cars.</i></div>
+
+<ul>
+<li><strong>M_CarExterior_Master</strong> — Material applied to the body of the car.  </li>
+<li><strong>M_CarInterior_Master</strong> — Material applied to the inside of the car.  </li>
+<li><strong>M_CarLightsGlass_Master</strong> — Material applied to the glass covering car lights.  </li>
+<li><strong>M_CarWindows_Master</strong> — Material applied to the windows.  </li>
+<li><strong>M_LicensePlate_Master</strong> — Material applied to the license plate.  </li>
+<li><strong>M_VehicleLights_Master</strong> — Material applied to the car lights as an emissive texure.  </li>
+<li><strong>M_VehicleLights_Sirens_Master</strong> — Material applied to the sirens, if applicable.  </li>
+</ul>
+<hr />
+<h2 id="customize-car-materials">Customize car materials</h2>
+<p>Create instances of the master materials and store them in the corresponding folder for the new model. Here is an example of the instances created for the police car available in the blueprint library, <em>vehicle.dodge_charger.police</em>. </p>
+<p><img alt="materials_instances" src="../img/material_customization/Materials_Instances.jpg" /></p>
+<div style="text-align: right"><i>Instanced materials for the police car blueprint.</i></div>
+
+<p>Generic documentation for materials and how to work with them can be found in the <a href="https://docs.unrealengine.com/en-US/Engine/Rendering/Materials/index.html">UE Docs</a>. All the materials can be modified to a great extent, but only the exterior one has properties worth mentioning. Others have certain properties that can be changed, such as opacity and color in glass materials, but it is not recommended to do so, except for specific purposes.  </p>
+<h3 id="exterior-properties">Exterior properties</h3>
+<p>The exterior material is applied to the body of the car, and it is the one that can be customized the most. </p>
+<ul>
+<li><strong>Base color</strong> — Base color of the bodywork.  </li>
+<li><strong>Tint shade</strong> — Tint color which visibility varies depending on the angle of visualization.  </li>
+</ul>
+<p><img alt="materials_Tint" src="../img/material_customization/Materials_Tint.jpg" /></p>
+<div style="text-align: right"><i>Red car with pink tint. On the left, tint is disabled, on the right, enabled.</i></div>
+
+<ul>
+<li><strong>Dust</strong> — A texture of dirt applied to the car. Dust is meant to pile on top of the geometry, and it is barely noticeable in the bottom parts. If the geometry is rotated, the dust will appear on the parts of the vehicle that are on top. <ul>
+<li><code>Amount</code> — Opacity of the texture.  </li>
+<li><code>Color</code> — Base color of the dust texture.  </li>
+<li><code>Tiling</code> — Size and repetition of the dust texture pattern.  </li>
+<li><code>Thickness</code> — Density of the dust.  </li>
+<li><code>Roughness</code> — Decrease of the car's metallic reflections due to dust.  </li>
+</ul>
+</li>
+</ul>
+<p><img alt="materials_Dust" src="../img/material_customization/Materials_Dust.jpg" /></p>
+<div style="text-align: right"><i>Dust property in a car's material.</i></div>
+
+<ul>
+<li><strong>Flakes</strong> — Sparkling flakes to the metallic paint of the car.  <ul>
+<li><code>On/Off</code> — Enables or disables the feature.  </li>
+<li><code>Scale</code> — Size of the flakes. </li>
+<li><code>Brightness</code> — Intensity of the sparkle.  </li>
+<li><code>Color</code> — Base color of the particles.  </li>
+</ul>
+</li>
+</ul>
+<p><img alt="materials_Flakes" src="../img/material_customization/Materials_Flakes.jpg" /></p>
+<div style="text-align: right"><i>Flakes property in a car's material.</i></div>
+
+<ul>
+<li><strong>Gain</strong> — Noise to the base paint of the car. <ul>
+<li><strong>On/Off</strong> — Enables or disables the feature.  </li>
+<li><strong>Scale</strong> — Size of the gain.  </li>
+<li><strong>Color</strong> — Base color of the gain.  </li>
+</ul>
+</li>
+</ul>
+<p><img alt="materials_Gain" src="../img/material_customization/Materials_Gain.jpg" /></p>
+<div style="text-align: right"><i>Gain property in a car's material.</i></div>
+
+<ul>
+<li><strong>Mud</strong> — A texture of mud applied to the car. Mud appears from the bottom to top of the car.  <ul>
+<li><code>Height</code> — Portion of the car where mud appears.  </li>
+<li><code>Mud_Color</code> — Base color of the mud texture.  </li>
+<li><code>Mud_Tiling</code> — Size and repetition of the mud texture pattern.  </li>
+<li><code>Mud_Thickness</code> — Density of the mud. </li>
+</ul>
+</li>
+</ul>
+<p><img alt="materials_mude" src="../img/material_customization/Materials_Mud.jpg" /></p>
+<div style="text-align: right"><i>Mud property in a car's material.</i></div>
+
+<ul>
+<li><strong>Noise</strong> — Noise applied to the normal of the material. Creates an orange peel effect.  <ul>
+<li><code>On/Off</code> — Enables or disables the feature.  </li>
+<li><code>Scale</code> — Size of the bumps created by the alteration of the normal map.  </li>
+</ul>
+</li>
+</ul>
+<p><img alt="materials_noise" src="../img/material_customization/Materials_Noise_High.jpg" /></p>
+<div style="text-align: right"><i>Noise property in a car's material.</i></div>
+
+<ul>
+<li><strong>Surface</strong> — Gloss and transparent coating applied to the vehicle's paint. This last step in <a href="https://en.wikipedia.org/wiki/Automotive_paint">automotive paint</a>.  <ul>
+<li><code>ClearCoat</code> — Opacity of the coating.  </li>
+<li><code>ClearCoat_Brightness</code> — Glossiness of the resulting material.  </li>
+<li><code>ClearCoat_Metallic</code> — Reflection of the resulting material.  </li>
+</ul>
+</li>
+</ul>
+<p><img alt="materials_Surface" src="../img/material_customization/Materials_Surface.jpg" /></p>
+<div style="text-align: right"><i>Visualization of the Surface coating applied to a material.</i></div>
+
+<hr />
+<h2 id="building-materials">Building materials</h2>
+<p>The materials applied to buildings are made of four basic textures that are combined to determine the basic properties of the material.  </p>
+<ul>
+<li><strong>Diffuse</strong> — Contains the basic painting of the material.  <ul>
+<li><code>RGB</code> — Channels with the base colors.  </li>
+<li><code>Alpha</code> — This channel defines a mask that allows to modify the color of the portions in white. This is useful to create some variations from the same material.  </li>
+</ul>
+</li>
+</ul>
+<p><img alt="building_diffuse_alpha" src="../img/building_diffuse_alpha.png" /></p>
+<ul>
+<li>
+<p><strong>ORME</strong> — Maps different properties of the material using specific channels.  </p>
+<ul>
+<li><code>Ambient occlusion</code> — Contained in the <code>R</code> channel.  </li>
+<li><code>Roughness</code> — Contained in the <code>G</code> channel.  </li>
+<li><code>Metallic map</code> — Contained in the <code>B</code> channel.  </li>
+<li><code>Emissive mask</code> — Contained in the <code>Alpha</code> channel. This mask allows to change the emissive color and intensity of the portions in white.  </li>
+</ul>
+</li>
+<li>
+<p><strong>Normal</strong> — Contains the normal map of the material.  </p>
+<ul>
+<li><code>RGB</code> — The normal map information.  </li>
+</ul>
+</li>
+<li>
+<p><strong>Emissive</strong> — If applicable, this texture is used to set the emissive base colors of the texture.  </p>
+<ul>
+<li><code>RGB</code> — Color information for the emissive elements in the texture.  </li>
+</ul>
+</li>
+</ul>
+<p><img alt="emissive" src="../img/EmissiveIntensity.gif" /></p>
+<hr />
+<h2 id="customize-a-building-material">Customize a building material</h2>
+<p>Similarly to car materials, a building material can be greatly changed if desired, but it is only recommended if the user has some expertise with Unreal Engine. However, there is some customization available for the two main shaders that buildings use.  </p>
+<p><img alt="building_material" src="../img/building_material.png" /></p>
+<ul>
+<li>
+<p><strong>Glass shader</strong> — <code>M_GlassMaster</code>.  </p>
+<ul>
+<li><code>Opacity</code> — Enable color changes on the white area on the <strong>Diffuse</strong> <code>Alpha</code> texture.  </li>
+<li><code>Color</code> — Tint to be applied based on the white area on the <strong>Diffuse</strong> <code>Alpha</code> texture.  </li>
+</ul>
+</li>
+<li>
+<p><strong>Building shader</strong> — <code>M_MaterialMaster</code>  </p>
+<ul>
+<li><code>Change Color</code> — Enable color changes on the white area on the <strong>Diffuse</strong> <code>Alpha</code> texture.  </li>
+<li><code>Color</code> — Tint to be applied based on the white area on the <strong>Diffuse</strong> <code>Alpha</code> texture.  </li>
+<li><code>Emissive Texture</code> — Enable the usage of an <strong>Emissive</strong> texture.  </li>
+<li><code>EmissiveColor</code> — Tint to be applied based on the white area on the <strong>ORME</strong> <code>Emissive mask</code> texture.</li>
+<li><code>Emissive attenuance</code> — Factor that divides the intensity stated in <strong>BP_Lights</strong> to obtain proper emissive values.  </li>
+<li><code>RoughnessCorrection</code> — Changes the intensity of the roughness map.  </li>
+<li><code>MetallicCorrection</code> — Changes the intensity of the metallic map.  </li>
+<li><code>NormalFlatness</code> — Changes the intensity of the normal map.  </li>
+</ul>
+</li>
+</ul>
+<hr />
+<p>That is a wrap on the most remarkable ways users can customize the materials of vehicles and buildings. </p>
+<p>Any doubts that may arise are more than welcomed in the forum.</p>
+<div class="build-buttons">
+<p>
+<a href="https://github.com/carla-simulator/carla/discussions/" target="_blank" class="btn btn-neutral" title="Go to the CARLA forum">
+CARLA forum</a>
+</p>
+</div>
+              
+            </div>
+          </div><footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+        <span>
+          <a href="https://github.com/carla-simulator/carla" class="fa fa-github" style="color: #fcfcfc"> GitHub</a>
+        </span>
+    
+    
+    
+  </span>
+</div>
+    <script src="../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "..";</script>
+    <script src="../js/theme_extra.js"></script>
+    <script src="../js/theme.js"></script>
+      <script src="../extra.js"></script>
+      <script src="../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>

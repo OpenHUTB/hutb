@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <link rel="shortcut icon" href="../img/favicon.ico" />
+    <title>Coordinates and transformations - CARLA Simulator</title>
+    <link rel="stylesheet" href="../css/theme.css" />
+    <link rel="stylesheet" href="../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+        <link href="../extra.css" rel="stylesheet" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "Coordinates and transformations";
+        var mkdocs_page_input_path = "coordinates.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href=".." class="icon icon-home"> CARLA Simulator
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+      <input type="text" name="q" placeholder="搜索文档" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="..">Home</a>
+                </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Getting started</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../start_introduction/">Introduction</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../start_quickstart/">Quick start package installation</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_first_steps/">First steps</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../build_carla/">Building CARLA</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Next steps</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_content_authoring_maps/">Content authoring - maps</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_content_authoring_vehicles/">Content authoring - vehicles</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../content_authoring_props/">Content authoring - props</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">CARLA topics</span></p>
+              <ul class="current">
+                  <li class="toctree-l1 current"><a class="reference internal current" href="#">Coordinates and transformations</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#global-coordinates">Global coordinates</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#actor-coordinates">Actor coordinates</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#handling-coordinates-through-the-carla-api">Handling coordinates through the CARLA API</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#location">Location</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#rotation">Rotation</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#transform">Transform</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#geocoordinates">Geocoordinates</a>
+    </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../foundations/">Foundations</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../core_actors/">Actors</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../core_map/">Maps</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../core_sensors/">Sensors and data</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../ts_traffic_simulation_overview/">Traffic</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../ai_rendering/">AI rendering</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../development_tutorials/">Development</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../custom_assets_tutorials/">Custom assets</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Resources</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../python_api/">Python API</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../catalogue/">Catalogue</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../ref_cpp/">C++ reference</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../bp_library/">Blueprint library</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tutorials/">Tutorials</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../ext_docs/">Extended documentation</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../download/">Downloads</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">CARLA Ecosystem</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../ecosys_ansys/">ANSYS</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_G_rllib_integration/">AWS</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_G_carsim_integration/">CarSIM</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_G_chrono/">Chrono</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../large_map_roadrunner/">MathWorks</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../inverted_ai/">Inverted AI</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../nvidia/">NVIDIA</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../adv_opendrive/">ASAM OpenDRIVE</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../adv_ptv/">PTV Vissim</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../adv_rss/">RSS</a>
+                  </li>
+                  <li class="toctree-l1"><a class="" href="https://carla.readthedocs.io/projects/ros-bridge/en/latest/">ROS</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_G_scenic/">Scenic</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../adv_sumo/">SUMO</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../ecosys_synkrotron/">SYNKROTRON</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Contributing</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../cont_contribution_guidelines/">Guidelines</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../cont_coding_standard/">Coding standards</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../cont_doc_standard/">Documentation standard</a>
+                  </li>
+                  <li class="toctree-l1"><a class="" href=".."></a>
+                  </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="..">CARLA Simulator</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href=".." class="icon icon-home" aria-label="Docs"></a></li>
+          <li class="breadcrumb-item">CARLA topics</li>
+      <li class="breadcrumb-item active">Coordinates and transformations</li>
+    <li class="wy-breadcrumbs-aside">
+          <a href="https://github.com/carla-simulator/carla/edit/master/Docs/coordinates.md" class="icon icon-github"> 在 GitHub 上编辑</a>
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="coordinates-and-transformations">Coordinates and transformations</h1>
+<p>This page provides details on the coordinate conventions used in CARLA and how to handle coordinates through the CARLA Python API.</p>
+<ul>
+<li><strong><a href="#global-coordinates">Global coordinates</a></strong></li>
+<li><strong><a href="#actor-coordinates">Actor coordinates</a></strong></li>
+<li><strong><a href="#handling-coordinates-through-the-carla-api">Handling coordinates through the CARLA API:</a></strong><ul>
+<li><a href="#location">Location</a></li>
+<li><a href="#rotation">Rotation</a></li>
+<li><a href="#transform">Transform</a></li>
+</ul>
+</li>
+<li><strong><a href="#geocoordinates">Geocoordinates</a></strong></li>
+</ul>
+<hr />
+<h2 id="global-coordinates">Global coordinates</h2>
+<p>CARLA is built on the Unreal Engine version 4.26 and follows the same <strong>left-handed coordinate system</strong>. You can read more details about the Unreal Engine coordinate system in the <a href="https://dev.epicgames.com/documentation/en-us/unreal-engine/coordinate-system-and-spaces-in-unreal-engine">Unreal Engine documentation</a>.</p>
+<p>For an observer standing at the origin facing towards the positive X-direction, the following relationships apply:</p>
+<ul>
+<li><strong>Z</strong> - <strong>Up</strong></li>
+<li><strong>X</strong> - <strong>Forward</strong></li>
+<li><strong>Y</strong> - <strong>Right</strong></li>
+</ul>
+<p><img alt="carla_lh_coordinates" src="../img/carla_left_handed_coordinates.png" /></p>
+<p>Distances are measured in meters throughout the CARLA API and angles are measured in degrees. Therefore, it is important to perform relevant conversions when CARLA is interfaced with other applications that might use <strong>right-handed coordinate systems</strong> or use radians for angles or centimeters or imperial measurements for distances. </p>
+<hr />
+<h2 id="actor-coordinates">Actor coordinates</h2>
+<p>Vehicles and other actors such as pedestrians have their own local coordinate systems to help maintain locally consistant coordinate relationships such as sensor positions.</p>
+<p>By convention, CARLA vehicles are set up such that the front of the vehicle points towards the positive X-axis, the right hand side of the vehicle points towards the positive Y-axis and the top of the vehicle points towards the positive Z-axis. The center of the vehicle's coordinate system is normally close to the center of the bounding box in X and Y and very close to the lowest face of the bounding box in Z. </p>
+<p><img alt="carla_vehicle_coordinates" src="../img/carla_vehicle_axes.png" /></p>
+<p>CARLA pedestrians are also similarly set up with the pedestrian facing towards the positive X-axis, the right arm facing towards the positive Y-axis, and the head in the positive Z-direction. Pedestrians are normally set up such that the coordinate center is in the middle of the bounding box in the resting pose. </p>
+<h2 id="handling-coordinates-through-the-carla-api">Handling coordinates through the CARLA API</h2>
+<p>The CARLA API has several utility objects for handling coordinates and coordinate transformations. </p>
+<h3 id="location">Location</h3>
+<p>The <a href="../python_api/#carlalocation">Location object</a> is used to define coordinates and retrieve or apply them in transforms or when spawning or moving objects and actors. </p>
+<p>The following code shows how to create a location object representing a coordinate at X=10m, Y=10m, Z=1m:</p>
+<pre><code class="language-py"># Default constructor with positional arguments
+location = carla.Location(10,10,1)
+
+# With keyword arguments
+location = carla.Location(x=10,y=10, z=1)
+
+# Default constructor with no arguments
+location = carla.Location() # x=y=z=0
+</code></pre>
+<p>Each or all the keyword arguments can be omitted and the relevant axis will be set to zero. </p>
+<hr />
+<h3 id="rotation">Rotation</h3>
+<p>The <a href="../python_api/#carlarotation">Rotation object</a> is used to define rotations within the CARLA coordinate system. Rotations are defined in Euler form as <strong>roll</strong>, <strong>pitch</strong> and <strong>yaw</strong>. The Euler angles are measured in degrees. <strong>Rotations are applied intrinsically in the order </strong>yaw, pitch, roll**.</p>
+<p>The following code shows how to create a rotation object for a roll of 10 degrees, a pitch of 10 degrees and a yaw of 90 degrees:</p>
+<pre><code class="language-py"># Default constructor with positional arguments
+rotation = carla.Rotation(10,90,10) # pitch, yaw, roll
+
+# With keyword arguments
+rotation = carla.Rotation(pitch=10, yaw=90, roll=10)
+
+# Default constructor with no arguments
+rotation = carla.Rotation() # pitch=yaw=roll=0
+</code></pre>
+<p>Each or all the keyword arguments can be omitted and the relevant angle will be set to zero. </p>
+<hr />
+<h3 id="transform">Transform</h3>
+<p>The CARLA <a href="../python_api/#carlatransform">Transform object</a> is used to contain all information about an object's pose, both its 3D location and rotation. A new transform object can be created using a Location and Rotation:</p>
+<pre><code class="language-py"># Set up a Location and Rotation
+location = carla.Location(10,10,1)
+rotation = carla.Rotation(yaw=90)
+
+# Create the transform
+transform = carla.Transform(location, rotation)
+</code></pre>
+<p>This transform can be used to spawn an actor such as a vehicle:</p>
+<pre><code class="language-py">vehicle = world.spawn_actor(vehicle_bp, transform)
+</code></pre>
+<p>An actor's transform may be queried using the <code>get_transform()</code> method and the associated location and rotation are accessed as attributes:</p>
+<pre><code class="language-py">print(vehicle.get_transform())
+print(vehicle.get_transform().location)
+print(vehicle.get_transform().rotation)
+
+&gt;&gt;&gt;Transform(Location(x=10, y=10, z=1.0), Rotation(pitch=0.0, yaw=90, roll=0.0))
+&gt;&gt;&gt;Location(x=10, y=10, z=1.0)
+&gt;&gt;&gt;Rotation(pitch=0.0, yaw=90, roll=0.0)
+</code></pre>
+<p>The transform object provides utility functions for applying transforms to other coordinates. The translation and rotation associated with a transform can be applied to a Location or Vector using the <code>transform()</code> method. This method is used to transform a point in the local coordinates of the transform's parent object (e.g a vehicle or other actor) to global coordinates. For example, to find the position of a sensor attached to a vehicle in the global coordinate frame:</p>
+<pre><code>sensor_local_coord = carla.Location(1,0,0)
+vehicle_transform = vehicle.get_transform()
+sensor_global_coord = vehicle_transform.transform(sensor_local_coord)
+
+&gt;&gt;&gt;Vector3D(x=10.0, y=11.0, z=1.0)
+</code></pre>
+<p>The Transform object also has an <code>inverse_transform()</code> method that is useful for finding the coordinates of a world object in the local coordinate frame of an actor:</p>
+<pre><code>location = carla.Location(1,0,0)
+vehicle_transform = vehicle.get_transform()
+transformed_location = vehicle_transform.inverse_transform(location)
+</code></pre>
+<p>This would be important for exchanging data about nearby vehicles or objects to an AV perception stack, since it will expect data in the vehicle's own coordinate frame. </p>
+<hr />
+<h2 id="geocoordinates">Geocoordinates</h2>
+<p>Geocoordinates are geodetic coordinates given in the format of <strong>latitude</strong>, <strong>longitude</strong> and <strong>altitude</strong> to represent a location on the Earth's surface. The OpenDRIVE definition of a CARLA map (the <code>.xodr</code> file) allows a georeference in its metadata. See <a href="https://releases.asam.net/OpenDRIVE/1.6.0/ASAM_OpenDRIVE_BS_V1-6-0.html#_georeferencing_in_opendrive">this documentation</a> for more information about the georeference in the OpenDRIVE standard. </p>
+<p>In the OpenDRIVE file, the georeference will be provided in the header information in a <geoReference> tag:</p>
+<pre><code class="language-xml">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+&lt;OpenDRIVE&gt;
+    &lt;header revMajor=&quot;1&quot; revMinor=&quot;4&quot; name=&quot;&quot; version=&quot;1&quot; date=&quot;2020-07-28T22:34:58&quot; north=&quot;9.9112975471922624e+1&quot; south=&quot;-1.7159821787367417e+2&quot; east=&quot;1.4036590163241959e+2&quot; west=&quot;-1.4497769211633769e+2&quot; vendor=&quot;VectorZero&quot;&gt;
+        &lt;geoReference&gt;&lt;![CDATA[+proj=tmerc +lat_0=0 +lon_0=0 +k=1 +x_0=0 +y_0=0 +ellps=WGS84]]&gt;&lt;/geoReference&gt;
+        &lt;userData&gt;
+            &lt;vectorScene program=&quot;RoadRunner&quot; version=&quot;2019.2.12 (build 5161c1572)&quot;/&gt;
+        &lt;/userData&gt;
+    &lt;/header&gt;
+
+    ...
+
+</code></pre>
+<p>The georeference provided in the OpenDRIVE file is used by the CARLA <a href="../python_api/#carlamap">Map object</a> to convert between CARLA's world coordinates and geocoordinates using a map projection. The parameters given in the georeference define the type of projection used and the geolocation of the center of the map in CARLA i.e. the point X=Y=Z=0. More details about CARLA's support of georeference parameters and projections can be found <a href="../geocoordinates/">here</a>.</p>
+<p>To convert a CARLA coordinate into a geocoordinate, use the <code>transform_to_geolocation()</code> method of the Map object:</p>
+<pre><code class="language-py">carla_map = world.get_map()
+
+location = carla.Location(0,0,0)
+print(carla_map.transform_to_geolocation(location))
+
+&gt;&gt;&gt;GeoLocation(latitude=0.000099, longitude=0.000090, altitude=1.000000)
+</code></pre>
+<p>Geocoordinates can also be converted into CARLA coordinates using the <code>geolocation_to_transform()</code> method of the Map object:</p>
+<pre><code class="language-py">geolocation = carla.GeoLocation(latitude=0.000099, longitude=0.000090, altitude=1.000000)
+carla_map = world.get_map()
+print(carla_map.geolocation_to_transform(geolocation))
+
+&gt;&gt;&gt;Location(x=10.014747, y=11.016221, z=1.000000)
+</code></pre>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="../content_authoring_props/" class="btn btn-neutral float-left" title="Content authoring - props"><span class="icon icon-circle-arrow-left"></span> 前一页</a>
+        <a href="../foundations/" class="btn btn-neutral float-right" title="Foundations">后一页 <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+        <span>
+          <a href="https://github.com/carla-simulator/carla" class="fa fa-github" style="color: #fcfcfc"> GitHub</a>
+        </span>
+    
+    
+      <span><a href="../content_authoring_props/" style="color: #fcfcfc">&laquo; 前一页</a></span>
+    
+    
+      <span><a href="../foundations/" style="color: #fcfcfc">后一页 &raquo;</a></span>
+    
+  </span>
+</div>
+    <script src="../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "..";</script>
+    <script src="../js/theme_extra.js"></script>
+    <script src="../js/theme.js"></script>
+      <script src="../extra.js"></script>
+      <script src="../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>

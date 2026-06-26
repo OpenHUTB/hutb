@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <link rel="shortcut icon" href="../img/favicon.ico" />
+    <title>Tutorials - CARLA Simulator</title>
+    <link rel="stylesheet" href="../css/theme.css" />
+    <link rel="stylesheet" href="../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+        <link href="../extra.css" rel="stylesheet" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "Tutorials";
+        var mkdocs_page_input_path = "tutorials.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href=".." class="icon icon-home"> CARLA Simulator
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+      <input type="text" name="q" placeholder="搜索文档" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="..">Home</a>
+                </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Getting started</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../start_introduction/">Introduction</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../start_quickstart/">Quick start package installation</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_first_steps/">First steps</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../build_carla/">Building CARLA</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Next steps</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_content_authoring_maps/">Content authoring - maps</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_content_authoring_vehicles/">Content authoring - vehicles</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../content_authoring_props/">Content authoring - props</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">CARLA topics</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../coordinates/">Coordinates and transformations</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../foundations/">Foundations</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../core_actors/">Actors</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../core_map/">Maps</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../core_sensors/">Sensors and data</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../ts_traffic_simulation_overview/">Traffic</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../ai_rendering/">AI rendering</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../development_tutorials/">Development</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../custom_assets_tutorials/">Custom assets</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Resources</span></p>
+              <ul class="current">
+                  <li class="toctree-l1"><a class="reference internal" href="../python_api/">Python API</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../catalogue/">Catalogue</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../ref_cpp/">C++ reference</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../bp_library/">Blueprint library</a>
+                  </li>
+                  <li class="toctree-l1 current"><a class="reference internal current" href="#">Tutorials</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#general">General</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#carla-features">CARLA features</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#building-and-integration">Building and integration</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#assets-and-maps">Assets and maps</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#developers">Developers</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#video-tutorials">Video tutorials</a>
+    </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../ext_docs/">Extended documentation</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../download/">Downloads</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">CARLA Ecosystem</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../ecosys_ansys/">ANSYS</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_G_rllib_integration/">AWS</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_G_carsim_integration/">CarSIM</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_G_chrono/">Chrono</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../large_map_roadrunner/">MathWorks</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../inverted_ai/">Inverted AI</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../nvidia/">NVIDIA</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../adv_opendrive/">ASAM OpenDRIVE</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../adv_ptv/">PTV Vissim</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../adv_rss/">RSS</a>
+                  </li>
+                  <li class="toctree-l1"><a class="" href="https://carla.readthedocs.io/projects/ros-bridge/en/latest/">ROS</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_G_scenic/">Scenic</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../adv_sumo/">SUMO</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../ecosys_synkrotron/">SYNKROTRON</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Contributing</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../cont_contribution_guidelines/">Guidelines</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../cont_coding_standard/">Coding standards</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../cont_doc_standard/">Documentation standard</a>
+                  </li>
+                  <li class="toctree-l1"><a class="" href=".."></a>
+                  </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="..">CARLA Simulator</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href=".." class="icon icon-home" aria-label="Docs"></a></li>
+          <li class="breadcrumb-item">Resources</li>
+      <li class="breadcrumb-item active">Tutorials</li>
+    <li class="wy-breadcrumbs-aside">
+          <a href="https://github.com/carla-simulator/carla/edit/master/Docs/tutorials.md" class="icon icon-github"> 在 GitHub 上编辑</a>
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="tutorials">Tutorials</h1>
+<p>Here you will find the multitude of tutorials available to help you understand how to use CARLA's many features.</p>
+<h2 id="general">General</h2>
+<h3 id="carla-features">CARLA features</h3>
+<ul>
+<li><a href="../tuto_G_retrieve_data/"><strong>Retrieve simulation data</strong></a> — A step by step guide to properly gather data using the recorder.</li>
+<li><a href="../tuto_G_traffic_manager/"><strong>Traffic manager</strong></a> — How to use traffic manager to guide traffic around your town.</li>
+<li><a href="../tuto_G_texture_streaming/"><strong>Texture streaming</strong></a> — Modify textures of map objects in real time to add variation.</li>
+<li><a href="../tuto_G_instance_segmentation_sensor/"><strong>Instance segmentation camera</strong></a> — Use an instance segmentation camera to distinguish objects of the same class.</li>
+<li><a href="../tuto_G_bounding_boxes/"><strong>Bounding boxes</strong></a> — Project bounding boxes from CARLA objects into the camera.</li>
+<li><a href="../tuto_G_pedestrian_bones/"><strong>Pedestrian bones</strong></a> — Project pedestrian skeleton into camera plane.</li>
+<li><a href="../tuto_G_control_walker_skeletons/"><strong>Control walker skeletons</strong></a> — Animate walkers using skeletons.</li>
+</ul>
+<h3 id="building-and-integration">Building and integration</h3>
+<ul>
+<li><a href="../build_docker_unreal/"><strong>Build Unreal Engine and CARLA in Docker</strong></a> — Build Unreal Engine and CARLA in Docker.</li>
+<li><a href="../tuto_G_carsim_integration/"><strong>CarSim Integration</strong></a> — Tutorial on how to run a simulation using the CarSim vehicle dynamics engine.</li>
+<li><a href="../tuto_G_rllib_integration/"><strong>RLlib Integration</strong></a> — Find out how to run your own experiment using the RLlib library.</li>
+<li><a href="../tuto_G_chrono/"><strong>Chrono Integration</strong></a> — Use the Chrono integration to simulation physics.</li>
+<li><a href="../tuto_G_pygame/"><strong>PyGame control</strong></a> — Use PyGame to display the output of camera sensors.</li>
+</ul>
+<h2 id="assets-and-maps">Assets and maps</h2>
+<ul>
+<li><a href="../tuto_G_openstreetmap/"><strong>Generate maps with OpenStreetMap</strong></a> — Use OpenStreetMap to generate maps for use in simulations.</li>
+<li><a href="../tuto_A_add_vehicle/"><strong>Add a new vehicle</strong></a> — Prepare a vehicle to be used in CARLA.</li>
+<li><a href="../tuto_A_add_props/"><strong>Add new props</strong></a> — Import additional props into CARLA.</li>
+<li><a href="../tuto_A_create_standalone/"><strong>Create standalone packages</strong></a> — Generate and handle standalone packages for assets.</li>
+<li><a href="../tuto_A_material_customization/"><strong>Material customization</strong></a> — Edit vehicle and building materials.</li>
+</ul>
+<h2 id="developers">Developers</h2>
+<ul>
+<li><a href="../tuto_D_contribute_assets/"><strong>How to upgrade content</strong></a> — Add new content to CARLA.</li>
+<li><a href="../tuto_D_create_sensor/"><strong>Create a sensor</strong></a> — Develop a new sensor to be used in CARLA.</li>
+<li><a href="../tuto_D_create_semantic_tags/"><strong>Create semantic tags</strong></a> — Define customized tags for semantic segmentation.</li>
+<li><a href="../tuto_D_customize_vehicle_suspension/"><strong>Customize vehicle suspension</strong></a> — Modify the suspension system of a vehicle.</li>
+<li><a href="../tuto_D_generate_colliders/"><strong>Generate detailed colliders</strong></a> — Create detailed colliders for vehicles.</li>
+<li><a href="../tuto_D_make_release/"><strong>Make a release</strong></a> — How to make a release of CARLA</li>
+</ul>
+<h2 id="video-tutorials">Video tutorials</h2>
+<ul>
+<li><a href="https://www.youtube.com/watch?v=pONr1R1dy88"><strong>Fundamentals</strong></a> — Learn the fundamental concepts of CARLA and start your first script. <a href="https://carla-releases.s3.us-east-005.backblazeb2.com/Docs/Fundamentals.ipynb"><strong>CODE</strong></a></li>
+<li><a href="https://www.youtube.com/watch?v=om8klsBj4rc"><strong>An in depth look at CARLA's sensors</strong></a> — An in depth look at CARLA's sensors and how to use them. <a href="https://carla-releases.s3.us-east-005.backblazeb2.com/Docs/Sensors_code.zip"><strong>CODE</strong></a></li>
+</ul>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="../bp_library/" class="btn btn-neutral float-left" title="Blueprint library"><span class="icon icon-circle-arrow-left"></span> 前一页</a>
+        <a href="../ext_docs/" class="btn btn-neutral float-right" title="Extended documentation">后一页 <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+        <span>
+          <a href="https://github.com/carla-simulator/carla" class="fa fa-github" style="color: #fcfcfc"> GitHub</a>
+        </span>
+    
+    
+      <span><a href="../bp_library/" style="color: #fcfcfc">&laquo; 前一页</a></span>
+    
+    
+      <span><a href="../ext_docs/" style="color: #fcfcfc">后一页 &raquo;</a></span>
+    
+  </span>
+</div>
+    <script src="../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "..";</script>
+    <script src="../js/theme_extra.js"></script>
+    <script src="../js/theme.js"></script>
+      <script src="../extra.js"></script>
+      <script src="../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>

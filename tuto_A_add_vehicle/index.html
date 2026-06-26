@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <link rel="shortcut icon" href="../img/favicon.ico" />
+    <title>Add a new vehicle - CARLA Simulator</title>
+    <link rel="stylesheet" href="../css/theme.css" />
+    <link rel="stylesheet" href="../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+        <link href="../extra.css" rel="stylesheet" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "Add a new vehicle";
+        var mkdocs_page_input_path = "tuto_A_add_vehicle.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href=".." class="icon icon-home"> CARLA Simulator
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+      <input type="text" name="q" placeholder="搜索文档" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="..">Home</a>
+                </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Getting started</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../start_introduction/">Introduction</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../start_quickstart/">Quick start package installation</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_first_steps/">First steps</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../build_carla/">Building CARLA</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Next steps</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_content_authoring_maps/">Content authoring - maps</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_content_authoring_vehicles/">Content authoring - vehicles</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../content_authoring_props/">Content authoring - props</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">CARLA topics</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../coordinates/">Coordinates and transformations</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../foundations/">Foundations</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../core_actors/">Actors</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../core_map/">Maps</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../core_sensors/">Sensors and data</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../ts_traffic_simulation_overview/">Traffic</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../ai_rendering/">AI rendering</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../development_tutorials/">Development</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../custom_assets_tutorials/">Custom assets</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Resources</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../python_api/">Python API</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../catalogue/">Catalogue</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../ref_cpp/">C++ reference</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../bp_library/">Blueprint library</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tutorials/">Tutorials</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../ext_docs/">Extended documentation</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../download/">Downloads</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">CARLA Ecosystem</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../ecosys_ansys/">ANSYS</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_G_rllib_integration/">AWS</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_G_carsim_integration/">CarSIM</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_G_chrono/">Chrono</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../large_map_roadrunner/">MathWorks</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../inverted_ai/">Inverted AI</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../nvidia/">NVIDIA</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../adv_opendrive/">ASAM OpenDRIVE</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../adv_ptv/">PTV Vissim</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../adv_rss/">RSS</a>
+                  </li>
+                  <li class="toctree-l1"><a class="" href="https://carla.readthedocs.io/projects/ros-bridge/en/latest/">ROS</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_G_scenic/">Scenic</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../adv_sumo/">SUMO</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../ecosys_synkrotron/">SYNKROTRON</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Contributing</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../cont_contribution_guidelines/">Guidelines</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../cont_coding_standard/">Coding standards</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../cont_doc_standard/">Documentation standard</a>
+                  </li>
+                  <li class="toctree-l1"><a class="" href=".."></a>
+                  </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="..">CARLA Simulator</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href=".." class="icon icon-home" aria-label="Docs"></a></li>
+      <li class="breadcrumb-item active">Add a new vehicle</li>
+    <li class="wy-breadcrumbs-aside">
+          <a href="https://github.com/carla-simulator/carla/edit/master/Docs/tuto_A_add_vehicle.md" class="icon icon-github"> 在 GitHub 上编辑</a>
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="add-a-new-vehicle">Add a new vehicle</h1>
+<p>This tutorial details how to add a new vehicle to CARLA. There are two sections, one for 4 wheeled vehicles and one for 2 wheeled vehicles. There is an outline of the basic requirements that must be fulfilled when modeling your vehicle to ensure that it works well in CARLA and instructions on configurations required after the vehicle has been imported into Unreal Engine.</p>
+<ul>
+<li><a href="#add-a-4-wheeled-vehicle"><strong>Add a 4 wheeled vehicle</strong></a><ul>
+<li><a href="#bind-and-model-the-vehicle">Bind and model the vehicle</a></li>
+<li><a href="#import-and-configure-the-vehicle">Import and configure the vehicle</a></li>
+</ul>
+</li>
+<li><a href="#add-a-2-wheeled-vehicle"><strong>Add a 2 wheeled vehicle</strong></a></li>
+</ul>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>This tutorial only applies to users that work with a build from source, and have access to the Unreal Engine Editor.</p>
+</div>
+<hr />
+<h2 id="add-a-4-wheeled-vehicle">Add a 4 wheeled vehicle</h2>
+<p>Vehicles added to CARLA need to use a <strong>common base skeleton</strong> which is found <a href="https://carla-assets.s3.us-east-005.backblazeb2.com/fbx/VehicleSkeleton.rar"><strong>here</strong></a>. This link will download a folder called <code>VehicleSkeleton.rar</code> which contains the base skeleton in two different <code>.fbx</code> formats, one in ASCII and the other in binary. The format you use will depend on your 3D modeling software requirements.</p>
+<p>__The positions of the skeleton bones can be changed but any other manipulation such as rotation, addition of new bones, or changing the current hierarchy will lead to errors. __</p>
+<hr />
+<h3 id="bind-and-model-the-vehicle">Bind and model the vehicle</h3>
+<p>This section details the minimum requirements in the modeling stage of your vehicle to make sure it can be used successfully in CARLA. The process involves binding the skeleton correctly to the base and wheels of the vehicle, creating Physical Asset and raycast sensor meshes, and exporting to the correct format.</p>
+<p><strong>1. Import the base skeleton.</strong></p>
+<p>Import the base skeleton into your preferred 3D modeling software. Common editors include Maya and Blender.</p>
+<p><strong>2. Bind the bones.</strong></p>
+<p>Bind the bones to the corresponding portions of the vehicle mesh according to the nomenclature below. Make sure to center the wheels' bones within the mesh.</p>
+<ul>
+<li><strong>Front left wheel:</strong> <code>Wheel_Front_Left</code></li>
+<li><strong>Front right wheel:</strong> <code>Wheel_Front_Right</code></li>
+<li><strong>Rear left wheel:</strong> <code>Wheel_Rear_Left</code></li>
+<li><strong>Rear right wheel:</strong> <code>Wheel_Rear_Right</code></li>
+<li><strong>Rest of the mesh:</strong> <code>VehicleBase</code></li>
+</ul>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Do not make any changes to the bone names or the hierarchy nor add any new bones.</p>
+</div>
+<p><strong>3.  Model your vehicle.</strong></p>
+<p>Vehicles should have between approximately 50,000 - 100,000 tris. We model the vehicles using the size and scale of actual cars.</p>
+<p>We recommend that you divide the vehicle into the following materials:</p>
+<blockquote>
+<ol>
+<li><strong>Bodywork</strong>: The metallic part of the vehicle. This material is changed to Unreal Engine material. Logos and details can be added but, to be visible, they must be painted in a different color by using the alpha channels in the Unreal Engine editor.</li>
+<li><strong>Glass_Ext</strong>: A layer of glass that allows visibility from the outside to the inside of the vehicle.</li>
+<li><strong>Glass_Int</strong>: A layer of glass that allows visibility from the inside to the outside of the vehicle.</li>
+<li><strong>Lights</strong>: Headlights, indicator lights, etc.</li>
+<li><strong>LightGlass_Ext</strong>: A layer of glass that allows visibility from the outside to the inside of the light.</li>
+<li><strong>LightGlass_Int</strong>: A layer of glass that allows visibility from the inside to the outside of the light.</li>
+<li><strong>LicensePlate</strong>: A rectangular plane of 29x12 cm. You can use the CARLA provided <code>.fbx</code> for best results, download it <a href="https://carla-assets.s3.us-east-005.backblazeb2.com/fbx/LicensePlate.rar">here</a>. The texture will be assigned automatically in Unreal Engine.</li>
+<li><strong>Interior</strong>: Any other details that don't fit in the above sections can go into <em>Interior</em>.</li>
+</ol>
+</blockquote>
+<p>Materials should be named using the format <code>M_CarPart_CarName</code>, e.g., <code>M_Bodywork_Mustang</code>.</p>
+<p>Textures should be named using the format <code>T_CarPart_CarName</code>, e.g., <code>T_Bodywork_Mustang</code>. Textures should be sized as 2048x2048.</p>
+<p>Unreal Engine automatically creates LODs but you can also create them manually in your 3D editor. Tri counts are as follows:</p>
+<ul>
+<li><strong>LOD 0</strong>: 100,000 tris</li>
+<li><strong>LOD 1</strong>: 80,000 tris</li>
+<li><strong>LOD 2</strong>: 60,000 tris</li>
+<li><strong>LOD 3</strong>: 30,000 tris</li>
+</ul>
+<p><strong>4. Create the Physical Asset mesh.</strong></p>
+<p>The Physical Asset mesh is an additional mesh that allows Unreal Engine to calculate the vehicle's physics. It should be as simple as possible, with a reduced number of polygons, and should cover the whole vehicle except for the wheels. See the image below for an example.</p>
+<blockquote>
+<blockquote>
+<p><img alt="physical asset mesh" src="../img/physical_asset_mesh.png" /></p>
+</blockquote>
+</blockquote>
+<p>The Physical Asset mesh should be exported as a separate <code>.fbx</code> file. The final file should fulfill the following requirements:</p>
+<ul>
+<li>Have a base mesh. This should be a copy of the Physical Asset mesh. It should have the same name as the original vehicle.</li>
+<li>The Physical Asset mesh must be named using the format <code>UCX_&lt;vehicle_name&gt;_&lt;number_of_mesh&gt;</code>, <strong>otherwise it will not be recognized by Unreal Engine.</strong></li>
+<li>The mesh must not extend beyond the boundaries of the original model.</li>
+<li>The mesh should have the same position as the original model.</li>
+</ul>
+<blockquote>
+<blockquote>
+<p><img alt="base mesh" src="../img/base_mesh.png" /></p>
+</blockquote>
+</blockquote>
+<p>Export the final mesh as an <code>.fbx</code> file with the name <code>SMC_&lt;vehicle_name&gt;.fbx</code>.</p>
+<p><strong>5. Create the mesh for the raycast sensor.</strong></p>
+<p>The raycast sensor mesh sets up the vehicle's shape that will be detected by the raycast sensors (RADAR, LiDAR, and Semantic LiDAR). This mesh should have a slightly more defined geometry than the Physical Asset mesh in order to increase the realism of sensor simulation but not as detailed as the car mesh for performance reasons.</p>
+<p>Consider the following points when creating the raycast sensor mesh:</p>
+<ul>
+<li>The mesh should cover all aspects of the vehicle, including wheels, side mirrors, and grilles.</li>
+<li>The wheels should be cylinders of no more than 16 loops.</li>
+<li>Various meshes can be joined together if required.</li>
+<li>The mesh(es) must not extend beyond the boundaries of the original model.</li>
+<li>The mesh(es) should have the same position as the original.</li>
+</ul>
+<blockquote>
+<blockquote>
+<p><img alt="collision mesh" src="../img/collision_mesh.png" /></p>
+</blockquote>
+</blockquote>
+<p>Export the final mesh as an <code>.fbx</code> file with the name <code>SM_sc_&lt;vehicle_name&gt;.fbx</code>.</p>
+<p><strong>5. Export the vehicle mesh(es).</strong></p>
+<p>Select all the main vehicle mesh(es) and the skeleton base and export as <code>.fbx</code>.</p>
+<hr />
+<h3 id="import-and-configure-the-vehicle">Import and configure the vehicle</h3>
+<p>This section details the process of importing the vehicle into Unreal Engine for use in CARLA. Perform these steps in the Unreal Engine editor.</p>
+<p><strong>1. Create the vehicle folder.</strong></p>
+<p>Create a new folder named <code>&lt;vehicle_name&gt;</code> in <code>Content/Carla/Static/Vehicles/4Wheeled</code>.</p>
+<p><strong>2. Import the <code>.fbx</code>.</strong></p>
+<p>Inside the new vehicle folder, import your main vehicle skeleton <code>.fbx</code> by right-clicking in the <strong><em>Content Browser</em></strong> and selecting <strong><em>Import into Game/Carla/Static/Vehicles/4Wheeled/&lt;vehicle_name&gt;</em></strong>.</p>
+<p>In the dialogue box that pops up:</p>
+<ul>
+<li>Set <strong><em>Import Content Type</em></strong> to <code>Geometry and Skinning Weights</code>.</li>
+<li>Set <strong><em>Normal Import Method</em></strong> to <code>Import Normals</code>.</li>
+<li>Optionally set <strong><em>Material Import Method</em></strong> to <code>Do not create materials</code>. Uncheck <strong><em>Import Textures</em></strong> to avoid Unreal Engine creating default materials.</li>
+</ul>
+<p>The Skeletal Mesh will appear along with two new files, <code>&lt;vehicle_name&gt;_PhysicsAssets</code> and <code>&lt;vehicle_name&gt;_Skeleton</code>.</p>
+<p>Import the rest of your <code>.fbx</code> files separately from the main vehicle skeleton <code>.fbx</code> file.</p>
+<p><strong>3. Set the physical asset mesh.</strong></p>
+<blockquote>
+<ol>
+<li>Open <code>&lt;vehicle_name&gt;_PhysicsAssets</code> from the <strong><em>Content Browser</em></strong>.</li>
+<li>Right-click on the <code>Vehicle_Base</code> mesh in the <strong><em>Skeleton Tree</em></strong> panel and go to <strong><em>Copy Collision from StaticMesh</em></strong>.</li>
+<li>Search for and select your <code>SMC_&lt;vehicle_name&gt;</code> file. You should see the outline of the physical asset mesh appear in the viewport.</li>
+<li>Delete the default capsule shape from the <code>Vehicle_Base</code>.</li>
+<li>Select all the wheels:<ul>
+<li>Go to the <strong><em>Tools</em></strong> panel and change the <strong><em>Primitive Type</em></strong> to <code>Sphere</code>.</li>
+<li>Go to the <strong><em>Details</em></strong> panel and change <strong><em>Physics Type</em></strong> to <code>Kinematic</code>.</li>
+<li>Set <strong><em>Linear Damping</em></strong> to <code>0</code>. This will eliminate any extra friction on the wheels.</li>
+</ul>
+</li>
+<li>Enable <strong><em>Simulation Generates Hit Event</em></strong> for all meshes.</li>
+<li>Click <strong><em>Re-generate Bodies</em></strong>.</li>
+<li>Adjust the wheel sphere to the size of the wheel.</li>
+<li>Save and close the window.</li>
+</ol>
+<p><img alt="Collision mesh" src="../img/collision_mesh_vehicle.png" /></p>
+</blockquote>
+<p><strong>4. Create the Animation Blueprint.</strong></p>
+<blockquote>
+<ol>
+<li>In the <strong><em>Content Browser</em></strong>, right-click inside your vehicle folder and select <strong><em>Animation -&gt; Animation Blueprint</em></strong>.</li>
+<li>In <strong><em>Parent Class</em></strong> search for and select <code>VehicleAnimInstance</code>.</li>
+<li>In <strong><em>Target Skeleton</em></strong> search for and select <code>&lt;vehicle_name&gt;_Skeleton</code>.</li>
+<li>Press <strong><em>OK</em></strong> and rename the blueprint as <code>AnimBP_&lt;vehicle_name&gt;</code>.</li>
+</ol>
+</blockquote>
+<p><strong>5. Configure the Animation Blueprint.</strong></p>
+<p>To ease the process of configuring the animation blueprint, we will copy an existing one from a native CARLA vehicle:</p>
+<blockquote>
+<ol>
+<li>Go to <code>Content/Carla/Static/Vehicle</code> and choose any CARLA vehicle folder. Open its Animation Blueprint.</li>
+<li>In the <strong><em>My Blueprint</em></strong> panel, double click on <strong><em>AnimGraph</em></strong>. You will see the graph come up in the viewport.</li>
+<li>Click and drag to select the <strong><em>Mesh Space Ref Pose</em></strong>, <strong><em>Wheel Handler</em></strong>, and <strong><em>Component To Local</em></strong> components. Right-click and select <strong><em>Copy</em></strong>.</li>
+<li>Go back to your own vehicle Animation Blueprint and paste the copied contents into the graph area.</li>
+<li>Click and drag from the standing figure in the <strong><em>Component To Local</em></strong> component to the figure in <strong><em>Output Pose</em></strong> to join the components together.</li>
+<li>Click <strong><em>Compile</em></strong> in the top left corner. You should now see a pulsating line flowing through the entire sequence.</li>
+<li>Save and close the window.</li>
+</ol>
+<blockquote>
+<p><img alt="add_vehicle_step_04" src="../img/add_vehicle_step_04.jpg" /></p>
+</blockquote>
+</blockquote>
+<p><strong>6. Prepare the vehicle and wheel blueprints.</strong></p>
+<blockquote>
+<ol>
+<li>In the <strong><em>Content Browser</em></strong>, go to <code>Content/Carla/Blueprints/Vehicles</code> and create a new folder <code>&lt;vehicle_name&gt;</code>.</li>
+<li>Inside the folder, right-click and go to <strong><em>Blueprint Class</em></strong>. Open the <strong><em>All Classes</em></strong> section in the pop-up.</li>
+<li>Search for <code>BaseVehiclePawn</code> and press <strong><em>Select</em></strong>.</li>
+<li>Rename the file as <code>BP_&lt;vehicle_name&gt;</code>.</li>
+<li>Go to the folder of any of the native CARLA vehicles in <code>Carla/Blueprints/Vehicles</code>. From the <strong><em>Content Browser</em></strong>, copy the four wheel blueprints into the blueprint folder for your own vehicle. Rename the files to replace the old vehicle name with your own vehicle name.</li>
+</ol>
+<blockquote>
+<p><img alt="Copy wheel blueprints" src="../img/copy_wheel_blueprint.png" /></p>
+</blockquote>
+</blockquote>
+<p><strong>7. Configure the wheel blueprints.</strong></p>
+<blockquote>
+<ol>
+<li>In your vehicle blueprint folder, open all four of the wheel blueprints.</li>
+<li>In the <strong><em>Class Defaults</em></strong> panel, set <strong><em>Collision Mesh</em></strong> to <code>Wheel_Shape</code>. <strong>Omitting this step will cause the vehicle wheels to sink into the ground</strong>.</li>
+<li>Adjust the values for wheel shape radius, width, mass, and damping rate according to your vehicle specifications.</li>
+<li>Set <strong><em>Tire Config</em></strong> to <code>CommonTireConfig</code></li>
+<li>On the front wheels set <strong><em>Steer Angle</em></strong> according to your preferences (default is <code>70</code>). Uncheck <strong><em>Affected by Handbrake</em></strong>.</li>
+<li>On the rear wheels set <strong><em>Steer Angle</em></strong> to <code>0</code>. Check <strong><em>Affected by Handbrake</em></strong>.</li>
+<li>When setting the suspension values, you can use the values <a href="../tuto_D_customize_vehicle_suspension/">here</a> as a guide.</li>
+<li>Compile and save.</li>
+</ol>
+<blockquote>
+<p><img alt="wheel shape" src="../img/wheel_shape.png" /></p>
+</blockquote>
+</blockquote>
+<p><strong>8. Configure vehicle blueprint.</strong></p>
+<blockquote>
+<ol>
+<li>From the <strong><em>Content Browser</em></strong>, open your <code>BP_&lt;vehicle_name&gt;</code>.</li>
+<li>In the <strong><em>Components</em></strong> panel, select <strong><em>Mesh (VehicleMesh) (Inherited)</em></strong>.</li>
+<li>In the <strong><em>Details</em></strong> panel, go to <strong><em>Skeletal Mesh</em></strong> and search for and select the base skeleton file of your vehicle (located in the <code>Carla/Static/Vehicles/4Wheeled/&lt;vehicle_name&gt;</code> folder).</li>
+<li>Go to <strong><em>Anim Class</em></strong> in the <strong><em>Details</em></strong> panel. Search for and select your <code>AnimBP_&lt;vehicle_name&gt;</code> file.</li>
+<li>In the <strong><em>Components</em></strong> panel, select <strong><em>Custom Collision (Inherited)</em></strong>.</li>
+<li>Select <strong><em>Static Mesh</em></strong> in the <strong><em>Details</em></strong> panel and search for your <code>SM_sc_&lt;vehicle_name&gt;</code> raycast sensor mesh.</li>
+<li>In the <strong><em>Components</em></strong> panel, select <strong><em>VehicleMovement (MovementComp) (Inherited)</em></strong>.</li>
+<li>In the <strong><em>Details</em></strong> panel, search for <code>wheel</code>. You will find settings for each of the wheels. For each one, click on <strong><em>Wheel Class</em></strong> and search for the <code>BP_&lt;vehicle_name&gt;_&lt;wheel_name&gt;</code> file that corresponds to the correct wheel position.</li>
+</ol>
+<blockquote>
+<blockquote>
+<blockquote>
+<p><img alt="wheel blueprint" src="../img/wheel_blueprint.png" /></p>
+</blockquote>
+</blockquote>
+</blockquote>
+</blockquote>
+<p>If you have any additional meshes for your vehicle (doors, lights, etc.,) separate from the base mesh:</p>
+<blockquote>
+<ol>
+<li>Drag them into the <strong><em>Mesh (VehicleMesh) (Inherited)</em></strong> hierarchy in the <strong><em>Components</em></strong> panel.</li>
+<li>Select the extra meshes in the hierarchy and search for <code>Collision</code> in the <strong><em>Details</em></strong> panel.</li>
+<li>Set <strong><em>Collision Presets</em></strong> to <code>NoCollision</code>.</li>
+<li>Select any lights meshes in the hierarchy. Search for <code>Tag</code> in the <strong><em>Details</em></strong> panel and add the tag <code>emissive</code>.</li>
+</ol>
+</blockquote>
+<p>Click <strong><em>Save</em></strong> and <strong><em>Compile</em></strong>.</p>
+<p><strong>9. Add the vehicle to the Blueprint Library</strong>.</p>
+<blockquote>
+<ol>
+<li>In <code>Content/Carla/Blueprint/Vehicle</code>, open the <code>VehicleFactory</code> file.</li>
+<li>In the <strong><em>Generate Definitions</em></strong> tab, double click <strong><em>Vehicles</em></strong>.</li>
+<li>In the <strong><em>Details</em></strong> panel, expand the <strong><em>Default Value</em></strong> section and add a new element to the vehicles array.</li>
+<li>Fill in the <strong><em>Make</em></strong> and <strong><em>Model</em></strong> of your vehicle.</li>
+<li>Fill in the <strong><em>Class</em></strong> value with your <code>BP_&lt;vehicle_name&gt;</code> file.</li>
+<li>Optionally, provide a set of recommended colors for the vehicle.</li>
+<li>Compile and save.</li>
+</ol>
+<p><img alt="vehicle factory" src="../img/vehicle_factory.png" /></p>
+</blockquote>
+<p><strong>10. Test the vehicle</strong>.</p>
+<p>Launch CARLA, open a terminal in <code>PythonAPI/examples</code> and run the following command:</p>
+<pre><code class="language-sh">python3 manual_control.py --filter &lt;model_name&gt; # The make or model defined in step 9
+</code></pre>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Even if you used upper case characters in your make and model, they need to be converted to lower case when passed to the filter.</p>
+</div>
+<hr />
+<h2 id="add-an-n-wheeled-vehicle">Add an N wheeled vehicle</h2>
+<p>Adding an N wheeled vehicle follows the same import pipeline as that for 4 wheeled vehicles above with a few steps that are different. </p>
+<p><strong>5.</strong> <strong>Configure the Animation Blueprint for an N wheeled vehicle</strong></p>
+<p>Search for <code>BaseVehiclePawnNW</code> and press <strong><em>Select</em></strong>.</p>
+<p><img alt="n_wheel_base" src="../img/base_nw.png" /></p>
+<p><strong>6.</strong> <strong>Prepare the vehicle and wheel blueprints</strong></p>
+<p>Go to the folder of any native CARLA vehicles in Carla/Blueprints/Vehicles. From the Content Browser, copy the four wheel blueprints into the blueprint folder for your own vehicle. Rename the files to replace the old vehicle name with your own vehicle name.</p>
+<p>Copy the four wheels and copy again for additional wheels. In the case of a 6 wheeled vehicle, you will need 6 different wheels: FLW, FRW, MLW, MRW, RLW, RRW.</p>
+<p><img alt="n_wheel_bps" src="../img/nwheels.png" /></p>
+<p><strong>7.</strong> <strong>Configure the wheel blueprints</strong></p>
+<p>Follow section <strong>7</strong> as above for the 4 wheeled vehicle. The key difference in the case of an N wheeled vehicle is those affected by handbrake and steering parameters. In some vehicles (like for example a long wheelbase truck) the front 2 pairs of wheels will steer, and one set may steer more than others. The rearmost pairs may be affected by handbrake, the specifics will depend upon the vehicle you are modelling.</p>
+<p><strong>8.</strong> <strong>Configure vehicle blueprint</strong></p>
+<p>In the Details panel, search for <code>wheel</code>. You will find settings for each of the wheels. For each one, click on Wheel Class and search for the BP_<vehicle_name>_<wheel_name> file that corresponds to the correct wheel position.</p>
+<p>This is correct, but just to specify, in the case of N wheeled vehicles, you need to set ALL the wheels. This is an example with a 6 wheeled vehicle:</p>
+<p><img alt="n_wheel_config" src="../img/nwheel_config.png" /></p>
+<p>Finally, an additional consideration is setting the differential. In the case of a 4 wheeled vehicle, we have different presets of differentials (Limited Slip, Open 4W etc.) but with N wheeled vehicles, you need to choose on which wheels you want to apply torque. In this case, we have chosen only the middle and rear wheels have torque, while the front wheels don’t, you can specify other configurations. The numbers are going to be the same as the image above this text (e.g. 0 will be the Front Left Wheel, as specified above).</p>
+<p><img alt="n_wheel_mech" src="../img/nwheel_mech_setup.png" /></p>
+<p>All other parameters such as engine, transmission, steering curve, are the same as 4 wheeled vehicles. </p>
+<hr />
+<h2 id="add-a-2-wheeled-vehicle">Add a 2 wheeled vehicle</h2>
+<p>Adding 2 wheeled vehicles is similar to adding a 4 wheeled one but due to the complexity of the animation you'll need to set up aditional bones to guide the driver's animation. <a href="https://carla-assets.s3.us-east-005.backblazeb2.com/fbx/BikeSkeleton.rar">Here</a> is the link to the reference skeleton for 2 wheeled vehicles.</p>
+<p>As with the 4 wheeled vehicles, orient the model towards positive "x" and every bone axis towards
+positive x and with the z axis facing upwards.</p>
+<pre><code class="language-yaml">Bone Setup:
+  - Bike_Rig:                   # The origin point of the mesh. Place it in the point 0 of the scenecomment
+    - BikeBody:                 # The model's body centre.
+      - Pedals:                 # If the vehicle is a bike bind the pedalier to this bone, will rotate with the bike acceleration.
+        - RightPedal:           # Sets the driver's feet position and rotates with the pedalier if the vehicle is a bike.
+        - LeftPedal:            # ^
+      - RearWheel:              # Rear Wheel of the vehicle
+      - Handler:                # Rotates with the frontal wheel of the vehicle bind the vehicle handler to it.
+        - HandlerMidBone:       # Positioned over the front wheel bone to orient the handler with the wheel
+        - HandlerRight:         # Sets the position of the driver's hand, no need to bind it to anything.
+        - HandlerLeft:          # ^
+      - Frontwheel:             # Frontal wheel of the vehicle.
+      - RightHelperRotator:     # This four additional bones are here for an obsolete system of making the bike stable by using aditional invisible wheels
+        - RightHelprWheel:      # ^
+      - LeftHelperRotator:      # ^
+        - LeftHelperWheel:      # ^
+      - Seat:                   # Sets the position of the drivers hip bone. No need to bind it to anything but place it carefully.
+</code></pre>
+<p><strong>1.</strong> Import fbx as Skelletal Mesh to its own folder inside <code>Content/Carla/Static/Vehicles/2Wheeled</code>. When importing select "General2WheeledVehicleSkeleton" as skelleton A Physics asset should be automatically created and linked.  </p>
+<p><strong>2.</strong> Tune the Physics asset. Delete the automatically created ones and add boxes to the <code>BikeBody</code> bone trying to match the shape as possible, make sure generate hit events is enabled. 
+  Add a sphere for each wheel and set their "Physics Type" to "Kinematic".  </p>
+<p><strong>3.</strong> Create folder <code>Content/Blueprints/Vehicles/&lt;vehicle-model&gt;</code>  </p>
+<p><strong>4.</strong> Inside that folder create two blueprint classes derived from "VehicleWheel" class. Call them <code>&lt;vehicle-model&gt;_FrontWheel</code> and <code>&lt;vehicle-model&gt;_RearWheel</code>. Set their "Shape Radius" to exactly match the mesh wheel radius (careful, radius not diameter). Set their "Tire Config" to "CommonTireConfig". On the front wheel uncheck "Affected by Handbrake" and on the rear wheel set "Steer Angle" to zero.  </p>
+<p><strong>5.</strong> Inside the same folder create a blueprint class derived from <code>Base2WheeledVehicle</code> call it <code>&lt;vehicle-model&gt;</code>. Open it for edit and select component "Mesh", setup the "Skeletal Mesh"
+  and the "Anim Class" to the corresponding ones. Then select the VehicleBounds component and set the size to cover vehicle's area as seen from above.</p>
+<p><strong>6.</strong> Select component "VehicleMovement", under "Vehicle Setup" expand "Wheel Setups", setup each wheel.  </p>
+<ul>
+<li><strong>0:</strong> Wheel Class=<code>&lt;vehicle-model&gt;_FrontWheel</code>, Bone Name=<code>FrontWheel</code>  </li>
+<li><strong>1:</strong> Wheel Class=<code>&lt;vehicle-model&gt;_FrontWheel</code>, Bone Name=<code>FrontWheel</code>  </li>
+<li><strong>2:</strong> Wheel Class=<code>&lt;vehicle-model&gt;_RearWheel</code>, Bone Name=<code>RearWheel</code>  </li>
+<li><strong>3:</strong> Wheel Class=<code>&lt;vehicle-model&gt;_RearWheel</code>, Bone Name=<code>RearWheel</code><br />
+(You'll notice that we are basically placing two wheels in each bone. The vehicle class unreal provides does not support vehicles with wheel numbers different from 4 so we had to make it believe the vehicle has 4 wheels)</li>
+</ul>
+<p><strong>7.</strong> Select the variable "is bike" and tick it if your model is a bike. This will activate the
+  pedalier rotation. Leave unmarked if you are setting up a motorbike.</p>
+<p><strong>8.</strong> Find the variable back Rotation and set it as it fit better select the component SkeletalMesh
+  (The driver) and move it along x axis until its in the seat position.  </p>
+<p><strong>9.</strong> Test it, go to CarlaGameMode blueprint and change "Default Pawn Class" to the newly
+  created bike blueprint.</p>
+              
+            </div>
+          </div><footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+        <span>
+          <a href="https://github.com/carla-simulator/carla" class="fa fa-github" style="color: #fcfcfc"> GitHub</a>
+        </span>
+    
+    
+    
+  </span>
+</div>
+    <script src="../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "..";</script>
+    <script src="../js/theme_extra.js"></script>
+    <script src="../js/theme.js"></script>
+      <script src="../extra.js"></script>
+      <script src="../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>

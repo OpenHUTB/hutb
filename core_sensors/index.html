@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <link rel="shortcut icon" href="../img/favicon.ico" />
+    <title>Sensors and data - CARLA Simulator</title>
+    <link rel="stylesheet" href="../css/theme.css" />
+    <link rel="stylesheet" href="../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+        <link href="../extra.css" rel="stylesheet" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "Sensors and data";
+        var mkdocs_page_input_path = "core_sensors.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href=".." class="icon icon-home"> CARLA Simulator
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+      <input type="text" name="q" placeholder="搜索文档" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="..">Home</a>
+                </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Getting started</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../start_introduction/">Introduction</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../start_quickstart/">Quick start package installation</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_first_steps/">First steps</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../build_carla/">Building CARLA</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Next steps</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_content_authoring_maps/">Content authoring - maps</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_content_authoring_vehicles/">Content authoring - vehicles</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../content_authoring_props/">Content authoring - props</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">CARLA topics</span></p>
+              <ul class="current">
+                  <li class="toctree-l1"><a class="reference internal" href="../coordinates/">Coordinates and transformations</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../foundations/">Foundations</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../core_actors/">Actors</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../core_map/">Maps</a>
+                  </li>
+                  <li class="toctree-l1 current"><a class="reference internal current" href="#">Sensors and data</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#sensors-step-by-step">Sensors step-by-step</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#setting">Setting</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#spawning">Spawning</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#listening">Listening</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#data">Data</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#types-of-sensors">Types of sensors</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#cameras">Cameras</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#detectors">Detectors</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#other">Other</a>
+    </li>
+        </ul>
+    </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../ts_traffic_simulation_overview/">Traffic</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../ai_rendering/">AI rendering</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../development_tutorials/">Development</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../custom_assets_tutorials/">Custom assets</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Resources</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../python_api/">Python API</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../catalogue/">Catalogue</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../ref_cpp/">C++ reference</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../bp_library/">Blueprint library</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tutorials/">Tutorials</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../ext_docs/">Extended documentation</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../download/">Downloads</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">CARLA Ecosystem</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../ecosys_ansys/">ANSYS</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_G_rllib_integration/">AWS</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_G_carsim_integration/">CarSIM</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_G_chrono/">Chrono</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../large_map_roadrunner/">MathWorks</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../inverted_ai/">Inverted AI</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../nvidia/">NVIDIA</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../adv_opendrive/">ASAM OpenDRIVE</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../adv_ptv/">PTV Vissim</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../adv_rss/">RSS</a>
+                  </li>
+                  <li class="toctree-l1"><a class="" href="https://carla.readthedocs.io/projects/ros-bridge/en/latest/">ROS</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_G_scenic/">Scenic</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../adv_sumo/">SUMO</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../ecosys_synkrotron/">SYNKROTRON</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Contributing</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../cont_contribution_guidelines/">Guidelines</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../cont_coding_standard/">Coding standards</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../cont_doc_standard/">Documentation standard</a>
+                  </li>
+                  <li class="toctree-l1"><a class="" href=".."></a>
+                  </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="..">CARLA Simulator</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href=".." class="icon icon-home" aria-label="Docs"></a></li>
+          <li class="breadcrumb-item">CARLA topics</li>
+      <li class="breadcrumb-item active">Sensors and data</li>
+    <li class="wy-breadcrumbs-aside">
+          <a href="https://github.com/carla-simulator/carla/edit/master/Docs/core_sensors.md" class="icon icon-github"> 在 GitHub 上编辑</a>
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="sensors-and-data">Sensors and data</h1>
+<p>Sensors are actors that retrieve data from their surroundings. They are crucial to create learning environment for driving agents.  </p>
+<p>This page summarizes everything necessary to start handling sensors. It introduces the types available and a step-by-step guide of their life cycle. The specifics for every sensor can be found in the <a href="../ref_sensors/">sensors reference</a>.</p>
+<ul>
+<li><a href="#sensors-step-by-step"><strong>Sensors step-by-step</strong></a>  <ul>
+<li><a href="#setting">Setting</a>  </li>
+<li><a href="#spawning">Spawning</a>  </li>
+<li><a href="#listening">Listening</a>  </li>
+<li><a href="#data">Data</a>  </li>
+</ul>
+</li>
+<li><a href="#types-of-sensors"><strong>Types of sensors</strong></a>  <ul>
+<li><a href="#cameras">Cameras</a>  </li>
+<li><a href="#detectors">Detectors</a>  </li>
+<li><a href="#other">Other</a> </li>
+</ul>
+</li>
+<li><a href="../ref_sensors/"><strong>Sensors reference</strong></a></li>
+</ul>
+<hr />
+<h2 id="sensors-step-by-step">Sensors step-by-step</h2>
+<p>The class <a href="../python_api/#carla.Sensor">carla.Sensor</a> defines a special type of actor able to measure and stream data.  </p>
+<ul>
+<li><strong>What is this data?</strong> It varies a lot depending on the type of sensor. All the types of data are inherited from the general <a href="../python_api/#carla.SensorData">carla.SensorData</a>. </li>
+<li><strong>When do they retrieve the data?</strong> Either on every simulation step or when a certain event is registered. Depends on the type of sensor. </li>
+<li><strong>How do they retrieve the data?</strong> Every sensor has a <code>listen()</code> method to receive and manage the data.  </li>
+</ul>
+<p>Despite their differences, all the sensors are used in a similar way. </p>
+<h3 id="setting">Setting</h3>
+<p>As with every other actor, find the blueprint and set specific attributes. This is essential when handling sensors. Their attributes will determine the results obtained. These are detailed in the <a href="../ref_sensors/">sensors reference</a>. </p>
+<p>The following example sets a dashboard HD camera.</p>
+<pre><code class="language-py"># Find the blueprint of the sensor.
+blueprint = world.get_blueprint_library().find('sensor.camera.rgb')
+# Modify the attributes of the blueprint to set image resolution and field of view.
+blueprint.set_attribute('image_size_x', '1920')
+blueprint.set_attribute('image_size_y', '1080')
+blueprint.set_attribute('fov', '110')
+# Set the time in seconds between sensor captures
+blueprint.set_attribute('sensor_tick', '1.0')
+</code></pre>
+<h3 id="spawning">Spawning</h3>
+<p>Sensors can be placed anywhere in the map. Normally they are attached to a parent actor, such as a a vehicle, to move around the simulation like a sensor physically mounted to a vehicle. The <code>spawn_actor()</code> method requires a sensor blueprint chosen from the blueprint library and a transform. In the case of an unattached sensor, the transform will define it's absolute position in the CARLA world. The <code>attach_to</code> parameter defines the actor to attach the camera to. For a sensor attached to an actor, the transform defines its relative position to the actor in the actor's coordinate system.</p>
+<pre><code class="language-py">my_vehicle = world.spawn_actor(vehicle_blueprint, spawn_point)
+transform = carla.Transform(carla.Location(x=0.8, z=1.7))
+sensor = world.spawn_actor(sensor_blueprint, transform, attach_to=my_vehicle)
+</code></pre>
+<p>The <code>attachment_type</code> parameter defines how the sensor's movement will be governed by the movement of its parent actor.</p>
+<ul>
+<li><strong>Rigid attachment</strong> (<code>carla.AttachmentType.Rigid</code>): Movement strictly follows the parent actors's pose. This is the most common choice for normal vehicle sensors like cameras and LIDARs. It is the default attachment type setting.  </li>
+<li><strong>SpringArm attachment</strong> (<code>carla.AttachmentType.SpringArm</code>): Movement is eased with little accelerations and decelerations. This attachment is recommended to record videos from the simulation. The movement is smooth and "hops" are avoided when updating the cameras' positions.  </li>
+<li><strong>SpringArmGhost attachment</strong> (<code>carla.AttachmentType.SpringArmGhost</code>): Like SpringArm but without collision testing, so the camera or sensor could cross walls or other geometries.  </li>
+</ul>
+<pre><code class="language-py">sensor = world.spawn_actor(sensor_blueprint, transform, attach_to=my_vehicle, attachment_type=carla.AttachmentType.SpringArm)
+</code></pre>
+<h3 id="listening">Listening</h3>
+<p>Every sensor has a <a href="../python_api/#carla.Sensor.listen"><code>listen()</code></a> method. This is called every time the sensor retrieves data.  </p>
+<p>The argument <code>callback</code> is a <a href="https://www.w3schools.com/python/python_lambda.asp">lambda function</a>. It describes what should the sensor do when data is retrieved. This must have the data retrieved as an argument.  </p>
+<pre><code class="language-py"># do_something() will be called each time a new image is generated by the camera.
+sensor.listen(lambda data: do_something(data))
+
+...
+
+# This collision sensor would print everytime a collision is detected. 
+def callback(event):
+    for actor_id in event:
+        vehicle = world_ref().get_actor(actor_id)
+        print('Vehicle too close: %s' % vehicle.type_id)
+
+sensor02.listen(callback)
+</code></pre>
+<h3 id="data">Data</h3>
+<p>Most sensor data objects have a function to save the information to disk. This will allow it to be used in other environments.  </p>
+<p>Sensor data differs a lot between sensor types. Take a look at the <a href="../ref_sensors/">sensors reference</a> to get a detailed explanation. However, all of them are always tagged with some basic information.  </p>
+<table>
+<thead>
+<tr>
+<th>Sensor data attribute</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>frame</code></td>
+<td>int</td>
+<td>Frame number when the measurement took place.</td>
+</tr>
+<tr>
+<td><code>timestamp</code></td>
+<td>double</td>
+<td>Timestamp of the measurement in simulation seconds since the beginning of the episode.</td>
+</tr>
+<tr>
+<td><code>transform</code></td>
+<td><a href="../python_api#carlatransform">carla.Transform</a></td>
+<td>World reference of the sensor at the time of the measurement.</td>
+</tr>
+</tbody>
+</table>
+<p><br></p>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p><code>is_listening()</code> is a <strong>sensor method</strong> to check whether the sensor has a callback registered by <code>listen</code>.
+<code>stop()</code> is a <strong>sensor method</strong> to stop the sensor from listening.
+<code>sensor_tick</code> is a <strong>blueprint attribute</strong> that sets the simulation time between data received.  </p>
+</div>
+<hr />
+<h2 id="types-of-sensors">Types of sensors</h2>
+<h3 id="cameras">Cameras</h3>
+<p>Take a shot of the world from their point of view. For cameras that return <a href="../python_api#carlaimage">carla.Image</a>, you can use the helper class <a href="../python_api/#carla.ColorConverter">carla.ColorConverter</a> to modify the image to represent different information.</p>
+<ul>
+<li><strong>Retrieve data</strong> every simulation step.  </li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>Sensor</th>
+<th>Output</th>
+<th>Overview</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="../ref_sensors/#rgb-camera">RGB</a></td>
+<td><a href="../python_api#carlaimage">carla.Image</a></td>
+<td>Provides clear vision of the surroundings. Looks like a normal photo of the scene.</td>
+</tr>
+<tr>
+<td><a href="../ref_sensors/#wide-angle-cameras">Wide angle</a></td>
+<td><a href="../python_api#carlaimage">carla.Image</a></td>
+<td>Models alternative camera models including wide-angle, fisheye and 360 degree cameras.</td>
+</tr>
+<tr>
+<td><a href="../ref_sensors/#depth-camera">Depth</a></td>
+<td><a href="../python_api#carlaimage">carla.Image</a></td>
+<td>Renders the depth of the elements in the field of view in a gray-scale map.</td>
+</tr>
+<tr>
+<td><a href="../ref_sensors/#optical-flow-camera">Optical Flow</a></td>
+<td><a href="../python_api#carlaimage">carla.Image</a></td>
+<td>Renders the motion of every pixel from the camera.</td>
+</tr>
+<tr>
+<td><a href="../ref_sensors/#semantic-segmentation-camera">Semantic segmentation</a></td>
+<td><a href="../python_api#carlaimage">carla.Image</a></td>
+<td>Renders elements in the field of view with a specific color according to their tags.</td>
+</tr>
+<tr>
+<td><a href="../ref_sensors/#instance-segmentation-camera">Instance segmentation</a></td>
+<td><a href="../python_api#carlaimage">carla.Image</a></td>
+<td>Renders elements in the field of view with a specific color according to their tags and a unique object ID.</td>
+</tr>
+<tr>
+<td><a href="../ref_sensors/#dvs-camera">DVS</a></td>
+<td><a href="../python_api#carladvseventarray">carla.DVSEventArray</a></td>
+<td>Measures changes of brightness intensity asynchronously as an event stream.</td>
+</tr>
+</tbody>
+</table>
+<p><br></p>
+<hr />
+<h3 id="detectors">Detectors</h3>
+<p>Retrieve data when the object they are attached to registers a specific event.  </p>
+<ul>
+<li><strong>Retrieve data</strong> when triggered.  </li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>Sensor</th>
+<th>Output</th>
+<th>Overview</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="../ref_sensors/#collision-detector">Collision</a></td>
+<td><a href="../python_api#carlacollisionevent">carla.CollisionEvent</a></td>
+<td>Retrieves collisions between its parent and other actors.</td>
+</tr>
+<tr>
+<td><a href="../ref_sensors/#lane-invasion-detector">Lane invasion</a></td>
+<td><a href="../python_api#carlalaneinvasionevent">carla.LaneInvasionEvent</a></td>
+<td>Registers when its parent crosses a lane marking.</td>
+</tr>
+<tr>
+<td><a href="../ref_sensors/#obstacle-detector">Obstacle</a></td>
+<td><a href="../python_api#carlaobstacledetectionevent">carla.ObstacleDetectionEvent</a></td>
+<td>Detects possible obstacles ahead of its parent.</td>
+</tr>
+</tbody>
+</table>
+<p><br></p>
+<h3 id="other">Other</h3>
+<p>Different functionalities such as navigation, measurement of physical properties and 2D/3D point maps of the scene.  </p>
+<ul>
+<li><strong>Retrieve data</strong> every simulation step.  </li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>Sensor</th>
+<th>Output</th>
+<th>Overview</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="../ref_sensors/#gnss-sensor">GNSS</a></td>
+<td><a href="../python_api#carlagnssmeasurement">carla.GNSSMeasurement</a></td>
+<td>Retrieves the geolocation of the sensor.</td>
+</tr>
+<tr>
+<td><a href="../ref_sensors/#imu-sensor">IMU</a></td>
+<td><a href="../python_api#carlaimumeasurement">carla.IMUMeasurement</a></td>
+<td>Comprises an accelerometer, a gyroscope, and a compass.</td>
+</tr>
+<tr>
+<td><a href="../ref_sensors/#lidar-sensor">LIDAR</a></td>
+<td><a href="../python_api#carlalidarmeasurement">carla.LidarMeasurement</a></td>
+<td>A rotating LIDAR. Generates a 4D point cloud with coordinates and intensity per point to model the surroundings.</td>
+</tr>
+<tr>
+<td><a href="../ref_sensors/#radar-sensor">Radar</a></td>
+<td><a href="../python_api#carlaradarmeasurement">carla.RadarMeasurement</a></td>
+<td>2D point map modelling elements in sight and their movement regarding the sensor.</td>
+</tr>
+<tr>
+<td><a href="../ref_sensors/#rss-sensor">RSS</a></td>
+<td><a href="../python_api#carlarssresponse">carla.RssResponse</a></td>
+<td>Modifies the controller applied to a vehicle according to safety checks. This sensor works in a different manner than the rest, and there is specific <a href="../adv_rss">RSS documentation</a> for it.</td>
+</tr>
+<tr>
+<td><a href="../ref_sensors/#semantic-lidar-sensor">Semantic LIDAR</a></td>
+<td><a href="../python_api#carlasemanticlidarmeasurement">carla.SemanticLidarMeasurement</a></td>
+<td>A rotating LIDAR. Generates a 3D point cloud with extra information regarding instance and semantic segmentation.</td>
+</tr>
+</tbody>
+</table>
+<p><br></p>
+<hr />
+<p>That is a wrap on sensors and how do these retrieve simulation data.  </p>
+<p>Thus concludes the introduction to CARLA. However there is yet a lot to learn.</p>
+<ul>
+<li><strong>Continue learning.</strong> There are some advanced features in CARLA: rendering options, traffic 
+  manager, the recorder, and some more. This is a great moment to learn more about them. </li>
+</ul>
+<div class="build-buttons">
+<p>
+<a href="../adv_synchrony_timestep" target="_blank" class="btn btn-neutral" title="Synchrony and time-step">
+Synchrony and time-step</a>
+</p>
+</div>
+
+<ul>
+<li><strong>Experiment freely.</strong> Take a look at the <strong>References</strong> section of this documentation. It 
+  contains detailed information on the classes in the Python API, sensors, code snippets and much 
+  more. </li>
+</ul>
+<div class="build-buttons">
+<p>
+<a href="../python_api" target="_blank" class="btn btn-neutral" title="Python API reference">
+Python API reference</a>
+</p>
+</div>
+
+<ul>
+<li><strong>Give your two cents.</strong> Any doubts, suggestions and ideas are welcome in the forum.</li>
+</ul>
+<div class="build-buttons">
+<p>
+<a href="https://github.com/carla-simulator/carla/discussions/" target="_blank" class="btn btn-neutral" title="Go to the CARLA forum">
+CARLA forum</a>
+</p>
+</div>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="../core_map/" class="btn btn-neutral float-left" title="Maps"><span class="icon icon-circle-arrow-left"></span> 前一页</a>
+        <a href="../ts_traffic_simulation_overview/" class="btn btn-neutral float-right" title="Traffic">后一页 <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+        <span>
+          <a href="https://github.com/carla-simulator/carla" class="fa fa-github" style="color: #fcfcfc"> GitHub</a>
+        </span>
+    
+    
+      <span><a href="../core_map/" style="color: #fcfcfc">&laquo; 前一页</a></span>
+    
+    
+      <span><a href="../ts_traffic_simulation_overview/" style="color: #fcfcfc">后一页 &raquo;</a></span>
+    
+  </span>
+</div>
+    <script src="../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "..";</script>
+    <script src="../js/theme_extra.js"></script>
+    <script src="../js/theme.js"></script>
+      <script src="../extra.js"></script>
+      <script src="../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>

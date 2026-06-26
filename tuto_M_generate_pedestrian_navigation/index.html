@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <link rel="shortcut icon" href="../img/favicon.ico" />
+    <title>Generate Pedestrian Navigation - CARLA Simulator</title>
+    <link rel="stylesheet" href="../css/theme.css" />
+    <link rel="stylesheet" href="../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+        <link href="../extra.css" rel="stylesheet" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "Generate Pedestrian Navigation";
+        var mkdocs_page_input_path = "tuto_M_generate_pedestrian_navigation.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href=".." class="icon icon-home"> CARLA Simulator
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+      <input type="text" name="q" placeholder="搜索文档" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="..">Home</a>
+                </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Getting started</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../start_introduction/">Introduction</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../start_quickstart/">Quick start package installation</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_first_steps/">First steps</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../build_carla/">Building CARLA</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Next steps</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_content_authoring_maps/">Content authoring - maps</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_content_authoring_vehicles/">Content authoring - vehicles</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../content_authoring_props/">Content authoring - props</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">CARLA topics</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../coordinates/">Coordinates and transformations</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../foundations/">Foundations</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../core_actors/">Actors</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../core_map/">Maps</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../core_sensors/">Sensors and data</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../ts_traffic_simulation_overview/">Traffic</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../ai_rendering/">AI rendering</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../development_tutorials/">Development</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../custom_assets_tutorials/">Custom assets</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Resources</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../python_api/">Python API</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../catalogue/">Catalogue</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../ref_cpp/">C++ reference</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../bp_library/">Blueprint library</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tutorials/">Tutorials</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../ext_docs/">Extended documentation</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../download/">Downloads</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">CARLA Ecosystem</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../ecosys_ansys/">ANSYS</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_G_rllib_integration/">AWS</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_G_carsim_integration/">CarSIM</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_G_chrono/">Chrono</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../large_map_roadrunner/">MathWorks</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../inverted_ai/">Inverted AI</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../nvidia/">NVIDIA</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../adv_opendrive/">ASAM OpenDRIVE</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../adv_ptv/">PTV Vissim</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../adv_rss/">RSS</a>
+                  </li>
+                  <li class="toctree-l1"><a class="" href="https://carla.readthedocs.io/projects/ros-bridge/en/latest/">ROS</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_G_scenic/">Scenic</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../adv_sumo/">SUMO</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../ecosys_synkrotron/">SYNKROTRON</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Contributing</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../cont_contribution_guidelines/">Guidelines</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../cont_coding_standard/">Coding standards</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../cont_doc_standard/">Documentation standard</a>
+                  </li>
+                  <li class="toctree-l1"><a class="" href=".."></a>
+                  </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="..">CARLA Simulator</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href=".." class="icon icon-home" aria-label="Docs"></a></li>
+      <li class="breadcrumb-item active">Generate Pedestrian Navigation</li>
+    <li class="wy-breadcrumbs-aside">
+          <a href="https://github.com/carla-simulator/carla/edit/master/Docs/tuto_M_generate_pedestrian_navigation.md" class="icon icon-github"> 在 GitHub 上编辑</a>
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="generate-pedestrian-navigation">Generate Pedestrian Navigation</h1>
+<p>To allow pedestrians to navigate a map, you will need to generate a pedestrian navigation file. This guide details what meshes to use and how to generate the file.</p>
+<ul>
+<li><a href="#before-you-begin"><strong>Before you begin</strong></a></li>
+<li><a href="#pedestrian-navigable-meshes"><strong>Pedestrian navigable meshes</strong></a></li>
+<li><a href="#optional-pedestrian-navigation-options"><strong>Optional pedestrian navigation options</strong></a></li>
+<li><a href="#generate-the-pedestrian-navigation"><strong>Generate the pedestrian navigation</strong></a></li>
+</ul>
+<hr />
+<h2 id="before-you-begin">Before you begin</h2>
+<p>Map customization (adding buildings, painting the road, adding landscape features, etc.) should be completed before generating the pedestrian navigation in order to avoid interference or collisions between the two, resulting in the need to generate the pedestrian navigation a second time.</p>
+<hr />
+<h2 id="pedestrian-navigable-meshes">Pedestrian navigable meshes</h2>
+<p>Pedestrians can only navigate specific meshes. You need to name the meshes you want to include in pedestrian navigation according to the nomenclature in the table below:</p>
+<table>
+<thead>
+<tr>
+<th>Type</th>
+<th>Name includes</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Ground</td>
+<td><code>Road_Sidewalk</code> or <code>Roads_Sidewalk</code></td>
+<td>Pedestrians will walk over these meshes freely.</td>
+</tr>
+<tr>
+<td>Crosswalk</td>
+<td><code>Road_Crosswalk</code> or <code>Roads_Crosswalk</code></td>
+<td>Pedestrians will walk over these meshes as a second option if no ground is found.</td>
+</tr>
+<tr>
+<td>Grass</td>
+<td><code>Road_Grass</code> or <code>Roads_Grass</code></td>
+<td>Pedestrians won't walk on this mesh unless you specify a percentage of them to do so.</td>
+</tr>
+<tr>
+<td>Road</td>
+<td><code>Road_Road</code> or <code>Roads_Road</code> <br> <code>Road_Curb</code> or <code>Roads_Curb</code> <br> <code>Road_Gutter</code> or <code>Roads_Gutter</code> <br> <code>Road_Marking</code> or <code>Roads_Marking</code></td>
+<td>Pedestrians will only cross roads through these meshes.</td>
+</tr>
+</tbody>
+</table>
+<p><br></p>
+<hr />
+<h2 id="optional-pedestrian-navigation-options">Optional pedestrian navigation options</h2>
+<p>The following step is not necessary for generating a pedestrian navigation, but allows you to customize pedestrian activity to a certain extent.</p>
+<ul>
+<li><strong>Generate new crosswalks</strong>.</li>
+</ul>
+<p>Avoid doing this if the crosswalk is already defined the <code>.xodr</code> file as this will lead to duplication:</p>
+<ol>
+<li>Create a plane mesh that extends a bit over two sidewalks that you want to connect.</li>
+<li>Place the mesh overlapping the ground and disable it's physics and rendering.</li>
+<li>Change the name of the mesh to <code>Road_Crosswalk</code> or <code>Roads_Crosswalk</code>.</li>
+</ol>
+<p><img alt="ue_crosswalks" src="../img/ue_crosswalks.jpg" />  </p>
+<hr />
+<h2 id="generate-the-pedestrian-navigation">Generate the pedestrian navigation</h2>
+<p><strong>1.</strong> To prevent the map being too large to export, select the <strong>BP_Sky object</strong> and add a tag <code>NoExport</code> to it. If you have any other particularly large meshes that are not involved in the pedestrian navigation, add the <code>NoExport</code> tag to them as well. </p>
+<p><img alt="ue_skybox_no_export" src="../img/ue_noexport.png" /> </p>
+<p><strong>2.</strong> Double check your mesh names. Mesh names should start with any of the appropriate formats listed below in order to be recognized as areas where pedestrians can walk. By default, pedestrians will be able to walk over sidewalks, crosswalks, and grass (with minor influence over the rest):  </p>
+<ul>
+<li>Sidewalk = <code>Road_Sidewalk</code> or <code>Roads_Sidewalk</code> </li>
+<li>Crosswalk = <code>Road_Crosswalk</code> or <code>Roads_Crosswalk</code> </li>
+<li>Grass = <code>Road_Grass</code> or <code>Roads_Grass</code></li>
+</ul>
+<p><img alt="ue_meshes" src="../img/ue_meshes.jpg" /> </p>
+<p><strong>3.</strong> Press <code>ctrl + A</code> to select everything and export the map by selecting <code>File</code> -&gt; <code>Carla Exporter</code>. A <code>&lt;mapName&gt;.obj</code> file will be created in <code>Unreal/CarlaUE4/Saved</code>.</p>
+<p><strong>4.</strong> Move the <code>&lt;mapName&gt;.obj</code> and the <code>&lt;mapName&gt;.xodr</code> to <code>Util/DockerUtils/dist</code>.  </p>
+<p><strong>5.</strong> Run the following command to generate the navigation file:  </p>
+<ul>
+<li><strong>Windows</strong> </li>
+</ul>
+<pre><code class="language-sh">build.bat &lt;mapName&gt; # &lt;mapName&gt; has no extension
+</code></pre>
+<ul>
+<li><strong>Linux</strong></li>
+</ul>
+<pre><code class="language-sh">./build.sh &lt;mapName&gt; # &lt;mapName&gt; has no extension
+</code></pre>
+<p><strong>6.</strong> A <code>&lt;mapName&gt;.bin</code> file will be created. This file contains the information for pedestrian navigation on your map. Move this file to the <code>Nav</code> folder of the package that contains the map.</p>
+<p><strong>7.</strong> Test the pedestrian navigation by starting a simulation and running the example script <code>generate_traffic.py</code> in <code>PythonAPI/examples</code>.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><strong>If you need to rebuild the pedestrian navigation</strong> after updating the map, ensure to delete the CARLA cache. This is normally found in the home directory in Ubuntu (i.e. <code>cd ~</code>), or in the user directory in Windows (the directory assigned to the environment variable <code>USERPROFILE</code>), remove the folder named <code>carlaCache</code> and all of its contents, it is likely to be large in size. </p>
+</div>
+<hr />
+<p>If you have any questions about the process, then you can ask in the <a href="https://github.com/carla-simulator/carla/discussions">forum</a>.</p>
+<div class="build-buttons">
+<p>
+<a href="https://github.com/carla-simulator/carla/discussions" target="_blank" class="btn btn-neutral" title="Go to the CARLA forum">
+CARLA forum</a>
+</p>
+</div>
+              
+            </div>
+          </div><footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+        <span>
+          <a href="https://github.com/carla-simulator/carla" class="fa fa-github" style="color: #fcfcfc"> GitHub</a>
+        </span>
+    
+    
+    
+  </span>
+</div>
+    <script src="../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "..";</script>
+    <script src="../js/theme_extra.js"></script>
+    <script src="../js/theme.js"></script>
+      <script src="../extra.js"></script>
+      <script src="../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>

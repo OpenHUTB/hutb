@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <link rel="shortcut icon" href="../img/favicon.ico" />
+    <title>Alternative methods to import maps - CARLA Simulator</title>
+    <link rel="stylesheet" href="../css/theme.css" />
+    <link rel="stylesheet" href="../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+        <link href="../extra.css" rel="stylesheet" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "Alternative methods to import maps";
+        var mkdocs_page_input_path = "tuto_M_add_map_alternative.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href=".." class="icon icon-home"> CARLA Simulator
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+      <input type="text" name="q" placeholder="搜索文档" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="..">Home</a>
+                </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Getting started</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../start_introduction/">Introduction</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../start_quickstart/">Quick start package installation</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_first_steps/">First steps</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../build_carla/">Building CARLA</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Next steps</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_content_authoring_maps/">Content authoring - maps</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_content_authoring_vehicles/">Content authoring - vehicles</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../content_authoring_props/">Content authoring - props</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">CARLA topics</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../coordinates/">Coordinates and transformations</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../foundations/">Foundations</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../core_actors/">Actors</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../core_map/">Maps</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../core_sensors/">Sensors and data</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../ts_traffic_simulation_overview/">Traffic</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../ai_rendering/">AI rendering</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../development_tutorials/">Development</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../custom_assets_tutorials/">Custom assets</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Resources</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../python_api/">Python API</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../catalogue/">Catalogue</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../ref_cpp/">C++ reference</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../bp_library/">Blueprint library</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tutorials/">Tutorials</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../ext_docs/">Extended documentation</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../download/">Downloads</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">CARLA Ecosystem</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../ecosys_ansys/">ANSYS</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_G_rllib_integration/">AWS</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_G_carsim_integration/">CarSIM</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_G_chrono/">Chrono</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../large_map_roadrunner/">MathWorks</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../inverted_ai/">Inverted AI</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../nvidia/">NVIDIA</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../adv_opendrive/">ASAM OpenDRIVE</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../adv_ptv/">PTV Vissim</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../adv_rss/">RSS</a>
+                  </li>
+                  <li class="toctree-l1"><a class="" href="https://carla.readthedocs.io/projects/ros-bridge/en/latest/">ROS</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_G_scenic/">Scenic</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../adv_sumo/">SUMO</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../ecosys_synkrotron/">SYNKROTRON</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Contributing</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../cont_contribution_guidelines/">Guidelines</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../cont_coding_standard/">Coding standards</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../cont_doc_standard/">Documentation standard</a>
+                  </li>
+                  <li class="toctree-l1"><a class="" href=".."></a>
+                  </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="..">CARLA Simulator</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href=".." class="icon icon-home" aria-label="Docs"></a></li>
+      <li class="breadcrumb-item active">Alternative methods to import maps</li>
+    <li class="wy-breadcrumbs-aside">
+          <a href="https://github.com/carla-simulator/carla/edit/master/Docs/tuto_M_add_map_alternative.md" class="icon icon-github"> 在 GitHub 上编辑</a>
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="alternative-methods-to-import-maps">Alternative methods to import maps</h1>
+<p>This guide describes alternative methods to import maps into CARLA. These methods involve more manual steps than the processes described in the <a href="../tuto_M_add_map_package/">package</a> and <a href="../tuto_M_add_map_source/">source</a> import guides. First we will describe the RoadRuner plugin and then the manual import method.</p>
+<ul>
+<li><a href="#roadrunner-plugin-import"><strong>RoadRunner plugin import</strong></a></li>
+<li><a href="#manual-import"><strong>Manual import</strong></a></li>
+</ul>
+<hr />
+<h2 id="roadrunner-plugin-import">RoadRunner plugin import</h2>
+<p>The RoadRunner software from MathWorks provides plugins for Unreal Engine to help ease the import process of maps into CARLA. </p>
+<h4 id="plugin-installation">Plugin installation</h4>
+<p><strong>1.</strong> The plugins are available for download from the <a href="https://www.mathworks.com/help/roadrunner/ug/Downloading-Plugins.html">MathWorks website</a>. MathWorks also has a <a href="https://www.mathworks.com/help/roadrunner/ug/Exporting-to-CARLA.html">full tutorial</a>, similar to this one, on how to import maps to CARLA using the plugins.</p>
+<p><strong>2.</strong> Extract the contents of the downloaded folder and move the folders <code>RoadRunnerImporter</code>, <code>RoadRunnerCarlaIntegration</code> and <code>RoadRunnerMaterials</code> to <code>&lt;carla&gt;/Unreal/CarlaUE4/Plugins/</code>.</p>
+<p><strong>3.</strong> Rebuild the plugin following the instructions below:  </p>
+<ul>
+<li><strong>On Windows.</strong>  <ul>
+<li>Right-click the <code>.uproject</code> file in <code>&lt;carla&gt;/Unreal/CarlaUE4</code> and select <code>Generate Visual Studio project files</code>.  </li>
+<li>In the root folder of CARLA, run the command:</li>
+</ul>
+</li>
+</ul>
+<pre><code class="language-sh">make launch
+</code></pre>
+<ul>
+<li><strong>On Linux.</strong>  <ul>
+<li>Run the following command:  </li>
+</ul>
+</li>
+</ul>
+<pre><code class="language-sh">UE4_ROOT/GenerateProjectFiles.sh -project=&quot;carla/Unreal/CarlaUE4/CarlaUE4.uproject&quot; -game -engine
+</code></pre>
+<p><strong>4.</strong> In the Unreal Engine window, make sure the checkbox is selected for both plugins <code>Edit &gt; Plugins</code>. </p>
+<p><img alt="rr_ue_plugins" src="../img/rr-ue4_plugins.jpg" /></p>
+<h3 id="import-map">Import map</h3>
+<p><strong>1.</strong> Import the <code>&lt;mapName&gt;.fbx</code> file to a new folder under <code>/Content/Carla/Maps</code> with the <code>Import</code> button.  </p>
+<p><img alt="ue_import" src="../img/ue_import_mapname.jpg" /></p>
+<p><strong>2.</strong> Set <code>Scene &gt; Hierarchy Type</code> to <em>Create One Blueprint Asset</em> (selected by default).<br />
+<strong>3.</strong> Set <code>Static Meshes &gt; Normal Import Method</code> to <em>Import Normals</em>.  </p>
+<p><img alt="ue_import_options" src="../img/ue_import_options.jpg" /></p>
+<p><strong>4.</strong> Click <code>Import</code>.<br />
+<strong>5.</strong> Save the current level <code>File</code> -&gt; <code>Save Current As...</code> -&gt; <code>&lt;mapname&gt;</code>.  </p>
+<p>The new map should now appear next to the others in the Unreal Engine <em>Content Browser</em>.</p>
+<p><img alt="ue_level_content" src="../img/ue_level_content.jpg" />
+</details></p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The tags for semantic segmentation will be assigned according to the name of the asset. The asset will be moved to the corresponding folder in <code>Content/Carla/PackageName/Static</code>. To change these, move them manually after importing. </p>
+</div>
+<hr />
+<h2 id="manual-import">Manual import</h2>
+<p>This method of importing maps can be used with generic <code>.fbx</code> and <code>.xodr</code> files. If you are using RoadRunner, you should use the export method <code>Firebox (.fbx)</code>, <code>OpenDRIVE (.xodr)</code> or <code>Unreal (.fbx + .xml)</code>. Do not use the <code>Carla Exporter</code> option because you will run into compatibility issues with the <code>.fbx</code> file. </p>
+<p>To import a map manually to Unreal Engine:</p>
+<p><strong>1.</strong> In your system's file explorer, copy the <code>.xodr</code> file to <code>&lt;carla-root&gt;/Unreal/CarlaUE4/Content/Carla/Maps/OpenDrive</code>.</p>
+<p><strong>2.</strong> Open the Unreal Engine editor by running <code>make launch</code> in the carla root directory. In the <em>Content Browser</em> of the editor, navigate to <code>Content/Carla/Maps/BaseMap</code> and duplicate the <code>BaseMap</code>. This will provide a blank map with the default sky and lighting objects.</p>
+<blockquote>
+<blockquote>
+<p><img alt="ue_duplicate_basemap" src="../img/ue_duplicate_basemap.png" /></p>
+</blockquote>
+</blockquote>
+<p><strong>3.</strong> Create a new folder with the name of your map package in the <code>Content/Carla/Maps</code> directory and save the duplicated map there with the same name as your <code>.fbx</code> and <code>.xodr</code> files.</p>
+<p><strong>4.</strong> In the <em>Content Browser</em> of the Unreal Engine editor, navigate back to <code>Content/Carla/Maps</code>. Right click in the grey area and select <code>Import to /Game/Carla/Maps...</code> under the heading <em>Import Asset</em>.</p>
+<blockquote>
+<blockquote>
+<p><img alt="ue_import_asset" src="../img/ue_import_asset.png" /></p>
+</blockquote>
+</blockquote>
+<p><strong>5.</strong> In the configuration window that pops up, make sure:</p>
+<blockquote>
+<ul>
+<li>These options are unchecked:<ul>
+<li>Auto Generate Collision  </li>
+<li>Combine Meshes  </li>
+<li>Force Front xAxis</li>
+</ul>
+</li>
+<li>In the following drop downs, the corresponding options are selected:<ul>
+<li>Normal Import Method - <em>Import Normals</em>  </li>
+<li>Material Import Method - <em>Create New Materials</em></li>
+</ul>
+</li>
+<li>These options are checked:<ul>
+<li>Convert Scene Unit</li>
+<li>Import Textures</li>
+</ul>
+</li>
+</ul>
+<blockquote>
+<p><img alt="ue_import_file" src="../img/ue_import_file.jpg" /></p>
+</blockquote>
+</blockquote>
+<p><strong>6.</strong> Click <code>Import</code>.</p>
+<p><strong>7.</strong> The meshes will appear in the <em>Content Browser</em>. Select the meshes and drag them into the scene.</p>
+<blockquote>
+<blockquote>
+<p><img alt="ue_meshes" src="../img/ue_drag_meshes.jpg" /></p>
+</blockquote>
+</blockquote>
+<p><strong>8.</strong> Center the meshes at 0,0,0.</p>
+<blockquote>
+<blockquote>
+<p><img alt="Transform_Map" src="../img/transform.jpg" /></p>
+</blockquote>
+</blockquote>
+<p><strong>9.</strong> In the <em>Content Browser</em>, select all the meshes that need to have colliders. This refers to any meshes that will interact with pedestrians or vehicles. The colliders prevent them from falling into the abyss. Right-click the selected meshes and select <code>Asset Actions &gt; Bulk Edit via Property Matrix...</code>.</p>
+<blockquote>
+<blockquote>
+<p><img alt="ue_selectmesh_collision" src="../img/ue_selectmesh_collision.jpg" /></p>
+</blockquote>
+</blockquote>
+<p><strong>10.</strong> Search for <em>collision</em> in the search box.</p>
+<p><strong>11.</strong> Change <code>Collision Complexity</code> from <code>Project Default</code> to <code>Use Complex Collision As Simple</code> and close the window.</p>
+<blockquote>
+<blockquote>
+<p><img alt="ue_collision_complexity" src="../img/ue_collision_complexity.jpg" /></p>
+</blockquote>
+</blockquote>
+<p><strong>12.</strong> Confirm the collision setting has been applied correctly by pressing <code>Alt + c</code>. You will see a black web over the meshes.</p>
+<p><strong>13.</strong> To create the ground truth for the semantic segmentation sensor, move the static meshes to the corresponding <code>Carla/Static/&lt;segment&gt;</code> folder following the structure below:</p>
+<pre><code>    Content
+    └── Carla
+        ├── Blueprints
+        ├── Config
+        ├── Exported Maps
+        ├── HDMaps
+        ├── Maps
+        └── Static
+            ├── Terrain
+            │   └── mapname
+            │       └── Static Meshes
+            │
+            ├── Road
+            │   └── mapname
+            │       └── Static Meshes
+            │
+            ├── RoadLines  
+            |   └── mapname
+            |       └── Static Meshes
+            └── Sidewalks  
+                └── mapname
+                    └── Static Meshes
+</code></pre>
+<p><strong>14.</strong> In the <em>Modes</em> panel, search for the <strong>Open Drive Actor</strong> and drag it into the scene.</p>
+<blockquote>
+<blockquote>
+<p><img alt="ue_opendrive_actor" src="../img/ue_opendrive_actor.jpg" /></p>
+</blockquote>
+</blockquote>
+<p><strong>15.</strong> In the <em>Details</em> panel, check <code>Add Spawners</code> and then click on the box beside <code>Generate Routes</code>. This will find the <code>.xodr</code> file with the same map name in the <code>&lt;carla-root&gt;/Unreal/CarlaUE4/Content/Carla/Maps/OpenDrive</code> directory and use it to generate a series of <em>RoutePlanner</em> and <em>VehicleSpawnPoint</em> actors.</p>
+<blockquote>
+<blockquote>
+<p><img alt="ue_generate_routes" src="../img/ue_generate_routes.png" /></p>
+</blockquote>
+</blockquote>
+<hr />
+<h2 id="next-steps">Next steps</h2>
+<p>You will now be able to open your map in the Unreal Editor and run simulations. From here, you will be able to customize the map and generate the pedestrian navigation data. We recommend generating the pedestrian navigation after all customization has finished, so there is no chance of obstacles blocking the pedestrian paths.</p>
+<p>CARLA provides several tools and guides to help with the customization of your maps:</p>
+<ul>
+<li><a href="../tuto_M_custom_layers/">Implement sub-levels in your map.</a></li>
+<li><a href="../tuto_M_custom_add_tl/">Add and configure traffic lights and signs.</a></li>
+<li><a href="../tuto_M_custom_buildings/">Add buildings with the procedural building tool.</a></li>
+<li><a href="../tuto_M_custom_road_painter/">Customize the road with the road painter tool.</a></li>
+<li><a href="../tuto_M_custom_weather_landscape/#weather-customization">Customize the weather</a></li>
+<li><a href="../tuto_M_custom_weather_landscape/#add-serial-meshes">Customize the landscape with serial meshes.</a></li>
+</ul>
+<p>Once you have finished with the customization, you can <a href="../tuto_M_generate_pedestrian_navigation/">generate the pedestrian navigation information</a>.</p>
+<hr />
+<p>It is recommended to use the automated processes for importing maps detailed in the guides for <a href="../tuto_M_add_map_package/">CARLA packages</a> and <a href="../tuto_M_add_map_source/">CARLA source build</a>, however the methods listed in this section can be used if required. If you encounter any issues with the alternative methods, feel free to post in the <a href="https://github.com/carla-simulator/carla/discussions">forum</a>.</p>
+              
+            </div>
+          </div><footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+        <span>
+          <a href="https://github.com/carla-simulator/carla" class="fa fa-github" style="color: #fcfcfc"> GitHub</a>
+        </span>
+    
+    
+    
+  </span>
+</div>
+    <script src="../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "..";</script>
+    <script src="../js/theme_extra.js"></script>
+    <script src="../js/theme.js"></script>
+      <script src="../extra.js"></script>
+      <script src="../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>

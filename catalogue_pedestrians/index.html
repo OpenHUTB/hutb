@@ -1,0 +1,606 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <link rel="shortcut icon" href="../img/favicon.ico" />
+    <title>Pedestrian catalogue - CARLA Simulator</title>
+    <link rel="stylesheet" href="../css/theme.css" />
+    <link rel="stylesheet" href="../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+        <link href="../extra.css" rel="stylesheet" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "Pedestrian catalogue";
+        var mkdocs_page_input_path = "catalogue_pedestrians.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href=".." class="icon icon-home"> CARLA Simulator
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+      <input type="text" name="q" placeholder="搜索文档" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="..">Home</a>
+                </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Getting started</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../start_introduction/">Introduction</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../start_quickstart/">Quick start package installation</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_first_steps/">First steps</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../build_carla/">Building CARLA</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Next steps</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_content_authoring_maps/">Content authoring - maps</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_content_authoring_vehicles/">Content authoring - vehicles</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../content_authoring_props/">Content authoring - props</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">CARLA topics</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../coordinates/">Coordinates and transformations</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../foundations/">Foundations</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../core_actors/">Actors</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../core_map/">Maps</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../core_sensors/">Sensors and data</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../ts_traffic_simulation_overview/">Traffic</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../ai_rendering/">AI rendering</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../development_tutorials/">Development</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../custom_assets_tutorials/">Custom assets</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Resources</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../python_api/">Python API</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../catalogue/">Catalogue</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../ref_cpp/">C++ reference</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../bp_library/">Blueprint library</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tutorials/">Tutorials</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../ext_docs/">Extended documentation</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../download/">Downloads</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">CARLA Ecosystem</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../ecosys_ansys/">ANSYS</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_G_rllib_integration/">AWS</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_G_carsim_integration/">CarSIM</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_G_chrono/">Chrono</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../large_map_roadrunner/">MathWorks</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../inverted_ai/">Inverted AI</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../nvidia/">NVIDIA</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../adv_opendrive/">ASAM OpenDRIVE</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../adv_ptv/">PTV Vissim</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../adv_rss/">RSS</a>
+                  </li>
+                  <li class="toctree-l1"><a class="" href="https://carla.readthedocs.io/projects/ros-bridge/en/latest/">ROS</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_G_scenic/">Scenic</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../adv_sumo/">SUMO</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../ecosys_synkrotron/">SYNKROTRON</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Contributing</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../cont_contribution_guidelines/">Guidelines</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../cont_coding_standard/">Coding standards</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../cont_doc_standard/">Documentation standard</a>
+                  </li>
+                  <li class="toctree-l1"><a class="" href=".."></a>
+                  </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="..">CARLA Simulator</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href=".." class="icon icon-home" aria-label="Docs"></a></li>
+      <li class="breadcrumb-item active">Pedestrian catalogue</li>
+    <li class="wy-breadcrumbs-aside">
+          <a href="https://github.com/carla-simulator/carla/edit/master/Docs/catalogue_pedestrians.md" class="icon icon-github"> 在 GitHub 上编辑</a>
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="pedestrian-catalogue">Pedestrian catalogue</h1>
+<h2 id="adults">Adults</h2>
+<ul>
+<li><strong>Adult pedestrian - 1</strong><ul>
+<li><a href="#adult-pedestrian-1-variant-1"><strong>Variant 1</strong></a></li>
+<li><a href="#adult-pedestrian-1-variant-2"><strong>Variant 2</strong></a></li>
+<li><a href="#adult-pedestrian-1-variant-3"><strong>Variant 3</strong></a></li>
+<li><a href="#adult-pedestrian-1-variant-4"><strong>Variant 4</strong></a></li>
+<li><a href="#adult-pedestrian-1-variant-5"><strong>Variant 5</strong></a></li>
+<li><a href="#adult-pedestrian-1-variant-6"><strong>Variant 6</strong></a></li>
+</ul>
+</li>
+<li><strong>Adult pedestrian - 2</strong><ul>
+<li><a href="#adult-pedestrian-2-variant-1"><strong>Variant 1</strong></a></li>
+<li><a href="#adult-pedestrian-2-variant-2"><strong>Variant 2</strong></a></li>
+<li><a href="#adult-pedestrian-2-variant-3"><strong>Variant 3</strong></a></li>
+<li><a href="#adult-pedestrian-2-variant-4"><strong>Variant 4</strong></a></li>
+</ul>
+</li>
+<li><strong>Adult pedestrian - 3</strong><ul>
+<li><a href="#adult-pedestrian-3-variant-1"><strong>Variant 1</strong></a></li>
+<li><a href="#adult-pedestrian-3-variant-2"><strong>Variant 2</strong></a></li>
+</ul>
+</li>
+<li><strong>Adult pedestrian - 4</strong><ul>
+<li><a href="#adult-pedestrian-4-variant-1"><strong>Variant 1</strong></a></li>
+<li><a href="#adult-pedestrian-4-variant-2"><strong>Variant 2</strong></a></li>
+</ul>
+</li>
+<li><strong>Adult pedestrian - 5</strong><ul>
+<li><a href="#adult-pedestrian-5-variant-1"><strong>Variant 1</strong></a></li>
+<li><a href="#adult-pedestrian-5-variant-2"><strong>Variant 2</strong></a></li>
+</ul>
+</li>
+<li><strong>Adult pedestrian - 6</strong><ul>
+<li><a href="#adult-pedestrian-6-variant-1"><strong>Variant 1</strong></a></li>
+<li><a href="#adult-pedestrian-6-variant-2"><strong>Variant 2</strong></a></li>
+</ul>
+</li>
+<li><strong>Adult pedestrian - 7</strong><ul>
+<li><a href="#adult-pedestrian-7-variant-1"><strong>Variant 1</strong></a></li>
+<li><a href="#adult-pedestrian-7-variant-2"><strong>Variant 2</strong></a></li>
+</ul>
+</li>
+<li><strong>Adult pedestrian - 8</strong><ul>
+<li><a href="#adult-pedestrian-8-variant-1"><strong>Variant 1</strong></a></li>
+<li><a href="#adult-pedestrian-8-variant-2"><strong>Variant 2</strong></a></li>
+</ul>
+</li>
+<li><strong>Adult pedestrian - 9</strong><ul>
+<li><a href="#adult-pedestrian-9-variant-1"><strong>Variant 1</strong></a></li>
+<li><a href="#adult-pedestrian-9-variant-2"><strong>Variant 2</strong></a></li>
+<li><a href="#adult-pedestrian-9-variant-3"><strong>Variant 3</strong></a></li>
+</ul>
+</li>
+<li><strong>Adult pedestrian - 10</strong><ul>
+<li><a href="#adult-pedestrian-10-variant-1"><strong>Variant 1</strong></a></li>
+<li><a href="#adult-pedestrian-10-variant-2"><strong>Variant 2</strong></a></li>
+<li><a href="#adult-pedestrian-10-variant-3"><strong>Variant 3</strong></a></li>
+<li><a href="#adult-pedestrian-10-variant-4"><strong>Variant 4</strong></a></li>
+</ul>
+</li>
+<li><strong>Adult pedestrian - 11</strong><ul>
+<li><a href="#adult-pedestrian-11-variant-1"><strong>Variant 1</strong></a></li>
+<li><a href="#adult-pedestrian-11-variant-2"><strong>Variant 2</strong></a></li>
+</ul>
+</li>
+<li><strong>Adult pedestrian - 12</strong><ul>
+<li><a href="#adult-pedestrian-12-variant-1"><strong>Variant 1</strong></a></li>
+<li><a href="#adult-pedestrian-12-variant-2"><strong>Variant 2</strong></a></li>
+<li><a href="#adult-pedestrian-12-variant-3"><strong>Variant 3</strong></a></li>
+</ul>
+</li>
+<li><strong>Adult pedestrian - 13</strong><ul>
+<li><a href="#adult-pedestrian-13-variant-1"><strong>Variant 1</strong></a></li>
+</ul>
+</li>
+<li><strong>Adult pedestrian - 14</strong><ul>
+<li><a href="#adult-pedestrian-14-variant-1"><strong>Variant 1</strong></a></li>
+<li><a href="#adult-pedestrian-14-variant-2"><strong>Variant 2</strong></a></li>
+<li><a href="#adult-pedestrian-14-variant-3"><strong>Variant 3</strong></a></li>
+</ul>
+</li>
+<li><strong>Adult pedestrian - 15</strong><ul>
+<li><a href="#adult-pedestrian-15-variant-1"><strong>Variant 1</strong></a></li>
+<li><a href="#adult-pedestrian-15-variant-2"><strong>Variant 2</strong></a></li>
+</ul>
+</li>
+</ul>
+<h2 id="children">Children</h2>
+<ul>
+<li><strong>Child pedestrian - 1</strong><ul>
+<li><a href="#child-pedestrian-1-variant-1"><strong>Variant 1</strong></a></li>
+<li><a href="#child-pedestrian-1-variant-2"><strong>Variant 2</strong></a></li>
+<li><a href="#child-pedestrian-1-variant-3"><strong>Variant 3</strong></a></li>
+</ul>
+</li>
+<li><strong>Child pedestrian - 2</strong><ul>
+<li><a href="#child-pedestrian-2-variant-1"><strong>Variant 1</strong></a></li>
+<li><a href="#child-pedestrian-2-variant-2"><strong>Variant 2</strong></a></li>
+<li><a href="#child-pedestrian-2-variant-3"><strong>Variant 3</strong></a></li>
+</ul>
+</li>
+<li><strong>Child pedestrian - 3</strong><ul>
+<li><a href="#child-pedestrian-3-variant-1"><strong>Variant 1</strong></a></li>
+</ul>
+</li>
+<li><strong>Child pedestrian - 4</strong><ul>
+<li><a href="#child-pedestrian-4-variant-1"><strong>Variant 1</strong></a></li>
+</ul>
+</li>
+</ul>
+<h2 id="police">Police</h2>
+<ul>
+<li><a href="#police-1"><strong>Police - 1</strong></a></li>
+<li><a href="#police-2"><strong>Police - 2</strong></a></li>
+</ul>
+<hr />
+<h2 id="wheelchair-users">Wheelchair users</h2>
+<p>A wheelchair model is available which is compatible with most of the pedestrian models. You can find out if a chosen pedestrian is compatible with the wheelchair model by using the <code>has_attribute</code> method of the pedestrian blueprint to test if it has the <code>can_use_wheelchair</code> attribute. Then set the <code>use_wheelchair</code> attribute to <code>True</code>:</p>
+<pre><code class="language-py">pedestrian_bp = bp_lib.find('walker.pedestrian.0028')
+if pedestrian_bp.has_attribute('can_use_wheelchair'):
+    pedestrian_bp.set_attribute('use_wheelchair', 'True')
+    pedestrian = world.spawn_actor(pedestrian_bp, spawn_point)
+</code></pre>
+<p><img alt="wheelchair_pedestrians" src="../img/catalogue/pedestrians/vru_pedestrians.webp" /></p>
+<hr />
+<h2 id="adults_1">Adults</h2>
+<h4 id="adult-pedestrian-1-variant-1">Adult pedestrian 1 - variant 1</h4>
+<p><img alt="pedestrian_0001" src="../img/catalogue/pedestrians/pedestrian_0001.webp" /></p>
+<ul>
+<li><strong>Blueprint ID</strong>: <span style="color:#00a6ed;">walker.pedestrian.0001<span></li>
+</ul>
+<h4 id="adult-pedestrian-1-variant-2">Adult pedestrian 1 - variant 2</h4>
+<p><img alt="pedestrian_0005" src="../img/catalogue/pedestrians/pedestrian_0005.webp" /></p>
+<ul>
+<li><strong>Blueprint ID</strong>: <span style="color:#00a6ed;">walker.pedestrian.0005<span></li>
+</ul>
+<h4 id="adult-pedestrian-1-variant-3">Adult pedestrian 1 - variant 3</h4>
+<p><img alt="pedestrian_0006" src="../img/catalogue/pedestrians/pedestrian_0006.webp" /></p>
+<ul>
+<li><strong>Blueprint ID</strong>: <span style="color:#00a6ed;">walker.pedestrian.0006<span></li>
+</ul>
+<h4 id="adult-pedestrian-1-variant-4">Adult pedestrian 1 - variant 4</h4>
+<p><img alt="pedestrian_0007" src="../img/catalogue/pedestrians/pedestrian_0007.webp" /></p>
+<ul>
+<li><strong>Blueprint ID</strong>: <span style="color:#00a6ed;">walker.pedestrian.0007<span></li>
+</ul>
+<h4 id="adult-pedestrian-1-variant-5">Adult pedestrian 1 - variant 5</h4>
+<p><img alt="pedestrian_0008" src="../img/catalogue/pedestrians/pedestrian_0008.webp" /></p>
+<ul>
+<li><strong>Blueprint ID</strong>: <span style="color:#00a6ed;">walker.pedestrian.0008<span></li>
+</ul>
+<hr />
+<h4 id="adult-pedestrian-2-variant-1">Adult pedestrian 2 - variant 1</h4>
+<p><img alt="pedestrian_0004" src="../img/catalogue/pedestrians/pedestrian_0004.webp" /></p>
+<ul>
+<li><strong>Blueprint ID</strong>: <span style="color:#00a6ed;">walker.pedestrian.0004<span></li>
+</ul>
+<h4 id="adult-pedestrian-2-variant-2">Adult pedestrian 2 - variant 2</h4>
+<p><img alt="pedestrian_0003" src="../img/catalogue/pedestrians/pedestrian_0003.webp" /></p>
+<ul>
+<li><strong>Blueprint ID</strong>: <span style="color:#00a6ed;">walker.pedestrian.0003<span></li>
+</ul>
+<h4 id="adult-pedestrian-2-variant-3">Adult pedestrian 2 - variant 3</h4>
+<p><img alt="pedestrian_0002" src="../img/catalogue/pedestrians/pedestrian_0002.webp" /></p>
+<ul>
+<li><strong>Blueprint ID</strong>: <span style="color:#00a6ed;">walker.pedestrian.0002<span></li>
+</ul>
+<hr />
+<h4 id="adult-pedestrian-3-variant-1">Adult pedestrian 3 - variant 1</h4>
+<p><img alt="pedestrian_0015" src="../img/catalogue/pedestrians/pedestrian_0015.webp" /></p>
+<ul>
+<li><strong>Blueprint ID</strong>: <span style="color:#00a6ed;">walker.pedestrian.0015<span></li>
+</ul>
+<h4 id="adult-pedestrian-3-variant-2">Adult pedestrian 3 - variant 2</h4>
+<p><img alt="pedestrian_0019" src="../img/catalogue/pedestrians/pedestrian_0019.webp" /></p>
+<ul>
+<li><strong>Blueprint ID</strong>: <span style="color:#00a6ed;">walker.pedestrian.0019<span></li>
+</ul>
+<hr />
+<h4 id="adult-pedestrian-4-variant-1">Adult pedestrian 4 - variant 1</h4>
+<p><img alt="pedestrian_0016" src="../img/catalogue/pedestrians/pedestrian_0016.webp" /></p>
+<ul>
+<li><strong>Blueprint ID</strong>: <span style="color:#00a6ed;">walker.pedestrian.0016<span></li>
+</ul>
+<h4 id="adult-pedestrian-4-variant-2">Adult pedestrian 4 - variant 2</h4>
+<p><img alt="pedestrian_0017" src="../img/catalogue/pedestrians/pedestrian_0017.webp" /></p>
+<ul>
+<li><strong>Blueprint ID</strong>: <span style="color:#00a6ed;">walker.pedestrian.0017<span></li>
+</ul>
+<hr />
+<h4 id="adult-pedestrian-5-variant-1">Adult pedestrian 5 - variant 1</h4>
+<p><img alt="pedestrian_0026" src="../img/catalogue/pedestrians/pedestrian_0026.webp" /></p>
+<ul>
+<li><strong>Blueprint ID</strong>: <span style="color:#00a6ed;">walker.pedestrian.0026<span></li>
+</ul>
+<h4 id="adult-pedestrian-5-variant-2">Adult pedestrian 5 - variant 2</h4>
+<p><img alt="pedestrian_0018" src="../img/catalogue/pedestrians/pedestrian_0018.webp" /></p>
+<ul>
+<li><strong>Blueprint ID</strong>: <span style="color:#00a6ed;">walker.pedestrian.0018<span></li>
+</ul>
+<hr />
+<h4 id="adult-pedestrian-6-variant-1">Adult pedestrian 6 - variant 1</h4>
+<p><img alt="pedestrian_0021" src="../img/catalogue/pedestrians/pedestrian_0021.webp" /></p>
+<ul>
+<li><strong>Blueprint ID</strong>: <span style="color:#00a6ed;">walker.pedestrian.0021<span></li>
+</ul>
+<h4 id="adult-pedestrian-6-variant-2">Adult pedestrian 6 - variant 2</h4>
+<p><img alt="pedestrian_0020" src="../img/catalogue/pedestrians/pedestrian_0020.webp" /></p>
+<ul>
+<li><strong>Blueprint ID</strong>: <span style="color:#00a6ed;">walker.pedestrian.0020<span></li>
+</ul>
+<hr />
+<h4 id="adult-pedestrian-7-variant-1">Adult pedestrian 7 - variant 1</h4>
+<p><img alt="pedestrian_0023" src="../img/catalogue/pedestrians/pedestrian_0023.webp" /></p>
+<ul>
+<li><strong>Blueprint ID</strong>: <span style="color:#00a6ed;">walker.pedestrian.0023<span></li>
+</ul>
+<h4 id="adult-pedestrian-7-variant-2">Adult pedestrian 7 - variant 2</h4>
+<p><img alt="pedestrian_0022" src="../img/catalogue/pedestrians/pedestrian_0022.webp" /></p>
+<ul>
+<li><strong>Blueprint ID</strong>: <span style="color:#00a6ed;">walker.pedestrian.0022<span></li>
+</ul>
+<hr />
+<h4 id="adult-pedestrian-8-variant-1">Adult pedestrian 8 - variant 1</h4>
+<p><img alt="pedestrian_0024" src="../img/catalogue/pedestrians/pedestrian_0024.webp" /></p>
+<ul>
+<li><strong>Blueprint ID</strong>: <span style="color:#00a6ed;">walker.pedestrian.0024<span></li>
+</ul>
+<h4 id="adult-pedestrian-8-variant-2">Adult pedestrian 8 - variant 2</h4>
+<p><img alt="pedestrian_0025" src="../img/catalogue/pedestrians/pedestrian_0025.webp" /></p>
+<ul>
+<li><strong>Blueprint ID</strong>: <span style="color:#00a6ed;">walker.pedestrian.0025<span></li>
+</ul>
+<hr />
+<h4 id="adult-pedestrian-9-variant-1">Adult pedestrian 9 - variant 1</h4>
+<p><img alt="pedestrian_0027" src="../img/catalogue/pedestrians/pedestrian_0027.webp" /></p>
+<ul>
+<li><strong>Blueprint ID</strong>: <span style="color:#00a6ed;">walker.pedestrian.0027<span></li>
+</ul>
+<h4 id="adult-pedestrian-9-variant-2">Adult pedestrian 9 - variant 2</h4>
+<p><img alt="pedestrian_0029" src="../img/catalogue/pedestrians/pedestrian_0029.webp" /></p>
+<ul>
+<li><strong>Blueprint ID</strong>: <span style="color:#00a6ed;">walker.pedestrian.0029<span></li>
+</ul>
+<h4 id="adult-pedestrian-9-variant-3">Adult pedestrian 9 - variant 3</h4>
+<p><img alt="pedestrian_0028" src="../img/catalogue/pedestrians/pedestrian_0028.webp" /></p>
+<ul>
+<li><strong>Blueprint ID</strong>: <span style="color:#00a6ed;">walker.pedestrian.0028<span></li>
+</ul>
+<hr />
+<h4 id="adult-pedestrian-10-variant-1">Adult pedestrian 10 - variant 1</h4>
+<p><img alt="pedestrian_0041" src="../img/catalogue/pedestrians/pedestrian_0041.webp" /></p>
+<ul>
+<li><strong>Blueprint ID</strong>: <span style="color:#00a6ed;">walker.pedestrian.0041<span></li>
+</ul>
+<h4 id="adult-pedestrian-10-variant-2">Adult pedestrian 10 - variant 2</h4>
+<p><img alt="pedestrian_0040" src="../img/catalogue/pedestrians/pedestrian_0040.webp" /></p>
+<ul>
+<li><strong>Blueprint ID</strong>: <span style="color:#00a6ed;">walker.pedestrian.0040<span></li>
+</ul>
+<h4 id="adult-pedestrian-10-variant-3">Adult pedestrian 10 - variant 3</h4>
+<p><img alt="pedestrian_0033" src="../img/catalogue/pedestrians/pedestrian_0033.webp" /></p>
+<ul>
+<li><strong>Blueprint ID</strong>: <span style="color:#00a6ed;">walker.pedestrian.0033<span></li>
+</ul>
+<h4 id="adult-pedestrian-10-variant-4">Adult pedestrian 10 - variant 4</h4>
+<p><img alt="pedestrian_0031" src="../img/catalogue/pedestrians/pedestrian_0031.webp" /></p>
+<ul>
+<li><strong>Blueprint ID</strong>: <span style="color:#00a6ed;">walker.pedestrian.0031<span></li>
+</ul>
+<hr />
+<h4 id="adult-pedestrian-11-variant-1">Adult pedestrian 11 - variant 1</h4>
+<p><img alt="pedestrian_0034" src="../img/catalogue/pedestrians/pedestrian_0034.webp" /></p>
+<ul>
+<li><strong>Blueprint ID</strong>: <span style="color:#00a6ed;">walker.pedestrian.0034<span></li>
+</ul>
+<h4 id="adult-pedestrian-11-variant-2">Adult pedestrian 11 - variant 2</h4>
+<p><img alt="pedestrian_0038" src="../img/catalogue/pedestrians/pedestrian_0038.webp" /></p>
+<ul>
+<li><strong>Blueprint ID</strong>: <span style="color:#00a6ed;">walker.pedestrian.0038<span></li>
+</ul>
+<hr />
+<h4 id="adult-pedestrian-12-variant-1">Adult pedestrian 12 - variant 1</h4>
+<p><img alt="pedestrian_0035" src="../img/catalogue/pedestrians/pedestrian_0035.webp" /></p>
+<ul>
+<li><strong>Blueprint ID</strong>: <span style="color:#00a6ed;">walker.pedestrian.0035<span></li>
+</ul>
+<h4 id="adult-pedestrian-12-variant-2">Adult pedestrian 12 - variant 2</h4>
+<p><img alt="pedestrian_0036" src="../img/catalogue/pedestrians/pedestrian_0036.webp" /></p>
+<ul>
+<li><strong>Blueprint ID</strong>: <span style="color:#00a6ed;">walker.pedestrian.0036<span></li>
+</ul>
+<h4 id="adult-pedestrian-12-variant-3">Adult pedestrian 12 - variant 3</h4>
+<p><img alt="pedestrian_0037" src="../img/catalogue/pedestrians/pedestrian_0037.webp" /></p>
+<ul>
+<li><strong>Blueprint ID</strong>: <span style="color:#00a6ed;">walker.pedestrian.0037<span></li>
+</ul>
+<hr />
+<h4 id="adult-pedestrian-13-variant-1">Adult pedestrian 13 - variant 1</h4>
+<p><img alt="pedestrian_0039" src="../img/catalogue/pedestrians/pedestrian_0039.webp" /></p>
+<ul>
+<li><strong>Blueprint ID</strong>: <span style="color:#00a6ed;">walker.pedestrian.0039<span></li>
+</ul>
+<hr />
+<h4 id="adult-pedestrian-14-variant-1">Adult pedestrian 14 - variant 1</h4>
+<p><img alt="pedestrian_0042" src="../img/catalogue/pedestrians/pedestrian_0042.webp" /></p>
+<ul>
+<li><strong>Blueprint ID</strong>: <span style="color:#00a6ed;">walker.pedestrian.0042<span></li>
+</ul>
+<h4 id="adult-pedestrian-14-variant-2">Adult pedestrian 14 - variant 2</h4>
+<p><img alt="pedestrian_0043" src="../img/catalogue/pedestrians/pedestrian_0043.webp" /></p>
+<ul>
+<li><strong>Blueprint ID</strong>: <span style="color:#00a6ed;">walker.pedestrian.0043<span></li>
+</ul>
+<h4 id="adult-pedestrian-14-variant-3">Adult pedestrian 14 - variant 3</h4>
+<p><img alt="pedestrian_0044" src="../img/catalogue/pedestrians/pedestrian_0044.webp" /></p>
+<ul>
+<li><strong>Blueprint ID</strong>: <span style="color:#00a6ed;">walker.pedestrian.0044<span></li>
+</ul>
+<hr />
+<h4 id="adult-pedestrian-15-variant-1">Adult pedestrian 15 - variant 1</h4>
+<p><img alt="pedestrian_0047" src="../img/catalogue/pedestrians/pedestrian_0047.webp" /></p>
+<ul>
+<li><strong>Blueprint ID</strong>: <span style="color:#00a6ed;">walker.pedestrian.0047<span></li>
+</ul>
+<h4 id="adult-pedestrian-15-variant-2">Adult pedestrian 15 - variant 2</h4>
+<p><img alt="pedestrian_0046" src="../img/catalogue/pedestrians/pedestrian_0046.webp" /></p>
+<ul>
+<li><strong>Blueprint ID</strong>: <span style="color:#00a6ed;">walker.pedestrian.0046<span></li>
+</ul>
+<hr />
+<h2 id="children_1">Children</h2>
+<hr />
+<h4 id="child-pedestrian-1-variant-1">Child pedestrian 1 - variant 1</h4>
+<p><img alt="pedestrian_0011" src="../img/catalogue/pedestrians/pedestrian_0011.webp" /></p>
+<ul>
+<li><strong>Blueprint ID</strong>: <span style="color:#00a6ed;">walker.pedestrian.0011<span></li>
+</ul>
+<h4 id="child-pedestrian-1-variant-2">Child pedestrian 1 - variant 2</h4>
+<p><img alt="pedestrian_0010" src="../img/catalogue/pedestrians/pedestrian_0010.webp" /></p>
+<ul>
+<li><strong>Blueprint ID</strong>: <span style="color:#00a6ed;">walker.pedestrian.0010<span></li>
+</ul>
+<h4 id="child-pedestrian-1-variant-3">Child pedestrian 1 - variant 3</h4>
+<p><img alt="pedestrian_0009" src="../img/catalogue/pedestrians/pedestrian_0009.webp" /></p>
+<ul>
+<li><strong>Blueprint ID</strong>: <span style="color:#00a6ed;">walker.pedestrian.0009<span></li>
+</ul>
+<hr />
+<h4 id="child-pedestrian-2-variant-1">Child pedestrian 2 - variant 1</h4>
+<p><img alt="pedestrian_0014" src="../img/catalogue/pedestrians/pedestrian_0014.webp" /></p>
+<ul>
+<li><strong>Blueprint ID</strong>: <span style="color:#00a6ed;">walker.pedestrian.0014<span></li>
+</ul>
+<h4 id="child-pedestrian-2-variant-2">Child pedestrian 2 - variant 2</h4>
+<p><img alt="pedestrian_0013" src="../img/catalogue/pedestrians/pedestrian_0013.webp" /></p>
+<ul>
+<li><strong>Blueprint ID</strong>: <span style="color:#00a6ed;">walker.pedestrian.0013<span></li>
+</ul>
+<h4 id="child-pedestrian-2-variant-3">Child pedestrian 2 - variant 3</h4>
+<p><img alt="pedestrian_0012" src="../img/catalogue/pedestrians/pedestrian_0012.webp" /></p>
+<ul>
+<li><strong>Blueprint ID</strong>: <span style="color:#00a6ed;">walker.pedestrian.0012<span></li>
+</ul>
+<hr />
+<h4 id="child-pedestrian-3-variant-1">Child pedestrian 3 - variant 1</h4>
+<p><img alt="pedestrian_0048" src="../img/catalogue/pedestrians/pedestrian_0048.webp" /></p>
+<ul>
+<li><strong>Blueprint ID</strong>: <span style="color:#00a6ed;">walker.pedestrian.0048<span></li>
+</ul>
+<hr />
+<h4 id="child-pedestrian-4-variant-1">Child pedestrian 4 - variant 1</h4>
+<p><img alt="pedestrian_0049" src="../img/catalogue/pedestrians/pedestrian_0049.webp" /></p>
+<ul>
+<li><strong>Blueprint ID</strong>: <span style="color:#00a6ed;">walker.pedestrian.0049<span></li>
+</ul>
+<hr />
+<h2 id="police_1">Police</h2>
+<hr />
+<h4 id="police-1">Police 1</h4>
+<p><img alt="pedestrian_0030" src="../img/catalogue/pedestrians/pedestrian_0030.webp" /></p>
+<ul>
+<li><strong>Blueprint ID</strong>: <span style="color:#00a6ed;">walker.pedestrian.0030<span></li>
+</ul>
+<hr />
+<h4 id="police-2">Police 2</h4>
+<p><img alt="pedestrian_0032" src="../img/catalogue/pedestrians/pedestrian_0032.webp" /></p>
+<ul>
+<li><strong>Blueprint ID</strong>: <span style="color:#00a6ed;">walker.pedestrian.0032<span></li>
+</ul>
+              
+            </div>
+          </div><footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+        <span>
+          <a href="https://github.com/carla-simulator/carla" class="fa fa-github" style="color: #fcfcfc"> GitHub</a>
+        </span>
+    
+    
+    
+  </span>
+</div>
+    <script src="../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "..";</script>
+    <script src="../js/theme_extra.js"></script>
+    <script src="../js/theme.js"></script>
+      <script src="../extra.js"></script>
+      <script src="../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>

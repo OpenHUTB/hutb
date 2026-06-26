@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <link rel="shortcut icon" href="../img/favicon.ico" />
+    <title>Catalogue - CARLA Simulator</title>
+    <link rel="stylesheet" href="../css/theme.css" />
+    <link rel="stylesheet" href="../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+        <link href="../extra.css" rel="stylesheet" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "Catalogue";
+        var mkdocs_page_input_path = "catalogue.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href=".." class="icon icon-home"> CARLA Simulator
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+      <input type="text" name="q" placeholder="搜索文档" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="..">Home</a>
+                </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Getting started</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../start_introduction/">Introduction</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../start_quickstart/">Quick start package installation</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_first_steps/">First steps</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../build_carla/">Building CARLA</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Next steps</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_content_authoring_maps/">Content authoring - maps</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_content_authoring_vehicles/">Content authoring - vehicles</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../content_authoring_props/">Content authoring - props</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">CARLA topics</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../coordinates/">Coordinates and transformations</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../foundations/">Foundations</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../core_actors/">Actors</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../core_map/">Maps</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../core_sensors/">Sensors and data</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../ts_traffic_simulation_overview/">Traffic</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../ai_rendering/">AI rendering</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../development_tutorials/">Development</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../custom_assets_tutorials/">Custom assets</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Resources</span></p>
+              <ul class="current">
+                  <li class="toctree-l1"><a class="reference internal" href="../python_api/">Python API</a>
+                  </li>
+                  <li class="toctree-l1 current"><a class="reference internal current" href="#">Catalogue</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#maps">Maps</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#vehicles">Vehicles</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#pedestrians">Pedestrians</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#props">Props</a>
+    </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../ref_cpp/">C++ reference</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../bp_library/">Blueprint library</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tutorials/">Tutorials</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../ext_docs/">Extended documentation</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../download/">Downloads</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">CARLA Ecosystem</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../ecosys_ansys/">ANSYS</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_G_rllib_integration/">AWS</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_G_carsim_integration/">CarSIM</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_G_chrono/">Chrono</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../large_map_roadrunner/">MathWorks</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../inverted_ai/">Inverted AI</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../nvidia/">NVIDIA</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../adv_opendrive/">ASAM OpenDRIVE</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../adv_ptv/">PTV Vissim</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../adv_rss/">RSS</a>
+                  </li>
+                  <li class="toctree-l1"><a class="" href="https://carla.readthedocs.io/projects/ros-bridge/en/latest/">ROS</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_G_scenic/">Scenic</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../adv_sumo/">SUMO</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../ecosys_synkrotron/">SYNKROTRON</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Contributing</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../cont_contribution_guidelines/">Guidelines</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../cont_coding_standard/">Coding standards</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../cont_doc_standard/">Documentation standard</a>
+                  </li>
+                  <li class="toctree-l1"><a class="" href=".."></a>
+                  </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="..">CARLA Simulator</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href=".." class="icon icon-home" aria-label="Docs"></a></li>
+          <li class="breadcrumb-item">Resources</li>
+      <li class="breadcrumb-item active">Catalogue</li>
+    <li class="wy-breadcrumbs-aside">
+          <a href="https://github.com/carla-simulator/carla/edit/master/Docs/catalogue.md" class="icon icon-github"> 在 GitHub 上编辑</a>
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="carla-catalogue">CARLA catalogue</h1>
+<p>The CARLA simulator provides a vast library of 3D assets to populate your autonomous agent's virtual environment. The 3D asset library provides numerous pre-built maps to choose from, a diverse array of vehicle models for traffic simulation along with models of pedestrians and other structures or obstacles that can be dynamically added to your simulation during runtime. This catalogue documents all of the 3D assets available to use in your simulations. </p>
+<ul>
+<li><a href="../catalogue_vehicles/"><strong>Vehicles catalogue</strong></a></li>
+<li><a href="../catalogue_pedestrians/"><strong>Pedestrians catalogue</strong></a></li>
+<li><a href="../catalogue_props/"><strong>Props catalogue</strong></a></li>
+</ul>
+<p>CARLA also provides numerous example Python scripts to help users understand the Python API. Information about the scripts is provided in the scripts catalogue:</p>
+<ul>
+<li><a href="../catalogue_scripts/"><strong>Scripts catalogue</strong></a></li>
+</ul>
+<h2 id="maps">Maps</h2>
+<p>The CARLA simulator provides 10 pre-built maps to choose from, providing a diverse array of environments for training and testing your autonomous agents. </p>
+<p><img alt="maps_montage" src="../img/catalogue/maps/maps_montage.webp" /></p>
+<table>
+<thead>
+<tr>
+<th>Town</th>
+<th>Summary</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="../map_town01/"><strong>Town01</strong></a></td>
+<td>A small, simple town with a river and several bridges.</td>
+</tr>
+<tr>
+<td><a href="../map_town02/"><strong>Town02</strong></a></td>
+<td>A small simple town with a mixture of residential and commercial buildings.</td>
+</tr>
+<tr>
+<td><a href="../map_town03/"><strong>Town03</strong></a></td>
+<td>A larger, urban map with a roundabout and large junctions.</td>
+</tr>
+<tr>
+<td><a href="../map_town04/"><strong>Town04</strong></a></td>
+<td>A small town embedded in the mountains with a special "figure of 8" <em>infinite</em> highway.</td>
+</tr>
+<tr>
+<td><a href="../map_town05/"><strong>Town05</strong></a></td>
+<td>Squared-grid town with cross junctions and a bridge. It has multiple lanes per direction. Useful to perform lane changes.</td>
+</tr>
+<tr>
+<td><a href="../map_town06/"><strong>Town06</strong></a></td>
+<td>Long many lane highways with many highway entrances and exits. It also has a <a href="https://en.wikipedia.org/wiki/Michigan_left"><strong>Michigan left</strong></a>.</td>
+</tr>
+<tr>
+<td><a href="../map_town07/"><strong>Town07</strong></a></td>
+<td>A rural environment with narrow roads, corn, barns and hardly any traffic lights.</td>
+</tr>
+<tr>
+<td><strong>Town08</strong></td>
+<td>Secret "unseen" town used for the <a href="https://leaderboard.carla.org/">Leaderboard</a> challenge</td>
+</tr>
+<tr>
+<td><strong>Town09</strong></td>
+<td>Secret "unseen" town used for the <a href="https://leaderboard.carla.org/">Leaderboard</a> challenge</td>
+</tr>
+<tr>
+<td><a href="../map_town10/"><strong>Town10</strong></a></td>
+<td>A downtown urban environment with skyscrapers, residential buildings and an ocean promenade.</td>
+</tr>
+<tr>
+<td><a href="../map_town11/"><strong>Town11</strong></a></td>
+<td>A Large Map that is undecorated. Serves as a proof of concept for the Large Maps feature.</td>
+</tr>
+<tr>
+<td><a href="../map_town12/"><strong>Town12</strong></a></td>
+<td>A Large Map with numerous different regions, including high-rise, residential and rural environments.</td>
+</tr>
+<tr>
+<td><a href="../map_town13/"><strong>Town13</strong></a></td>
+<td>A Large Map similar in scale to Town 12, but with distinct features.</td>
+</tr>
+<tr>
+<td><a href="../map_town15/"><strong>Town15</strong></a></td>
+<td>A map based on the road layout of the Autonomous University of Barcelona.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="vehicles">Vehicles</h2>
+<p>CARLA provides a diverse array of vehicles, with high fidelity models of real world cars, trucks and bikes, for replicating traffic in your simulations. Browse and choose the vehicles you like in the <a href="../catalogue_vehicles/"><strong>vehicle catalogue</strong></a>.</p>
+<p><img alt="vehicles_overview" src="../img/catalogue/vehicles/vehicle_montage.webp" /></p>
+<h2 id="pedestrians">Pedestrians</h2>
+<p>CARLA's asset library includes a variety of pedestrians to simulate foot traffic in the 3D environments surrounding your agent. Browse and choose the pedestrians you want in the <a href="../catalogue_pedestrians/"><strong>pedestrian catalogue</strong></a>.</p>
+<p><img alt="pedestrian_overview" src="../img/catalogue/pedestrians/pedestrians_overview.webp" /></p>
+<h2 id="props">Props</h2>
+<p>CARLA's props model the various structures and items you might find on or near roads, such as kiosks, statues, benches, boxes, bins, debris or trash. The props can be placed anywhere in your simulation dynamically during runtime. Browse and choose your props in the <a href="../catalogue_props/"><strong>props catalogue</strong></a>.</p>
+<p><img alt="props_overview" src="../img/catalogue/props/props_overview.webp" /></p>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="../python_api/" class="btn btn-neutral float-left" title="Python API"><span class="icon icon-circle-arrow-left"></span> 前一页</a>
+        <a href="../ref_cpp/" class="btn btn-neutral float-right" title="C++ reference">后一页 <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+        <span>
+          <a href="https://github.com/carla-simulator/carla" class="fa fa-github" style="color: #fcfcfc"> GitHub</a>
+        </span>
+    
+    
+      <span><a href="../python_api/" style="color: #fcfcfc">&laquo; 前一页</a></span>
+    
+    
+      <span><a href="../ref_cpp/" style="color: #fcfcfc">后一页 &raquo;</a></span>
+    
+  </span>
+</div>
+    <script src="../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "..";</script>
+    <script src="../js/theme_extra.js"></script>
+    <script src="../js/theme.js"></script>
+      <script src="../extra.js"></script>
+      <script src="../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>

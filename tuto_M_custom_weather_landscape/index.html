@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <link rel="shortcut icon" href="../img/favicon.ico" />
+    <title>Customizing maps: Weather and Landscape - CARLA Simulator</title>
+    <link rel="stylesheet" href="../css/theme.css" />
+    <link rel="stylesheet" href="../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+        <link href="../extra.css" rel="stylesheet" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "Customizing maps: Weather and Landscape";
+        var mkdocs_page_input_path = "tuto_M_custom_weather_landscape.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href=".." class="icon icon-home"> CARLA Simulator
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+      <input type="text" name="q" placeholder="搜索文档" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="..">Home</a>
+                </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Getting started</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../start_introduction/">Introduction</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../start_quickstart/">Quick start package installation</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_first_steps/">First steps</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../build_carla/">Building CARLA</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Next steps</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_content_authoring_maps/">Content authoring - maps</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_content_authoring_vehicles/">Content authoring - vehicles</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../content_authoring_props/">Content authoring - props</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">CARLA topics</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../coordinates/">Coordinates and transformations</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../foundations/">Foundations</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../core_actors/">Actors</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../core_map/">Maps</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../core_sensors/">Sensors and data</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../ts_traffic_simulation_overview/">Traffic</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../ai_rendering/">AI rendering</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../development_tutorials/">Development</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../custom_assets_tutorials/">Custom assets</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Resources</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../python_api/">Python API</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../catalogue/">Catalogue</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../ref_cpp/">C++ reference</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../bp_library/">Blueprint library</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tutorials/">Tutorials</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../ext_docs/">Extended documentation</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../download/">Downloads</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">CARLA Ecosystem</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../ecosys_ansys/">ANSYS</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_G_rllib_integration/">AWS</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_G_carsim_integration/">CarSIM</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_G_chrono/">Chrono</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../large_map_roadrunner/">MathWorks</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../inverted_ai/">Inverted AI</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../nvidia/">NVIDIA</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../adv_opendrive/">ASAM OpenDRIVE</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../adv_ptv/">PTV Vissim</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../adv_rss/">RSS</a>
+                  </li>
+                  <li class="toctree-l1"><a class="" href="https://carla.readthedocs.io/projects/ros-bridge/en/latest/">ROS</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_G_scenic/">Scenic</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../adv_sumo/">SUMO</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../ecosys_synkrotron/">SYNKROTRON</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Contributing</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../cont_contribution_guidelines/">Guidelines</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../cont_coding_standard/">Coding standards</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../cont_doc_standard/">Documentation standard</a>
+                  </li>
+                  <li class="toctree-l1"><a class="" href=".."></a>
+                  </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="..">CARLA Simulator</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href=".." class="icon icon-home" aria-label="Docs"></a></li>
+      <li class="breadcrumb-item active">Customizing maps: Weather and Landscape</li>
+    <li class="wy-breadcrumbs-aside">
+          <a href="https://github.com/carla-simulator/carla/edit/master/Docs/tuto_M_custom_weather_landscape.md" class="icon icon-github"> 在 GitHub 上编辑</a>
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="customizing-maps-weather-and-landscape">Customizing maps: Weather and Landscape</h1>
+<p>CARLA provides several blueprints to help ease the creation of default weather settings for your maps and to populate the lanscape with serial meshes such as street lights, power lines, etc.</p>
+<p>This guide will explain where each one of these blueprints are located and how to use and configure them.</p>
+<ul>
+<li><a href="#weather-customization"><strong>Weather customization</strong></a><ul>
+<li><a href="#bp_sky">BP_Sky</a></li>
+<li><a href="#bp_weather">BP_Weather</a></li>
+</ul>
+</li>
+<li><a href="#add-serial-meshes"><strong>Serial meshes</strong></a><ul>
+<li><a href="#bp_repspline">BP_RepSpline</a></li>
+<li><a href="#bp_spline">BP_Spline</a></li>
+<li><a href="#bp_wall">BP_Wall</a></li>
+<li><a href="#bp_splinepoweline">BP_SplinePoweLine</a></li>
+</ul>
+</li>
+<li><a href="#next-steps"><strong>Next steps</strong></a></li>
+</ul>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>This tutorial only applies to users that work with a build from source, and have access to the Unreal Editor.</p>
+</div>
+<hr />
+<h2 id="weather-customization">Weather customization</h2>
+<p>This section explains how to experiment with different weather parameters before setting your map's default weather, and once you are happy with the settings, how to configure the default weather parameters for your map.</p>
+<h3 id="bp_sky">BP_Sky</h3>
+<p>The <code>BP_Sky</code> blueprint is neccessary to bring light and weather to your map. It can also be used to test different weather configurations before deciding on your default weather parameters.</p>
+<p>It is likely the <code>BP_Sky</code> blueprint will already be loaded in your map. If not you can add it by dragging it into the scene from <code>Content/Carla/Blueprints/Weather</code>.</p>
+<p>To try out different weather parameters, go to the <em>Details</em> panel of the <code>BP_Sky</code> actor, and play with the values in the <em>Parameters</em> section.</p>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>If more than one <code>BP_Sky</code> blueprint is loaded into the scene, the weather will be duplicated with undesirable results, e.g, having two suns.</p>
+</div>
+<h3 id="bp_weather">BP_Weather</h3>
+<p>The default weather for your map is defined in the <code>BP_Weather</code> blueprint. This blueprint allows you to set the same parameters as are available through the Python API. These parameters are described <a href="https://carla.readthedocs.io/en/latest/python_api/#carlaweatherparameters">here</a>.</p>
+<p>To set the default weather for your map:</p>
+<p><strong>1. Open the <code>BP_Weather</code> blueprint.</strong> </p>
+<p>In the <em>Content Browser</em>, navigate to <code>Content/Carla/Blueprints/Weather</code> and double-click on <code>BP_Weather</code>.</p>
+<p><strong>2. Add your town.</strong></p>
+<p>In the <em>Details</em> panel of the <code>BP_Weather</code> window, go to the <em>Weather</em> section and add your town to the <em>Default Weathers</em> array.</p>
+<p><strong>3. Configure your default weather parameters.</strong></p>
+<p>For each weather parameter, set your desired value. When you are finished, press <em>Compile</em> then <em>Save</em> and close.</p>
+<blockquote>
+<blockquote>
+<blockquote>
+<blockquote>
+<blockquote>
+<p><img alt="bp_weather_pic" src="../img/map_customization/BP_Weather.jpg" /><br></p>
+</blockquote>
+</blockquote>
+</blockquote>
+</blockquote>
+</blockquote>
+<div style="text-align: right">
+<i>Array containing default weather parameters for every CARLA map. Town01 opened.</i></div>
+<p><br></p>
+<hr />
+<h2 id="add-serial-meshes">Add serial meshes</h2>
+<p>There are four blueprints available to add props aligned in one direction, e.g., walls, powerlines, street lights. These blueprints use a series of meshes distributed along a Bezier curve. Each one is initialized in the same way:</p>
+<p><strong>1. Initialize the series.</strong></p>
+<p>Drag the blueprint into the scene. You will see one element standing at the starting point of a Bezier curve with two nodes marking the beginning and ending.</p>
+<p><strong>2. Define the path.</strong></p>
+<p>Select the direction arrow of the element and press <strong>Alt</strong> while dragging the element in the direction you want to go. This will create a new element which can be used to define the curve. As you drag, a new mesh will appear either on every node of the curve or every time you press <code>Alt</code> while dragging, depending on the blueprint.</p>
+<p><strong>3. Customize the pattern.</strong></p>
+<p>The following sections will describe the different customization parameters available to each blueprint.</p>
+<h3 id="bp_repspline">BP_RepSpline</h3>
+<p>The <code>BP_RepSpline</code> blueprint is found in <code>Carla/Blueprints/LevelDesign</code>. It is used to add <strong>individual</strong> elements along a path defined by a Bezier curve.</p>
+<p>The serialization is customized via the following values:</p>
+<ul>
+<li><em>Distance between</em> — Set the distance between elements.</li>
+<li><em>Offset rotation</em> — Set a fixed rotation for the different axis.</li>
+<li><em>Random rotation</em> — Set a range of random rotations for the different axis.</li>
+<li><em>Offset translation</em> — Set a range of random locations along the different axis.</li>
+<li><em>Max Number of Meshes</em> — Set the maximum amount of elements that will be place between nodes of the curve.</li>
+<li><em>World aligned ZY</em> — If selected, the elements will be vertically aligned regarding the world axis.</li>
+<li><em>EndPoint</em> — If selected, an element will be added at the end node of the curve.</li>
+<li><em>Collision enabled</em> — Set the type of collisions enabled for the meshes.</li>
+</ul>
+<p><img alt="bp_repspline_pic" src="../img/map_customization/BP_Repspline.jpg" /></p>
+<div style="text-align: right"><i>BP_RepSpline example.</i></div>
+
+<h3 id="bp_spline">BP_Spline</h3>
+<p>The <code>BP_Spline</code> blueprint is found in <code>Carla/Blueprints/LevelDesign</code>. It adds <strong>connected</strong> elements that <strong>strictly</strong> follow a path defined by a Bezier curve. The mesh will be warped to fit the path created.</p>
+<p>The blueprint can be customized using the following value:</p>
+<ul>
+<li><em>Gap distance</em> — Add a separation between elements.  </li>
+</ul>
+<p><img alt="bp_spline_pic" src="../img/map_customization/BP_Spline.jpg" /></p>
+<div style="text-align: right"><i>BP_Spline example.</i></div>
+
+<h3 id="bp_wall">BP_Wall</h3>
+<p>The <code>BP_Wall</code> blueprint is found in <code>Carla/Blueprints/LevelDesign</code>. It adds <strong>connected</strong> elements along a path defined by a Bezier curve. The mesh will not be warped to fit the curve, but the nodes will be respected.</p>
+<ul>
+<li><em>Distance between</em> — Set the distance between elements.</li>
+<li><em>Vertically aligned</em> — If selected, the elements will be vertically aligned regarding the world axis.</li>
+<li><em>Scale offset</em> — Scale the length of the mesh to round out the connection between elements.</li>
+</ul>
+<p><img alt="bp_wall_pic" src="../img/map_customization/BP_Wall.jpg" /></p>
+<div style="text-align: right"><i>BP_Wall example.</i></div>
+
+<h3 id="bp_splinepoweline">BP_SplinePoweLine</h3>
+<p>The <strong>BP_SplinePoweLine</strong> blueprint is found in <code>Carla/Static/Pole/PoweLine</code>. It adds <strong>electricity poles</strong> along a path defined by a Bezier curve and <strong>connects them with power lines</strong>.</p>
+<p>To provide variety, you can provide the blueprint with an array of powerline meshes to populate the path. To do this:</p>
+<ol>
+<li>Double-click the <strong>BP_SplinePoweLine</strong> blueprint in the <em>Content Browser</em>.</li>
+<li>In the <em>Details</em> panel, go to the <em>Default</em> section.</li>
+<li>Expand the <em>Array Meshes</em> and add to or change it according to your needs.</li>
+<li>Press <em>Compile</em>, then save and close the window.</li>
+</ol>
+<p><img alt="bp_splinepowerline_pic" src="../img/map_customization/BP_Splinepowerline.jpg" /></p>
+<div style="text-align: right"><i>BP_SplinePowerLine example.</i></div>
+
+<p>To alter the line tension of the power lines:</p>
+<ol>
+<li>Select the blueprint actor in the editor scene and go to the <em>Details</em> panel.</li>
+<li>Go to the <em>Default</em> section.</li>
+<li>Adjust the value in <em>Tension</em>. <code>0</code> indicates that the lines will be straight.</li>
+</ol>
+<p>To increase the amount of wires:</p>
+<ol>
+<li>In the <em>Content Browser</em>, double-click on one of the pole meshes.</li>
+<li>Go to the <em>Socket Manager</em> panel.</li>
+<li>Configure existing sockets or add new ones by clicking <em>Create Socket</em>. Sockets are empty meshes that represent the connection points of the power line. A wire is created form socket to socket between poles.</li>
+</ol>
+<p><img alt="bp_powerline_socket_pic" src="../img/map_customization/BP_Splinepowerline_Sockets.jpg" /></p>
+<div style="text-align: right"><i>Visualization of the sockets for BP_SplinePowerLine.</i></div>
+<p><br></p>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>The amount of sockets and their names should be consistent between poles. Otherwise, visualization issues may arise. </p>
+</div>
+<hr />
+<h2 id="next-steps">Next steps</h2>
+<p>Continue customizing your map using the tools and guides below:</p>
+<ul>
+<li><a href="../tuto_M_custom_layers/">Implement sub-levels in your map.</a></li>
+<li><a href="../tuto_M_custom_add_tl/">Add and configure traffic lights and signs.</a></li>
+<li><a href="../tuto_M_custom_buildings/">Add buildings with the procedural building tool.</a></li>
+<li><a href="../tuto_M_custom_road_painter/">Customize the road with the road painter tool.</a></li>
+<li><a href="./#add-serial-meshes">Customize the landscape with serial meshes.</a></li>
+</ul>
+<p>Once you have finished with the customization, you can <a href="../tuto_M_generate_pedestrian_navigation/">generate the pedestrian navigation information</a>.</p>
+<hr />
+<p>If you have any questions about the process, then you can ask in the <a href="https://github.com/carla-simulator/carla/discussions">forum</a>.</p>
+<div class="build-buttons">
+<p>
+<a href="https://github.com/carla-simulator/carla/discussions" target="_blank" class="btn btn-neutral" title="Go to the CARLA forum">
+CARLA forum</a>
+</p>
+</div>
+              
+            </div>
+          </div><footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+        <span>
+          <a href="https://github.com/carla-simulator/carla" class="fa fa-github" style="color: #fcfcfc"> GitHub</a>
+        </span>
+    
+    
+    
+  </span>
+</div>
+    <script src="../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "..";</script>
+    <script src="../js/theme_extra.js"></script>
+    <script src="../js/theme.js"></script>
+      <script src="../extra.js"></script>
+      <script src="../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>

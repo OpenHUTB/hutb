@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <link rel="shortcut icon" href="../img/favicon.ico" />
+    <title>F.A.Q. - CARLA Simulator</title>
+    <link rel="stylesheet" href="../css/theme.css" />
+    <link rel="stylesheet" href="../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+        <link href="../extra.css" rel="stylesheet" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "F.A.Q.";
+        var mkdocs_page_input_path = "build_faq.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href=".." class="icon icon-home"> CARLA Simulator
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+      <input type="text" name="q" placeholder="搜索文档" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="..">Home</a>
+                </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Getting started</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../start_introduction/">Introduction</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../start_quickstart/">Quick start package installation</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_first_steps/">First steps</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../build_carla/">Building CARLA</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Next steps</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_content_authoring_maps/">Content authoring - maps</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_content_authoring_vehicles/">Content authoring - vehicles</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../content_authoring_props/">Content authoring - props</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">CARLA topics</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../coordinates/">Coordinates and transformations</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../foundations/">Foundations</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../core_actors/">Actors</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../core_map/">Maps</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../core_sensors/">Sensors and data</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../ts_traffic_simulation_overview/">Traffic</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../ai_rendering/">AI rendering</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../development_tutorials/">Development</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../custom_assets_tutorials/">Custom assets</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Resources</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../python_api/">Python API</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../catalogue/">Catalogue</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../ref_cpp/">C++ reference</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../bp_library/">Blueprint library</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tutorials/">Tutorials</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../ext_docs/">Extended documentation</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../download/">Downloads</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">CARLA Ecosystem</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../ecosys_ansys/">ANSYS</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_G_rllib_integration/">AWS</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_G_carsim_integration/">CarSIM</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_G_chrono/">Chrono</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../large_map_roadrunner/">MathWorks</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../inverted_ai/">Inverted AI</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../nvidia/">NVIDIA</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../adv_opendrive/">ASAM OpenDRIVE</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../adv_ptv/">PTV Vissim</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../adv_rss/">RSS</a>
+                  </li>
+                  <li class="toctree-l1"><a class="" href="https://carla.readthedocs.io/projects/ros-bridge/en/latest/">ROS</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_G_scenic/">Scenic</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../adv_sumo/">SUMO</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../ecosys_synkrotron/">SYNKROTRON</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Contributing</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../cont_contribution_guidelines/">Guidelines</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../cont_coding_standard/">Coding standards</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../cont_doc_standard/">Documentation standard</a>
+                  </li>
+                  <li class="toctree-l1"><a class="" href=".."></a>
+                  </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="..">CARLA Simulator</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href=".." class="icon icon-home" aria-label="Docs"></a></li>
+      <li class="breadcrumb-item active">F.A.Q.</li>
+    <li class="wy-breadcrumbs-aside">
+          <a href="https://github.com/carla-simulator/carla/edit/master/Docs/build_faq.md" class="icon icon-github"> 在 GitHub 上编辑</a>
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="faq">F.A.Q.</h1>
+<p>Some of the most common issues regarding CARLA installation and builds are listed here. Some more can be found in the <a href="https://github.com/carla-simulator/carla/issues?utf8=%E2%9C%93&amp;q=label%3Aquestion+">GitHub issues</a> for the project. In case you don't find your doubt listed here, have a look in the forum and feel free to ask there.</p>
+<div class="build-buttons">
+<p>
+<a href="https://github.com/carla-simulator/carla/discussions/" target="_blank" class="btn btn-neutral" title="Go to the CARLA forum">
+CARLA forum</a>
+</p>
+</div>
+
+<hr />
+<h2 id="system-requirements">System requirements</h2>
+<ul>
+<li><a href="#expected-disk-space-to-build-carla">Expected disk space to build CARLA.</a></li>
+<li><a href="#recommended-hardware-to-run-carla">Recommended hardware to run CARLA.</a></li>
+</ul>
+<hr />
+<h2 id="linux-build">Linux build</h2>
+<ul>
+<li><a href="#carlaue4sh-script-does-not-appear-when-downloading-from-github">"CarlaUE4.sh" script does not appear when downloading from GitHub.</a></li>
+<li><a href="#make-launch-is-not-working-on-linux">"make launch" is not working on Linux.</a></li>
+<li><a href="#cloning-the-unreal-engine-repository-shows-an-error">Cloning the Unreal Engine repository shows an error.</a></li>
+<li><a href="#attributeerror-module-carla-has-no-attribute-client-when-running-a-script">AttributeError: module 'carla' has no attribute 'Client' when running a script.</a></li>
+<li><a href="#cannot-run-example-scripts-or-runtimeerror-rpcrpc_error-during-call-in-function-version">Cannot run example scripts or "RuntimeError: rpc::rpc_error during call in function version".</a></li>
+</ul>
+<hr />
+<h2 id="windows-build">Windows build</h2>
+<ul>
+<li><a href="#carlaue4exe-does-not-appear-when-downloading-from-github">"CarlaUE4.exe" does not appear when downloading from GitHub.</a></li>
+<li><a href="#carlaue4-could-not-be-compiled-try-rebuilding-it-from-source-manually">CarlaUE4 could not be compiled. Try rebuilding it from source manually.</a></li>
+<li><a href="#cmake-error-shows-even-though-cmake-is-properly-installed">CMake error shows even though CMake is properly installed.</a></li>
+<li><a href="#error-c2440-c2672-compiler-version">Error C2440, C2672: compiler version.</a></li>
+<li><a href="#make-launch-is-not-working-on-windows">"make launch" is not working on Windows.</a></li>
+<li><a href="#make-is-missing-libintl3dll-orand-libiconv2dll">Make is missing libintl3.dll or/and libiconv2.dll.</a></li>
+<li><a href="#modules-are-missing-or-built-with-a-different-engine-version">Modules are missing or built with a different engine version.</a></li>
+<li><a href="#there-is-no-dist-folder-in-pythonapicarla-despite-a-successful-output-message">There is no <code>dist</code> folder in <code>PythonAPI/carla</code> despite a successful output message.</a></li>
+</ul>
+<hr />
+<h2 id="running-carla">Running Carla</h2>
+<ul>
+<li><a href="#low-fps-rate-when-running-the-server-in-unreal-editor">Low FPS rate when running the server in Unreal Editor.</a></li>
+<li><a href="#cant-run-a-script">Can't run a script.</a></li>
+<li><a href="#connect-to-the-simulator-while-running-within-unreal-editor">Connect to the simulator while running within Unreal Editor.</a></li>
+<li><a href="#cant-run-carla-neither-binary-nor-source-build">Can't run CARLA neither binary nor source build.</a></li>
+<li><a href="#importerror-dll-load-failed-the-specified-module-could-not-be-found">ImportError: DLL load failed: The specified module could not be found.</a></li>
+<li><a href="#importerror-dll-load-failed-while-importing-libcarla-1-is-not-a-valid-win32-app">ImportError: DLL load failed while importing libcarla: %1 is not a valid Win32 app.</a></li>
+<li><a href="#importerror-no-module-named-carla">ImportError: No module named 'carla'</a></li>
+</ul>
+<hr />
+<h2 id="other">Other</h2>
+<ul>
+<li><a href="#fatal-error-versionh-has-been-modified-since-the-precompiled-header">Fatal error: 'version.h' has been modified since the precompiled header.</a></li>
+<li><a href="#create-a-binary-version-of-carla">Create a binary version of CARLA.</a></li>
+<li><a href="#can-i-package-carla-for-windows-on-a-linux-machine-and-vice-versa">Can I package CARLA for Windows on a Linux machine and vice versa?</a></li>
+<li><a href="#how-do-i-uninstall-the-carla-client-library">How do I uninstall the CARLA client library?</a></li>
+</ul>
+<hr />
+<!-- ======================================================================= -->
+<h2 id="system-requirements_1">System requirements</h2>
+<!-- ======================================================================= -->
+
+<h6 id="expected-disk-space-to-build-carla">Expected disk space to build CARLA.</h6>
+<blockquote>
+<p>It is advised to have at least 170GB free. Building CARLA requires about 35GB of disk space, plus Unreal Engine which requires about 95-135GB.</p>
+</blockquote>
+<!-- ======================================================================= -->
+
+<h6 id="recommended-hardware-to-run-carla">Recommended hardware to run CARLA.</h6>
+<blockquote>
+<p>CARLA is a performance demanding software. At the very minimum it requires a 6GB GPU or, even better, a dedicated GPU capable of running Unreal Engine.  </p>
+<p>Take a look at <a href="https://dev.epicgames.com/documentation/en-us/unreal-engine/hardware-and-software-specifications-for-unreal-engine">Unreal Engine's recommended hardware</a>.</p>
+</blockquote>
+<hr />
+<h2 id="linux-build_1">Linux build</h2>
+<!-- ======================================================================= -->
+<h6 id="carlaue4sh-script-does-not-appear-when-downloading-from-github">"CarlaUE4.sh" script does not appear when downloading from GitHub.</h6>
+<blockquote>
+<p>There is no <code>CarlaUE4.sh</code> script in the source version of CARLA. Follow the <a href="../build_linux/">build instructions</a> to build CARLA from source.  </p>
+<p>To run CARLA using <code>CarlaUE4.sh</code>, follow the <a href="../start_quickstart/">quick start installation</a>.</p>
+</blockquote>
+<!-- ======================================================================= -->
+
+<h6 id="make-launch-is-not-working-on-linux">"make launch" is not working on Linux.</h6>
+<blockquote>
+<p>Many different issues can be dragged out during the build installation and will manifest themselves like this. Here is a list of the most likely reasons why:  </p>
+<ul>
+<li><strong>Run Unreal Engine 4.26.</strong> Something may have failed when building Unreal Engine. Try running UE editor on its own and check that it is the 4.26 release.  </li>
+<li><strong>Download the assets.</strong> The server will not be able to run without the visual content. This step is mandatory.  </li>
+<li><strong>UE4_ROOT is not defined.</strong> The environment variable is not set. Remember to make it persistent session-wide by adding it to the <code>~/.bashrc</code> or <code>~/.profile</code>. Otherwise it will need to be set for every new shell. Run <code>export UE4_ROOT=&lt;path_to_unreal_4-26&gt;</code> to set the variable this time.  </li>
+<li><strong>Check dependencies.</strong> Make sure that everything was installed properly. Maybe one of the commands was skipped, unsuccessful or the dependencies were not suitable for the system.</li>
+<li><strong>Numpy 2 conflicts</strong>. Numpy 2 causes conflicts with tools used to build CARLA. This is one of the most common causes for errors related to Boost. Check your numpy version using <code>python3 -m pip show numpy</code>. If it is version 2.0.0 or later, you must downgrade to <em>numpy&lt;2.0.0</em>.</li>
+<li><strong>Delete CARLA and clone it again.</strong> Just in case something went wrong. Delete CARLA and clone or download it again.  </li>
+<li><strong>Meet system requirements.</strong> Ubuntu version should be 16.04 or later. CARLA needs around 170GB of disk space and a dedicated GPU (or at least one with 6GB) to run.</li>
+</ul>
+<p>Other specific reasons for a system to show conflicts with CARLA may occur. Please, post these on the <a href="https://github.com/carla-simulator/carla/discussions/">forum</a> so the team can get to know more about them.   </p>
+</blockquote>
+<!-- ======================================================================= -->
+
+<h6 id="cloning-the-unreal-engine-repository-shows-an-error">Cloning the Unreal Engine repository shows an error.</h6>
+<blockquote>
+<p><strong>1. Is the Unreal Engine account activated?</strong> The UE repository is private. In order to clone it, create the <a href="https://www.unrealengine.com/en-US/">UE</a> account, activate it (check the verification mail), and <a href="https://www.unrealengine.com/en-US/blog/updated-authentication-process-for-connecting-epic-github-accounts">link your GitHub</a> account.  </p>
+<p><strong>2. Is git properly installed?</strong> Sometimes an error shows incompatibilities with the <code>https</code> protocol. It can be solved easily by uninstalling and reinstalling git. Open a terminal and run the following commands:</p>
+<pre><code> sudo apt-get remove git #Uninstall git
+ sudo apt install git-all #install git
+</code></pre>
+</blockquote>
+<!-- ======================================================================= -->
+
+<h6 id="attributeerror-module-carla-has-no-attribute-client-when-running-a-script">AttributeError: module 'carla' has no attribute 'Client' when running a script.</h6>
+<blockquote>
+<p>Run the following command.</p>
+<pre><code>  python3 -m pip install -Iv setuptools==47.3.1
+</code></pre>
+<p>And build the PythonAPI again. </p>
+<pre><code> make PythonAPI
+</code></pre>
+<p>Try to build the docs to test if everything is running properly. A successful message should show.</p>
+<pre><code> make PythonAPI.docs
+</code></pre>
+</blockquote>
+<!-- ======================================================================= -->
+
+<h6 id="cannot-run-example-scripts-or-runtimeerror-rpcrpc_error-during-call-in-function-version">Cannot run example scripts or "RuntimeError: rpc::rpc_error during call in function version".</h6>
+<blockquote>
+<p><img alt="faq_rpc_error" src="../img/faq_rpc_error.jpg" /></p>
+<p>If running a script returns an output similar to this, there is a problem with the <code>.egg</code> file in the PythonAPI. </p>
+</blockquote>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>If you are using 0.9.12+, there are several methods to use/install the client library. If you are using one of the newer methods for the client library (<code>.whl</code> or PyPi download) the information in this section will not be relevant to you.</p>
+</div>
+<blockquote>
+<p>First of all, open <code>&lt;root_carla&gt;/PythonAPI/carla/dist</code>. There should be an <code>.egg</code> file for the corresponding CARLA and Python version you are using (similar to <code>carla-0.X.X-pyX.X-linux-x86_64.egg</code>). Make sure the file matches the Python version you are using. To check your Python version use the following command.  </p>
+<pre><code>  python3 --version
+  # or for Python 2
+  python --version
+</code></pre>
+<p>If either the file is missing or you think it could be corrupted, try rebuilding again.  </p>
+<pre><code> make clean
+ make PythonAPI
+ make launch
+</code></pre>
+<p>Now try one of the example scripts again. </p>
+<pre><code> cd PythonAPI/examples
+ python3 dynamic_weather.py
+</code></pre>
+<p>If the error persists, the problem is probably related with your PythonPATH. These scripts automatically look for the <code>.egg</code> file associated with the build, so maybe there is another <code>.egg</code> file in your PythonPATH interfering with the process. Show the content of the PythonPATH with the following command.  </p>
+<pre><code> echo $PYTHONPATH
+</code></pre>
+<p>Look up in the output for other instances of <code>.egg</code> files in a route similar to <code>PythonAPI/carla/dist</code>, and get rid of these. They probably belong to other instances of CARLA installations. For example, if you also installed CARLA via <em>apt-get</em>, you can remove it with the following command, and the PythonPATH will be cleaned too.  </p>
+<pre><code> sudo apt-get purge carla-simulator
+</code></pre>
+<p>Ultimately there is the option to add the <code>.egg</code> file of your build to the PythonPATH using the <code>~/.bashrc</code>. This is not the recommended way. It would be better to have a clear PythonPATH and simply add the path to the necessary <code>.egg</code> files in the scripts.  </p>
+<p>First, open <code>~/.bashrc</code>.</p>
+<pre><code> gedit ~/.bashrc
+</code></pre>
+<p>Add the following lines to <code>~/.bashrc</code>. These store the path to the build <code>.egg</code> file, so that Python can automatically find it. Save the file, and reset the terminal for changes to be effective.</p>
+<p><code>export PYTHONPATH=$PYTHONPATH:"${CARLA_ROOT}/PythonAPI/carla/dist/$(ls ${CARLA_ROOT}/PythonAPI/carla/dist | grep py3.)"
+export PYTHONPATH=$PYTHONPATH:${CARLA_ROOT}/PythonAPI/carla</code></p>
+<p>After cleaning the PythonPATH or adding the path to the build <code>.egg</code> file, all the example scripts should work properly.  </p>
+</blockquote>
+<hr />
+<h2 id="windows-build_1">Windows build</h2>
+<!-- ======================================================================= -->
+
+<h6 id="carlaue4exe-does-not-appear-when-downloading-from-github">"CarlaUE4.exe" does not appear when downloading from GitHub.</h6>
+<blockquote>
+<p>There is no <code>CarlaUE4.exe</code> executable in the source version of CARLA. Follow the <a href="../build_windows/">build instructions</a> to build CARLA from source. To directly get the <code>CarlaUE4.exe</code>, follow the <a href="../start_quickstart/">quick start instructions</a>.  </p>
+</blockquote>
+<!-- ======================================================================= -->
+
+<h6 id="carlaue4-could-not-be-compiled-try-rebuilding-it-from-source-manually">CarlaUE4 could not be compiled. Try rebuilding it from source manually.</h6>
+<blockquote>
+<p>Something went wrong when trying to build CARLA. Rebuild using Visual Studio to discover what happened.  </p>
+<p><strong>1.</strong> Go to <code>carla/Unreal/CarlaUE4</code> and right-click the <code>CarlaUE4.uproject</code>.<br />
+<strong>2.</strong> Click on <strong>Generate Visual Studio project files</strong>.<br />
+<strong>3.</strong> Open the file generated with Visual Studio 2022 (or 2019).<br />
+<strong>4.</strong> Compile the project with Visual Studio. The shortcut is F7. The build will fail, but the issues found will be shown below.</p>
+<p>Different issues may result in this specific error message. The user <a href="https://github.com/tamakoji">@tamakoji</a> solved a recurrent case where the source code hadn't been cloned properly and the CARLA version could not be set (when downloading this as a .zip from git).  </p>
+<ul>
+<li><strong>Check the <code>Build/CMakeLists.txt.in</code>.</strong> If it shows as <code>set(CARLA_VERSION )</code> do the following:  </li>
+</ul>
+<p><strong>1.</strong> Go to <code>Setup.bat</code> line 198.  </p>
+<p><strong>2.</strong> Update the line from: </p>
+<p><code>for /f %%i in ('git describe --tags --dirty --always') do set carla_version=%%i</code></p>
+<p>to:</p>
+<p><code>for /f %%i in ('git describe --tags --dirty --always') do set carla_version="0.9.9"</code></p>
+</blockquote>
+<!-- ======================================================================= -->
+
+<h6 id="cmake-error-shows-even-though-cmake-is-properly-installed">CMake error shows even though CMake is properly installed.</h6>
+<blockquote>
+<p>This issue occurs when trying to use the <em>make</em> command either to build the server or the client. Even if CMake is installed, updated and added to the environment path. There may be a conflict between Visual Studio versions.  </p>
+<p>Leave only VS2022(or VS2019) and completely erase the rest.  </p>
+</blockquote>
+<!-- ======================================================================= -->
+
+<h6 id="error-c2440-c2672-compiler-version">Error C2440, C2672: compiler version.</h6>
+<blockquote>
+<p>The build is not using the 2022(or 2019) compiler due to conflicts with other Visual Studio or Microsoft Compiler versions. Uninstall these and rebuild again.  </p>
+<p>Visual Studio is not good at getting rid of itself. To completely clean Visual Studio from the computer go to <code>Program Files (x86)\Microsoft Visual Studio\Installer\resources\app\layout</code> and run <code>.\InstallCleanup.exe -full</code>. This may need admin permissions.  </p>
+<p>To keep other Visual Studio versions, edit <code>%appdata%\Unreal Engine\UnrealBuildTool\BuildConfiguration.xml</code> by adding the following lines:</p>
+<p><code>&lt;VCProjectFileGenerator&gt;
+   &lt;Version&gt;VisualStudio 2022&lt;/Version&gt;
+&lt;/VCProjectFileGenerator&gt;</code></p>
+<p><code>&lt;WindowsPlatform&gt;
+   &lt;Compiler&gt;VisualStudio 2022&lt;/Compiler&gt;
+&lt;/WindowsPlatform&gt;</code><br />
+or</p>
+<p><code>&lt;VCProjectFileGenerator&gt;
+   &lt;Version&gt;VisualStudio2019&lt;/Version&gt;
+&lt;/VCProjectFileGenerator&gt;</code></p>
+<p><code>&lt;WindowsPlatform&gt;
+   &lt;Compiler&gt;VisualStudio2019&lt;/Compiler&gt;
+&lt;/WindowsPlatform&gt;</code>  </p>
+</blockquote>
+<!-- ======================================================================= -->
+
+<h6 id="make-launch-is-not-working-on-windows">"make launch" is not working on Windows.</h6>
+<blockquote>
+<p>Many different issues can be dragged out during the build installation and manifest themselves like this. Here is a list of the most likely reasons why: </p>
+<ul>
+<li><strong>Restart the computer.</strong> There is a lot going on during the Windows build. Restart and make sure that everything is updated properly.  </li>
+<li><strong>Run Unreal Engine 4.26.</strong> Something may have failed when building Unreal Engine. Run the Editor and check that version 4.26 is being used.  </li>
+<li><strong>Download the assets.</strong> The server will not be able to run without the visual content. This step is mandatory.  </li>
+<li><strong>Visual Studio 2022 (or 2019).</strong> If there are other versions of Visual Studio installed or recently uninstalled, conflicts may arise. To completely clean Visual Studio from the computer go to <code>Program Files (x86)\Microsoft Visual Studio\Installer\resources\app\layout</code> and run <code>.\InstallCleanup.exe -full</code>.  </li>
+<li><strong>Delete CARLA and clone it again.</strong> Just in case something went wrong. Delete CARLA and clone or download it again.  </li>
+<li><strong>Meet system requirements.</strong> CARLA needs around 170GB of disk space and a dedicated GPU (or at least one with 6GB) to run.  </li>
+</ul>
+<p>Other specific reasons for a system to show conflicts with CARLA may occur. Please, post these on the <a href="https://github.com/carla-simulator/carla/discussions/">forum</a> so the team can get to know more about them.</p>
+</blockquote>
+<!-- ======================================================================= -->
+
+<h6 id="make-is-missing-libintl3dll-orand-libiconv2dll">Make is missing libintl3.dll or/and libiconv2.dll.</h6>
+<blockquote>
+<p>Download the <a href="http://gnuwin32.sourceforge.net/downlinks/make-dep-zip.php">dependencies</a> and extract the <code>bin</code> content into the <code>make</code> installation path.   </p>
+</blockquote>
+<!-- ======================================================================= -->
+
+<h6 id="modules-are-missing-or-built-with-a-different-engine-version">Modules are missing or built with a different engine version.</h6>
+<blockquote>
+<p>Click on <strong>Accept</strong> to rebuild them. </p>
+</blockquote>
+<!-- ======================================================================= -->
+
+<h6 id="there-is-no-dist-folder-in-pythonapicarla-despite-a-successful-output-message">There is no <code>dist</code> folder in <code>PythonAPI/carla</code> despite a successful output message.</h6>
+<blockquote>
+<p>In Windows, the <code>make PythonAPI</code> command can return a message that the Python API was installed successfully when it actually wasn't. If there is no <code>dist</code> folder created in the <code>PythonAPI/carla</code> directory after you see this output, then look at the command output higher up. It is likely an error occurred and the build needs to be retried after correcting the error and running <code>make clean</code>.</p>
+</blockquote>
+<hr />
+<h2 id="running-carla_1">Running CARLA</h2>
+<!-- ======================================================================= -->
+
+<h6 id="low-fps-rate-when-running-the-server-in-unreal-editor">Low FPS rate when running the server in Unreal Editor.</h6>
+<blockquote>
+<p>UE4 Editor goes to a low performance mode when out of focus.  </p>
+<p>Go to <code>Edit/Editor Preferences/Performance</code> in the editor preferences, and disable the "Use Less CPU When in Background" option.</p>
+</blockquote>
+<!-- ======================================================================= -->
+
+<h6 id="cant-run-a-script">Can't run a script.</h6>
+<blockquote>
+<p>Some scripts have requirements. These are listed in files named <strong>Requirements.txt</strong>, in the same path as the script itself. Be sure to check these in order to run the script. The majority of them can be installed with a simple <code>pip</code> command.  </p>
+<p>Sometimes on Windows, scripts cannot run with just <code>&gt; script_name.py</code>. Try adding <code>&gt; python3 script_name.py</code>, and make sure to be in the right directory.  </p>
+</blockquote>
+<!-- ======================================================================= -->
+
+<h6 id="connect-to-the-simulator-while-running-within-unreal-editor">Connect to the simulator while running within Unreal Editor.</h6>
+<blockquote>
+<p>Click on <strong>Play</strong> and wait until the scene is loaded. At that point, a Python client can connect to the simulator as with the standalone simulator.</p>
+</blockquote>
+<!-- ======================================================================= -->
+
+<h6 id="cant-run-carla-neither-binary-nor-source-build">Can't run CARLA neither binary nor source build.</h6>
+<blockquote>
+<p>NVIDIA drivers may be outdated. Make sure that this is not the case. If the issue is still unresolved, take a look at the <a href="https://github.com/carla-simulator/carla/discussions/">forum</a> and post the specific issue. </p>
+</blockquote>
+<!-- ======================================================================= -->
+
+<h6 id="importerror-dll-load-failed-the-specified-module-could-not-be-found">ImportError: DLL load failed: The specified module could not be found.</h6>
+<blockquote>
+<p>One of the libraries needed has not been properly installed. As a work around, go to <code>carla\Build\zlib-source\build</code>, and copy the file named <code>zlib.dll</code> in the directory of the script. </p>
+</blockquote>
+<!-- ======================================================================= -->
+
+<h6 id="importerror-dll-load-failed-while-importing-libcarla-1-is-not-a-valid-win32-app">ImportError: DLL load failed while importing libcarla: %1 is not a valid Win32 app.</h6>
+<blockquote>
+<p>A 32-bit Python version is creating conflicts when trying to run a script. Uninstall it and leave only the Python3 x64 required. </p>
+</blockquote>
+<!-- ======================================================================= -->
+
+<h6 id="importerror-no-module-named-carla">ImportError: No module named 'carla'</h6>
+<blockquote>
+<p>This error occurs because Python cannot find the CARLA library. The CARLA library is contained in an <code>.egg</code> file, located in the directory <code>PythonAPI/carla/dist</code> and all the example scripts will look for it in this directory. The <code>.egg</code> file follows the nomenclature of <code>carla-&lt;carla-version&gt;-py&lt;python-version&gt;-&lt;operating-system&gt;.egg</code>.
+</p>
+</blockquote>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>CARLA only used <code>.egg</code> files for the client library in versions prior to 0.9.12. If you are using 0.9.12+, there are several methods to use/install the client library. If you are using one of the newer methods for the client library (<code>.whl</code> or PyPi download) the information in this section will not be relevant to you.</p>
+<p>Read more about the newer methods to use/install the client library in the <a href="../start_quickstart/#carla-0912"><strong>Quickstart tutorial</strong></a>.</p>
+</div>
+<blockquote>
+<p>If you are using a packaged version of CARLA, there will be several <code>.egg</code> files, corresponding to different versions of Python, depending on the version of CARLA. Make sure you are running the scripts with one of these Python versions. To check the default Python version, type the following into the command line:</p>
+<pre><code>  python3 --version
+  # or
+  python --version
+</code></pre>
+<p>If you built Python from source, the <code>.egg</code> file will be built according to the default Python version on your system. In Linux this will be the default Python version returned for:</p>
+<pre><code>  /usr/bin/env python3 --version
+  # or if you specify ARGS="--python-version=2"
+  /usr/bin/env python2 --version
+</code></pre>
+<p>In Windows it will be the default Python version for:</p>
+<pre><code>  python --version
+</code></pre>
+<p>Make sure you are running your scripts with the version of Python that corresponds to your <code>.egg</code> file.
+In Linux, you may also need to set your Python path to point to the CARLA <code>.egg</code>. To do this, run the following command:</p>
+<pre><code>  export PYTHONPATH=$PYTHONPATH:&lt;path/to/carla/&gt;/PythonAPI/carla/dist/&lt;your_egg_file&gt;
+  # Check if CARLA can now be found
+  python3 -c 'import carla;print("Success")'
+</code></pre>
+<p>Be aware that virtual environments, or other Python environments like Conda, can complicate the installation of CARLA. Make sure you have set up your Python defaults and paths accordingly.</p>
+</blockquote>
+<hr />
+<h2 id="other_1">Other</h2>
+<!-- ======================================================================= -->
+
+<h6 id="fatal-error-versionh-has-been-modified-since-the-precompiled-header">Fatal error: 'version.h' has been modified since the precompiled header.</h6>
+<blockquote>
+<p>This happens from time to time due to Linux updates. There is a special target in the Makefile for this issue. It takes a long time but fixes the issue:</p>
+<pre><code> make hard-clean
+ make CarlaUE4Editor
+</code></pre>
+</blockquote>
+<!-- ======================================================================= -->
+
+<h6 id="create-a-binary-version-of-carla">Create a binary version of CARLA.</h6>
+<blockquote>
+<p>In Linux, run <code>make package</code> in the project folder. The package will include the project, and the Python API modules.  </p>
+<p>Alternatively, it is possible to compile a binary version of CARLA within Unreal Editor. Open the CarlaUE4 project, go to the menu <code>File/Package Project</code>, and select a platform. This may take a while. </p>
+</blockquote>
+<!-- ======================================================================= -->
+
+<h6 id="can-i-package-carla-for-windows-on-a-linux-machine-and-vice-versa">Can I package CARLA for Windows on a Linux machine and vice versa?</h6>
+<blockquote>
+<p>Although this feature is available for Unreal Engine, it is not available in CARLA. We have a number of dependencies that are not supported to be cross compiled.</p>
+</blockquote>
+<!-- ======================================================================= -->
+<h6 id="how-do-i-uninstall-the-carla-client-library">How do I uninstall the CARLA client library?</h6>
+<blockquote>
+<p>If you installed the client library using <strong>pip</strong>, you should uninstall it by running:</p>
+</blockquote>
+<pre><code class="language-sh">python3 -m pip uninstall carla
+</code></pre>
+<hr />
+              
+            </div>
+          </div><footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+        <span>
+          <a href="https://github.com/carla-simulator/carla" class="fa fa-github" style="color: #fcfcfc"> GitHub</a>
+        </span>
+    
+    
+    
+  </span>
+</div>
+    <script src="../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "..";</script>
+    <script src="../js/theme_extra.js"></script>
+    <script src="../js/theme.js"></script>
+      <script src="../extra.js"></script>
+      <script src="../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <link rel="shortcut icon" href="../img/favicon.ico" />
+    <title>Add new props - CARLA Simulator</title>
+    <link rel="stylesheet" href="../css/theme.css" />
+    <link rel="stylesheet" href="../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+        <link href="../extra.css" rel="stylesheet" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "Add new props";
+        var mkdocs_page_input_path = "tuto_A_add_props.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href=".." class="icon icon-home"> CARLA Simulator
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+      <input type="text" name="q" placeholder="搜索文档" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="..">Home</a>
+                </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Getting started</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../start_introduction/">Introduction</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../start_quickstart/">Quick start package installation</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_first_steps/">First steps</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../build_carla/">Building CARLA</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Next steps</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_content_authoring_maps/">Content authoring - maps</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_content_authoring_vehicles/">Content authoring - vehicles</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../content_authoring_props/">Content authoring - props</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">CARLA topics</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../coordinates/">Coordinates and transformations</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../foundations/">Foundations</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../core_actors/">Actors</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../core_map/">Maps</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../core_sensors/">Sensors and data</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../ts_traffic_simulation_overview/">Traffic</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../ai_rendering/">AI rendering</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../development_tutorials/">Development</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../custom_assets_tutorials/">Custom assets</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Resources</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../python_api/">Python API</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../catalogue/">Catalogue</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../ref_cpp/">C++ reference</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../bp_library/">Blueprint library</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tutorials/">Tutorials</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../ext_docs/">Extended documentation</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../download/">Downloads</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">CARLA Ecosystem</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../ecosys_ansys/">ANSYS</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_G_rllib_integration/">AWS</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_G_carsim_integration/">CarSIM</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_G_chrono/">Chrono</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../large_map_roadrunner/">MathWorks</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../inverted_ai/">Inverted AI</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../nvidia/">NVIDIA</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../adv_opendrive/">ASAM OpenDRIVE</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../adv_ptv/">PTV Vissim</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../adv_rss/">RSS</a>
+                  </li>
+                  <li class="toctree-l1"><a class="" href="https://carla.readthedocs.io/projects/ros-bridge/en/latest/">ROS</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_G_scenic/">Scenic</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../adv_sumo/">SUMO</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../ecosys_synkrotron/">SYNKROTRON</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Contributing</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../cont_contribution_guidelines/">Guidelines</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../cont_coding_standard/">Coding standards</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../cont_doc_standard/">Documentation standard</a>
+                  </li>
+                  <li class="toctree-l1"><a class="" href=".."></a>
+                  </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="..">CARLA Simulator</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href=".." class="icon icon-home" aria-label="Docs"></a></li>
+      <li class="breadcrumb-item active">Add new props</li>
+    <li class="wy-breadcrumbs-aside">
+          <a href="https://github.com/carla-simulator/carla/edit/master/Docs/tuto_A_add_props.md" class="icon icon-github"> 在 GitHub 上编辑</a>
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="add-new-props">Add new props</h1>
+<p>Props are the assets that populate the scene, besides the map, and the vehicles. That includes streetlights, buildings, trees, and much more. The simulator can ingest new props anytime in a simple process. This is really useful to create customized environments in a map. </p>
+<ul>
+<li><a href="#prepare-the-package"><strong>Prepare the package</strong></a>  <ul>
+<li><a href="#create-the-folder-structure">Create the folder structure</a>  </li>
+<li><a href="#create-the-json-description">Create the JSON description</a>  </li>
+</ul>
+</li>
+<li><a href="#ingestion-in-a-carla-package"><strong>Ingestion in a CARLA package</strong></a>  </li>
+<li><a href="#ingestion-in-a-build-from-source"><strong>Ingestion in a build from source</strong></a>  </li>
+</ul>
+<hr />
+<h2 id="prepare-the-package">Prepare the package</h2>
+<h3 id="create-the-folder-structure">Create the folder structure</h3>
+<p><strong>1. Create a folder inside <code>carla/Import</code>.</strong> The name of the folder is not relevant.  </p>
+<p><strong>2. Create the subfolders.</strong> There should be one general subfolder for all the props, and inside of it, as many subfolders as props to import. </p>
+<p><strong>3. Move the files of each prop to the corresponding subfolder.</strong> A prop subfolder will contain the <code>.fbx</code> mesh, and optionally, the textures required by it.  </p>
+<p>For instance, an <code>Import</code> folder with two separate packages should have a structure similar to the one below.</p>
+<pre><code class="language-sh">Import
+│
+├── Package01
+│   ├── Package01.json
+│   └── Props
+│       ├── Prop01
+│       │   ├── Prop01_Diff.png
+│       │   ├── Prop01_Norm.png
+│       │   ├── Prop01_Spec.png
+│       │   └── Prop01.fbx
+│       └── Prop02
+│           └── Prop02.fbx
+└── Package02
+    ├── Packag02.json
+    └── Props
+        └── Prop03
+            └── Prop03.fbx
+</code></pre>
+<h3 id="create-the-json-description">Create the JSON description</h3>
+<p>Create a <code>.json</code> file in the root folder of the package. Name the file after the package. Note that this will be the distribution name. The content of the file will describe a JSON array of <strong>maps</strong> and <strong>props</strong> with basic information for each of them.  </p>
+<p><strong>Maps</strong> are not part of this tutorial, so this definition will be empty. There is a specific tutorial to <a href="../tuto_M_custom_map_overview/"><strong>add a new map</strong></a>.  </p>
+<p><strong>Props</strong> need the following parameters.  </p>
+<ul>
+<li><strong>name</strong> of the prop. This must be the same as the <code>.fbx</code>.  </li>
+<li><strong>source</strong> path to the <code>.fbx</code>.  </li>
+<li><strong>size</strong> estimation of the prop. The possible values are listed here.  <ul>
+<li><code>tiny</code>  </li>
+<li><code>small</code>  </li>
+<li><code>medium</code>  </li>
+<li><code>big</code>  </li>
+<li><code>huge</code>  </li>
+</ul>
+</li>
+<li><strong>tag</strong> value for the semantic segmentation. If the tag is misspelled, it will be read as <code>Unlabeled</code>. <ul>
+<li><code>Bridge</code></li>
+<li><code>Building</code></li>
+<li><code>Dynamic</code></li>
+<li><code>Fence</code></li>
+<li><code>Ground</code></li>
+<li><code>GuardRail</code></li>
+<li><code>Other</code></li>
+<li><code>Pedestrian</code></li>
+<li><code>Pole</code></li>
+<li><code>RailTrack</code></li>
+<li><code>Road</code></li>
+<li><code>RoadLine</code></li>
+<li><code>SideWalk</code></li>
+<li><code>Sky</code></li>
+<li><code>Static</code></li>
+<li><code>Terrain</code></li>
+<li><code>TrafficLight</code></li>
+<li><code>TrafficSign</code></li>
+<li><code>Unlabeled</code></li>
+<li><code>Vegetation</code></li>
+<li><code>Vehicles</code></li>
+<li><code>Wall</code></li>
+<li><code>Water</code></li>
+</ul>
+</li>
+</ul>
+<p>In the end, the <code>.json</code> should look similar to the one below.</p>
+<pre><code class="language-json">{
+  &quot;maps&quot;: [
+  ],
+  &quot;props&quot;: [
+    {
+      &quot;name&quot;: &quot;MyProp01&quot;,
+      &quot;size&quot;: &quot;medium&quot;,
+      &quot;source&quot;: &quot;./Props/Prop01/Prop01.fbx&quot;,
+      &quot;tag&quot;: &quot;SemanticSegmentationTag01&quot;
+    },
+    {
+      &quot;name&quot;: &quot;MyProp02&quot;,
+      &quot;size&quot;: &quot;small&quot;,
+      &quot;source&quot;: &quot;./Props/Prop02/Prop02.fbx&quot;,
+      &quot;tag&quot;: &quot;SemanticSegmentationTag02&quot;
+    }
+  ]
+}
+</code></pre>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Packages with the same name will produce an error.  </p>
+</div>
+<hr />
+<h2 id="ingestion-in-a-carla-package">Ingestion in a CARLA package</h2>
+<p>This is the method used to ingest the props into a CARLA package such as CARLA 0.9.8.  </p>
+<p>A Docker image of Unreal Engine will be created. It acts as a black box that automatically imports the package into the CARLA image, and generates a ditribution package. The Docker image takes 4h and 400GB to be built. However, this is only needed the first time. </p>
+<p><strong>1. Build a Docker image of Unreal Engine.</strong> Follow <a href="https://github.com/carla-simulator/carla/tree/master/Util/Docker">these instructions</a> to build the image.  </p>
+<p><strong>2. Run the script to cook the props.</strong> In the folder <code>~/carla/Util/Docker</code> there is a script that connects with the Docker image previously created, and makes the ingestion automatically. It only needs the path for the input and output files, and the name of the package to be ingested.  </p>
+<pre><code class="language-sh">python3 docker_tools.py --input ~/path_to_package --output ~/path_for_output_assets  --packages Package01
+</code></pre>
+<p><strong>3. Locate the package</strong>. The Docker should have generated the package <code>Package01.tar.gz</code> in the output path. This is the standalone package for the assets. </p>
+<p><strong>4. Import the package into CARLA.</strong>  </p>
+<ul>
+<li>
+<p><strong>On Windows</strong> extract the package in the <code>WindowsNoEditor</code> folder. </p>
+</li>
+<li>
+<p><strong>On Linux</strong> move the package to the <code>Import</code> folder, and run the script to import it. </p>
+</li>
+</ul>
+<pre><code class="language-sh">cd Util
+./ImportAssets.sh
+</code></pre>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>There is an alternative on Linux. Move the package to the <code>Import</code> folder and run the script <code>Util/ImportAssets.sh</code> to extract the package.</p>
+</div>
+<hr />
+<h2 id="ingestion-in-a-build-from-source">Ingestion in a build from source</h2>
+<p>This is the method to import the props into a CARLA build from source.  </p>
+<p>The JSON file will be read to place the props inside the <code>Content</code> in Unreal Engine. Furthermore, it will create a <code>Package1.Package.json</code> file inside the package's <code>Config</code> folder. This will be used to define the props in the blueprint library, and expose them in the Python API. It will also be used if the package is exported as a <a href="../tuto_A_create_standalone/">standalone package</a>.</p>
+<p>When everything is ready, run the command. </p>
+<pre><code class="language-sh">make import
+</code></pre>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Make sure that the package is inside the <code>Import</code> folder in CARLA. </p>
+</div>
+<hr />
+<p>That is all there is to know about the different ways to import new props into CARLA. If there are any doubts, feel free to post these in the forum. </p>
+<div class="build-buttons">
+<p>
+<a href="https://github.com/carla-simulator/carla/discussions/" target="_blank" class="btn btn-neutral" title="Go to the CARLA forum">
+CARLA forum</a>
+</p>
+</div>
+              
+            </div>
+          </div><footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+        <span>
+          <a href="https://github.com/carla-simulator/carla" class="fa fa-github" style="color: #fcfcfc"> GitHub</a>
+        </span>
+    
+    
+    
+  </span>
+</div>
+    <script src="../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "..";</script>
+    <script src="../js/theme_extra.js"></script>
+    <script src="../js/theme.js"></script>
+      <script src="../extra.js"></script>
+      <script src="../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>

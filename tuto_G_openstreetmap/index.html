@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <link rel="shortcut icon" href="../img/favicon.ico" />
+    <title>Generate maps with OpenStreetMap - CARLA Simulator</title>
+    <link rel="stylesheet" href="../css/theme.css" />
+    <link rel="stylesheet" href="../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+        <link href="../extra.css" rel="stylesheet" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "Generate maps with OpenStreetMap";
+        var mkdocs_page_input_path = "tuto_G_openstreetmap.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href=".." class="icon icon-home"> CARLA Simulator
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+      <input type="text" name="q" placeholder="搜索文档" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="..">Home</a>
+                </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Getting started</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../start_introduction/">Introduction</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../start_quickstart/">Quick start package installation</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_first_steps/">First steps</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../build_carla/">Building CARLA</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Next steps</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_content_authoring_maps/">Content authoring - maps</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_content_authoring_vehicles/">Content authoring - vehicles</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../content_authoring_props/">Content authoring - props</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">CARLA topics</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../coordinates/">Coordinates and transformations</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../foundations/">Foundations</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../core_actors/">Actors</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../core_map/">Maps</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../core_sensors/">Sensors and data</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../ts_traffic_simulation_overview/">Traffic</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../ai_rendering/">AI rendering</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../development_tutorials/">Development</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../custom_assets_tutorials/">Custom assets</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Resources</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../python_api/">Python API</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../catalogue/">Catalogue</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../ref_cpp/">C++ reference</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../bp_library/">Blueprint library</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tutorials/">Tutorials</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../ext_docs/">Extended documentation</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../download/">Downloads</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">CARLA Ecosystem</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../ecosys_ansys/">ANSYS</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_G_rllib_integration/">AWS</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_G_carsim_integration/">CarSIM</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_G_chrono/">Chrono</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../large_map_roadrunner/">MathWorks</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../inverted_ai/">Inverted AI</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../nvidia/">NVIDIA</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../adv_opendrive/">ASAM OpenDRIVE</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../adv_ptv/">PTV Vissim</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../adv_rss/">RSS</a>
+                  </li>
+                  <li class="toctree-l1"><a class="" href="https://carla.readthedocs.io/projects/ros-bridge/en/latest/">ROS</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_G_scenic/">Scenic</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../adv_sumo/">SUMO</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../ecosys_synkrotron/">SYNKROTRON</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Contributing</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../cont_contribution_guidelines/">Guidelines</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../cont_coding_standard/">Coding standards</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../cont_doc_standard/">Documentation standard</a>
+                  </li>
+                  <li class="toctree-l1"><a class="" href=".."></a>
+                  </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="..">CARLA Simulator</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href=".." class="icon icon-home" aria-label="Docs"></a></li>
+      <li class="breadcrumb-item active">Generate maps with OpenStreetMap</li>
+    <li class="wy-breadcrumbs-aside">
+          <a href="https://github.com/carla-simulator/carla/edit/master/Docs/tuto_G_openstreetmap.md" class="icon icon-github"> 在 GitHub 上编辑</a>
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="generate-maps-with-openstreetmap">Generate maps with OpenStreetMap</h1>
+<p>In this guide you will learn:</p>
+<ul>
+<li>How to export a map from OpenStreetMaps.</li>
+<li>The different formats of map that can be used in CARLA and each format's limitations.</li>
+<li>How to convert the native <code>.osm</code> format to <code>.xodr</code>.</li>
+<li>How to include traffic light information in the <code>.xodr</code> file.</li>
+<li>How to run the final map in a CARLA simulation.</li>
+</ul>
+<p><a href="https://www.openstreetmap.org">OpenStreetMap</a> is an open data map of the world developed by thousands of contributors and licensed under the <a href="https://opendatacommons.org/licenses/odbl/">Open Data Commons Open Database License</a>. Sections of the map can be exported to an XML formatted <code>.osm</code> file. CARLA can convert this file to an OpenDRIVE format and ingest it using the <a href="#adv_opendrive.md">OpenDRIVE Standalone Mode</a>.</p>
+<ul>
+<li><a href="#export-a-map-with-openstreetmap"><strong>Export a map with OpenStreetMap</strong></a></li>
+<li><a href="#using-openstreetmaps-in-carla"><strong>Using OpenStreetMaps in CARLA</strong></a></li>
+<li><a href="#convert-openstreetmap-format-to-opendrive-format"><strong>Convert OpenStreetMap format to OpenDRIVE format</strong></a><ul>
+<li><a href="#linux">Linux</a></li>
+<li><a href="#windows">Windows</a></li>
+<li><a href="#generate-traffic-lights">Generate Traffic Lights</a></li>
+</ul>
+</li>
+<li><a href="#ingest-into-carla"><strong>Ingest into CARLA</strong></a></li>
+</ul>
+<hr />
+<h2 id="export-a-map-with-openstreetmap">Export a map with OpenStreetMap</h2>
+<p>This section explains how to export your desired map information from Open Street Map:</p>
+<p><strong>1.</strong> Navigate to the <a href="https://www.openstreetmap.org">Open Street Map website</a>. You will see the map view and a panel on the right side of the window where you can configure different map layers, query different features, toggle the legend, and more.</p>
+<p><strong>2.</strong> Search for your desired location and zoom in to a specific area.</p>
+<p><img alt="openstreetmap_view" src="../img/tuto_g_osm_web.jpg" /></p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>If you would like to use a map of a large area, for example, Paris, you may consider using CARLA's <a href="../large_map_overview/"><strong>Large Map</strong> feature</a>.</p>
+</div>
+<p><strong>3.</strong> Click on <em>Export</em> on the upper left side of the window to open the <em>Export</em> panel.</p>
+<p><strong>4.</strong> Click on <em>Manually select a different area</em> in the <em>Export</em> panel.</p>
+<p><strong>5.</strong> Select a custom area by dragging the corners of the square area in the viewport.</p>
+<p><strong>6.</strong> Click the <em>Export</em> button in the <em>Export</em> panel and save the map information of the selected area as a <code>.osm</code> file.</p>
+<p><img alt="openstreetmap_area" src="../img/tuto_g_osm_area.jpg" /></p>
+<hr />
+<h2 id="using-openstreetmaps-in-carla">Using OpenStreetMaps in CARLA</h2>
+<p>Open Street Map data can be used in CARLA via three different methods. The method you use will depend on if the data is in the original <code>.osm</code> format or if you convert the file to <code>.xodr</code> using the conversion method explained in the following sections. Keeping the file in <code>.osm</code> is the most restrictive method as it does not allow for settings customization.</p>
+<p><strong>Options available for <code>.xodr</code> format:</strong></p>
+<ul>
+<li>Generate the map in your own script. <strong>This method allows parameterization.</strong></li>
+<li>Pass the file as a parameter to CARLA's <code>config.py</code>. <strong>This method does not allow parameterization.</strong></li>
+</ul>
+<p><strong>Options available for <code>.osm</code> format:</strong></p>
+<ul>
+<li>Pass the file as a parameter to CARLA's <code>config.py</code>. <strong>This method does not allow parameterization.</strong></li>
+</ul>
+<p>The following sections will provide more detail on the options listed above.</p>
+<hr />
+<h2 id="convert-openstreetmap-format-to-opendrive-format">Convert OpenStreetMap format to OpenDRIVE format</h2>
+<p>This section demonstrates how to use the Python API to convert the <code>.osm</code> file we exported in the previous section to <code>.xodr</code> format so that it is ready for use in CARLA.</p>
+<p>The <a href="../python_api/#carla.Osm2OdrSettings">carla.Osm2OdrSettings</a> class is used to configure conversion settings such as offset values, traffic light generation, origin coordinates, and more. The full list of configurable parameters is found in the Python API <a href="../python_api/#carla.Osm2OdrSettings">documentation</a>. The <a href="../python_api/#carla.Osm2Odr">carla.Osm2Odr</a> class uses these settings to parse the <code>.osm</code> data and output it in <code>.xodr</code> format.</p>
+<p>In Windows, the <code>.osm</code> file must be encoded to <code>UTF-8</code>. This is not necessary in Linux. Below are example code snippets that show how to perform the file conversion depending on your operating system:</p>
+<h5 id="linux">Linux</h5>
+<pre><code class="language-py"># Read the .osm data
+f = open(&quot;path/to/osm/file&quot;, 'r')
+osm_data = f.read()
+f.close()
+
+# Define the desired settings. In this case, default values.
+settings = carla.Osm2OdrSettings()
+# Set OSM road types to export to OpenDRIVE
+settings.set_osm_way_types([&quot;motorway&quot;, &quot;motorway_link&quot;, &quot;trunk&quot;, &quot;trunk_link&quot;, &quot;primary&quot;, &quot;primary_link&quot;, &quot;secondary&quot;, &quot;secondary_link&quot;, &quot;tertiary&quot;, &quot;tertiary_link&quot;, &quot;unclassified&quot;, &quot;residential&quot;])
+# Convert to .xodr
+xodr_data = carla.Osm2Odr.convert(osm_data, settings)
+
+# save opendrive file
+f = open(&quot;path/to/output/file&quot;, 'w')
+f.write(xodr_data)
+f.close()
+</code></pre>
+<h5 id="windows">Windows</h5>
+<pre><code class="language-py">import io
+
+# Read the .osm data
+f = io.open(&quot;test&quot;, mode=&quot;r&quot;, encoding=&quot;utf-8&quot;)
+osm_data = f.read()
+f.close()
+
+# Define the desired settings. In this case, default values.
+settings = carla.Osm2OdrSettings()
+# Set OSM road types to export to OpenDRIVE
+settings.set_osm_way_types([&quot;motorway&quot;, &quot;motorway_link&quot;, &quot;trunk&quot;, &quot;trunk_link&quot;, &quot;primary&quot;, &quot;primary_link&quot;, &quot;secondary&quot;, &quot;secondary_link&quot;, &quot;tertiary&quot;, &quot;tertiary_link&quot;, &quot;unclassified&quot;, &quot;residential&quot;])
+# Convert to .xodr
+xodr_data = carla.Osm2Odr.convert(osm_data, settings)
+
+# save opendrive file
+f = open(&quot;path/to/output/file&quot;, 'w')
+f.write(xodr_data)
+f.close()
+</code></pre>
+<p><br></p>
+<hr />
+<h3 id="generate-traffic-lights">Generate Traffic Lights</h3>
+<p>Open Street Map data can define which junctions are controlled with traffic lights. To use this traffic light data in CARLA, you need to enable it in the OSM map settings via the Python API before converting the <code>.osm</code> file to <code>.xodr</code> format:</p>
+<pre><code class="language-py"># Define the desired settings. In this case, default values.
+settings = carla.Osm2OdrSettings()
+# enable traffic light generation from OSM data
+settings.generate_traffic_lights = True
+# Convert to .xodr
+xodr_data = carla.Osm2Odr.convert(osm_data, settings)
+</code></pre>
+<p>Traffic light data quality can vary depending on the region from which you extract data. Some traffic light information may be missing completely. To work within these limitations, you can use the Python API to configure all junctions to be controlled with traffic lights:</p>
+<pre><code class="language-py">settings.all_junctions_with_traffic_lights = True
+</code></pre>
+<p>You can also exclude certain roads, e.g., motorway links, from generating traffic lights:</p>
+<pre><code>settings.set_traffic_light_excluded_way_types([&quot;motorway_link&quot;])
+</code></pre>
+<hr />
+<h2 id="ingest-into-carla">Ingest into CARLA</h2>
+<p>This section explains how to use the different options available to ingest your Open Street Map information into CARLA using the <a href="../adv_opendrive/">OpenDRIVE Standalone Mode</a>.</p>
+<p>There are three options available:</p>
+<p><a href="#a-use-your-own-script"><strong>A)</strong></a> Generate the map using a converted <code>.xodr</code> file in your own custom Python script. <strong>This method allows parameterization.</strong><br />
+<a href="#b-pass-xodr-to-configpy"><strong>B)</strong></a> Pass a converted <code>.xodr</code> file as a parameter to the CARLA <code>config.py</code> script. <strong>This method does not allow parameterization.</strong><br />
+<a href="#c-pass-osm-to-configpy"><strong>C)</strong></a> Pass the original <code>.osm</code> file as a parameter to the CARLA <code>config.py</code> script. <strong>This method does not allow parameterization.</strong>  </p>
+<h6 id="a-use-your-own-script">A) Use your own script</h6>
+<p>Generate the new map and block the simulation until it is ready by calling <a href="../python_api/#carla.Client.generate_opendrive_world"><code>client.generate_opendrive_world()</code></a>. Use the <a href="../python_api/#carla.OpendriveGenerationParameters">carla.OpendriveGenerationParameters</a> class to configure the mesh generation. See below for an example:</p>
+<pre><code class="language-py">vertex_distance = 2.0  # in meters
+max_road_length = 500.0 # in meters
+wall_height = 0.0      # in meters
+extra_width = 0.6      # in meters
+world = client.generate_opendrive_world(
+    xodr_xml, carla.OpendriveGenerationParameters(
+        vertex_distance=vertex_distance,
+        max_road_length=max_road_length,
+        wall_height=wall_height,
+        additional_width=extra_width,
+        smooth_junctions=True,
+        enable_mesh_visibility=True))
+</code></pre>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><code>wall_height = 0.0</code> is strongly recommended. OpenStreetMap defines lanes in opposing directions as different roads. If walls are generated, this will result in wall overlapping and undesired collisions.</p>
+</div>
+<h6 id="b-pass-xodr-to-configpy">B) Pass <code>.xodr</code> to <code>config.py</code></h6>
+<p>After you have started a CARLA server, run the following command in a separate terminal to load your Open Street Map:</p>
+<pre><code class="language-sh">cd PythonAPI/util
+
+python3 config.py -x=/path/to/xodr/file
+</code></pre>
+<p><a href="../python_api/#carla.OpendriveGenerationParameters">Default parameters</a> will be used.</p>
+<h6 id="c-pass-osm-to-configpy">C) Pass <code>.osm</code> to <code>config.py</code></h6>
+<p>After you have started a CARLA server, run the following command in a separate terminal to load your Open Street Map:</p>
+<pre><code class="language-sh">cd PythonAPI/util
+
+python3 config.py --osm-path=/path/to/OSM/file
+</code></pre>
+<p><a href="../python_api/#carla.OpendriveGenerationParameters">Default parameters</a> will be used.</p>
+<p>Regardless of the method used, the map will be ingested into CARLA and the result should be similar to the image below:</p>
+<p><img alt="opendrive_meshissue" src="../img/tuto_g_osm_carla.jpg" /></p>
+<div style="text-align: right"><i>Outcome of the CARLA map generation using OpenStreetMap.</i></div>
+
+<p><br></p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>The roads generated end abruptly at the borders of the map. This will cause the Traffic Manager to crash when vehicles are not able to find the next waypoint. To avoid this, the OSM mode in the Traffic Manager is set to <strong>True</strong> by default (<a href="../python_api/#carlatrafficmanager"><code>set_osm_mode()</code></a>). This will show a warning and destroy vehicles when necessary.  </p>
+</div>
+<hr />
+<p>Any issues and doubts related with this topic can be posted in the CARLA forum.</p>
+<div class="build-buttons">
+<p>
+<a href="https://github.com/carla-simulator/carla/discussions/" target="_blank" class="btn btn-neutral" title="Go to the CARLA forum">
+CARLA forum</a>
+</p>
+</div>
+              
+            </div>
+          </div><footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+        <span>
+          <a href="https://github.com/carla-simulator/carla" class="fa fa-github" style="color: #fcfcfc"> GitHub</a>
+        </span>
+    
+    
+    
+  </span>
+</div>
+    <script src="../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "..";</script>
+    <script src="../js/theme_extra.js"></script>
+    <script src="../js/theme.js"></script>
+      <script src="../extra.js"></script>
+      <script src="../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>

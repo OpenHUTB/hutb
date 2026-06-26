@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <link rel="shortcut icon" href="../img/favicon.ico" />
+    <title>C++ client example - CARLA Simulator</title>
+    <link rel="stylesheet" href="../css/theme.css" />
+    <link rel="stylesheet" href="../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+        <link href="../extra.css" rel="stylesheet" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "C++ client example";
+        var mkdocs_page_input_path = "adv_cpp_client.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href=".." class="icon icon-home"> CARLA Simulator
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+      <input type="text" name="q" placeholder="搜索文档" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="..">Home</a>
+                </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Getting started</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../start_introduction/">Introduction</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../start_quickstart/">Quick start package installation</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_first_steps/">First steps</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../build_carla/">Building CARLA</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Next steps</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_content_authoring_maps/">Content authoring - maps</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_content_authoring_vehicles/">Content authoring - vehicles</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../content_authoring_props/">Content authoring - props</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">CARLA topics</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../coordinates/">Coordinates and transformations</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../foundations/">Foundations</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../core_actors/">Actors</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../core_map/">Maps</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../core_sensors/">Sensors and data</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../ts_traffic_simulation_overview/">Traffic</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../ai_rendering/">AI rendering</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../development_tutorials/">Development</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../custom_assets_tutorials/">Custom assets</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Resources</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../python_api/">Python API</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../catalogue/">Catalogue</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../ref_cpp/">C++ reference</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../bp_library/">Blueprint library</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tutorials/">Tutorials</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../ext_docs/">Extended documentation</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../download/">Downloads</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">CARLA Ecosystem</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../ecosys_ansys/">ANSYS</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_G_rllib_integration/">AWS</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_G_carsim_integration/">CarSIM</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_G_chrono/">Chrono</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../large_map_roadrunner/">MathWorks</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../inverted_ai/">Inverted AI</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../nvidia/">NVIDIA</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../adv_opendrive/">ASAM OpenDRIVE</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../adv_ptv/">PTV Vissim</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../adv_rss/">RSS</a>
+                  </li>
+                  <li class="toctree-l1"><a class="" href="https://carla.readthedocs.io/projects/ros-bridge/en/latest/">ROS</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_G_scenic/">Scenic</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../adv_sumo/">SUMO</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../ecosys_synkrotron/">SYNKROTRON</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Contributing</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../cont_contribution_guidelines/">Guidelines</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../cont_coding_standard/">Coding standards</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../cont_doc_standard/">Documentation standard</a>
+                  </li>
+                  <li class="toctree-l1"><a class="" href=".."></a>
+                  </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="..">CARLA Simulator</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href=".." class="icon icon-home" aria-label="Docs"></a></li>
+      <li class="breadcrumb-item active">C++ client example</li>
+    <li class="wy-breadcrumbs-aside">
+          <a href="https://github.com/carla-simulator/carla/edit/master/Docs/adv_cpp_client.md" class="icon icon-github"> 在 GitHub 上编辑</a>
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="c-client-example">C++ client example</h1>
+<p>To build the C++ client example you will need <code>make</code> installed. Before building a C++ client, you will need to build CARLA, follow the relevant <a href="../build_carla/">build instructions</a> for your platform. </p>
+<p>Navigate to the <code>Examples/CppClient</code> folder in the CARLA repository and open a terminal. You will find a Makefile in this directory. To build and run it in Linux execute <code>make run</code> at the command prompt. In Windows, create a file named <code>CMakeLists.txt</code> in the same directory and add the contents in <a href="../cpp_client_cmake_windows/">this file</a>, then run <code>cmake</code>.</p>
+<p>This C++ example will connect to the server, spawn a vehicle and apply a command to the vehicle before destroying it and terminating. </p>
+<h3 id="include-the-relevant-header-files">Include the relevant header files</h3>
+<p>For this example, we will be using several different CARLA classes, so we need to include the relevant header files from the CARLA library and include any standard libraries we will use:</p>
+<pre><code class="language-cpp">#include &lt;iostream&gt;
+#include &lt;random&gt;
+#include &lt;sstream&gt;
+#include &lt;stdexcept&gt;
+#include &lt;string&gt;
+#include &lt;thread&gt;
+#include &lt;tuple&gt;
+
+#include &lt;carla/client/ActorBlueprint.h&gt;
+#include &lt;carla/client/BlueprintLibrary.h&gt;
+#include &lt;carla/client/Client.h&gt;
+#include &lt;carla/client/Map.h&gt;
+#include &lt;carla/client/Sensor.h&gt;
+#include &lt;carla/client/TimeoutException.h&gt;
+#include &lt;carla/client/World.h&gt;
+#include &lt;carla/geom/Transform.h&gt;
+#include &lt;carla/image/ImageIO.h&gt;
+#include &lt;carla/image/ImageView.h&gt;
+#include &lt;carla/sensor/data/Image.h&gt;
+
+</code></pre>
+<h3 id="connecting-the-c-client-to-the-server">Connecting the C++ client to the server</h3>
+<p>Include <code>carla/client/Client.h</code> and then connect the client:</p>
+<pre><code class="language-cpp">...
+#include &lt;carla/client/Client.h&gt;
+...
+int main(int argc, const char *argv[]) {
+
+    std::string host;
+    uint16_t port;
+    std::tie(host, port) = ParseArguments(argc, argv);
+    ...
+    // Connect the client to the server
+    auto client = cc::Client(host, port);
+    client.SetTimeout(40s);
+</code></pre>
+<h3 id="load-a-map">Load a map</h3>
+<p>Now let's load a randomly chosen map:</p>
+<pre><code class="language-cpp">// Initialize random number generator
+std::mt19937_64 rng((std::random_device())());
+...
+auto town_name = RandomChoice(client.GetAvailableMaps(), rng);
+std::cout &lt;&lt; &quot;Loading world: &quot; &lt;&lt; town_name &lt;&lt; std::endl;
+auto world = client.LoadWorld(town_name);
+</code></pre>
+<h3 id="spawn-a-randomly-chosen-vehicle">Spawn a randomly chosen vehicle</h3>
+<p>Next we will fetch the blueprint library, filter for vehicles and choose a random vehicle blueprint:</p>
+<pre><code class="language-cpp">auto blueprint_library = world.GetBlueprintLibrary();
+auto vehicles = blueprint_library-&gt;Filter(&quot;vehicle&quot;);
+auto blueprint = RandomChoice(*vehicles, rng);
+</code></pre>
+<p>Now we need to find a location to spawn the vehicle from a spawn point in the map. We will get a pointer reference to the map object and then choose a random spawn point (ensure you have initialized the random number generator):</p>
+<pre><code class="language-cpp">auto map = world.GetMap();
+auto transform = RandomChoice(map-&gt;GetRecommendedSpawnPoints(), rng);
+</code></pre>
+<p>Now we have the blueprint and spawn location, we can now spawn the vehicle using the <code>world.SpawnActor(...)</code> method:</p>
+<pre><code class="language-cpp">auto actor = world.SpawnActor(blueprint, transform);
+std::cout &lt;&lt; &quot;Spawned &quot; &lt;&lt; actor-&gt;GetDisplayId() &lt;&lt; '\n';
+// Retrieve a pointer to the vehicle object
+auto vehicle = boost::static_pointer_cast&lt;cc::Vehicle&gt;(actor);
+</code></pre>
+<h3 id="apply-a-control">Apply a control</h3>
+<p>Let's now apply some control to the vehicle to move it using the <code>ApplyControl(...)</code> method:</p>
+<pre><code class="language-cpp">cc::Vehicle::Control control;
+control.throttle = 1.0f;
+vehicle-&gt;ApplyControl(control);
+</code></pre>
+<p>Now we will relocate the spectator so that we can see our newly spawned vehicle in the map:</p>
+<pre><code class="language-cpp">auto spectator = world.GetSpectator();
+// Adjust the transform to look 
+transform.location += 32.0f * transform.GetForwardVector();
+transform.location.z += 2.0f;
+transform.rotation.yaw += 180.0f;
+transform.rotation.pitch = -15.0f;
+// Now set the spectator transform
+spectator-&gt;SetTransform(transform);
+</code></pre>
+<p>We'll also sleep the process for 10 seconds to observe the simulation shortly, before the client closes:</p>
+<pre><code class="language-cpp">std::this_thread::sleep_for(10s);
+
+</code></pre>
+<p>If you wish to keep the client open while other commands are executed, create a game loop. Now you have loaded a map and spawned a vehicle. To further explore the C++ API <a href="../ref_cpp/#c-documentation">build the Doxygen documentation</a> and open it in a browser. </p>
+<p>To build the C++ client in another location outside of the CARLA repository, edit the first 5 lines of the Makefile to reference the correct locations for the <code>/build</code> directory and the CARLA build location:</p>
+<pre><code class="language-make">CARLADIR=$(CURDIR)/../..
+BUILDDIR=$(CURDIR)/build
+BINDIR=$(CURDIR)/bin
+INSTALLDIR=$(CURDIR)/libcarla-install
+TOOLCHAIN=$(CURDIR)/ToolChain.cmake
+</code></pre>
+              
+            </div>
+          </div><footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+        <span>
+          <a href="https://github.com/carla-simulator/carla" class="fa fa-github" style="color: #fcfcfc"> GitHub</a>
+        </span>
+    
+    
+    
+  </span>
+</div>
+    <script src="../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "..";</script>
+    <script src="../js/theme_extra.js"></script>
+    <script src="../js/theme.js"></script>
+      <script src="../extra.js"></script>
+      <script src="../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>

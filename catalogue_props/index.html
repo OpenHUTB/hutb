@@ -1,0 +1,937 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <link rel="shortcut icon" href="../img/favicon.ico" />
+    <title>Props catalogue - CARLA Simulator</title>
+    <link rel="stylesheet" href="../css/theme.css" />
+    <link rel="stylesheet" href="../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+        <link href="../extra.css" rel="stylesheet" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "Props catalogue";
+        var mkdocs_page_input_path = "catalogue_props.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href=".." class="icon icon-home"> CARLA Simulator
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+      <input type="text" name="q" placeholder="搜索文档" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="..">Home</a>
+                </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Getting started</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../start_introduction/">Introduction</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../start_quickstart/">Quick start package installation</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_first_steps/">First steps</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../build_carla/">Building CARLA</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Next steps</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_content_authoring_maps/">Content authoring - maps</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_content_authoring_vehicles/">Content authoring - vehicles</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../content_authoring_props/">Content authoring - props</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">CARLA topics</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../coordinates/">Coordinates and transformations</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../foundations/">Foundations</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../core_actors/">Actors</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../core_map/">Maps</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../core_sensors/">Sensors and data</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../ts_traffic_simulation_overview/">Traffic</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../ai_rendering/">AI rendering</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../development_tutorials/">Development</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../custom_assets_tutorials/">Custom assets</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Resources</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../python_api/">Python API</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../catalogue/">Catalogue</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../ref_cpp/">C++ reference</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../bp_library/">Blueprint library</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tutorials/">Tutorials</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../ext_docs/">Extended documentation</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../download/">Downloads</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">CARLA Ecosystem</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../ecosys_ansys/">ANSYS</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_G_rllib_integration/">AWS</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_G_carsim_integration/">CarSIM</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_G_chrono/">Chrono</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../large_map_roadrunner/">MathWorks</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../inverted_ai/">Inverted AI</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../nvidia/">NVIDIA</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../adv_opendrive/">ASAM OpenDRIVE</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../adv_ptv/">PTV Vissim</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../adv_rss/">RSS</a>
+                  </li>
+                  <li class="toctree-l1"><a class="" href="https://carla.readthedocs.io/projects/ros-bridge/en/latest/">ROS</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_G_scenic/">Scenic</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../adv_sumo/">SUMO</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../ecosys_synkrotron/">SYNKROTRON</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Contributing</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../cont_contribution_guidelines/">Guidelines</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../cont_coding_standard/">Coding standards</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../cont_doc_standard/">Documentation standard</a>
+                  </li>
+                  <li class="toctree-l1"><a class="" href=".."></a>
+                  </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="..">CARLA Simulator</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href=".." class="icon icon-home" aria-label="Docs"></a></li>
+      <li class="breadcrumb-item active">Props catalogue</li>
+    <li class="wy-breadcrumbs-aside">
+          <a href="https://github.com/carla-simulator/carla/edit/master/Docs/catalogue_props.md" class="icon icon-github"> 在 GitHub 上编辑</a>
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="props-catalogue">Props catalogue</h1>
+<h2 id="containers"><strong>Containers</strong></h2>
+<ul>
+<li><strong>Barrels</strong><ul>
+<li><a href="#barrel"><strong>Barrel</strong></a></li>
+</ul>
+</li>
+<li><strong>Bins</strong><ul>
+<li><a href="#bin"><strong>Bin</strong></a></li>
+<li><a href="#cloth-container"><strong>Cloth container</strong></a></li>
+<li><a href="#garbage-container"><strong>Garbage container</strong></a></li>
+<li><a href="#glass-container"><strong>Glass container</strong></a></li>
+</ul>
+</li>
+<li><strong>Boxes</strong><ul>
+<li><a href="#box-01"><strong>Box 01</strong></a></li>
+<li><a href="#box-02"><strong>Box 02</strong></a></li>
+<li><a href="#box-03"><strong>Box 03</strong></a></li>
+<li><a href="#creased-box-01"><strong>Creased box 01</strong></a></li>
+<li><a href="#creased-box-02"><strong>Creased box 02</strong></a></li>
+<li><a href="#creased-box-03"><strong>Creased box 03</strong></a></li>
+</ul>
+</li>
+</ul>
+<h2 id="garbage"><strong>Garbage</strong></h2>
+<ul>
+<li><strong>Bags</strong><ul>
+<li><a href="#trash-bag"><strong>Trash bag</strong></a></li>
+</ul>
+</li>
+<li><strong>Garbage</strong><ul>
+<li><a href="#cola-can"><strong>Cola can</strong></a></li>
+<li><a href="#garbage-01"><strong>Garbage 01</strong></a></li>
+<li><a href="#garbage-02"><strong>Garbage 02</strong></a></li>
+<li><a href="#garbage-03"><strong>Garbage 03</strong></a></li>
+<li><a href="#garbage-04"><strong>Garbage 04</strong></a></li>
+<li><a href="#garbage-05"><strong>Garbage 05</strong></a></li>
+<li><a href="#garbage-06"><strong>Garbage 06</strong></a></li>
+</ul>
+</li>
+<li><strong>Platforms</strong><ul>
+<li><a href="#garbage-platform-01"><strong>Garbage platform 01</strong></a></li>
+</ul>
+</li>
+<li><strong>Trash cans</strong><ul>
+<li><a href="#trash-can-01"><strong>Trash can 01</strong></a></li>
+<li><a href="#trash-can-02"><strong>Trash can 02</strong></a></li>
+<li><a href="#trash-can-03"><strong>Trash can 03</strong></a></li>
+<li><a href="#trash-can-04"><strong>Trash can 04</strong></a></li>
+<li><a href="#trash-can-05"><strong>Trash can 05</strong></a></li>
+</ul>
+</li>
+</ul>
+<h2 id="park-garden"><strong>Park / garden</strong></h2>
+<ul>
+<li><strong>Furniture</strong><ul>
+<li><a href="#bench-03"><strong>Bench 03</strong></a></li>
+<li><a href="#garden-lamp"><strong>Garden lamp</strong></a></li>
+<li><a href="#pergola"><strong>Pergola</strong></a></li>
+<li><a href="#plastic-chair"><strong>Plastic chair</strong></a></li>
+<li><a href="#plastic-table"><strong>Plastic table</strong></a></li>
+<li><a href="#slide"><strong>Slide</strong></a></li>
+<li><a href="#swing"><strong>Swing</strong></a></li>
+<li><a href="#swingcouch"><strong>Swingcouch</strong></a></li>
+<li><a href="#table"><strong>Table</strong></a></li>
+<li><a href="#trampoline"><strong>Trampoline</strong></a></li>
+</ul>
+</li>
+<li><strong>Misc</strong><ul>
+<li><a href="#barbeque"><strong>Barbeque</strong></a></li>
+<li><a href="#clothesline"><strong>Clothesline</strong></a></li>
+<li><a href="#doghouse"><strong>Doghouse</strong></a></li>
+<li><a href="#gnome"><strong>Gnome</strong></a></li>
+<li><a href="#wateringcan"><strong>Wateringcan</strong></a></li>
+</ul>
+</li>
+<li><strong>Other</strong><ul>
+<li><a href="#haybale"><strong>Haybale</strong></a></li>
+<li><a href="#haybale-alternate"><strong>Haybale alternate</strong></a></li>
+</ul>
+</li>
+<li><strong>Plantpots</strong><ul>
+<li><a href="#plantpot-01"><strong>Plantpot 01</strong></a></li>
+<li><a href="#plantpot-02"><strong>Plantpot 02</strong></a></li>
+<li><a href="#plantpot-03"><strong>Plantpot 03</strong></a></li>
+<li><a href="#plantpot-04"><strong>Plantpot 04</strong></a></li>
+<li><a href="#plantpot-05"><strong>Plantpot 05</strong></a></li>
+<li><a href="#plantpot-06"><strong>Plantpot 06</strong></a></li>
+<li><a href="#plantpot-07"><strong>Plantpot 07</strong></a></li>
+<li><a href="#plantpot-08"><strong>Plantpot 08</strong></a></li>
+</ul>
+</li>
+</ul>
+<h2 id="personal"><strong>Personal</strong></h2>
+<ul>
+<li><strong>Bags</strong><ul>
+<li><a href="#plastic-bag"><strong>Plastic bag</strong></a></li>
+<li><a href="#shopping-bag"><strong>Shopping bag</strong></a></li>
+</ul>
+</li>
+<li><strong>Carts</strong><ul>
+<li><a href="#shopping-cart"><strong>Shopping cart</strong></a></li>
+<li><a href="#shopping-trolley"><strong>Shopping trolley</strong></a></li>
+</ul>
+</li>
+<li><strong>Cases</strong><ul>
+<li><a href="#briefcase"><strong>Briefcase</strong></a></li>
+<li><a href="#guitarcase"><strong>Guitarcase</strong></a></li>
+<li><a href="#travel-case"><strong>Travel case</strong></a></li>
+</ul>
+</li>
+<li><strong>Clothing</strong><ul>
+<li><a href="#bike-helmet"><strong>Bike helmet</strong></a></li>
+<li><a href="#motor-helmet"><strong>Motor helmet</strong></a></li>
+</ul>
+</li>
+<li><strong>Personal effects</strong><ul>
+<li><a href="#mobile"><strong>Mobile</strong></a></li>
+<li><a href="#purse"><strong>Purse</strong></a></li>
+</ul>
+</li>
+</ul>
+<h2 id="road"><strong>Road</strong></h2>
+<ul>
+<li><strong>Barriers</strong><ul>
+<li><a href="#street-barrier"><strong>Street barrier</strong></a></li>
+</ul>
+</li>
+<li><strong>Cones</strong><ul>
+<li><a href="#construction-cone"><strong>Construction cone</strong></a></li>
+<li><a href="#traffic-cone-01"><strong>Traffic cone 01</strong></a></li>
+<li><a href="#traffic-cone-02"><strong>Traffic cone 02</strong></a></li>
+</ul>
+</li>
+<li><strong>Construction</strong><ul>
+<li><a href="#iron-plank"><strong>Iron plank</strong></a></li>
+<li><a href="#warning-construction"><strong>Warning construction</strong></a></li>
+</ul>
+</li>
+<li><strong>Debris</strong><ul>
+<li><a href="#brokentile-01"><strong>Brokentile 01</strong></a></li>
+<li><a href="#brokentile-02"><strong>Brokentile 02</strong></a></li>
+<li><a href="#brokentile-03"><strong>Brokentile 03</strong></a></li>
+<li><a href="#brokentile-04"><strong>Brokentile 04</strong></a></li>
+<li><a href="#dirt-/-debris-01"><strong>Dirt / debris 01</strong></a></li>
+<li><a href="#dirt-/-debris-02"><strong>Dirt / debris 02</strong></a></li>
+<li><a href="#dirt-/-debris-03"><strong>Dirt / debris 03</strong></a></li>
+</ul>
+</li>
+<li><strong>Signs</strong><ul>
+<li><a href="#traffic-warning"><strong>Traffic warning</strong></a></li>
+<li><a href="#warning-accident"><strong>Warning accident</strong></a></li>
+</ul>
+</li>
+</ul>
+<h2 id="sidewalk"><strong>Sidewalk</strong></h2>
+<ul>
+<li><strong>Barriers</strong><ul>
+<li><a href="#chain-barrier"><strong>Chain barrier</strong></a></li>
+<li><a href="#chain-barrier-end"><strong>Chain barrier end</strong></a></li>
+</ul>
+</li>
+<li><strong>Benches</strong><ul>
+<li><a href="#bench-01"><strong>Bench 01</strong></a></li>
+<li><a href="#bench-02"><strong>Bench 02</strong></a></li>
+</ul>
+</li>
+<li><strong>Commercial</strong><ul>
+<li><a href="#foodcart"><strong>Foodcart</strong></a></li>
+<li><a href="#kiosk-01"><strong>Kiosk 01</strong></a></li>
+</ul>
+</li>
+<li><strong>Monouments</strong><ul>
+<li><a href="#fountain"><strong>Fountain</strong></a></li>
+</ul>
+</li>
+<li><strong>Monuments</strong><ul>
+<li><a href="#map-table"><strong>Map table</strong></a></li>
+</ul>
+</li>
+<li><strong>Signs</strong><ul>
+<li><a href="#advertisement"><strong>Advertisement</strong></a></li>
+<li><a href="#street-sign"><strong>Street sign</strong></a></li>
+<li><a href="#street-sign-01"><strong>Street sign 01</strong></a></li>
+<li><a href="#street-sign-04"><strong>Street sign 04</strong></a></li>
+</ul>
+</li>
+<li><strong>Transport</strong><ul>
+<li><a href="#bus-stop"><strong>Bus stop</strong></a></li>
+<li><a href="#bus-stopl-alternate"><strong>Bus stopl alternate</strong></a></li>
+</ul>
+</li>
+<li><strong>Utilities</strong><ul>
+<li><a href="#atm"><strong>ATM</strong></a></li>
+<li><a href="#mailbox"><strong>Mailbox</strong></a></li>
+<li><a href="#street-fountain"><strong>Street fountain</strong></a></li>
+<li><a href="#vending-machine"><strong>Vending machine</strong></a></li>
+</ul>
+</li>
+</ul>
+<h2 id="vegetation"><strong>Vegetation</strong></h2>
+<ul>
+<li><strong>Trees</strong><ul>
+<li><a href="#aporosa-tree"><strong>Aporosa tree</strong></a></li>
+<li><a href="#coconut-palm"><strong>Coconut palm</strong></a></li>
+<li><a href="#cypress-tree"><strong>Cypress tree</strong></a></li>
+</ul>
+</li>
+</ul>
+<h2 id="utility"><strong>Utility</strong></h2>
+<ul>
+<li><strong>Calibration</strong><ul>
+<li><a href="#calibrator"><strong>Calibrator</strong></a></li>
+</ul>
+</li>
+</ul>
+<hr />
+<h2 id="containers_1"><strong>Containers</strong></h2>
+<h3 id="barrel">Barrel</h3>
+<p><img alt="static_prop_barrel" src="../img/catalogue/props/static_prop_barrel.webp" /></p>
+<ul>
+<li><strong>Blueprint ID</strong>: <span style="color:#00a6ed;">static.prop.barrel<span></li>
+</ul>
+<h3 id="bin">Bin</h3>
+<p><img alt="static_prop_bin" src="../img/catalogue/props/static_prop_bin.webp" /></p>
+<ul>
+<li><strong>Blueprint ID</strong>: <span style="color:#00a6ed;">static.prop.bin<span></li>
+</ul>
+<h3 id="cloth-container">Cloth container</h3>
+<p><img alt="static_prop_clothcontainer" src="../img/catalogue/props/static_prop_clothcontainer.webp" /></p>
+<ul>
+<li><strong>Blueprint ID</strong>: <span style="color:#00a6ed;">static.prop.clothcontainer<span></li>
+</ul>
+<h3 id="garbage-container">Garbage container</h3>
+<p><img alt="static_prop_container" src="../img/catalogue/props/static_prop_container.webp" /></p>
+<ul>
+<li><strong>Blueprint ID</strong>: <span style="color:#00a6ed;">static.prop.container<span></li>
+</ul>
+<h3 id="glass-container">Glass container</h3>
+<p><img alt="static_prop_glasscontainer" src="../img/catalogue/props/static_prop_glasscontainer.webp" /></p>
+<ul>
+<li><strong>Blueprint ID</strong>: <span style="color:#00a6ed;">static.prop.glasscontainer<span></li>
+</ul>
+<h3 id="box-01">Box 01</h3>
+<p><img alt="static_prop_box01" src="../img/catalogue/props/static_prop_box01.webp" /></p>
+<ul>
+<li><strong>Blueprint ID</strong>: <span style="color:#00a6ed;">static.prop.box01<span></li>
+</ul>
+<h3 id="box-02">Box 02</h3>
+<p><img alt="static_prop_box02" src="../img/catalogue/props/static_prop_box02.webp" /></p>
+<ul>
+<li><strong>Blueprint ID</strong>: <span style="color:#00a6ed;">static.prop.box02<span></li>
+</ul>
+<h3 id="box-03">Box 03</h3>
+<p><img alt="static_prop_box03" src="../img/catalogue/props/static_prop_box03.webp" /></p>
+<ul>
+<li><strong>Blueprint ID</strong>: <span style="color:#00a6ed;">static.prop.box03<span></li>
+</ul>
+<h3 id="creased-box-01">Creased box 01</h3>
+<p><img alt="static_prop_creasedbox01" src="../img/catalogue/props/static_prop_creasedbox01.webp" /></p>
+<ul>
+<li><strong>Blueprint ID</strong>: <span style="color:#00a6ed;">static.prop.creasedbox01<span></li>
+</ul>
+<h3 id="creased-box-02">Creased box 02</h3>
+<p><img alt="static_prop_creasedbox02" src="../img/catalogue/props/static_prop_creasedbox02.webp" /></p>
+<ul>
+<li><strong>Blueprint ID</strong>: <span style="color:#00a6ed;">static.prop.creasedbox02<span></li>
+</ul>
+<h3 id="creased-box-03">Creased box 03</h3>
+<p><img alt="static_prop_creasedbox03" src="../img/catalogue/props/static_prop_creasedbox03.webp" /></p>
+<ul>
+<li><strong>Blueprint ID</strong>: <span style="color:#00a6ed;">static.prop.creasedbox03<span></li>
+</ul>
+<hr />
+<h2 id="garbage_1"><strong>Garbage</strong></h2>
+<h3 id="trash-bag">Trash bag</h3>
+<p><img alt="static_prop_trashbag" src="../img/catalogue/props/static_prop_trashbag.webp" /></p>
+<ul>
+<li><strong>Blueprint ID</strong>: <span style="color:#00a6ed;">static.prop.trashbag<span></li>
+</ul>
+<h3 id="cola-can">Cola can</h3>
+<p><img alt="static_prop_colacan" src="../img/catalogue/props/static_prop_colacan.webp" /></p>
+<ul>
+<li><strong>Blueprint ID</strong>: <span style="color:#00a6ed;">static.prop.colacan<span></li>
+</ul>
+<h3 id="garbage-01">Garbage 01</h3>
+<p><img alt="static_prop_garbage01" src="../img/catalogue/props/static_prop_garbage01.webp" /></p>
+<ul>
+<li><strong>Blueprint ID</strong>: <span style="color:#00a6ed;">static.prop.garbage01<span></li>
+</ul>
+<h3 id="garbage-02">Garbage 02</h3>
+<p><img alt="static_prop_garbage02" src="../img/catalogue/props/static_prop_garbage02.webp" /></p>
+<ul>
+<li><strong>Blueprint ID</strong>: <span style="color:#00a6ed;">static.prop.garbage02<span></li>
+</ul>
+<h3 id="garbage-03">Garbage 03</h3>
+<p><img alt="static_prop_garbage03" src="../img/catalogue/props/static_prop_garbage03.webp" /></p>
+<ul>
+<li><strong>Blueprint ID</strong>: <span style="color:#00a6ed;">static.prop.garbage03<span></li>
+</ul>
+<h3 id="garbage-04">Garbage 04</h3>
+<p><img alt="static_prop_garbage04" src="../img/catalogue/props/static_prop_garbage04.webp" /></p>
+<ul>
+<li><strong>Blueprint ID</strong>: <span style="color:#00a6ed;">static.prop.garbage04<span></li>
+</ul>
+<h3 id="garbage-05">Garbage 05</h3>
+<p><img alt="static_prop_garbage05" src="../img/catalogue/props/static_prop_garbage05.webp" /></p>
+<ul>
+<li><strong>Blueprint ID</strong>: <span style="color:#00a6ed;">static.prop.garbage05<span></li>
+</ul>
+<h3 id="garbage-06">Garbage 06</h3>
+<p><img alt="static_prop_garbage06" src="../img/catalogue/props/static_prop_garbage06.webp" /></p>
+<ul>
+<li><strong>Blueprint ID</strong>: <span style="color:#00a6ed;">static.prop.garbage06<span></li>
+</ul>
+<h3 id="garbage-platform-01">Garbage platform 01</h3>
+<p><img alt="static_prop_platformgarbage01" src="../img/catalogue/props/static_prop_platformgarbage01.webp" /></p>
+<ul>
+<li><strong>Blueprint ID</strong>: <span style="color:#00a6ed;">static.prop.platformgarbage01<span></li>
+</ul>
+<h3 id="trash-can-01">Trash can 01</h3>
+<p><img alt="static_prop_trashcan01" src="../img/catalogue/props/static_prop_trashcan01.webp" /></p>
+<ul>
+<li><strong>Blueprint ID</strong>: <span style="color:#00a6ed;">static.prop.trashcan01<span></li>
+</ul>
+<h3 id="trash-can-02">Trash can 02</h3>
+<p><img alt="static_prop_trashcan02" src="../img/catalogue/props/static_prop_trashcan02.webp" /></p>
+<ul>
+<li><strong>Blueprint ID</strong>: <span style="color:#00a6ed;">static.prop.trashcan02<span></li>
+</ul>
+<h3 id="trash-can-03">Trash can 03</h3>
+<p><img alt="static_prop_trashcan03" src="../img/catalogue/props/static_prop_trashcan03.webp" /></p>
+<ul>
+<li><strong>Blueprint ID</strong>: <span style="color:#00a6ed;">static.prop.trashcan03<span></li>
+</ul>
+<h3 id="trash-can-04">Trash can 04</h3>
+<p><img alt="static_prop_trashcan04" src="../img/catalogue/props/static_prop_trashcan04.webp" /></p>
+<ul>
+<li><strong>Blueprint ID</strong>: <span style="color:#00a6ed;">static.prop.trashcan04<span></li>
+</ul>
+<h3 id="trash-can-05">Trash can 05</h3>
+<p><img alt="static_prop_trashcan05" src="../img/catalogue/props/static_prop_trashcan05.webp" /></p>
+<ul>
+<li><strong>Blueprint ID</strong>: <span style="color:#00a6ed;">static.prop.trashcan05<span></li>
+</ul>
+<hr />
+<h2 id="park-garden_1"><strong>Park / garden</strong></h2>
+<h3 id="bench-03">Bench 03</h3>
+<p><img alt="static_prop_bench03" src="../img/catalogue/props/static_prop_bench03.webp" /></p>
+<ul>
+<li><strong>Blueprint ID</strong>: <span style="color:#00a6ed;">static.prop.bench03<span></li>
+</ul>
+<h3 id="garden-lamp">Garden lamp</h3>
+<p><img alt="static_prop_gardenlamp" src="../img/catalogue/props/static_prop_gardenlamp.webp" /></p>
+<ul>
+<li><strong>Blueprint ID</strong>: <span style="color:#00a6ed;">static.prop.gardenlamp<span></li>
+</ul>
+<h3 id="pergola">Pergola</h3>
+<p><img alt="static_prop_pergola" src="../img/catalogue/props/static_prop_pergola.webp" /></p>
+<ul>
+<li><strong>Blueprint ID</strong>: <span style="color:#00a6ed;">static.prop.pergola<span></li>
+</ul>
+<h3 id="plastic-chair">Plastic chair</h3>
+<p><img alt="static_prop_plasticchair" src="../img/catalogue/props/static_prop_plasticchair.webp" /></p>
+<ul>
+<li><strong>Blueprint ID</strong>: <span style="color:#00a6ed;">static.prop.plasticchair<span></li>
+</ul>
+<h3 id="plastic-table">Plastic table</h3>
+<p><img alt="static_prop_plastictable" src="../img/catalogue/props/static_prop_plastictable.webp" /></p>
+<ul>
+<li><strong>Blueprint ID</strong>: <span style="color:#00a6ed;">static.prop.plastictable<span></li>
+</ul>
+<h3 id="slide">Slide</h3>
+<p><img alt="static_prop_slide" src="../img/catalogue/props/static_prop_slide.webp" /></p>
+<ul>
+<li><strong>Blueprint ID</strong>: <span style="color:#00a6ed;">static.prop.slide<span></li>
+</ul>
+<h3 id="swing">Swing</h3>
+<p><img alt="static_prop_swing" src="../img/catalogue/props/static_prop_swing.webp" /></p>
+<ul>
+<li><strong>Blueprint ID</strong>: <span style="color:#00a6ed;">static.prop.swing<span></li>
+</ul>
+<h3 id="swingcouch">Swingcouch</h3>
+<p><img alt="static_prop_swingcouch" src="../img/catalogue/props/static_prop_swingcouch.webp" /></p>
+<ul>
+<li><strong>Blueprint ID</strong>: <span style="color:#00a6ed;">static.prop.swingcouch<span></li>
+</ul>
+<h3 id="table">Table</h3>
+<p><img alt="static_prop_table" src="../img/catalogue/props/static_prop_table.webp" /></p>
+<ul>
+<li><strong>Blueprint ID</strong>: <span style="color:#00a6ed;">static.prop.table<span></li>
+</ul>
+<h3 id="trampoline">Trampoline</h3>
+<p><img alt="static_prop_trampoline" src="../img/catalogue/props/static_prop_trampoline.webp" /></p>
+<ul>
+<li><strong>Blueprint ID</strong>: <span style="color:#00a6ed;">static.prop.trampoline<span></li>
+</ul>
+<h3 id="barbeque">Barbeque</h3>
+<p><img alt="static_prop_barbeque" src="../img/catalogue/props/static_prop_barbeque.webp" /></p>
+<ul>
+<li><strong>Blueprint ID</strong>: <span style="color:#00a6ed;">static.prop.barbeque<span></li>
+</ul>
+<h3 id="clothesline">Clothesline</h3>
+<p><img alt="static_prop_clothesline" src="../img/catalogue/props/static_prop_clothesline.webp" /></p>
+<ul>
+<li><strong>Blueprint ID</strong>: <span style="color:#00a6ed;">static.prop.clothesline<span></li>
+</ul>
+<h3 id="doghouse">Doghouse</h3>
+<p><img alt="static_prop_doghouse" src="../img/catalogue/props/static_prop_doghouse.webp" /></p>
+<ul>
+<li><strong>Blueprint ID</strong>: <span style="color:#00a6ed;">static.prop.doghouse<span></li>
+</ul>
+<h3 id="gnome">Gnome</h3>
+<p><img alt="static_prop_gnome" src="../img/catalogue/props/static_prop_gnome.webp" /></p>
+<ul>
+<li><strong>Blueprint ID</strong>: <span style="color:#00a6ed;">static.prop.gnome<span></li>
+</ul>
+<h3 id="wateringcan">Wateringcan</h3>
+<p><img alt="static_prop_wateringcan" src="../img/catalogue/props/static_prop_wateringcan.webp" /></p>
+<ul>
+<li><strong>Blueprint ID</strong>: <span style="color:#00a6ed;">static.prop.wateringcan<span></li>
+</ul>
+<h3 id="haybale">Haybale</h3>
+<p><img alt="static_prop_haybale" src="../img/catalogue/props/static_prop_haybale.webp" /></p>
+<ul>
+<li><strong>Blueprint ID</strong>: <span style="color:#00a6ed;">static.prop.haybale<span></li>
+</ul>
+<h3 id="haybale-alternate">Haybale alternate</h3>
+<p><img alt="static_prop_haybalelb" src="../img/catalogue/props/static_prop_haybalelb.webp" /></p>
+<ul>
+<li><strong>Blueprint ID</strong>: <span style="color:#00a6ed;">static.prop.haybalelb<span></li>
+</ul>
+<h3 id="plantpot-01">Plantpot 01</h3>
+<p><img alt="static_prop_plantpot01" src="../img/catalogue/props/static_prop_plantpot01.webp" /></p>
+<ul>
+<li><strong>Blueprint ID</strong>: <span style="color:#00a6ed;">static.prop.plantpot01<span></li>
+</ul>
+<h3 id="plantpot-02">Plantpot 02</h3>
+<p><img alt="static_prop_plantpot02" src="../img/catalogue/props/static_prop_plantpot02.webp" /></p>
+<ul>
+<li><strong>Blueprint ID</strong>: <span style="color:#00a6ed;">static.prop.plantpot02<span></li>
+</ul>
+<h3 id="plantpot-03">Plantpot 03</h3>
+<p><img alt="static_prop_plantpot03" src="../img/catalogue/props/static_prop_plantpot03.webp" /></p>
+<ul>
+<li><strong>Blueprint ID</strong>: <span style="color:#00a6ed;">static.prop.plantpot03<span></li>
+</ul>
+<h3 id="plantpot-04">Plantpot 04</h3>
+<p><img alt="static_prop_plantpot04" src="../img/catalogue/props/static_prop_plantpot04.webp" /></p>
+<ul>
+<li><strong>Blueprint ID</strong>: <span style="color:#00a6ed;">static.prop.plantpot04<span></li>
+</ul>
+<h3 id="plantpot-05">Plantpot 05</h3>
+<p><img alt="static_prop_plantpot05" src="../img/catalogue/props/static_prop_plantpot05.webp" /></p>
+<ul>
+<li><strong>Blueprint ID</strong>: <span style="color:#00a6ed;">static.prop.plantpot05<span></li>
+</ul>
+<h3 id="plantpot-06">Plantpot 06</h3>
+<p><img alt="static_prop_plantpot06" src="../img/catalogue/props/static_prop_plantpot06.webp" /></p>
+<ul>
+<li><strong>Blueprint ID</strong>: <span style="color:#00a6ed;">static.prop.plantpot06<span></li>
+</ul>
+<h3 id="plantpot-07">Plantpot 07</h3>
+<p><img alt="static_prop_plantpot07" src="../img/catalogue/props/static_prop_plantpot07.webp" /></p>
+<ul>
+<li><strong>Blueprint ID</strong>: <span style="color:#00a6ed;">static.prop.plantpot07<span></li>
+</ul>
+<h3 id="plantpot-08">Plantpot 08</h3>
+<p><img alt="static_prop_plantpot08" src="../img/catalogue/props/static_prop_plantpot08.webp" /></p>
+<ul>
+<li><strong>Blueprint ID</strong>: <span style="color:#00a6ed;">static.prop.plantpot08<span></li>
+</ul>
+<hr />
+<h2 id="personal_1"><strong>Personal</strong></h2>
+<h3 id="plastic-bag">Plastic bag</h3>
+<p><img alt="static_prop_plasticbag" src="../img/catalogue/props/static_prop_plasticbag.webp" /></p>
+<ul>
+<li><strong>Blueprint ID</strong>: <span style="color:#00a6ed;">static.prop.plasticbag<span></li>
+</ul>
+<h3 id="shopping-bag">Shopping bag</h3>
+<p><img alt="static_prop_shoppingbag" src="../img/catalogue/props/static_prop_shoppingbag.webp" /></p>
+<ul>
+<li><strong>Blueprint ID</strong>: <span style="color:#00a6ed;">static.prop.shoppingbag<span></li>
+</ul>
+<h3 id="shopping-cart">Shopping cart</h3>
+<p><img alt="static_prop_shoppingcart" src="../img/catalogue/props/static_prop_shoppingcart.webp" /></p>
+<ul>
+<li><strong>Blueprint ID</strong>: <span style="color:#00a6ed;">static.prop.shoppingcart<span></li>
+</ul>
+<h3 id="shopping-trolley">Shopping trolley</h3>
+<p><img alt="static_prop_shoppingtrolley" src="../img/catalogue/props/static_prop_shoppingtrolley.webp" /></p>
+<ul>
+<li><strong>Blueprint ID</strong>: <span style="color:#00a6ed;">static.prop.shoppingtrolley<span></li>
+</ul>
+<h3 id="briefcase">Briefcase</h3>
+<p><img alt="static_prop_briefcase" src="../img/catalogue/props/static_prop_briefcase.webp" /></p>
+<ul>
+<li><strong>Blueprint ID</strong>: <span style="color:#00a6ed;">static.prop.briefcase<span></li>
+</ul>
+<h3 id="guitarcase">Guitarcase</h3>
+<p><img alt="static_prop_guitarcase" src="../img/catalogue/props/static_prop_guitarcase.webp" /></p>
+<ul>
+<li><strong>Blueprint ID</strong>: <span style="color:#00a6ed;">static.prop.guitarcase<span></li>
+</ul>
+<h3 id="travel-case">Travel case</h3>
+<p><img alt="static_prop_travelcase" src="../img/catalogue/props/static_prop_travelcase.webp" /></p>
+<ul>
+<li><strong>Blueprint ID</strong>: <span style="color:#00a6ed;">static.prop.travelcase<span></li>
+</ul>
+<h3 id="bike-helmet">Bike helmet</h3>
+<p><img alt="static_prop_bike helmet" src="../img/catalogue/props/static_prop_bike helmet.webp" /></p>
+<ul>
+<li><strong>Blueprint ID</strong>: <span style="color:#00a6ed;">static.prop.bike helmet<span></li>
+</ul>
+<h3 id="motor-helmet">Motor helmet</h3>
+<p><img alt="static_prop_motorhelmet" src="../img/catalogue/props/static_prop_motorhelmet.webp" /></p>
+<ul>
+<li><strong>Blueprint ID</strong>: <span style="color:#00a6ed;">static.prop.motorhelmet<span></li>
+</ul>
+<h3 id="mobile">Mobile</h3>
+<p><img alt="static_prop_mobile" src="../img/catalogue/props/static_prop_mobile.webp" /></p>
+<ul>
+<li><strong>Blueprint ID</strong>: <span style="color:#00a6ed;">static.prop.mobile<span></li>
+</ul>
+<h3 id="purse">Purse</h3>
+<p><img alt="static_prop_purse" src="../img/catalogue/props/static_prop_purse.webp" /></p>
+<ul>
+<li><strong>Blueprint ID</strong>: <span style="color:#00a6ed;">static.prop.purse<span></li>
+</ul>
+<hr />
+<h2 id="road_1"><strong>Road</strong></h2>
+<h3 id="street-barrier">Street barrier</h3>
+<p><img alt="static_prop_streetbarrier" src="../img/catalogue/props/static_prop_streetbarrier.webp" /></p>
+<ul>
+<li><strong>Blueprint ID</strong>: <span style="color:#00a6ed;">static.prop.streetbarrier<span></li>
+</ul>
+<h3 id="construction-cone">Construction cone</h3>
+<p><img alt="static_prop_constructioncone" src="../img/catalogue/props/static_prop_constructioncone.webp" /></p>
+<ul>
+<li><strong>Blueprint ID</strong>: <span style="color:#00a6ed;">static.prop.constructioncone<span></li>
+</ul>
+<h3 id="traffic-cone-01">Traffic cone 01</h3>
+<p><img alt="static_prop_trafficcone01" src="../img/catalogue/props/static_prop_trafficcone01.webp" /></p>
+<ul>
+<li><strong>Blueprint ID</strong>: <span style="color:#00a6ed;">static.prop.trafficcone01<span></li>
+</ul>
+<h3 id="traffic-cone-02">Traffic cone 02</h3>
+<p><img alt="static_prop_trafficcone02" src="../img/catalogue/props/static_prop_trafficcone02.webp" /></p>
+<ul>
+<li><strong>Blueprint ID</strong>: <span style="color:#00a6ed;">static.prop.trafficcone02<span></li>
+</ul>
+<h3 id="iron-plank">Iron plank</h3>
+<p><img alt="static_prop_ironplank" src="../img/catalogue/props/static_prop_ironplank.webp" /></p>
+<ul>
+<li><strong>Blueprint ID</strong>: <span style="color:#00a6ed;">static.prop.ironplank<span></li>
+</ul>
+<h3 id="warning-construction">Warning construction</h3>
+<p><img alt="static_prop_warningconstruction" src="../img/catalogue/props/static_prop_warningconstruction.webp" /></p>
+<ul>
+<li><strong>Blueprint ID</strong>: <span style="color:#00a6ed;">static.prop.warningconstruction<span></li>
+</ul>
+<h3 id="brokentile-01">Brokentile 01</h3>
+<p><img alt="static_prop_brokentile01" src="../img/catalogue/props/static_prop_brokentile01.webp" /></p>
+<ul>
+<li><strong>Blueprint ID</strong>: <span style="color:#00a6ed;">static.prop.brokentile01<span></li>
+</ul>
+<h3 id="brokentile-02">Brokentile 02</h3>
+<p><img alt="static_prop_brokentile02" src="../img/catalogue/props/static_prop_brokentile02.webp" /></p>
+<ul>
+<li><strong>Blueprint ID</strong>: <span style="color:#00a6ed;">static.prop.brokentile02<span></li>
+</ul>
+<h3 id="brokentile-03">Brokentile 03</h3>
+<p><img alt="static_prop_brokentile03" src="../img/catalogue/props/static_prop_brokentile03.webp" /></p>
+<ul>
+<li><strong>Blueprint ID</strong>: <span style="color:#00a6ed;">static.prop.brokentile03<span></li>
+</ul>
+<h3 id="brokentile-04">Brokentile 04</h3>
+<p><img alt="static_prop_brokentile04" src="../img/catalogue/props/static_prop_brokentile04.webp" /></p>
+<ul>
+<li><strong>Blueprint ID</strong>: <span style="color:#00a6ed;">static.prop.brokentile04<span></li>
+</ul>
+<h3 id="dirt-debris-01">Dirt / debris 01</h3>
+<p><img alt="static_prop_dirtdebris01" src="../img/catalogue/props/static_prop_dirtdebris01.webp" /></p>
+<ul>
+<li><strong>Blueprint ID</strong>: <span style="color:#00a6ed;">static.prop.dirtdebris01<span></li>
+</ul>
+<h3 id="dirt-debris-02">Dirt / debris 02</h3>
+<p><img alt="static_prop_dirtdebris02" src="../img/catalogue/props/static_prop_dirtdebris02.webp" /></p>
+<ul>
+<li><strong>Blueprint ID</strong>: <span style="color:#00a6ed;">static.prop.dirtdebris02<span></li>
+</ul>
+<h3 id="dirt-debris-03">Dirt / debris 03</h3>
+<p><img alt="static_prop_dirtdebris03" src="../img/catalogue/props/static_prop_dirtdebris03.webp" /></p>
+<ul>
+<li><strong>Blueprint ID</strong>: <span style="color:#00a6ed;">static.prop.dirtdebris03<span></li>
+</ul>
+<h3 id="traffic-warning">Traffic warning</h3>
+<p><img alt="static_prop_trafficwarning" src="../img/catalogue/props/static_prop_trafficwarning.webp" /></p>
+<ul>
+<li><strong>Blueprint ID</strong>: <span style="color:#00a6ed;">static.prop.trafficwarning<span></li>
+</ul>
+<h3 id="warning-accident">Warning accident</h3>
+<p><img alt="static_prop_warningaccident" src="../img/catalogue/props/static_prop_warningaccident.webp" /></p>
+<ul>
+<li><strong>Blueprint ID</strong>: <span style="color:#00a6ed;">static.prop.warningaccident<span></li>
+</ul>
+<hr />
+<h2 id="sidewalk_1"><strong>Sidewalk</strong></h2>
+<h3 id="chain-barrier">Chain barrier</h3>
+<p><img alt="static_prop_chainbarrier" src="../img/catalogue/props/static_prop_chainbarrier.webp" /></p>
+<ul>
+<li><strong>Blueprint ID</strong>: <span style="color:#00a6ed;">static.prop.chainbarrier<span></li>
+</ul>
+<h3 id="chain-barrier-end">Chain barrier end</h3>
+<p><img alt="static_prop_chainbarrierend" src="../img/catalogue/props/static_prop_chainbarrierend.webp" /></p>
+<ul>
+<li><strong>Blueprint ID</strong>: <span style="color:#00a6ed;">static.prop.chainbarrierend<span></li>
+</ul>
+<h3 id="bench-01">Bench 01</h3>
+<p><img alt="static_prop_bench01" src="../img/catalogue/props/static_prop_bench01.webp" /></p>
+<ul>
+<li><strong>Blueprint ID</strong>: <span style="color:#00a6ed;">static.prop.bench01<span></li>
+</ul>
+<h3 id="bench-02">Bench 02</h3>
+<p><img alt="static_prop_bench02" src="../img/catalogue/props/static_prop_bench02.webp" /></p>
+<ul>
+<li><strong>Blueprint ID</strong>: <span style="color:#00a6ed;">static.prop.bench02<span></li>
+</ul>
+<h3 id="foodcart">Foodcart</h3>
+<p><img alt="static_prop_foodcart" src="../img/catalogue/props/static_prop_foodcart.webp" /></p>
+<ul>
+<li><strong>Blueprint ID</strong>: <span style="color:#00a6ed;">static.prop.foodcart<span></li>
+</ul>
+<h3 id="kiosk-01">Kiosk 01</h3>
+<p><img alt="static_prop_kiosk_01" src="../img/catalogue/props/static_prop_kiosk_01.webp" /></p>
+<ul>
+<li><strong>Blueprint ID</strong>: <span style="color:#00a6ed;">static.prop.kiosk_01<span></li>
+</ul>
+<h3 id="fountain">Fountain</h3>
+<p><img alt="static_prop_fountain" src="../img/catalogue/props/static_prop_fountain.webp" /></p>
+<ul>
+<li><strong>Blueprint ID</strong>: <span style="color:#00a6ed;">static.prop.fountain<span></li>
+</ul>
+<h3 id="map-table">Map table</h3>
+<p><img alt="static_prop_maptable" src="../img/catalogue/props/static_prop_maptable.webp" /></p>
+<ul>
+<li><strong>Blueprint ID</strong>: <span style="color:#00a6ed;">static.prop.maptable<span></li>
+</ul>
+<h3 id="advertisement">Advertisement</h3>
+<p><img alt="static_prop_advertisement" src="../img/catalogue/props/static_prop_advertisement.webp" /></p>
+<ul>
+<li><strong>Blueprint ID</strong>: <span style="color:#00a6ed;">static.prop.advertisement<span></li>
+</ul>
+<h3 id="street-sign">Street sign</h3>
+<p><img alt="static_prop_streetsign" src="../img/catalogue/props/static_prop_streetsign.webp" /></p>
+<ul>
+<li><strong>Blueprint ID</strong>: <span style="color:#00a6ed;">static.prop.streetsign<span></li>
+</ul>
+<h3 id="street-sign-01">Street sign 01</h3>
+<p><img alt="static_prop_streetsign01" src="../img/catalogue/props/static_prop_streetsign01.webp" /></p>
+<ul>
+<li><strong>Blueprint ID</strong>: <span style="color:#00a6ed;">static.prop.streetsign01<span></li>
+</ul>
+<h3 id="street-sign-04">Street sign 04</h3>
+<p><img alt="static_prop_streetsign04" src="../img/catalogue/props/static_prop_streetsign04.webp" /></p>
+<ul>
+<li><strong>Blueprint ID</strong>: <span style="color:#00a6ed;">static.prop.streetsign04<span></li>
+</ul>
+<h3 id="bus-stop">Bus stop</h3>
+<p><img alt="static_prop_busstop" src="../img/catalogue/props/static_prop_busstop.webp" /></p>
+<ul>
+<li><strong>Blueprint ID</strong>: <span style="color:#00a6ed;">static.prop.busstop<span></li>
+</ul>
+<h3 id="bus-stopl-alternate">Bus stopl alternate</h3>
+<p><img alt="static_prop_busstoplb" src="../img/catalogue/props/static_prop_busstoplb.webp" /></p>
+<ul>
+<li><strong>Blueprint ID</strong>: <span style="color:#00a6ed;">static.prop.busstoplb<span></li>
+</ul>
+<h3 id="atm">ATM</h3>
+<p><img alt="static_prop_atm" src="../img/catalogue/props/static_prop_atm.webp" /></p>
+<ul>
+<li><strong>Blueprint ID</strong>: <span style="color:#00a6ed;">static.prop.atm<span></li>
+</ul>
+<h3 id="mailbox">Mailbox</h3>
+<p><img alt="static_prop_mailbox" src="../img/catalogue/props/static_prop_mailbox.webp" /></p>
+<ul>
+<li><strong>Blueprint ID</strong>: <span style="color:#00a6ed;">static.prop.mailbox<span></li>
+</ul>
+<h3 id="street-fountain">Street fountain</h3>
+<p><img alt="static_prop_streetfountain" src="../img/catalogue/props/static_prop_streetfountain.webp" /></p>
+<ul>
+<li><strong>Blueprint ID</strong>: <span style="color:#00a6ed;">static.prop.streetfountain<span></li>
+</ul>
+<h3 id="vending-machine">Vending machine</h3>
+<p><img alt="static_prop_vendingmachine" src="../img/catalogue/props/static_prop_vendingmachine.webp" /></p>
+<ul>
+<li><strong>Blueprint ID</strong>: <span style="color:#00a6ed;">static.prop.vendingmachine<span></li>
+</ul>
+<hr />
+<h2 id="vegetation_1"><strong>Vegetation</strong></h2>
+<h3 id="aporosa-tree">Aporosa tree</h3>
+<p><img alt="static_prop_Aporosa" src="../img/catalogue/props/static_prop_aporosa.webp" /></p>
+<ul>
+<li><strong>Blueprint ID</strong>: <span style="color:#00a6ed;">static.prop.aporosatree<span>  </li>
+</ul>
+<h3 id="coconut-palm">Coconut palm</h3>
+<p><img alt="static_prop_CoconutPalm" src="../img/catalogue/props/static_prop_coconut_palm.webp" /></p>
+<ul>
+<li><strong>Blueprint ID</strong>: <span style="color:#00a6ed;">static.prop.coconutpalm<span>  </li>
+</ul>
+<h3 id="cypress-tree">Cypress tree</h3>
+<p><img alt="static_prop_CypressTree" src="../img/catalogue/props/static_prop_cypress_tree.webp" /></p>
+<ul>
+<li><strong>Blueprint ID</strong>: <span style="color:#00a6ed;">static.prop.cypresstree<span>  </li>
+</ul>
+<hr />
+<h2 id="utility_1"><strong>Utility</strong></h2>
+<h3 id="calibrator">Calibrator</h3>
+<p><img alt="static_prop_calibrator" src="../img/catalogue/props/static_prop_calibrator.webp" /></p>
+<ul>
+<li><strong>Blueprint ID</strong>: <span style="color:#00a6ed;">static.prop.calibrator<span></li>
+</ul>
+<hr />
+              
+            </div>
+          </div><footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+        <span>
+          <a href="https://github.com/carla-simulator/carla" class="fa fa-github" style="color: #fcfcfc"> GitHub</a>
+        </span>
+    
+    
+    
+  </span>
+</div>
+    <script src="../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "..";</script>
+    <script src="../js/theme_extra.js"></script>
+    <script src="../js/theme.js"></script>
+      <script src="../extra.js"></script>
+      <script src="../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <link rel="shortcut icon" href="../img/favicon.ico" />
+    <title>Chrono - CARLA Simulator</title>
+    <link rel="stylesheet" href="../css/theme.css" />
+    <link rel="stylesheet" href="../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+        <link href="../extra.css" rel="stylesheet" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "Chrono";
+        var mkdocs_page_input_path = "tuto_G_chrono.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href=".." class="icon icon-home"> CARLA Simulator
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+      <input type="text" name="q" placeholder="搜索文档" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="..">Home</a>
+                </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Getting started</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../start_introduction/">Introduction</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../start_quickstart/">Quick start package installation</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_first_steps/">First steps</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../build_carla/">Building CARLA</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Next steps</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_content_authoring_maps/">Content authoring - maps</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_content_authoring_vehicles/">Content authoring - vehicles</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../content_authoring_props/">Content authoring - props</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">CARLA topics</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../coordinates/">Coordinates and transformations</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../foundations/">Foundations</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../core_actors/">Actors</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../core_map/">Maps</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../core_sensors/">Sensors and data</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../ts_traffic_simulation_overview/">Traffic</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../ai_rendering/">AI rendering</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../development_tutorials/">Development</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../custom_assets_tutorials/">Custom assets</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Resources</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../python_api/">Python API</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../catalogue/">Catalogue</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../ref_cpp/">C++ reference</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../bp_library/">Blueprint library</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tutorials/">Tutorials</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../ext_docs/">Extended documentation</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../download/">Downloads</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">CARLA Ecosystem</span></p>
+              <ul class="current">
+                  <li class="toctree-l1"><a class="reference internal" href="../ecosys_ansys/">ANSYS</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_G_rllib_integration/">AWS</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_G_carsim_integration/">CarSIM</a>
+                  </li>
+                  <li class="toctree-l1 current"><a class="reference internal current" href="#">Chrono</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#project-chrono">Project Chrono</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#using-chrono-with-carla">Using Chrono with CARLA</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#configuring-the-server">Configuring the server</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#enabling-chrono-physics">Enabling Chrono physics</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#limitations">Limitations</a>
+    </li>
+        </ul>
+    </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../large_map_roadrunner/">MathWorks</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../inverted_ai/">Inverted AI</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../nvidia/">NVIDIA</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../adv_opendrive/">ASAM OpenDRIVE</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../adv_ptv/">PTV Vissim</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../adv_rss/">RSS</a>
+                  </li>
+                  <li class="toctree-l1"><a class="" href="https://carla.readthedocs.io/projects/ros-bridge/en/latest/">ROS</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_G_scenic/">Scenic</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../adv_sumo/">SUMO</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../ecosys_synkrotron/">SYNKROTRON</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Contributing</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../cont_contribution_guidelines/">Guidelines</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../cont_coding_standard/">Coding standards</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../cont_doc_standard/">Documentation standard</a>
+                  </li>
+                  <li class="toctree-l1"><a class="" href=".."></a>
+                  </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="..">CARLA Simulator</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href=".." class="icon icon-home" aria-label="Docs"></a></li>
+          <li class="breadcrumb-item">CARLA Ecosystem</li>
+      <li class="breadcrumb-item active">Chrono</li>
+    <li class="wy-breadcrumbs-aside">
+          <a href="https://github.com/carla-simulator/carla/edit/master/Docs/tuto_G_chrono.md" class="icon icon-github"> 在 GitHub 上编辑</a>
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="chrono-integration">Chrono Integration</h1>
+<p>This guide outlines what Chrono is, how to use it in CARLA, and the limitations involved in the integration.</p>
+<ul>
+<li><a href="#project-chrono"><strong>Project Chrono</strong></a></li>
+<li><a href="#using-chrono-on-carla"><strong>Using Chrono on CARLA</strong></a><ul>
+<li><a href="#configuring-the-server">Configuring the server</a></li>
+<li><a href="#enabling-chrono-physics">Enabling Chrono physics</a></li>
+</ul>
+</li>
+<li><a href="#limitations"><strong>Limitations</strong></a></li>
+</ul>
+<hr />
+<h2 id="project-chrono">Project Chrono</h2>
+<p><a href="https://projectchrono.org/">Project Chrono</a> is an open-source, multi-physics simulation engine that provides highly realistic vehicle dynamics using a template-based approach. The integration in CARLA allows users to utilize Chrono templates to simulate vehicle dynamics while navigating a map.</p>
+<hr />
+<h2 id="using-chrono-with-carla">Using Chrono with CARLA</h2>
+<p>To use the Chrono integration for vehicle Physics in CARLA, you must first build or launch the server with a build flag and then use the PythonAPI to enable Chrono for a vehicle spawned in the CARLA simulation.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The CARLA-Chrono integration is compatible with <strong>Chrono version 6</strong>. Ensure that your Chrono installation is compatible before starting. </p>
+</div>
+<h3 id="configuring-the-server">Configuring the server</h3>
+<p>Chrono will only work if the CARLA server is compiled with the Chrono tag.</p>
+<p><strong>In the build from source version of CARLA</strong>, run the following command to start the server:</p>
+<pre><code class="language-sh">make launch ARGS=&quot;--chrono&quot;
+</code></pre>
+<p>The above command pulls the source code for version 6 from the Project Chrono repository. If you wish to use your own Chrono installation, use the following command to specify the path to your Chrono source code:</p>
+<pre><code class="language-sh">make launch ARGS=&quot;--chrono --chrono-path &lt;PATH&gt;&quot;
+</code></pre>
+<hr />
+<h3 id="enabling-chrono-physics">Enabling Chrono physics</h3>
+<p>Chrono physics is enabled using the <code>enable_chrono_physics</code> method available through the <a href="../python_api/#carlaactor">Actor</a> class. As well as values for substeps and substep delta time, it requires three template files and a base path to locate those files:</p>
+<ul>
+<li><strong><code>base_path</code>:</strong> Path of the directory which contains the template files. This is necessary to ensure that auxiliary files referenced from the template files have a common base path from which to search.</li>
+<li><strong><code>vehicle_json</code>:</strong> Path of the vehicle template file relative to the <code>base_path</code>.</li>
+<li><strong><code>tire_json</code>:</strong> Path of the tire template file relative to the <code>base_path</code>.</li>
+<li><strong><code>powertrain_json</code>:</strong> Path of the powertrain template file relative to the <code>base_path</code>.</li>
+</ul>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>Double-check your paths. Incorrect or missing paths can cause Unreal Engine to crash.</p>
+</div>
+<p>A default implementation for a sedan is provided in <code>Co-Simulation/Chrono/Vehicles/sedan/</code> but you can find a variety of example template files for different vehicles available in <code>Build/chrono-install/share/chrono/data/vehicle</code>. Read the Project Chrono <a href="https://api.projectchrono.org/manual_vehicle.html">documentation</a> to find out more about their vehicle examples and how to create templates.</p>
+<p>See below for an example of how to enable Chrono physics:</p>
+<pre><code class="language-python">    # Spawn your vehicle
+    vehicle = world.spawn_actor(bp, spawn_point)
+
+    # Set the base path
+    base_path = &quot;/path/to/carla/Co-Simulation/Chrono/Vehicles/&quot;
+
+    # Set the template files
+
+    vehicle_json = &quot;sedan/vehicle/Sedan_Vehicle.json&quot;
+    powertrain_json = &quot;sedan/powertrain/Sedan_SimpleMapPowertrain.json&quot;
+    tire_json = &quot;sedan/tire/Sedan_TMeasyTire.json&quot;
+
+    # Enable Chrono physics
+
+    vehicle.enable_chrono_physics(5000, 0.002, vehicle_json, powertrain_json, tire_json, base_path)
+</code></pre>
+<p>You can try the Chrono physics integration using the example script <code>manual_control_chrono.py</code> found in <code>PythonAPI/examples</code>. After running the script, press <code>Ctrl + o</code> to enable Chrono.</p>
+<hr />
+<h3 id="limitations">Limitations</h3>
+<p>This integration does not support collisions. <strong>When a collision occurs, the vehicle will revert to CARLA default physics.</strong></p>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="../tuto_G_carsim_integration/" class="btn btn-neutral float-left" title="CarSIM"><span class="icon icon-circle-arrow-left"></span> 前一页</a>
+        <a href="../large_map_roadrunner/" class="btn btn-neutral float-right" title="MathWorks">后一页 <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+        <span>
+          <a href="https://github.com/carla-simulator/carla" class="fa fa-github" style="color: #fcfcfc"> GitHub</a>
+        </span>
+    
+    
+      <span><a href="../tuto_G_carsim_integration/" style="color: #fcfcfc">&laquo; 前一页</a></span>
+    
+    
+      <span><a href="../large_map_roadrunner/" style="color: #fcfcfc">后一页 &raquo;</a></span>
+    
+  </span>
+</div>
+    <script src="../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "..";</script>
+    <script src="../js/theme_extra.js"></script>
+    <script src="../js/theme.js"></script>
+      <script src="../extra.js"></script>
+      <script src="../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>

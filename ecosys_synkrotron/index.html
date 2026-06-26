@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <link rel="shortcut icon" href="../img/favicon.ico" />
+    <title>SYNKROTRON - CARLA Simulator</title>
+    <link rel="stylesheet" href="../css/theme.css" />
+    <link rel="stylesheet" href="../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+        <link href="../extra.css" rel="stylesheet" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "SYNKROTRON";
+        var mkdocs_page_input_path = "ecosys_synkrotron.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href=".." class="icon icon-home"> CARLA Simulator
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+      <input type="text" name="q" placeholder="搜索文档" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="..">Home</a>
+                </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Getting started</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../start_introduction/">Introduction</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../start_quickstart/">Quick start package installation</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_first_steps/">First steps</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../build_carla/">Building CARLA</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Next steps</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_content_authoring_maps/">Content authoring - maps</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_content_authoring_vehicles/">Content authoring - vehicles</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../content_authoring_props/">Content authoring - props</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">CARLA topics</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../coordinates/">Coordinates and transformations</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../foundations/">Foundations</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../core_actors/">Actors</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../core_map/">Maps</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../core_sensors/">Sensors and data</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../ts_traffic_simulation_overview/">Traffic</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../ai_rendering/">AI rendering</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../development_tutorials/">Development</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../custom_assets_tutorials/">Custom assets</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Resources</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../python_api/">Python API</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../catalogue/">Catalogue</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../ref_cpp/">C++ reference</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../bp_library/">Blueprint library</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tutorials/">Tutorials</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../ext_docs/">Extended documentation</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../download/">Downloads</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">CARLA Ecosystem</span></p>
+              <ul class="current">
+                  <li class="toctree-l1"><a class="reference internal" href="../ecosys_ansys/">ANSYS</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_G_rllib_integration/">AWS</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_G_carsim_integration/">CarSIM</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_G_chrono/">Chrono</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../large_map_roadrunner/">MathWorks</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../inverted_ai/">Inverted AI</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../nvidia/">NVIDIA</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../adv_opendrive/">ASAM OpenDRIVE</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../adv_ptv/">PTV Vissim</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../adv_rss/">RSS</a>
+                  </li>
+                  <li class="toctree-l1"><a class="" href="https://carla.readthedocs.io/projects/ros-bridge/en/latest/">ROS</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_G_scenic/">Scenic</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../adv_sumo/">SUMO</a>
+                  </li>
+                  <li class="toctree-l1 current"><a class="reference internal current" href="#">SYNKROTRON</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#oasis-simulation-platform">OASIS simulation platform</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#oasis-data-platform">OASIS data platform</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#synkrotron-tools-and-services">Synkrotron Tools and Services</a>
+    </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Contributing</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../cont_contribution_guidelines/">Guidelines</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../cont_coding_standard/">Coding standards</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../cont_doc_standard/">Documentation standard</a>
+                  </li>
+                  <li class="toctree-l1"><a class="" href=".."></a>
+                  </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="..">CARLA Simulator</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href=".." class="icon icon-home" aria-label="Docs"></a></li>
+          <li class="breadcrumb-item">CARLA Ecosystem</li>
+      <li class="breadcrumb-item active">SYNKROTRON</li>
+    <li class="wy-breadcrumbs-aside">
+          <a href="https://github.com/carla-simulator/carla/edit/master/Docs/ecosys_synkrotron.md" class="icon icon-github"> 在 GitHub 上编辑</a>
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <p><img src="../img/synkrotron.jpg" alt= “synkrotron_logo” style="display: block; margin-left: auto; margin-right: auto; width: 70%;"></p>
+<h1 id="synkrotron-simulation-solutions">Synkrotron simulation solutions</h1>
+<p>Synkrotron provides advanced solutions for autonomous driving  simulation built on top of CARLA. Synkrotron's product suite OASIS supports ​a broad range of applications including scenario generation, sensor modelling,  ​traffic simulation and data management. Based on a flexible architecture OASIS ​can be deployed on the cloud at scale, or in a developer's local environment for prototyping.</p>
+<hr />
+<p><img src="../img/oasis_logo.png" alt= “synkrotron_logo” style="display: block; margin-left: auto; margin-right: auto; width: 70%;"></p>
+<div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; max-width: 100%; height: auto;">
+    <iframe src="https://www.youtube.com/embed/YRI67aar3S0" frameborder="0" allowfullscreen style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;"></iframe>
+</div>
+
+<p><br></p>
+<h2 id="oasis-simulation-platform"><a href="https://www.synkrotron.ai/sim.html"><strong>OASIS simulation platform</strong></a></h2>
+<p>OASIS Sim is a fully-fledged, scalable simulation platform with CARLA at its core. It supports the complete life-cycle of AD simulation: </p>
+<ul>
+<li>scenario import &amp; editing with a graphical user interface</li>
+<li>sensor configuration</li>
+<li>distributed task management</li>
+<li>diagnosis through rich simulation data and logs </li>
+</ul>
+<p>Both cloud and local deployment are available through containerized ​packaging. Comprehensive APIs are exposed for integration with DevOps too. You can <a href="https://synkrotron.ai/contact.html">request a trial</a> from Synkrotron.</p>
+<h2 id="oasis-data-platform"><a href="https://www.synkrotron.ai/data.html"><strong>OASIS data platform</strong></a></h2>
+<p>OASIS Data is a platform for managing the high volume of data flowing through the autonomous driving R&amp;D pipeline. Data-driven development of AD systems are made possible with OASIS Data via the following functionalities:</p>
+<ul>
+<li>data acquisition and anonymization </li>
+<li>multi-stage filtering based on structured data (CAN bus signals, active-safety triggering, etc.) and unstructured data (sensor readings)</li>
+<li>information mapping and environment reconstruction with LIDAR and/or vision-only strategy</li>
+<li>auto-labeling of data with pre-trained perception models</li>
+<li>scenario tagging and reconstruction with OpenX format output</li>
+</ul>
+<p>The processed data from the platform supports downstream applications such as scenario re-simulation with Oasis Sim, retraining of perception models with new labeled data and operational fleet management.</p>
+<h2 id="synkrotron-tools-and-services"><strong>Synkrotron Tools and Services</strong></h2>
+<p>In addition to the complete solutions introduced above, Synkrotron also offers the following developer tools and services to facilitate AD simulation development.</p>
+<table>
+<thead>
+<tr>
+<th>Product/service</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Sensor model</strong>: fish-eye camera</td>
+<td>Fisheye camera with configurable distortion parameters</td>
+</tr>
+<tr>
+<td><strong>Sensor model</strong>: LIDAR</td>
+<td>Advanced lidar model with configurable shutter mode and material reflections</td>
+</tr>
+<tr>
+<td><strong>SOTIF</strong> scenario generation tool</td>
+<td>Given the ODD description from user, identify important scenario elements and generate critical scenarios to help uncover unknown unsafe domains of the autonomous driving systems, achieved by using an ontology-based method combined with iterative optimizations against evaluations in Carla</td>
+</tr>
+<tr>
+<td><strong>Map creation</strong></td>
+<td>Given lidar scan data (can also provide road-test data collection equipments &amp; service), create HD maps for the user and output OpenDrive files which can be loaded in Carla for PnC tests or logsim</td>
+</tr>
+<tr>
+<td><strong>Sensor model</strong>: physics models for camera</td>
+<td>Supports CMOS simulations and outputs 12bit raw sensor data, for customers who develop ISP algorithms or who has ECUs that need raw data from camera instead of RGBs</td>
+</tr>
+<tr>
+<td><strong>Static scene creation</strong></td>
+<td>Combined HD mapping, 3D asset development and procedural modeling to create 3D static scenes/digital twins for users</td>
+</tr>
+<tr>
+<td><strong>Dynamic scenario reconstruction</strong></td>
+<td>On top of static scenes, also detect and track various traffic participants from user's road-test data; the recovered trajectories/behaviors are turned into OpenScenario 1.0 files and can be re-simulated in CARLA</td>
+</tr>
+</tbody>
+</table>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="../adv_sumo/" class="btn btn-neutral float-left" title="SUMO"><span class="icon icon-circle-arrow-left"></span> 前一页</a>
+        <a href="../cont_contribution_guidelines/" class="btn btn-neutral float-right" title="Guidelines">后一页 <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+        <span>
+          <a href="https://github.com/carla-simulator/carla" class="fa fa-github" style="color: #fcfcfc"> GitHub</a>
+        </span>
+    
+    
+      <span><a href="../adv_sumo/" style="color: #fcfcfc">&laquo; 前一页</a></span>
+    
+    
+      <span><a href="../cont_contribution_guidelines/" style="color: #fcfcfc">后一页 &raquo;</a></span>
+    
+  </span>
+</div>
+    <script src="../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "..";</script>
+    <script src="../js/theme_extra.js"></script>
+    <script src="../js/theme.js"></script>
+      <script src="../extra.js"></script>
+      <script src="../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>

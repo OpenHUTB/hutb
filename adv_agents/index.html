@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <link rel="shortcut icon" href="../img/favicon.ico" />
+    <title>CARLA Agents - CARLA Simulator</title>
+    <link rel="stylesheet" href="../css/theme.css" />
+    <link rel="stylesheet" href="../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+        <link href="../extra.css" rel="stylesheet" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "CARLA Agents";
+        var mkdocs_page_input_path = "adv_agents.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href=".." class="icon icon-home"> CARLA Simulator
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+      <input type="text" name="q" placeholder="搜索文档" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="..">Home</a>
+                </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Getting started</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../start_introduction/">Introduction</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../start_quickstart/">Quick start package installation</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_first_steps/">First steps</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../build_carla/">Building CARLA</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Next steps</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_content_authoring_maps/">Content authoring - maps</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_content_authoring_vehicles/">Content authoring - vehicles</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../content_authoring_props/">Content authoring - props</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">CARLA topics</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../coordinates/">Coordinates and transformations</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../foundations/">Foundations</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../core_actors/">Actors</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../core_map/">Maps</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../core_sensors/">Sensors and data</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../ts_traffic_simulation_overview/">Traffic</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../ai_rendering/">AI rendering</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../development_tutorials/">Development</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../custom_assets_tutorials/">Custom assets</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Resources</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../python_api/">Python API</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../catalogue/">Catalogue</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../ref_cpp/">C++ reference</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../bp_library/">Blueprint library</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tutorials/">Tutorials</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../ext_docs/">Extended documentation</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../download/">Downloads</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">CARLA Ecosystem</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../ecosys_ansys/">ANSYS</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_G_rllib_integration/">AWS</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_G_carsim_integration/">CarSIM</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_G_chrono/">Chrono</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../large_map_roadrunner/">MathWorks</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../inverted_ai/">Inverted AI</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../nvidia/">NVIDIA</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../adv_opendrive/">ASAM OpenDRIVE</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../adv_ptv/">PTV Vissim</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../adv_rss/">RSS</a>
+                  </li>
+                  <li class="toctree-l1"><a class="" href="https://carla.readthedocs.io/projects/ros-bridge/en/latest/">ROS</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_G_scenic/">Scenic</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../adv_sumo/">SUMO</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../ecosys_synkrotron/">SYNKROTRON</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Contributing</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../cont_contribution_guidelines/">Guidelines</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../cont_coding_standard/">Coding standards</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../cont_doc_standard/">Documentation standard</a>
+                  </li>
+                  <li class="toctree-l1"><a class="" href=".."></a>
+                  </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="..">CARLA Simulator</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href=".." class="icon icon-home" aria-label="Docs"></a></li>
+      <li class="breadcrumb-item active">CARLA Agents</li>
+    <li class="wy-breadcrumbs-aside">
+          <a href="https://github.com/carla-simulator/carla/edit/master/Docs/adv_agents.md" class="icon icon-github"> 在 GitHub 上编辑</a>
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="carla-agents">CARLA Agents</h1>
+<p>CARLA Agent scripts allow a vehicle to either follow a random, endless route or take the shortest route to a given destination. Agents obey traffic lights and react to other obstacles in the road. There are three agent types available. Parameters such as target speed, braking distance, tailgating behavior, and more can be modified. Actor classes can be modified or used as a base class to create custom agents according to the user's needs.</p>
+<ul>
+<li><a href="#overview-of-agent-scripts"><strong>Overview of agent scripts</strong></a><ul>
+<li><a href="#planning-and-control">Planning and control</a></li>
+<li><a href="#agent-behaviors">Agent behaviors</a></li>
+</ul>
+</li>
+<li><a href="#implement-an-agent"><strong>Implement an agent</strong></a></li>
+<li><a href="#behavior-types"><strong>Behavior types</strong></a><ul>
+<li><a href="#create-your-own-behavior-type">Create your own behavior type</a></li>
+</ul>
+</li>
+<li><a href="#creating-an-agent"><strong>Creating an agent</strong></a></li>
+</ul>
+<hr />
+<h2 id="overview-of-agent-scripts">Overview of agent scripts</h2>
+<p>The main scripts involved in the CARLA Agents are found in <code>PythonAPI/carla/agents/navigation</code>. They fall into two categories; <strong>planning and control</strong> and <strong>agent behaviors</strong>.</p>
+<h3 id="planning-and-control">Planning and control</h3>
+<ul>
+<li><strong><code>controller.py</code>:</strong> Combines longitudinal and lateral PID controllers into a single class, <strong>VehiclePIDController</strong>, used for low-level control of vehicles from the client side of CARLA.</li>
+<li><strong><code>global_route_planner.py</code>:</strong> Gets detailed topology from the CARLA server to build a graph representation of the world map, providing waypoint and road option information for the <strong>Local Planner</strong>.</li>
+<li><strong><code>local_planner.py</code>:</strong> Follows waypoints based on control inputs from the <strong>VehiclePIDController</strong>. Waypoints can either be provided by the <strong>Global Route Planner</strong> or be calculated dynamically, choosing random paths at junctions, similar to the <a href="../adv_traffic_manager/">Traffic Manager</a>.</li>
+</ul>
+<h3 id="agent-behaviors">Agent behaviors</h3>
+<ul>
+<li><strong><code>basic_agent.py</code>:</strong> Contains an agent base class that implements a <strong>Basic Agent</strong> that roams around the map or reaches a target destination in the shortest distance possible, avoiding other vehicles, responding to traffic lights but ignoring stop signs.</li>
+<li><strong><code>behavior_agent.py</code>:</strong> Contains a class that implements a more complex <strong>Behavior Agent</strong> that can reach a target destination in the shortest distance possible, following traffic lights, signs, and speed limits while tailgating other vehicles. There are three predefined types that condition how the agent behaves.</li>
+<li><strong><code>behavior_types.py</code>:</strong> Contains the parameters for the behavior types that condition the <strong>Behavior Agent</strong>; Cautious, Normal, and Aggressive.</li>
+</ul>
+<hr />
+<h2 id="implement-an-agent">Implement an agent</h2>
+<p>This section will explain how to use the example CARLA Agent classes in your own scripts. At the end of the section, you will find out how to run an example script that shows the different agents in action.</p>
+<p><strong>1.</strong> Import the agent class you want to use:</p>
+<pre><code class="language-py"># To import a basic agent
+from agents.navigation.basic_agent import BasicAgent
+
+# To import a behavior agent
+from agents.navigation.behavior_agent import BehaviorAgent
+</code></pre>
+<p><strong>2.</strong> Any vehicle can be turned into an agent. <a href="../core_actors/#spawning">Spawn a vehicle</a> and pass it as an argument to the agent class to instantiate it:</p>
+<pre><code class="language-py"># To start a basic agent
+agent = BasicAgent(vehicle)
+
+# To start a behavior agent with an aggressive profile
+agent = BehaviorAgent(vehicle, behavior='aggressive')
+</code></pre>
+<p>Read more about behavior types and how to configure your own in the section <a href="#behavior-types"><strong>behavior types</strong></a>.</p>
+<p><strong>3.</strong> You can set a destination for the agent to travel to. If you don't set a destination for the agent, it will roam endlessly around the map. To set the destination, provide the agent with a <a href="../python_api/#carlalocation">location</a>:</p>
+<pre><code class="language-py">destination = random.choice(spawn_points).location
+agent.set_destination(destination)
+</code></pre>
+<p><strong>4.</strong> Vehicle controls and behaviors are applied during a navigation step. During each step, the <strong>Basic Agent</strong> will apply a vehicle control and react to any vehicles or traffic lights by performing an emergency stop. The <strong>Behavior Agent</strong> will react to traffic lights, avoid pedestrians, follow cars and navigate intersections according to the behavior type you applied:</p>
+<pre><code class="language-py">while True:
+    vehicle.apply_control(agent.run_step())
+</code></pre>
+<p><strong>5.</strong> You can check if the agent has finished its trajectory and perform an action when that happens. The following snippet will end the simulation once your vehicle has reached its destination:</p>
+<pre><code class="language-py">while True:
+    if agent.done():
+        print(&quot;The target has been reached, stopping the simulation&quot;)
+        break
+
+    vehicle.apply_control(agent.run_step())
+</code></pre>
+<p><strong>6.</strong> Instead of finishing the simulation when an agent has reached its target destination, a new, random route can be generated for the agent to follow:</p>
+<pre><code class="language-py">while True:
+    if agent.done():
+        agent.set_destination(random.choice(spawn_points).location)
+        print(&quot;The target has been reached, searching for another target&quot;)
+
+    vehicle.apply_control(agent.run_step())
+</code></pre>
+<p>The <strong>Basic Agent</strong> provides a few methods to manipulate agent behavior or program routes to follow:</p>
+<ul>
+<li><strong><code>set_target_speed(speed)</code>:</strong> Set the target speed in km/h</li>
+<li><strong><code>follow_speed_limits(value=True)</code>:</strong> Sets the agent to follow speed limits.</li>
+<li><strong><code>set_destination(end_location, start_location=None)</code>:</strong> The agent will travel from a specific start location to an end location via the shortest route possible. If no start location is provided, it will use the current agent location.</li>
+<li><strong><code>set_global_plan(plan, stop_waypoint_creation=True, clean_queue=True)</code>:</strong> Adds a specific plan for the agent to follow. The plan argument should consist of a list of <code>[carla.Waypoint, RoadOption]</code> that will be the path the agent needs to take. <code>stop_waypoint_creation</code> will prevent waypoints from being automatically created once the path has run its course. <code>clean_queue</code> will reset the agent's current plan.</li>
+<li><strong><code>trace_route(start_waypoint, end_waypoint)</code>:</strong> Gets the shortest distance between two waypoints from the Global Route Planner and returns the path as a list of <code>[carla.Waypoint, RoadOption]</code> for the agent to follow.</li>
+<li><strong><code>ignore_traffic_lights(active=True)</code>:</strong> Set the agent to ignore or obey traffic lights.</li>
+<li><strong><code>ignore_stop_signs(active=True)</code>:</strong> Set the agent to ignore or obey stop signs.</li>
+<li><strong><code>ignore_vehicles(active=True)</code>:</strong> Set the agent to ignore or react to other vehicles.</li>
+</ul>
+<p>The <code>automatic_control.py</code> script, found in <code>PythonAPI/examples</code>, is an example of the Basic and Behavior Agents in action. To try the script, navigate to the example directory and run the following command:</p>
+<pre><code class="language-sh"># To run with a basic agent
+python3 automatic_control.py --agent=Basic
+
+# To run with a behavior agent
+python3 automatic_control.py --agent=Behavior --behavior=aggressive
+</code></pre>
+<hr />
+<h2 id="behavior-types">Behavior types</h2>
+<p>Behavior types for the behavior agent are defined in <code>behavior_types.py</code>. The three pre-configured profiles are <strong>'cautious'</strong>, <strong>'normal'</strong>, and <strong>'aggressive'</strong>. You can use the set profiles, modify them or create your own. The following variables can be adjusted:</p>
+<ul>
+<li><strong><code>max_speed</code></strong>: The maximum speed in km/h your vehicle will be able to reach.</li>
+<li><strong><code>speed_lim_dist</code></strong>: Value in km/h that defines how far your vehicle's target speed will be from the current speed limit (e.g., if the speed limit is 30km/h and <code>speed_lim_dist</code> is 10km/h, then the target speed will be 20km/h)</li>
+<li><strong><code>speed_decrease</code></strong>: How quickly in km/h your vehicle will slow down when approaching a slower vehicle ahead.</li>
+<li><strong><code>safety_time</code></strong>: Time-to-collision; an approximation of the time it will take for your vehicle to collide with one in front if it brakes suddenly.</li>
+<li><strong><code>min_proximity_threshold</code></strong>: The minimum distance in meters from another vehicle or pedestrian before your vehicle performs a maneuver such as avoidance, or tailgating.</li>
+<li><strong><code>braking_distance</code></strong>: The distance from a pedestrian or vehicle at which your vehicle will perform an emergency stop.</li>
+<li><strong><code>tailgate_counter</code></strong>: A counter to avoid tailgating too quickly after the last tailgate.</li>
+</ul>
+<h2 id="create-your-own-behavior-type">Create your own behavior type</h2>
+<p>To create your own behavior type:</p>
+<p><strong>1.</strong> Create the class for your behavior type in <code>behavior_types.py</code>:</p>
+<pre><code class="language-py">class ProfileName(object):
+    # complete value definitions
+</code></pre>
+<p><strong>2.</strong> Define and instantiate your behavior type in the <code>behavior_agent.py</code> script:</p>
+<pre><code class="language-py"># Parameters for agent behavior
+if behavior == 'cautious':
+    self._behavior = Cautious()
+
+elif behavior == 'normal':
+    self._behavior = Normal()
+
+elif behavior == 'aggressive':
+    self._behavior = Aggressive()
+
+elif behavior == '&lt;type_name&gt;':
+    self._behavior = &lt;TypeName&gt;()
+</code></pre>
+<hr />
+<h2 id="creating-an-agent">Creating an agent</h2>
+<p>The CARLA Agents are just examples of the kind of agents users can run. Users can build upon the <strong>Basic Agent</strong> to create their own agents. The possibilities are endless. There are only two elements that are necessary for every agent, <strong>the initialization</strong> and the <strong>run step</strong>.</p>
+<p>Find an example of a minimal layout of a custom agent below:</p>
+<pre><code class="language-py">import carla
+
+from agents.navigation.basic_agent import BasicAgent
+
+class CustomAgent(BasicAgent):
+    def __init__(self, vehicle, target_speed=20, debug=False):
+        &quot;&quot;&quot;
+        :param vehicle: actor to apply to local planner logic onto
+        :param target_speed: speed (in Km/h) at which the vehicle will move
+        &quot;&quot;&quot;
+        super().__init__(target_speed, debug)
+
+    def run_step(self, debug=False):
+        &quot;&quot;&quot;
+        Execute one step of navigation.
+        :return: carla.VehicleControl
+        &quot;&quot;&quot;
+        # Actions to take during each simulation step
+        control = carla.VehicleControl()
+        return control
+</code></pre>
+<p>Check out the <code>basic_agent.py</code> and <code>behavior_agent.py</code> scripts to explore their structure and functions for more ideas on how to create your own.</p>
+<hr />
+<p>You can explore the provided agent scripts, expand upon them or use them as a baseline to create your own. If you have any questions about the agents, feel free to post in the <a href="https://github.com/carla-simulator/carla/discussions/">forum</a>.</p>
+              
+            </div>
+          </div><footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+        <span>
+          <a href="https://github.com/carla-simulator/carla" class="fa fa-github" style="color: #fcfcfc"> GitHub</a>
+        </span>
+    
+    
+    
+  </span>
+</div>
+    <script src="../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "..";</script>
+    <script src="../js/theme_extra.js"></script>
+    <script src="../js/theme.js"></script>
+      <script src="../extra.js"></script>
+      <script src="../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>

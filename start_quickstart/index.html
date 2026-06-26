@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <link rel="shortcut icon" href="../img/favicon.ico" />
+    <title>Quick start package installation - CARLA Simulator</title>
+    <link rel="stylesheet" href="../css/theme.css" />
+    <link rel="stylesheet" href="../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+        <link href="../extra.css" rel="stylesheet" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "Quick start package installation";
+        var mkdocs_page_input_path = "start_quickstart.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href=".." class="icon icon-home"> CARLA Simulator
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+      <input type="text" name="q" placeholder="搜索文档" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="..">Home</a>
+                </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Getting started</span></p>
+              <ul class="current">
+                  <li class="toctree-l1"><a class="reference internal" href="../start_introduction/">Introduction</a>
+                  </li>
+                  <li class="toctree-l1 current"><a class="reference internal current" href="#">Quick start package installation</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#before-you-begin">Before you begin</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#windows">Windows</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#linux">Linux</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#carla-installation">CARLA installation</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#a-debian-carla-installation">A. Debian CARLA installation</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#b-package-installation">B. Package installation</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#import-additional-assets">Import additional assets</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#install-client-library">Install client library</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#carla-versions-prior-to-0912">CARLA versions prior to 0.9.12</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#carla-0912">CARLA 0.9.12+</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#running-carla">Running CARLA</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#command-line-options">Command-line options</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#updating-carla">Updating CARLA</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#follow-up">Follow-up</a>
+    </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_first_steps/">First steps</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../build_carla/">Building CARLA</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Next steps</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_content_authoring_maps/">Content authoring - maps</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_content_authoring_vehicles/">Content authoring - vehicles</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../content_authoring_props/">Content authoring - props</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">CARLA topics</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../coordinates/">Coordinates and transformations</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../foundations/">Foundations</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../core_actors/">Actors</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../core_map/">Maps</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../core_sensors/">Sensors and data</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../ts_traffic_simulation_overview/">Traffic</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../ai_rendering/">AI rendering</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../development_tutorials/">Development</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../custom_assets_tutorials/">Custom assets</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Resources</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../python_api/">Python API</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../catalogue/">Catalogue</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../ref_cpp/">C++ reference</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../bp_library/">Blueprint library</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tutorials/">Tutorials</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../ext_docs/">Extended documentation</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../download/">Downloads</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">CARLA Ecosystem</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../ecosys_ansys/">ANSYS</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_G_rllib_integration/">AWS</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_G_carsim_integration/">CarSIM</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_G_chrono/">Chrono</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../large_map_roadrunner/">MathWorks</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../inverted_ai/">Inverted AI</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../nvidia/">NVIDIA</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../adv_opendrive/">ASAM OpenDRIVE</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../adv_ptv/">PTV Vissim</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../adv_rss/">RSS</a>
+                  </li>
+                  <li class="toctree-l1"><a class="" href="https://carla.readthedocs.io/projects/ros-bridge/en/latest/">ROS</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_G_scenic/">Scenic</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../adv_sumo/">SUMO</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../ecosys_synkrotron/">SYNKROTRON</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Contributing</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../cont_contribution_guidelines/">Guidelines</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../cont_coding_standard/">Coding standards</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../cont_doc_standard/">Documentation standard</a>
+                  </li>
+                  <li class="toctree-l1"><a class="" href=".."></a>
+                  </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="..">CARLA Simulator</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href=".." class="icon icon-home" aria-label="Docs"></a></li>
+          <li class="breadcrumb-item">Getting started</li>
+      <li class="breadcrumb-item active">Quick start package installation</li>
+    <li class="wy-breadcrumbs-aside">
+          <a href="https://github.com/carla-simulator/carla/edit/master/Docs/start_quickstart.md" class="icon icon-github"> 在 GitHub 上编辑</a>
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="quick-start-package-installation">Quick start package installation</h1>
+<p>This guide shows how to download and install the packaged version of CARLA. The package includes the CARLA server and two options for the client library. There are additional assets that can be downloaded and imported into the package. Advanced customization and development options that require use of the Unreal Engine editor are not available but these can be accessed by using the build version of CARLA for either <a href="../build_windows/">Windows</a> or <a href="../build_linux/">Linux</a>.</p>
+<ul>
+<li><strong><a href="#before-you-begin">Before you begin</a></strong>  </li>
+<li><strong><a href="#carla-installation">CARLA installation</a></strong>  <ul>
+<li><a href="#a-debian-carla-installation">A. Debian CARLA installation</a>  </li>
+<li><a href="#b-package-installation">B. Package installation</a>  </li>
+</ul>
+</li>
+<li><strong><a href="#import-additional-assets">Import additional assets</a></strong>  </li>
+<li><strong><a href="#install-client-library">Install client library</a></strong><ul>
+<li><a href="#carla-versions-prior-to-0912">CARLA versions prior to 0.9.12</a></li>
+<li><a href="#carla-0912">CARLA 0.9.12+</a></li>
+</ul>
+</li>
+<li><strong><a href="#running-carla">Running CARLA</a></strong>  <ul>
+<li><a href="#command-line-options">Command-line options</a>  </li>
+</ul>
+</li>
+<li><strong><a href="#updating-carla">Updating CARLA</a></strong>    </li>
+<li><strong><a href="#follow-up">Follow-up</a></strong> </li>
+</ul>
+<hr />
+<h2 id="before-you-begin">Before you begin</h2>
+<p>The following requirements should be fulfilled before installing CARLA:</p>
+<ul>
+<li><strong>System requirements.</strong> CARLA is built for Windows and Linux systems.</li>
+<li><strong>An adequate GPU.</strong> CARLA aims for realistic simulations, so the server needs at least a 6 GB GPU although we would recommend 8 GB. A dedicated GPU is highly recommended for machine learning. </li>
+<li><strong>Disk space.</strong> CARLA will use about 20 GB of space.</li>
+<li><strong>Python.</strong> <a href="(https://www.python.org/downloads/)">Python</a> is the main scripting language in CARLA. CARLA supports Python 2.7 and Python 3 on Linux, and Python 3 on Windows.</li>
+<li><strong>Pip.</strong> Some installation methods of the CARLA client library require <strong>pip</strong> or <strong>pip3</strong> (depending on your Python version) version 20.3 or higher. To check your <strong>pip</strong> version:</li>
+</ul>
+<blockquote>
+<blockquote>
+<pre><code> # For Python 3
+ python3 -m pip -V
+
+ # For Python 2
+ pip -V
+</code></pre>
+</blockquote>
+<p>If you need to upgrade:</p>
+<blockquote>
+<pre><code> # For Python 3
+ python3 -m pip install --upgrade pip
+
+ # For Python 2
+ pip install --upgrade pip
+</code></pre>
+</blockquote>
+</blockquote>
+<ul>
+<li><strong>Two TCP ports and good internet connection.</strong> 2000 and 2001 by default. Make sure that these ports are not blocked by firewalls or any other applications. </li>
+<li><strong>Other requirements.</strong>  CARLA requires some Python dependencies. Install the dependencies according to your operating system:</li>
+</ul>
+<h3 id="windows">Windows</h3>
+<pre><code class="language-sh">python3 -m pip install --user pygame numpy
+</code></pre>
+<h3 id="linux">Linux</h3>
+<pre><code class="language-sh">pip install --user pygame numpy &amp;&amp;
+python3 -m pip install --user pygame numpy
+</code></pre>
+<hr />
+<h2 id="carla-installation">CARLA installation</h2>
+<p>There are two methods to download and install CARLA as a package:</p>
+<p><strong>A)</strong> <a href="#a-debian-carla-installation">Download the Debian package.</a></p>
+<p><strong>B)</strong> <a href="#b-package-installation">Download the package from GitHub.</a> </p>
+<h3 id="a-debian-carla-installation">A. Debian CARLA installation</h3>
+<p>The Debain package is available for both Ubuntu 18.04 and Ubuntu 20.04, however <strong>the officially supported platform is Ubuntu 18.04</strong>.</p>
+<p><strong>1.</strong> Set up the Debian repository in the system:</p>
+<pre><code class="language-sh">    sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 1AF1527DE64CB8D9
+    sudo add-apt-repository &quot;deb [arch=amd64] http://dist.carla.org/carla $(lsb_release -sc) main&quot;
+</code></pre>
+<p><strong>2.</strong> Install CARLA and check for the installation in the <code>/opt/</code> folder:</p>
+<pre><code class="language-sh">    sudo apt-get update # Update the Debian package index
+    sudo apt-get install carla-simulator # Install the latest CARLA version, or update the current installation
+    cd /opt/carla-simulator # Open the folder where CARLA is installed
+</code></pre>
+<p>This repository contains CARLA 0.9.10 and later versions. To install a specific version add the version tag to the installation command:  </p>
+<pre><code class="language-sh">    apt-cache madison carla-simulator # List the available versions of Carla
+    sudo apt-get install carla-simulator=0.9.10-1 # In this case, &quot;0.9.10&quot; refers to a CARLA version, and &quot;1&quot; to the Debian revision
+</code></pre>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>To install CARLA versions prior to 0.9.10, change to a previous version of the documentation using the panel in the bottom right corner of the window, and follow the old instructions.  </p>
+</div>
+<h3 id="b-package-installation">B. Package installation</h3>
+<div class="build-buttons">
+<p>
+<a href="https://github.com/carla-simulator/carla/blob/master/Docs/download.md" target="_blank" class="btn btn-neutral" title="Go to the latest CARLA release">
+<span class="icon icon-github"></span> CARLA repository</a>
+</p>
+</div>
+
+<p>This repository contains different versions of CARLA. You will find options to download the <strong>current release</strong> with all the most recent fixes and features, <strong>previous releases</strong> and a <strong>nightly build</strong> with all the developmental fixes and features (the nightly build is the most unstable version of CARLA).</p>
+<p>The package is a compressed file named <strong>CARLA_version.number</strong>. Download and extract the release file. It contains a precompiled version of the simulator, the Python API module and some scripts to be used as examples. </p>
+<hr />
+<h2 id="import-additional-assets">Import additional assets</h2>
+<p>Each release has it's own additional package of extra assets and maps. This additional package includes the maps <strong>Town06</strong> and <strong>Town07</strong>. These are stored separately to reduce the size of the build, so they can only be imported after the main package has been installed. </p>
+<p><strong>1.</strong> <a href="https://github.com/carla-simulator/carla/blob/master/Docs/download.md">Download</a> the appropriate package for your desired version of CARLA.</p>
+<p><strong>2.</strong> Extract the package:</p>
+<ul>
+<li>
+<p><strong>On Linux</strong>:</p>
+<ul>
+<li>move the package to the <em>Import</em> folder and run the following script to extract the contents:  </li>
+</ul>
+</li>
+</ul>
+<pre><code class="language-sh">        cd path/to/carla/root
+
+        ./ImportAssets.sh
+</code></pre>
+<ul>
+<li>
+<p><strong>On Windows</strong>:</p>
+<ul>
+<li>Extract the contents directly in the root folder. </li>
+</ul>
+</li>
+</ul>
+<hr />
+<h2 id="install-client-library">Install client library</h2>
+<h3 id="carla-versions-prior-to-0912">CARLA versions prior to 0.9.12</h3>
+<p>Previous versions of CARLA did not require the Python library to be installed, they came with an <code>.egg</code> file that was ready to use out of the box. <strong>CARLA versions 0.9.12+ change this behavior significantly; there are several options available to install the client library.</strong> If you are using a version of CARLA prior to 0.9.12, please select that version in the bottom right corner of the screen to see the relevant documentation. Otherwise, read on below about the available options in CARLA 0.9.12+.</p>
+<h3 id="carla-0912">CARLA 0.9.12+</h3>
+<p>There are several options available to install and use the CARLA client library:</p>
+<ul>
+<li><strong>.egg</strong> file</li>
+<li><strong>.whl</strong> file</li>
+<li><strong>Downloadable Python package</strong></li>
+</ul>
+<p>Read more below about the requirements and limitations of each method before deciding which one to use. Please note that mixing the different methods can lead to incompatibilities, so use virtual environments when possible or <a href="../build_faq/#how-do-i-uninstall-the-carla-client-library">uninstall</a> a previously installed library before using a new one.</p>
+<blockquote>
+<p><strong>A. .egg files</strong></p>
+<blockquote>
+<p>CARLA provides <code>.egg</code> files in <code>PythonAPI/carla/dist/</code> for different Python versions that are ready to use out of the box. Each of the example scripts in <code>PythonAPI/examples</code> includes a <a href="build_system.md#versions-prior-to-0912">code snippet</a> that looks for this file automatically. In Linux, you may need to add this file to your <code>PYTHONPATH</code>. Read more about <code>.egg</code> files in CARLA <a href="../build_faq/#importerror-no-module-named-carla">here</a>.</p>
+<p><strong>If you have previously installed the client library with <code>pip</code>, this will take precedence over the <code>.egg</code> file</strong>. You will need to <a href="../build_faq/#how-do-i-uninstall-the-carla-client-library">uninstall</a> the previous library first.</p>
+</blockquote>
+<p><strong>B. .whl files</strong></p>
+<blockquote>
+<p>CARLA provides <code>.whl</code> files for different Python versions. You will need to install the <code>.whl</code> file. The <code>.whl</code> file is found in <code>PythonAPI/carla/dist/</code>. There is one file per supported Python version, indicated by the file name (e.g., carla-0.9.12-<strong>cp36</strong>-cp36m-manylinux_2_27_x86_64.whl indicates Python 3.6).</p>
+<p><strong>It is recommended to install the CARLA client library in a virtual environment to avoid conflicts when working with multiple versions.</strong></p>
+<p>To install the CARLA client library, run the following command, choosing the file appropriate to your desired Python version. You will need <strong>pip/pip3</strong> version 20.3 or above. See the <a href="#before-you-begin"><strong>Before you begin</strong></a> section for how to check the version and upgrade <strong>pip/pip3</strong>:</p>
+<pre><code> # Python 3
+ python3 -m pip install &lt;wheel-file-name&gt;.whl
+</code></pre>
+<p>If you previously installed the client library, you should <a href="../build_faq/#how-do-i-uninstall-the-carla-client-library">uninstall</a> the old one before installing the new one.</p>
+</blockquote>
+<p><strong>C. Downloadable Python package</strong></p>
+<blockquote>
+<p>The CARLA client library can be downloaded from <a href="https://pypi.org/project/carla/">PyPi</a>. This library is compatible with Python versions 2.7, 3.6, 3.7, and 3.8. To install it you will need <strong>pip/pip3</strong> version 20.3 or above. See the <a href="#before-you-begin"><strong>Before you begin</strong></a> section for how to check the version and upgrade <strong>pip/pip3</strong>. </p>
+<p><strong>It is recommended to install the CARLA client library in a virtual environment to avoid conflicts when working with multiple versions.</strong></p>
+<p>To install the client library from PyPi, run the following command:</p>
+<pre><code> # Python 3
+ python3 -m pip install carla
+</code></pre>
+<p>The PyPi download is suitable for use with CARLA packages only (i.e., not with a version built from source). Since the PyPi download <strong>only contains the client library</strong>, it is most useful in situations where you will be communicating with a remote CARLA server where you do not require downloading a full CARLA package.</p>
+</blockquote>
+</blockquote>
+<hr />
+<h2 id="running-carla">Running CARLA</h2>
+<p>The method to start a CARLA server depends on the installation method you used and your operating system:</p>
+<ul>
+<li>Debian installation:</li>
+</ul>
+<pre><code class="language-sh">    cd /opt/carla-simulator/bin/
+
+    ./CarlaUE4.sh
+</code></pre>
+<ul>
+<li>Linux package installation:</li>
+</ul>
+<pre><code class="language-sh">    cd path/to/carla/root
+
+    ./CarlaUE4.sh
+</code></pre>
+<ul>
+<li>Windows package installation:</li>
+</ul>
+<pre><code class="language-sh">    cd path/to/carla/root
+
+    CarlaUE4.exe
+</code></pre>
+<p>A window containing a view over the city will pop up. This is the <em>spectator view</em>. To fly around the city use the mouse and <code>WASD</code> keys, holding down the right mouse button to control the direction. </p>
+<p>This is the server simulator which is now running and waiting for a client to connect and interact with the world. You can try some of the example scripts to spawn life into the city and drive a car:</p>
+<pre><code class="language-sh">        # Terminal A 
+        cd PythonAPI\examples
+
+        python3 -m pip install -r requirements.txt # Support for Python2 is provided in the CARLA release packages
+
+        python3 generate_traffic.py  
+
+        # Terminal B
+        cd PythonAPI\examples
+
+        python3 manual_control.py 
+</code></pre>
+<h4 id="command-line-options">Command-line options</h4>
+<p>There are some configuration options available when launching CARLA and they can be used as follows:</p>
+<pre><code class="language-sh">    ./CarlaUE4.sh -carla-rpc-port=3000
+</code></pre>
+<ul>
+<li><code>-carla-rpc-port=N</code> Listen for client connections at port <code>N</code>. Streaming port is set to <code>N+1</code> by default.  </li>
+<li><code>-carla-streaming-port=N</code> Specify the port for sensor data streaming. Use 0 to get a random unused port. The second port will be automatically set to <code>N+1</code>.  </li>
+<li><code>-quality-level={Low,Epic}</code> Change graphics quality level. Find out more in <a href="../adv_rendering_options/">rendering options</a>.  </li>
+<li><strong><a href="https://docs.unrealengine.com/en-US/Programming/Basics/CommandLineArguments">List of Unreal Engine 4 command-line arguments</a>.</strong> There are a lot of options provided by Unreal Engine however not all of these are available in CARLA.  </li>
+</ul>
+<p>The script <a href="https://github.com/carla-simulator/carla/blob/master/PythonAPI/util/config.py"><code>PythonAPI/util/config.py</code></a> provides more configuration options and should be run when the server has been started:</p>
+<pre><code class="language-sh">    ./config.py --no-rendering      # Disable rendering
+    ./config.py --map Town05        # Change map
+    ./config.py --weather ClearNoon # Change weather
+
+    ./config.py --help # Check all the available configuration options
+</code></pre>
+<hr />
+<h2 id="updating-carla">Updating CARLA</h2>
+<p>There is no way to update the packaged version of CARLA. When a new version is released, the repository is updated and you will need to delete the previous version and install the new version.</p>
+<p>If you installed the client library using <strong>pip/pip3</strong>, you should uninstall it by running:</p>
+<pre><code class="language-sh"># Python 3
+python3 -m pip uninstall carla
+</code></pre>
+<hr />
+<h2 id="follow-up">Follow-up</h2>
+<p>By now you should have a packaged version of CARLA up and running. If you came across any difficulties during the installation process, feel free to post in the <a href="https://github.com/carla-simulator/carla/discussions/">CARLA forum</a> or in the <a href="https://discord.gg/8kqACuC">Discord</a> channel.</p>
+<p>The next step is to learn more about the core concepts in CARLA. Read the <strong>First steps</strong> section to start learning. You can also find all the information about the Python API classes and methods in the <a href="../python_api/">Python API reference</a>.</p>
+<div class="build-buttons">
+<p>
+<a href="../core_concepts" target="_blank" class="btn btn-neutral" title="Go to first steps">
+Go to: First steps</a>
+</p>
+</div>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="../start_introduction/" class="btn btn-neutral float-left" title="Introduction"><span class="icon icon-circle-arrow-left"></span> 前一页</a>
+        <a href="../tuto_first_steps/" class="btn btn-neutral float-right" title="First steps">后一页 <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+        <span>
+          <a href="https://github.com/carla-simulator/carla" class="fa fa-github" style="color: #fcfcfc"> GitHub</a>
+        </span>
+    
+    
+      <span><a href="../start_introduction/" style="color: #fcfcfc">&laquo; 前一页</a></span>
+    
+    
+      <span><a href="../tuto_first_steps/" style="color: #fcfcfc">后一页 &raquo;</a></span>
+    
+  </span>
+</div>
+    <script src="../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "..";</script>
+    <script src="../js/theme_extra.js"></script>
+    <script src="../js/theme.js"></script>
+      <script src="../extra.js"></script>
+      <script src="../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>

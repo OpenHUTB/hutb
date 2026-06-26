@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <link rel="shortcut icon" href="../img/favicon.ico" />
+    <title>Downloads - CARLA Simulator</title>
+    <link rel="stylesheet" href="../css/theme.css" />
+    <link rel="stylesheet" href="../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+        <link href="../extra.css" rel="stylesheet" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "Downloads";
+        var mkdocs_page_input_path = "download.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href=".." class="icon icon-home"> CARLA Simulator
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+      <input type="text" name="q" placeholder="搜索文档" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="..">Home</a>
+                </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Getting started</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../start_introduction/">Introduction</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../start_quickstart/">Quick start package installation</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_first_steps/">First steps</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../build_carla/">Building CARLA</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Next steps</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_content_authoring_maps/">Content authoring - maps</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_content_authoring_vehicles/">Content authoring - vehicles</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../content_authoring_props/">Content authoring - props</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">CARLA topics</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../coordinates/">Coordinates and transformations</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../foundations/">Foundations</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../core_actors/">Actors</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../core_map/">Maps</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../core_sensors/">Sensors and data</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../ts_traffic_simulation_overview/">Traffic</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../ai_rendering/">AI rendering</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../development_tutorials/">Development</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../custom_assets_tutorials/">Custom assets</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Resources</span></p>
+              <ul class="current">
+                  <li class="toctree-l1"><a class="reference internal" href="../python_api/">Python API</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../catalogue/">Catalogue</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../ref_cpp/">C++ reference</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../bp_library/">Blueprint library</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tutorials/">Tutorials</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../ext_docs/">Extended documentation</a>
+                  </li>
+                  <li class="toctree-l1 current"><a class="reference internal current" href="#">Downloads</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#latest-release">Latest Release</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#nightly-build">Nightly build</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#versions-09x">Versions 0.9.x</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#versions-08x">Versions 0.8.x</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#docker">Docker</a>
+    </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">CARLA Ecosystem</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../ecosys_ansys/">ANSYS</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_G_rllib_integration/">AWS</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_G_carsim_integration/">CarSIM</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_G_chrono/">Chrono</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../large_map_roadrunner/">MathWorks</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../inverted_ai/">Inverted AI</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../nvidia/">NVIDIA</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../adv_opendrive/">ASAM OpenDRIVE</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../adv_ptv/">PTV Vissim</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../adv_rss/">RSS</a>
+                  </li>
+                  <li class="toctree-l1"><a class="" href="https://carla.readthedocs.io/projects/ros-bridge/en/latest/">ROS</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_G_scenic/">Scenic</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../adv_sumo/">SUMO</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../ecosys_synkrotron/">SYNKROTRON</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Contributing</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../cont_contribution_guidelines/">Guidelines</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../cont_coding_standard/">Coding standards</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../cont_doc_standard/">Documentation standard</a>
+                  </li>
+                  <li class="toctree-l1"><a class="" href=".."></a>
+                  </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="..">CARLA Simulator</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href=".." class="icon icon-home" aria-label="Docs"></a></li>
+          <li class="breadcrumb-item">Resources</li>
+      <li class="breadcrumb-item active">Downloads</li>
+    <li class="wy-breadcrumbs-aside">
+          <a href="https://github.com/carla-simulator/carla/edit/master/Docs/download.md" class="icon icon-github"> 在 GitHub 上编辑</a>
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="downloads">Downloads</h1>
+<h3 id="latest-release">Latest Release</h3>
+<p>The latest release of CARLA is <strong>0.9.16</strong>, check out the <a href="https://carla.org/2025/09/16/release-0.9.16/">release announcement</a> for more details.</p>
+<ul>
+<li><a href="https://github.com/carla-simulator/carla/releases/tag/0.9.16/">CARLA 0.9.16</a> - <a href="https://carla.readthedocs.io/en/latest/">Documentation</a></li>
+</ul>
+<h3 id="nightly-build">Nightly build</h3>
+<p>This is an automated build with the latest changes pushed to our <code>ue4-dev</code>
+branch. It contains the very latest fixes and features that will be part of the
+next release, but also some experimental changes. Use at your own risk!</p>
+<ul>
+<li><a href="https://carla-releases.s3.us-east-005.backblazeb2.com/Linux/Dev/CARLA_Latest.tar.gz">CARLA Nightly Build (Linux)</a></li>
+<li><a href="https://carla-releases.s3.us-east-005.backblazeb2.com/Linux/Dev/AdditionalMaps_Latest.tar.gz">AdditionalMaps Nightly Build (Linux)</a></li>
+<li><a href="https://carla-releases.s3.us-east-005.backblazeb2.com/Windows/Dev/CARLA_Latest.zip">CARLA Nightly Build (Windows)</a></li>
+<li><a href="https://carla-releases.s3.us-east-005.backblazeb2.com/Windows/Dev/AdditionalMaps_Latest.zip">AdditionalMaps Nightly Build (Windows)</a></li>
+</ul>
+<p><a id="last-run-link" href='https://github.com/carla-simulator/carla/actions'>Last successful build</a>: <span id="last-run-time" class="loading">Loading...</span></p>
+
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>If you are looking for the nightly build of the Unreal Engine 5.5 version of CARLA, please visit the <a href="https://carla-ue5.readthedocs.io/en/latest/download/">downloads page</a> of the <a href="https://carla-ue5.readthedocs.io/en/latest/">CARLA UE5 documentation</a>.</p>
+</div>
+<h3 id="versions-09x">Versions 0.9.x</h3>
+<p>Here are the previous versions of CARLA with links to the specific documentation for each version:</p>
+<ul>
+<li><a href="https://github.com/carla-simulator/carla/releases/tag/0.9.15/">CARLA 0.9.15</a> - <a href="https://carla.readthedocs.io/en/0.9.15/">Documentation</a></li>
+<li><a href="https://github.com/carla-simulator/carla/releases/tag/0.9.14/">CARLA 0.9.14</a> - <a href="https://carla.readthedocs.io/en/0.9.14/">Documentation</a></li>
+<li><a href="https://github.com/carla-simulator/carla/releases/tag/0.9.13/">CARLA 0.9.13</a> - <a href="https://carla.readthedocs.io/en/0.9.13/">Documentation</a></li>
+<li><a href="https://github.com/carla-simulator/carla/releases/tag/0.9.12/">CARLA 0.9.12</a> - <a href="https://carla.readthedocs.io/en/0.9.12/">Documentation</a></li>
+<li><a href="https://github.com/carla-simulator/carla/releases/tag/0.9.11/">CARLA 0.9.11</a> - <a href="https://carla.readthedocs.io/en/0.9.11/">Documentation</a></li>
+<li><a href="https://github.com/carla-simulator/carla/releases/tag/0.9.10/">CARLA 0.9.10</a> - <a href="https://carla.readthedocs.io/en/0.9.10/">Documentation</a></li>
+<li><a href="https://github.com/carla-simulator/carla/releases/tag/0.9.9/">CARLA 0.9.9</a> - <a href="https://carla.readthedocs.io/en/0.9.9/">Documentation</a></li>
+<li><a href="https://github.com/carla-simulator/carla/releases/tag/0.9.8/">CARLA 0.9.8</a> - <a href="https://carla.readthedocs.io/en/0.9.8/">Documentation</a></li>
+<li><a href="https://github.com/carla-simulator/carla/releases/tag/0.9.7/">CARLA 0.9.7</a> - <a href="https://carla.readthedocs.io/en/0.9.7/">Documentation</a></li>
+<li><a href="https://github.com/carla-simulator/carla/releases/tag/0.9.6/">CARLA 0.9.6</a> - <a href="https://carla.readthedocs.io/en/0.9.6/">Documentation</a></li>
+<li><a href="https://github.com/carla-simulator/carla/releases/tag/0.9.5/">CARLA 0.9.5</a> - <a href="https://carla.readthedocs.io/en/0.9.5/">Documentation</a></li>
+<li><a href="https://github.com/carla-simulator/carla/releases/tag/0.9.4/">CARLA 0.9.4</a> - <a href="https://carla.readthedocs.io/en/0.9.4/">Documentation</a></li>
+<li><a href="https://github.com/carla-simulator/carla/releases/tag/0.9.3/">CARLA 0.9.3</a> - <a href="https://carla.readthedocs.io/en/0.9.3/">Documentation</a></li>
+<li><a href="https://github.com/carla-simulator/carla/releases/tag/0.9.2/">CARLA 0.9.2</a> - <a href="https://carla.readthedocs.io/en/0.9.2/">Documentation</a></li>
+<li><a href="https://github.com/carla-simulator/carla/releases/tag/0.9.1/">CARLA 0.9.1</a> - <a href="https://carla.readthedocs.io/en/0.9.1/">Documentation</a></li>
+<li><a href="https://github.com/carla-simulator/carla/releases/tag/0.9.0/">CARLA 0.9.0</a> - <a href="https://carla.readthedocs.io/en/0.9.0/">Documentation</a></li>
+</ul>
+<h3 id="versions-08x">Versions 0.8.x</h3>
+<ul>
+<li><a href="https://github.com/carla-simulator/carla/releases/tag/0.8.4/">CARLA 0.8.4</a> - <a href="https://carla.readthedocs.io/en/0.8.4/">Documentation</a></li>
+<li><a href="https://github.com/carla-simulator/carla/releases/tag/0.8.3/">CARLA 0.8.3</a></li>
+<li><a href="https://github.com/carla-simulator/carla/releases/tag/0.8.2/">CARLA 0.8.2</a> - <a href="https://carla.readthedocs.io/en/stable/">Documentation</a></li>
+</ul>
+<hr />
+<h3 id="docker">Docker</h3>
+<p>All versions are available to pull from DockerHub:</p>
+<pre><code class="language-sh">docker pull carlasim/carla:X.X.X
+</code></pre>
+<p>Use tag "latest" for the most recent release:</p>
+<pre><code class="language-sh">docker pull carlasim/carla:latest
+</code></pre>
+<script>
+async function getLastWorkflowRun(owner, repo, workflowFileName) {
+  const url = `https://api.github.com/repos/${owner}/${repo}/actions/workflows/${workflowFileName}/runs?status=completed&per_page=1`;
+
+  try {
+    const response = await fetch(url, {
+      headers: {
+        'Accept': 'application/vnd.github.v3+json'
+      }
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const data = await response.json();
+    if (data.workflow_runs && data.workflow_runs.length > 0) {
+      const lastRun = data.workflow_runs[0];
+      return {
+        timestamp: lastRun.updated_at,
+        url: lastRun.html_url,
+        status: lastRun.conclusion
+      };
+    }
+    return null;
+  } catch (error) {
+    console.error('Error fetching workflow runs:', error);
+    return null;
+  }
+}
+
+// Format timestamp to be more readable
+function formatTimestamp(isoString) {
+    const date = new Date(isoString);
+    return date.toLocaleString('en-US', {
+        weekday: 'long',
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+        timeZoneName: 'short'
+    });
+}
+
+// Example usage
+getLastWorkflowRun('carla-simulator', 'carla', 'ue4_dev.yml')
+  .then(result => {
+    if (result) {
+      console.log('Last successful run:', result.timestamp);
+      console.log('View run:', result.url);
+      const lastRunTimeElement = document.getElementById('last-run-time');
+      const lastRunLink = document.getElementById('last-run-link')
+      //const lastRun = result.workflow_runs[0];
+      const formattedTime = formatTimestamp(result.timestamp);
+      lastRunTimeElement.textContent = formattedTime;
+      lastRunLink.setAttribute("href", result.url)
+
+    } else {
+      console.log('No completed runs found');
+    }
+  });
+</script>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="../ext_docs/" class="btn btn-neutral float-left" title="Extended documentation"><span class="icon icon-circle-arrow-left"></span> 前一页</a>
+        <a href="../ecosys_ansys/" class="btn btn-neutral float-right" title="ANSYS">后一页 <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+        <span>
+          <a href="https://github.com/carla-simulator/carla" class="fa fa-github" style="color: #fcfcfc"> GitHub</a>
+        </span>
+    
+    
+      <span><a href="../ext_docs/" style="color: #fcfcfc">&laquo; 前一页</a></span>
+    
+    
+      <span><a href="../ecosys_ansys/" style="color: #fcfcfc">后一页 &raquo;</a></span>
+    
+  </span>
+</div>
+    <script src="../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "..";</script>
+    <script src="../js/theme_extra.js"></script>
+    <script src="../js/theme.js"></script>
+      <script src="../extra.js"></script>
+      <script src="../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>

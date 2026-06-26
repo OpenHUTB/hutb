@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <link rel="shortcut icon" href="../img/favicon.ico" />
+    <title>Getting started with CARLA - CARLA Simulator</title>
+    <link rel="stylesheet" href="../css/theme.css" />
+    <link rel="stylesheet" href="../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+        <link href="../extra.css" rel="stylesheet" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "Getting started with CARLA";
+        var mkdocs_page_input_path = "tuto_G_getting_started.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href=".." class="icon icon-home"> CARLA Simulator
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+      <input type="text" name="q" placeholder="搜索文档" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="..">Home</a>
+                </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Getting started</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../start_introduction/">Introduction</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../start_quickstart/">Quick start package installation</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_first_steps/">First steps</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../build_carla/">Building CARLA</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Next steps</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_content_authoring_maps/">Content authoring - maps</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_content_authoring_vehicles/">Content authoring - vehicles</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../content_authoring_props/">Content authoring - props</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">CARLA topics</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../coordinates/">Coordinates and transformations</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../foundations/">Foundations</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../core_actors/">Actors</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../core_map/">Maps</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../core_sensors/">Sensors and data</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../ts_traffic_simulation_overview/">Traffic</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../ai_rendering/">AI rendering</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../development_tutorials/">Development</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../custom_assets_tutorials/">Custom assets</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Resources</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../python_api/">Python API</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../catalogue/">Catalogue</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../ref_cpp/">C++ reference</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../bp_library/">Blueprint library</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tutorials/">Tutorials</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../ext_docs/">Extended documentation</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../download/">Downloads</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">CARLA Ecosystem</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../ecosys_ansys/">ANSYS</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_G_rllib_integration/">AWS</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_G_carsim_integration/">CarSIM</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_G_chrono/">Chrono</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../large_map_roadrunner/">MathWorks</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../inverted_ai/">Inverted AI</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../nvidia/">NVIDIA</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../adv_opendrive/">ASAM OpenDRIVE</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../adv_ptv/">PTV Vissim</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../adv_rss/">RSS</a>
+                  </li>
+                  <li class="toctree-l1"><a class="" href="https://carla.readthedocs.io/projects/ros-bridge/en/latest/">ROS</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_G_scenic/">Scenic</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../adv_sumo/">SUMO</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../ecosys_synkrotron/">SYNKROTRON</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Contributing</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../cont_contribution_guidelines/">Guidelines</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../cont_coding_standard/">Coding standards</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../cont_doc_standard/">Documentation standard</a>
+                  </li>
+                  <li class="toctree-l1"><a class="" href=".."></a>
+                  </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="..">CARLA Simulator</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href=".." class="icon icon-home" aria-label="Docs"></a></li>
+      <li class="breadcrumb-item active">Getting started with CARLA</li>
+    <li class="wy-breadcrumbs-aside">
+          <a href="https://github.com/carla-simulator/carla/edit/master/Docs/tuto_G_getting_started.md" class="icon icon-github"> 在 GitHub 上编辑</a>
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="getting-started-with-carla">Getting started with CARLA</h1>
+<p>The CARLA simulator is a comprehensive solution for producing synthetic training data for applications in autonomous driving (AD) and also other robotics applications. CARLA simulates a highly realistic environment emulating real world towns, cities and highways and the vehicles and other objects that occupy these driving spaces. </p>
+<p>The CARLA simulator is further useful as an evaluation and testing environment. You can deploy the AD agents you have trained within the simulation to test and evaluate their performance and safety, all within the security of a simulated environment, with no risk to hardware or other road users.</p>
+<p>In this tutorial, we will cover some of the basic steps of getting started with CARLA, from using the spectator to navigate the environment, populating your simulation with vehicles and pedestrians and then adding sensors and cameras to gather simulated data to feed into neural networks for training or testing. </p>
+<h2 id="starting-carla-and-connecting-the-client">Starting CARLA and connecting the client</h2>
+<p>CARLA can be launched using the command line using the executable in Windows or the shell script in Linux. Follow the installation instructions for <a href="../start_quickstart/"><strong>Linux</strong></a> and <a href="../start_quickstart/"><strong>Windows</strong></a> then <a href="../start_quickstart/#running-carla"><strong>launch CARLA</strong></a> from the command line.</p>
+<p>To manipulate CARLA through the Python API, we need to connect the Python client to the server through an open port:</p>
+<pre><code class="language-py">import carla
+import random
+
+# Connect to the client and retrieve the world object
+client = carla.Client('localhost', 2000)
+world = client.get_world()
+
+</code></pre>
+<p>The <a href="python_api#carlaclient"><strong>client</strong></a> object serves to maintain the client's connection to the server and has a number of functions for applying commands and loading or exporting data. We can load an alternative map or reload the current one (resetting to initial state) using the client object:</p>
+<pre><code class="language-py"># Print available maps
+client.get_available_maps()
+
+# Load new map
+client.load_world('Town07')
+
+# Reload current map and reset state
+client.reload_world()
+
+</code></pre>
+<p>The port can be chosen as any available port and is 2000 by default, you can also choose a host different from <em>localhost</em> by using a computer's IP address. This way, the CARLA server can be run on a networked machine, while the python client can be run from a personal computer. This is particularly useful for differentiating the GPU used for running the CARLA simulator and that used for neural network training, both of which can be highly demanding on graphics hardware.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The following presumes that CARLA is running in the default <a href="../adv_synchrony_timestep/"><strong>asynchronous</strong></a> mode. If you have engaged synchronous mode, some of the code in the following sections might not work as expected.</p>
+</div>
+<h2 id="the-world-object">The world object</h2>
+<p>In the CARLA API, the <a href="python_api#carlaworld"><strong>world</strong></a> object provides access to all elements of the simulation, including the map, objects within the map, such as buildings, traffic lights, vehicles and pedestrians.</p>
+<p>We can use the world object to query and access objects within the simulation:</p>
+<pre><code class="language-py">
+# Get names of all objects 
+world.get_names_of_all_objects()
+
+# Filter the list of names for buildings
+filter(lambda x: 'Building' in x, world.get_names_of_all_objects())
+
+# Get a list of all actors, such as vehicles and pedestrians
+world.get_actors()
+
+# Filter the list to find the vehicles
+world.get_actors().filter('*vehicle*')
+
+</code></pre>
+<p>The world object is used to add things to the simulation, such as vehicles and pedestrians through the spawn methods. Vehicles and pedestrians have a special place within the CARLA simulation since they exhibit behaviors, i.e. they can move around and affect other objects, so we call them actors. This differentiates them from static, inanimate objects like buildings that are just features in the map. Other objects such as traffic lights are also actors since they exhibit behaviors that affect other objects. </p>
+<p>To spawn objects, we need a <a href="python_api#carlaactorblueprint"><strong>blueprint</strong></a> for the object. Blueprints are recipes containing all the parts necessary for an actor such as the mesh, textures and materials that govern it's appearance within the simulation and all the logic that governs its behavior and physics - how it interacts with other objects in the simulation. Let's find a blueprint for a vehicle and spawn it.</p>
+<pre><code class="language-py">
+# Get the blueprint library and filter for the vehicle blueprints
+vehicle_bps = world.get_blueprint_library().filter('*vehicle*')
+
+# Randomly choose a vehicle blueprint to spawn
+vehicle_bp = random.choice(vehicle_bps)
+
+# We need a place to spawn the vehicle that will work so we will
+# use the predefined spawn points for the map and randomly select one
+spawn_point = random.choice(world.get_map().get_spawn_points())
+
+# Now let's spawn the vehicle
+world.spawn_actor(vehicle_bp, spawn_point)
+
+</code></pre>
+<p>For various reasons, this spawn attempt might fail, so to avoid our code crashing, we can use a fault tolerant spawn method. This returns a NoneType object if the spawn fails. If the spawn succeeds, it will return a reference to the vehicle itself, that can be used to control it in various ways, including applying control inputs to move and steer it, handing over control to the Traffic Manager or destroying it.</p>
+<pre><code class="language-py">vehicle = world.try_spawn_actor(vehicle_bp, spawn_point)
+
+</code></pre>
+<p>The spawn may fail if there is already a vehicle or other actor at or close to the chosen spawn point, or if the spawn point is in an inappropriate location such as within a building or other static item of the map that's not a road or pavement.</p>
+<h2 id="the-spectator">The spectator</h2>
+<p>The spectator is a view into the simulation. By default, the spectator opens in a new window when you run the CARLA server on a computer with a screen attached, unless you specify the <code>-RenderOffScreen</code> command line option. </p>
+<p>The spectator is helpful to visualize your simulation. Using the spectator, you can familiarize yourself with the map you've loaded, and see the result of any changes you are making, such as adding vehicles, changing the weather, turning on/off various layers of the map and for debugging purposes. </p>
+<p>You can fly the spectator around the world using the mouse to control the pitch and yaw of the spectator view and the QWE-ASD keys to move the spectator:</p>
+<ul>
+<li>Q - move upwards (towards the top edge of the window)</li>
+<li>
+<p>E - move downwards (towards the lower edge of the window)</p>
+</li>
+<li>
+<p>W - move forwards</p>
+</li>
+<li>S - move backwards</li>
+<li>A - move left</li>
+<li>D - move right</li>
+</ul>
+<p>Left click and drag the mouse in the spectator window up and down to control pitch and left and right to control yaw.</p>
+<p><img alt="flying_spectator" src="../img/tuto_G_getting_started/flying_spectator.gif" /></p>
+<p>The spectator and its properties can be accessed and manipulated through the Python API:</p>
+<pre><code class="language-py"># Retrieve the spectator object
+spectator = world.get_spectator()
+
+# Get the location and rotation of the spectator through its transform
+transform = spectator.get_transform()
+
+location = transform.location
+rotation = transform.rotation
+
+# Set the spectator with an empty transform
+spectator.set_transform(carla.Transform())
+# This will set the spectator at the origin of the map, with 0 degrees
+# pitch, yaw and roll - a good way to orient yourself in the map
+
+</code></pre>
+<h2 id="finding-a-custom-spawn-point-using-the-spectator">Finding a custom spawn point using the spectator</h2>
+<p>The spectator is particularly useful to verify your actors are spawning correctly and also to determine locations for spawning. </p>
+<p>We have two options to define spawn points. We can define our own custom spawn points, or we can use predefined spawn points that are provided with each map.</p>
+<p>If we want to define a custom spawn point, we need to know the coordinates of the spawn point. Here we can use the spectator to help us since we can access its location.</p>
+<p>First, use the controls defined above to fly the spectator to a point of interest.</p>
+<p>Now, let's spawn a vehicle where the spectator is:</p>
+<pre><code class="language-py">vehicle = world.try_spawn_actor(vehicle_bp, spectator.get_transform())
+</code></pre>
+<p><img alt="spawn_vehicle" src="../img/tuto_G_getting_started/spawn_vehicle.gif" /></p>
+<p>You'll now see a vehicle spawned at the point where the spectator is. It will take on both the location and the rotation of the spectator, so be sure to orient the spectator in the direction you want the vehicle to face. If you navigate close to the ground, the spectator will end up inside the vehicle, and if it is too close to the ground, the spawn may fail. If you spawn the vehicle with the spectator high in the air, the vehicle will drop to the ground.</p>
+<p>We can also record this point for later use, manually recording it or printing to a file:</p>
+<pre><code class="language-py">print(spectator.get_transform())
+
+&gt;&gt;&gt; Transform(Location(x=25.761623, y=13.169240, z=0.539901), Rotation(pitch=0.862031, yaw=-2.056274, roll=0.000069))
+
+</code></pre>
+<h2 id="using-and-visualizing-map-spawn-points">Using and visualizing map spawn points</h2>
+<p>Manually defining spawn points is useful for custom scenarios, however, if we need to create a whole city full of traffic, it could be very time consuming. For this reason, each map provides a set of predefined spawn points distributed evenly throughout the map to make creating large volumes of NPC traffic efficient.</p>
+<pre><code class="language-py"># Get the map's spawn points
+spawn_points = world.get_map().get_spawn_points()
+
+# Get the blueprint library and filter for the vehicle blueprints
+vehicle_bps = world.get_blueprint_library().filter('*vehicle*')
+
+# Spawn 50 vehicles randomly distributed throughout the map
+for i in range(0,50):
+    world.try_spawn_actor(random.choice(vehicle_bps, random.choice(spawn_points)))
+</code></pre>
+<p>This is useful, however, we don't really know where the vehicles are going to end up. Luckily CARLA's debug tools give us some ways of visualizing locations in the map. For example, if we wanted to be slightly more specific about which spawn points we wanted to use, in the case that we wanted to create congestion in one particular part of town, we could specify a set of spawn points for instantiating new vehicles in the simulation. </p>
+<p>To do this, we can visualize the spawn points in the map.</p>
+<pre><code class="language-py"># Get the map spawn points
+spawn_points = world.get_map().get_spawn_points()
+
+for i, spawn_point in enumerate(spawn_points):
+    # Draw in the spectator window the spawn point index
+    world.debug.draw_string(spawn_point.location, str(i), life_time=100)
+    # We can also draw an arrow to see the orientation of the spawn point
+    # (i.e. which way the vehicle will be facing when spawned)
+    world.debug.draw_arrow(spawn_point.location, spawn_point.location + spawn_point.get_forward_vector(), life_time=100)
+
+
+</code></pre>
+<p><img alt="spawn_points" src="../img/tuto_G_getting_started/spawn_points.png" /></p>
+<p>Now we can note down the spawn point indices we are interested in and fill this street with vehicles:</p>
+<pre><code class="language-py">for ind in [89, 95, 99, 102, 103, 104, 110, 111, 115, 126, 135, 138, 139, 140, 141]:
+    world.try_spawn_actor(random.choice(vehicle_bps), spawn_points[ind])
+</code></pre>
+<p>Or spawn randomly throughout the map:</p>
+<pre><code class="language-py">for ind in range(0, 100):
+    world.try_spawn_actor(random.choice(vehicle_bps), random.choice(spawn_points))
+</code></pre>
+<p><img alt="vehicle_street" src="../img/tuto_G_getting_started/vehicle_street.png" /></p>
+<h2 id="actors-and-blueprints">Actors and blueprints</h2>
+<p><a href="python_api#carlaactor"><strong>Actors</strong></a> are the objects within the CARLA simulation that have an affect or <em>act</em> upon other objects in the simulation. CARLA actors include vehicles, pedestrians, traffic lights, road signs, obstacles, cameras and sensors. Each actor requires a <a href="python_api#carlaactorblueprint"><strong>blueprint</strong></a>. The blueprint defines all the necessary elements needed for an actor, including assets such as meshes, textures and materials and also any logic required to govern the behavior of the actor. To spawn an actor, we need to define it with a blueprint. </p>
+<p>CARLA provides a comprehensive library of blueprints including numerous types and models of vehicles, numerous pedestrian models and traffic lights, boxes, trash cans, shopping carts and traffic signals.</p>
+<p>We can use CARLA's <a href="python_api#carlablueprintlibrary"><strong>blueprint library</strong></a> to find and choose an appropriate blueprint for our needs:</p>
+<pre><code class="language-py"># Print all available blueprints
+for actor in world.get_blueprint_library():
+    print(actor)
+</code></pre>
+<p>The blueprint library can be filtered to narrow down our search:</p>
+<pre><code class="language-py"># Print all available vehicle blueprints
+for actor in world.get_blueprint_library().filter('vehicle'):
+    print(actor)
+
+vehicle_blueprint = world.get_blueprint_library().find('vehicle.audi.tt')
+</code></pre>
+              
+            </div>
+          </div><footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+        <span>
+          <a href="https://github.com/carla-simulator/carla" class="fa fa-github" style="color: #fcfcfc"> GitHub</a>
+        </span>
+    
+    
+    
+  </span>
+</div>
+    <script src="../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "..";</script>
+    <script src="../js/theme_extra.js"></script>
+    <script src="../js/theme.js"></script>
+      <script src="../extra.js"></script>
+      <script src="../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>

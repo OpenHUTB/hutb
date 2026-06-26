@@ -1,0 +1,741 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <link rel="shortcut icon" href="../img/favicon.ico" />
+    <title>Content authoring - maps - CARLA Simulator</title>
+    <link rel="stylesheet" href="../css/theme.css" />
+    <link rel="stylesheet" href="../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+        <link href="../extra.css" rel="stylesheet" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "Content authoring - maps";
+        var mkdocs_page_input_path = "tuto_content_authoring_maps.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href=".." class="icon icon-home"> CARLA Simulator
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+      <input type="text" name="q" placeholder="搜索文档" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="..">Home</a>
+                </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Getting started</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../start_introduction/">Introduction</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../start_quickstart/">Quick start package installation</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_first_steps/">First steps</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../build_carla/">Building CARLA</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Next steps</span></p>
+              <ul class="current">
+                  <li class="toctree-l1 current"><a class="reference internal current" href="#">Content authoring - maps</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#prerequisites">Prerequisites</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#large-maps">Large Maps</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#digital-twin-tool">Digital Twin Tool</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#create-a-road-network-using-roadrunner">Create a road network using RoadRunner</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#truevision-designer">TrueVision designer</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#importing-your-road-network-into-carla">Importing your road network into CARLA</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#importing-assets-and-adding-them-to-the-map">Importing assets and adding them to the map</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#traffic-lights">Traffic lights</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#traffic-signs">Traffic signs</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#materials">Materials</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#road-painter">Road Painter</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#what-is-the-road-painter">What is the road painter?</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#establish-the-road-painter-master-material-and-render-target">Establish the road painter, master material and render target</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#prepare-the-master-material">Prepare the master material</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#paint-the-road">Paint the road</a>
+    </li>
+        </ul>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#update-the-appearance-of-lane-markings">Update the appearance of lane markings</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#trees-and-vegetation">Trees and Vegetation</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#foliage-tool">Foliage tool</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#exporting-a-map">Exporting a map</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#exporting-a-map-as-a-separate-package">Exporting a map as a separate package</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#exporting-a-map-as-part-of-a-complete-carla-package">Exporting a map as part of a complete CARLA package</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#next-steps">Next steps</a>
+    </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_content_authoring_vehicles/">Content authoring - vehicles</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../content_authoring_props/">Content authoring - props</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">CARLA topics</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../coordinates/">Coordinates and transformations</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../foundations/">Foundations</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../core_actors/">Actors</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../core_map/">Maps</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../core_sensors/">Sensors and data</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../ts_traffic_simulation_overview/">Traffic</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../ai_rendering/">AI rendering</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../development_tutorials/">Development</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../custom_assets_tutorials/">Custom assets</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Resources</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../python_api/">Python API</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../catalogue/">Catalogue</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../ref_cpp/">C++ reference</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../bp_library/">Blueprint library</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tutorials/">Tutorials</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../ext_docs/">Extended documentation</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../download/">Downloads</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">CARLA Ecosystem</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../ecosys_ansys/">ANSYS</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_G_rllib_integration/">AWS</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_G_carsim_integration/">CarSIM</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_G_chrono/">Chrono</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../large_map_roadrunner/">MathWorks</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../inverted_ai/">Inverted AI</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../nvidia/">NVIDIA</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../adv_opendrive/">ASAM OpenDRIVE</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../adv_ptv/">PTV Vissim</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../adv_rss/">RSS</a>
+                  </li>
+                  <li class="toctree-l1"><a class="" href="https://carla.readthedocs.io/projects/ros-bridge/en/latest/">ROS</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_G_scenic/">Scenic</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../adv_sumo/">SUMO</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../ecosys_synkrotron/">SYNKROTRON</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Contributing</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../cont_contribution_guidelines/">Guidelines</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../cont_coding_standard/">Coding standards</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../cont_doc_standard/">Documentation standard</a>
+                  </li>
+                  <li class="toctree-l1"><a class="" href=".."></a>
+                  </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="..">CARLA Simulator</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href=".." class="icon icon-home" aria-label="Docs"></a></li>
+          <li class="breadcrumb-item">Next steps</li>
+      <li class="breadcrumb-item active">Content authoring - maps</li>
+    <li class="wy-breadcrumbs-aside">
+          <a href="https://github.com/carla-simulator/carla/edit/master/Docs/tuto_content_authoring_maps.md" class="icon icon-github"> 在 GitHub 上编辑</a>
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="content-authoring-maps">Content authoring - Maps</h1>
+<p>CARLA comes with a generous compliment of assets for creating driving simulations out of the box. However, the real power of CARLA comes in its comprehensive extensibility, allowing users to create entirely custom environments populated with bespoke assets like buildings, benches, trash cans, statues, street lights and bus stops. </p>
+<p>In this tutorial we will cover the process of creating a simple map for use with CARLA. We will use two software packages to create parts of the map. We will create the road network using <a href="https://es.mathworks.com/products/roadrunner.html"><strong>RoadRunner</strong></a> and then add assets to the map through the <a href="https://www.unrealengine.com/en-US/features/the-unreal-editor"><strong>Unreal Editor</strong></a>.</p>
+<ul>
+<li><strong><a href="#prerequisites">Prerequisites</a></strong>  </li>
+<li><strong><a href="#large-maps">Large maps</a></strong></li>
+<li><strong><a href="#digital-twin-tool">Digital Twin Tool</a></strong></li>
+<li><strong><a href="#create-a-road-network-using-roadrunner">RoadRunner</a></strong>  </li>
+<li><strong><a href="#importing-your-road-network-into-carla">Importing into CARLA</a></strong></li>
+<li><strong><a href="#importing-assets-and-adding-them-to-the-map">Importing assets</a></strong></li>
+<li><strong><a href="#traffic-lights">Traffic lights</a></strong></li>
+<li><strong><a href="#traffic-signs">Traffic signs</a></strong> </li>
+<li><strong><a href="#materials">Materials</a></strong></li>
+<li><strong><a href="#road-painter">Road painter</a></strong><ul>
+<li><a href="#what-is-the-road-painter">What is the road painter?</a></li>
+<li><a href="#establish-the-road-painter-master-material-and-render-target">Road painter actor, master material and render target</a></li>
+<li><a href="#prepare-the-master-material">Prepare the master material</a></li>
+<li><a href="#paint-the-road">Paint the road</a></li>
+<li><a href="#update-the-appearance-of-lane-markings">Update the appearance of lane markings</a></li>
+<li><a href="#next-steps">Next steps</a></li>
+</ul>
+</li>
+<li><strong><a href="#trees-and-vegetation">Trees and vegetation</a></strong><ul>
+<li><a href="#foliage-tool">Foliage tool</a></li>
+</ul>
+</li>
+<li><strong><a href="#exporting-a-map">Exporting a map</a></strong><ul>
+<li><a href="#exporting-a-map-as-a-separate-package">Exporting a map as a separate package</a></li>
+<li><a href="#exporting-a-map-as-part-of-a-complete-carla-package">Exporting a map as part of a complete CARLA package</a></li>
+</ul>
+</li>
+</ul>
+<h2 id="prerequisites">Prerequisites</h2>
+<p>To follow this guide, you will need to build CARLA from source, so that you may use the Unreal Editor. Follow the <a href="../build_carla/"><strong>build instructions</strong></a> for your relevant operating system. You will also need a licensed copy of RoadRunner. You may also need a 3D modelling application such as Maya, 3DS Max or Blender to create 3D assets for your custom maps. You should ensure you have completed all the steps to build CARLA and ensure that the Unreal Editor is working, this could take some time to build the application. If you want to create 3D assets for your map, you should use an appropriate 3D design application such as Blender, Maya, 3DsMax or Modo. </p>
+<h2 id="large-maps">Large Maps</h2>
+<p>The following text details the procedures for creating and decorating a standard map. From version 0.9.12, CARLA has the Large Maps functionality. Large maps are bigger in scale than standard maps, and can be up to 100 km<sup>2</sup> in size. Large maps work in a slightly different way to standard maps, because of hardware limitations, even in high end graphics cards. Large maps are split up into tiles, and only the tiles needed immediately (i.e. those closest to the Ego vehicle) are loaded during the simulation. Other tiles sit dormant until the data is needed. This facilitates the highest performance for CARLA simulations. Most of the details that follow are similar when building a Large Map, but there are some additional steps. Please follow <a href="../content_authoring_large_maps/">this guide</a> to build a Large Map for CARLA.</p>
+<h2 id="digital-twin-tool">Digital Twin Tool</h2>
+<p>CARLA offers a procedural map generation tool, which ingests road network data from OpenStreetMap and decorates the map procedurally with buildings and vegetation. Read about how to use the tool <a href="../adv_digital_twin/">here</a>.</p>
+<h2 id="create-a-road-network-using-roadrunner">Create a road network using RoadRunner</h2>
+<p>Open RoadRunner and create a new scene. Choose the Road Plan Tool and right click in the workspace to drop the first control point for the road. Click and drag elsewhere in the workspace to extend the road. </p>
+<p><img alt="roadrunner_draw" src="../img/tuto_content_authoring_maps/drawing_roads.gif" /></p>
+<p>For the purpose of this tutorial we use a simple oval road with a junction in the middle. For building more advanced networks please refer to the <a href="https://es.mathworks.com/products/roadrunner.html"><strong>roadrunner documentation</strong></a>.</p>
+<p><img alt="roadrunner_road" src="../img/tuto_content_authoring_maps/simple_crossroads.png" /></p>
+<p>Once you have made your map in RoadRunner you will be able to export it. Be aware that <strong>the road layout cannot be modified after it has been exported.</strong> Before exporting, ensure that:</p>
+<ul>
+<li>The map is centered at (0,0) to ensure the map can be visualized correctly in Unreal Engine.</li>
+<li>The map definition is correct.</li>
+<li>The map validation is correct, paying close attention to connections and geometries.</li>
+</ul>
+<blockquote>
+<blockquote>
+<blockquote>
+<blockquote>
+<p><img alt="CheckGeometry" src="../img/check_geometry.jpg" /></p>
+</blockquote>
+</blockquote>
+</blockquote>
+</blockquote>
+<p>Once the map is ready, click on the <code>OpenDRIVE Preview Tool</code> button to visualize the OpenDRIVE road network and give everything one last check.</p>
+<blockquote>
+<blockquote>
+<blockquote>
+<blockquote>
+<p><img alt="checkopen" src="../img/check_open.jpg" /></p>
+</blockquote>
+</blockquote>
+</blockquote>
+</blockquote>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><em>OpenDrive Preview Tool</em> makes it easier to test the integrity of the map. If there are any errors with junctions, click on <code>Maneuver Tool</code>, and <code>Rebuild Maneuver Roads</code>.</p>
+</div>
+<p>Once you have created your desired road network, in the RoadRunner menu bar choose <code>File &gt; Export &gt; Carla (.fbx, .xodr, .rrdata, .xml)</code> and export to an appropriate location. </p>
+<p><img alt="roadrunner_exports" src="../img/tuto_content_authoring_maps/roadrunner_exports.png" /></p>
+<p>RoadRunner is the best application for creating custom maps. There are alternatives such as <a href="../tuto_G_openstreetmap/"><strong>OpenStreetMap</strong></a> that focus on generating maps from real road maps. </p>
+<h2 id="truevision-designer">TrueVision designer</h2>
+<p>RoadRunner is a proprietary software that requires MATLAB. Some institutions like universities may have deals with MathWorks such that some users may be able to acquire a RoadRunner license. If you don't have budget for a license, a convenient open source alternative to RoadRunner is the <a href="https://www.truevision.ai/designer"><strong>TrueVision Designer</strong></a>. This app has many of the same features as RoadRunner and is useful if you cannot acquire a license for RoadRunner. </p>
+<h2 id="importing-your-road-network-into-carla">Importing your road network into CARLA</h2>
+<p>The important export files needed for CARLA are the <code>.xodr</code> file and the <code>.fbx</code> file. Copy or move these files into the <code>Import</code> folder inside the root directory of the CARLA repository where you have built from source. </p>
+<p><img alt="roadrunner_imports" src="../img/tuto_content_authoring_maps/rr_import.png" /></p>
+<p>Now open a terminal at the root of the CARLA source directory and run <code>make import</code>. This will import the road network into CARLA.</p>
+<p>You can now see your new map inside the Unreal Editor. Run <code>make launch</code> at the root of the CARLA source directory to launch the Unreal Editor. You will now see a new directory in the content browser named <code>map_package</code>. Within this directory in the location <code>Content &gt; map_package &gt; Maps &gt; tutorial</code> you will now find your new map.</p>
+<p><img alt="new_loaded_map" src="../img/tuto_content_authoring_maps/new_map.png" /></p>
+<p>You have now created the road network, the basis of your map.</p>
+<h2 id="importing-assets-and-adding-them-to-the-map">Importing assets and adding them to the map</h2>
+<p>Now we have the road network as the basis for our map, we now want to create some content for the map, such as buildings. These assets can be created using a 3D modelling application such as Autodesk Maya, 3DS Max, Blender or any other 3D application with the appropriate export options. It is important that, at a minimum, the application is capable of <code>.fbx</code> export. </p>
+<p>There are several elements needed to create an asset in CARLA:</p>
+<ul>
+<li><a href="https://en.wikipedia.org/wiki/Polygon_mesh"><strong>Mesh</strong></a> - a set of 3D coordinate vertices and the associated joining edges</li>
+<li><a href="https://en.wikipedia.org/wiki/UV_mapping"><strong>UV map</strong></a> - a mapping of 3D vertices and edges to a 2D texture space to match textures with 3D locations</li>
+<li><a href="https://en.wikipedia.org/wiki/Texture_mapping"><strong>Texture</strong></a> - a 2D image defining the colors and patterns to appear on the surface of the 3D object</li>
+<li><a href="https://en.wikipedia.org/wiki/Normal_mapping"><strong>Normal map</strong></a> - a 2D image defining the directions of the normals on the surface of the object, to add 3D variations to the object's surface</li>
+<li>ORM map - a map defining the regions of metallicity, roughness and ambient occlusion</li>
+</ul>
+<p>The ORM map utilizes the channels of a standard RGBA encoded image to encode the map of metallic regions, roughness and ambient occlusion. As we define the map here, the red channel defines the metallic map, the green channel the roughness and the blue channel is the ambient occlusion. These maps (as well as the diffuse and normal maps) can be created using an application such as <a href="https://www.adobe.com/products/substance3d-painter.html"><strong>Adobe Substance 3D painter</strong></a>.</p>
+<p>Create a new folder in some appropriate location using the Unreal content browser. Within this folder you can either right click and select <code>Import to PATH/TO/FOLDER</code> near the top of the context menu, or drag and drop files directly into the content browser. </p>
+<p>We will import an FBX file containing the base mesh and the UV map, that we have exported from Blender.</p>
+<p><img alt="farmhouse_blender" src="../img/tuto_content_authoring_maps/farmhouse_in_blender.png" /></p>
+<p>In the context menu, ensure that in the <strong>Mesh</strong> section <code>Import Normals</code> is selected
+ for <code>Normal Import Method</code> and that in the <strong>Material</strong> section that <code>Do Not Create Material</code> is selected. Deselect <code>Import Textures</code> in the <strong>Materials</strong> section since we will import them manually. These choices would differ if you wanted to use some textures already embedded in your FBX file. </p>
+<p>Select <code>Import All</code>. Once the import has completed, double click on the imported asset that appears in the content browser to edit it. </p>
+<p><img alt="farmhouse_edit" src="../img/tuto_content_authoring_maps/farmhouse_ue_edit.png" /></p>
+<p>We should now import the textures, the diffuse texture for the diffuse colors, the normal map and the ORM map. </p>
+<p>Open the ORM map by double clicking and deselect the <code>sRGB</code> option, to ensure the texture is correctly applied. </p>
+<p>Right click in the content browser and select <code>Material</code> from the menu. A new material will be created in the content browser. Double click to edit it. Shift select the textures you imported and drag them into the material edit window, you will now get 3 new nodes in the material node editor. </p>
+<p><img alt="material_init" src="../img/tuto_content_authoring_maps/initialise_material.png" /></p>
+<p>Now connect the nodes according to the following rules:</p>
+<ul>
+<li>Diffuse RGB --&gt; Base Color</li>
+<li>Normal RGB --&gt; Normal</li>
+<li>ORM R --&gt; Ambient occlusion</li>
+<li>ORM G --&gt; Roughness</li>
+<li>ORM B --&gt; Metallic</li>
+</ul>
+<p>Your material node graph should now look similar to this: </p>
+<p><img alt="material_final" src="../img/tuto_content_authoring_maps/material_connected.png" /></p>
+<p>Save the material, then open the asset again and drag the material into the material slot. Your asset should now be fully textured.</p>
+<p><img alt="textured_asset" src="../img/tuto_content_authoring_maps/textured_asset.png" /></p>
+<p>Now save the asset and it is ready for use in your map. You can now drag the asset from the content browser and place it into your map:</p>
+<p><img alt="asset_in_map" src="../img/tuto_content_authoring_maps/asset_in_map.png" /></p>
+<p>Now you can save the map, using the "Save Current" option in the top left of the workspace and it is ready to use. Play the simulation.</p>
+<p>This concludes the Map authorship guide. Now you know how to create a road network and import 3D assets for use in CARLA. You may now read how to <a href="../tuto_M_manual_map_package/"><strong>package a map for use in CARLA standalone version</strong></a></p>
+<h2 id="traffic-lights">Traffic lights</h2>
+<p>To add traffic lights to your new map:</p>
+<p><strong>1.</strong> From the <em>Content Browser</em>, navigate to <code>Content &gt; Carla &gt; Static &gt; TrafficLight &gt; StreetLights_01</code>. You will find several different traffic light blueprints to choose from.</p>
+<p><strong>2.</strong> Drag the traffic lights into the scene and position them in the desired location. Press the space bar on your keyboard to toggle between positioning, rotation, and scaling tools.</p>
+<p><strong>3.</strong> Adjust the <a href="../python_api/#carla.TrafficSign.trigger_volume"><code>trigger volume</code></a> for each traffic light by selecting the <em>BoxTrigger</em> component in the <em>Details</em> panel and adjusting the values in the <em>Transform</em> section. This will determine the traffic light's area of influence.</p>
+<blockquote>
+<blockquote>
+<p><img alt="ue_trafficlight" src="../img/ue_trafficlight.jpg" /></p>
+</blockquote>
+</blockquote>
+<p><strong>4.</strong> For junctions, drag the <code>BP_TrafficLightGroup</code> actor into the level. Assign all the traffic lights in the junction to the traffic light group by adding them to the <em>Traffic Lights</em> array in the <em>Details</em> panel.</p>
+<blockquote>
+<blockquote>
+<p><img alt="ue_tl_group" src="../img/ue_tl_group.jpg" /></p>
+</blockquote>
+</blockquote>
+<p><strong>5.</strong> Traffic light timing is only configurable through the Python API. See the documentation <a href="../core_actors/#traffic-signs-and-traffic-lights">here</a> for more information.</p>
+<blockquote>
+<blockquote>
+<p><img alt="ue_tlsigns_example" src="../img/ue_tlsigns_example.jpg" /></p>
+</blockquote>
+<p><em>Example: Traffic Signs, Traffic lights and Turn based stop.</em></p>
+</blockquote>
+<h2 id="traffic-signs">Traffic signs</h2>
+<p>To add traffic signs to your new map:</p>
+<p><strong>1.</strong> From the <em>Content Browser</em>, navigate to <code>Content &gt; Carla &gt; Static &gt; TrafficSign</code>. You will find several different traffic light blueprints to choose from.</p>
+<p><strong>2.</strong> Drag the traffic lights into the scene and position them in the desired location. Press the space bar on your keyboard to toggle between positioning, rotation, and scaling tools.</p>
+<p><strong>3.</strong> Adjust the <a href="../python_api/#carla.TrafficSign.trigger_volume"><code>trigger volume</code></a> for each traffic sign by selecting the <em>BoxTrigger</em> component in the <em>Details</em> panel and adjusting the values in the <em>Transform</em> section. This will determine the traffic light's area of influence. Not all traffic signs have a trigger volume. Those that do, include the yield, stop and speed limit signs.</p>
+<h2 id="materials">Materials</h2>
+<p>The CARLA content library has a multitude of useful materials ready to use to change the look of your maps. In your content browser, navigate to <code>Carla &gt; Static &gt; GenericMaterials</code>. In here you will find numerous materials you can use to alter the appearance of your map. </p>
+<p>You can test the materials rapidly by drag and drop onto map elements:</p>
+<p><img alt="map_materials" src="../img/tuto_content_authoring_maps/map_materials.gif" /></p>
+<h2 id="road-painter">Road Painter</h2>
+<p>The road painter is a tool that can be used to customize the appearance of the road, adding extra realism with additional textures, decals and meshes.</p>
+<h3 id="what-is-the-road-painter">What is the road painter?</h3>
+<p>The Road Painter tool is a blueprint that uses OpenDRIVE information to paint roads quickly. It takes a master material and applies it to a render target of the road to use as a canvas. The master material is made up of a collection of materials that can be blended using brushes and applied as masks. There is no need to apply photometry techniques nor consider the UVs of the geometry.</p>
+<p>The road painter uses the OpenDRIVE information to paint the roads. Make sure that your <code>.xodr</code> file has the same name as your map for this to work correctly.</p>
+<h3 id="establish-the-road-painter-master-material-and-render-target">Establish the road painter, master material and render target</h3>
+<p><strong>1. Create the <code>RoadPainter</code> actor.</strong></p>
+<ol>
+<li>In the <em>Content Browser</em>, navigate to <code>Content &gt; Carla &gt; Blueprints &gt; LevelDesign</code>.</li>
+<li>Drag the <code>RoadPainter</code> into the scene.</li>
+</ol>
+<p><strong>2. Create the Render Target.</strong></p>
+<ol>
+<li>In the <em>Content Browser</em>, navigate to <code>Content &gt; Carla &gt; Blueprints &gt; LevelDesign &gt; RoadPainterAssets</code>.</li>
+<li>Right-click on the <code>RenderTarget</code> file and select <code>Duplicate</code>.</li>
+<li>Rename to <code>Tutorial_RenderTarget</code>.</li>
+</ol>
+<p><strong>3. Create the master material instance.</strong></p>
+<ol>
+<li>In the <em>Content Browser</em>, navigate to <code>Game &gt; Carla &gt; Static &gt; GenericMaterials &gt; RoadPainterMaterials</code>.</li>
+<li>Right-click on <code>M_RoadMaster</code> and select <em>Create Material Instance</em>.</li>
+<li>Rename to <code>Tutorial_RoadMaster</code>.</li>
+</ol>
+<p><strong>4. Re-calibrate the <em>Map Size (Cm)</em> so that it is equal to the actual size of the map.</strong></p>
+<ol>
+<li>Select the <code>RoadPainter</code> actor in the scene.</li>
+<li>Go to the <em>Details</em> panel and press the <em>Z-Size</em> button. You will see the value in <em>Map Size (Cm)</em> change.</li>
+</ol>
+<blockquote>
+<blockquote>
+<blockquote>
+<blockquote>
+<blockquote>
+<p><img alt="map size" src="../img/map_size.png" /></p>
+</blockquote>
+</blockquote>
+</blockquote>
+</blockquote>
+</blockquote>
+<p><strong>5. Synchronize the map size between the <code>RoadPainter</code> and <code>Tutorial_RoadMaster</code>.</strong></p>
+<ol>
+<li>In the <em>Content Browser</em>, open <code>Tutorial_RoadMaster</code>.</li>
+<li>Copy the value <em>Map Size (Cm)</em> from the previous step and paste it to <em>Global Scalar Parameter Values -&gt; Map units (CM)</em> in the <code>Tutorial_RoadMaster</code> window.</li>
+<li>Press save.</li>
+</ol>
+<blockquote>
+<blockquote>
+<blockquote>
+<blockquote>
+<blockquote>
+<blockquote>
+<p><img alt="img" src="../img/map_size_sync.png" /></p>
+</blockquote>
+</blockquote>
+</blockquote>
+</blockquote>
+</blockquote>
+</blockquote>
+<p><strong>6. Create the communication link between the road painter and the master material.</strong></p>
+<p>The <code>Tutorial_RenderTarget</code> will be the communication link between the road painter and <code>Tutorial_RoadMaster</code>.</p>
+<ol>
+<li>In the <code>Tutorial_RoadMaster</code> window, apply the <code>Tutorial_RenderTarget</code> to <em>Global Texture Parameter Values -&gt; Texture Mask</em>.</li>
+<li>Save and close.</li>
+<li>In the main editor window, select the road painter actor, go to the <em>Details</em> panel and apply the <code>Tutorial_RenderTarget</code> to <em>Paint -&gt; Render Target</em>.</li>
+</ol>
+<hr />
+<h3 id="prepare-the-master-material">Prepare the master material</h3>
+<p>The <code>Tutorial_RoadMaster</code> material you created holds the base material, extra material information, and parameters that will be applied via your <code>Tutorial_RenderTarget</code>. You can configure one base material and up to three additional materials.</p>
+<blockquote>
+<blockquote>
+<p><img alt="master materials" src="../img/master_material.png" /></p>
+</blockquote>
+</blockquote>
+<p>To configure the materials, double-click the <code>Tutorial_RoadMaster</code> file. In the window that appears, you can select and adjust the following values for each material according to your needs:</p>
+<ul>
+<li>Brightness</li>
+<li>Hue</li>
+<li>Saturation</li>
+<li>AO Intensity</li>
+<li>NormalMap Intensity</li>
+<li>Roughness Contrast</li>
+<li>Roughness Intensity</li>
+</ul>
+<p>You can change the textures for each material by selecting the following values and searching for a texture in the search box:</p>
+<ul>
+<li>Diffuse</li>
+<li>Normal</li>
+<li>ORMH</li>
+</ul>
+<p>Explore some of the CARLA textures available in <code>Game &gt; Carla &gt; Static &gt; GenericMaterials &gt; Asphalt &gt; Textures</code>.</p>
+<hr />
+<h4 id="paint-the-road">Paint the road</h4>
+<p><strong>1. Create the link between the road painter and the roads.</strong></p>
+<ol>
+<li>In the main editor window, search for <code>Road_Road</code> in the <em>World Outliner</em> search box.</li>
+<li>Press <code>Ctrl + A</code> to select all the roads.</li>
+<li>In the <em>Details</em> panel, go to the <em>Materials</em> section and apply <code>Tutorial_RoadMaster</code> to <em>Element 0</em>, <em>Element 1</em>, <em>Element 2</em>, and <em>Element 3</em>.</li>
+</ol>
+<p><strong>2. Choose the material to customize.</strong></p>
+<p>Each of the materials we added to <code>Tutorial_RoadMaster</code> are applied to the roads separately and application is configured with the <em>Brush</em> tool. To apply and customize a material:</p>
+<ol>
+<li>Select the road painter actor</li>
+<li>In the <em>Details</em> panel, select the material to work with in the <em>Mask Color</em> dropdown menu.</li>
+</ol>
+<blockquote>
+<blockquote>
+<blockquote>
+<blockquote>
+<blockquote>
+<blockquote>
+<p><img alt="choose material" src="../img/choose_material.png" /></p>
+</blockquote>
+</blockquote>
+</blockquote>
+</blockquote>
+</blockquote>
+</blockquote>
+<p><strong>3. Set the brush and stencil parameters.</strong></p>
+<p>There are a variety of stencils to choose from in <code>GenericMaterials/RoadStencil/Alphas</code>. The stencil is used to paint the road according to your needs and can be adjusted using the following values:</p>
+<ul>
+<li><em>Stencil size</em> — Size of the brush.</li>
+<li><em>Brush strength</em> — Roughness of the outline.</li>
+<li><em>Spacebeween Brushes</em> — Distance between strokes.</li>
+<li><em>Max Jitter</em> — Size variation of the brush between strokes.</li>
+<li><em>Stencil</em> — The brush to use.</li>
+<li><em>Rotation</em> — Rotation applied to the stroke.</li>
+</ul>
+<blockquote>
+<blockquote>
+<blockquote>
+<blockquote>
+<blockquote>
+<blockquote>
+<p><img alt="materials_roadpaint_brushes" src="../img/material_customization/Materials_Brush.jpg" /></p>
+</blockquote>
+</blockquote>
+</blockquote>
+</blockquote>
+</blockquote>
+</blockquote>
+<div style="text-align: right"><i>Brush panel.</i></div>
+<p><br>
+<img alt="materials_roadpaint_typesofbrushes" src="../img/material_customization/Materials_Road_Typesofbrushes.jpg" /></p>
+<div style="text-align: right"><i>Different types of brushes.</i></div>
+<p><br>
+<strong>4. Apply each material to the desired portions of the road.</strong></p>
+<p>Choose where to apply the selected material via the buttons in the <em>Default</em> section of the <em>Details</em> panel:</p>
+<ul>
+<li><em>Paint all roads</em> — Paint all the roads.</li>
+<li><em>Paint by actor</em> — Paint a specific, selected actor.</li>
+<li><em>Paint over circle</em> — Paint using a circular pattern, useful to provide variation.</li>
+<li><em>Paint over square</em> — Paint using a square pattern, useful to provide variation.</li>
+</ul>
+<p>This section also contains options to erase the applied changes.</p>
+<ul>
+<li><em>Clear all</em> — Erase all the painted material.</li>
+<li><em>Clear materials</em> — Remove the currently active materials.</li>
+<li><em>Clear material by actor</em> — Remove the material closest to the selected actor.</li>
+</ul>
+<blockquote>
+<blockquote>
+<blockquote>
+<blockquote>
+<blockquote>
+<blockquote>
+<p><img alt="materials_roadpaint_brushes" src="../img/material_customization/Materials_RoadPainter_Default.jpg" /></p>
+</blockquote>
+</blockquote>
+</blockquote>
+</blockquote>
+</blockquote>
+</blockquote>
+<div style="text-align: right"><i>Different painting and erasing options.</i></div>
+<p><br>
+<strong>5. Add decals and meshes.</strong></p>
+<p>You can explore the available decals and meshes in <code>Content &gt; Carla Static &gt; Decals</code> and <code>Content &gt; Carla &gt; Static</code>. Add them to road painter by extending and adding to the <em>Decals Spawn</em> and <em>Meshes Spawn</em> arrays. For each one you can configure the following parameters:</p>
+<ul>
+<li><em>Number of Decals/Meshes</em> - The amount of each decal or mesh to paint.</li>
+<li><em>Decal/Mesh Scale</em> — Scale of the decal/mesh per axis.</li>
+<li><em>Fixed Decal/Mesh Offset</em> — Deviation from the center of the lane per axis.</li>
+<li><em>Random Offset</em> — Max deviation from the center of the lane per axis.</li>
+<li><em>Decal/Mesh Random Yaw</em> — Max random yaw rotation.</li>
+<li><em>Decal/Mesh Min Scale</em> — Minimum random scale applied to the decal/mesh.</li>
+<li><em>Decal/Mesh Max Scale</em> — Max random scale applied to the decal/mesh.</li>
+</ul>
+<blockquote>
+<blockquote>
+<blockquote>
+<blockquote>
+<blockquote>
+<blockquote>
+<p><img alt="materials_" src="../img/decals_meshes.png" /></p>
+</blockquote>
+</blockquote>
+</blockquote>
+</blockquote>
+</blockquote>
+</blockquote>
+<div style="text-align: right"><i>Decals and Meshes panels.</i></div>
+<p><br></p>
+<p>Once you have configured your meshes and decals, spawn them by pressing <code>Spawn decals</code> and <code>Spawn meshes</code>.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Make sure that meshes and decals do not have collisions enabled that can interfere with cars on the road and lower any bounding boxes to the level of the road.</p>
+</div>
+<p><strong>7. Experiment to get your desired appearance.</strong> </p>
+<p>Experiment with different materials, textures, settings, decals, and meshes to get your desired look. Below are some example images of how the appearance of the road changes during the process of painting each material.</p>
+<p><img alt="materials_roadpaint_mat00" src="../img/material_customization/Materials_Road_MaterialBase.jpg" /></p>
+<div style="text-align: right"><i>Example of base road material.</i></div>
+<p><br>
+<img alt="materials_roadpaint_mat01" src="../img/material_customization/Materials_Road_Material1.jpg" /></p>
+<div style="text-align: right"><i>Example after material 1 is applied.</i></div>
+<p><br>
+<img alt="materials_roadpaint_mat02" src="../img/material_customization/Materials_Road_Material2.jpg" /></p>
+<div style="text-align: right"><i>Example after material 2 is applied.</i></div>
+<p><br>
+<img alt="materials_roadpaint_mat03" src="../img/material_customization/Materials_Road_Material3.jpg" /></p>
+<div style="text-align: right"><i>Example after material 3 is applied.</i></div>
+<p><br>
+<img alt="materials_roadpaint_mat03" src="../img/material_customization/Materials_Road_Decals.jpg" /></p>
+<div style="text-align: right"><i>Example after decals are applied.</i></div>
+<p><br>
+<img alt="materials_roadpaint_mat03" src="../img/material_customization/Materials_Road_Meshes.jpg" /></p>
+<div style="text-align: right"><i>Example after meshes are applied.</i></div>
+<p><br></p>
+<hr />
+<h2 id="update-the-appearance-of-lane-markings">Update the appearance of lane markings</h2>
+<p>After you have painted the roads, you can update the appearance of the road markings by following these steps:</p>
+<p><strong>1. Make a copy of the master material.</strong></p>
+<ol>
+<li>In the <em>Content Browser</em>, navigate to <code>Game &gt; Carla &gt; Static &gt; GenericMaterials &gt; RoadPainterMaterials</code>.</li>
+<li>Right-click on <code>Tutorial_RoadMaster</code> and select <em>Create Material Instance</em>.</li>
+<li>Rename to <code>Tutorial_LaneMarkings</code>.</li>
+</ol>
+<p><strong>2. Configure the lane marking material.</strong></p>
+<ol>
+<li>In the <em>Content Browser</em>, double-click on <code>Tutorial_LaneMarkings</code>.</li>
+<li>In the <em>Details</em> panel, go to the <em>Global Static Switch Parameter Values</em> section and check the boxes on the left and right of <em>LaneMark</em>.</li>
+<li>Go to the <em>Texture</em> section and check the boxes for <em>LaneColor</em> and <em>Uv Size</em>.</li>
+<li>Choose your preferred color for the lane markings in <em>LaneColor</em>.</li>
+<li><em>Save</em> and close.</li>
+</ol>
+<p><strong>3. Select the road marking meshes.</strong></p>
+<p>Drag the material onto the lane markings you wish to color. Repeat the whole process for different colors of lane markings if required.</p>
+<hr />
+<h2 id="trees-and-vegetation">Trees and Vegetation</h2>
+<p>The CARLA content library has a comprehensive set of vegetation blueprints for you to add further realism to the off-road areas of your maps like sidewalks, parks, hillsides, fields and forrest. </p>
+<p>Navigate to the vegetation folder in the CARLA content library: <code>Carla &gt; Static &gt; Vegetation</code>. You will find blueprints for multiple types of trees, bushes, shrubs. You can drag these elements into your map from the content browser. </p>
+<p><img alt="map_materials" src="../img/tuto_content_authoring_maps/add_tree.png" /></p>
+<h3 id="foliage-tool">Foliage tool</h3>
+<p>A useful tool for trees and vegetation is the <a href="https://docs.unrealengine.com/4.27/en-US/BuildingWorlds/Foliage/"><strong>Unreal Engine foliage tool</strong></a>. Activate the tool by selecting the <code>mode</code> from the mode dropdown in the toolbar.</p>
+<p><img alt="foliage_tool" src="../img/tuto_content_authoring_maps/select_foliage_tool.gif" /></p>
+<p>Drag your desired foliage item into the box labeled <code>+ Drop Foliage Here</code>. Set an appropriate density in the density field, then paint into the map with your foliage item. </p>
+<p><img alt="foliage_paint" src="../img/tuto_content_authoring_maps/foliage_paint.gif" /></p>
+<hr />
+<h2 id="exporting-a-map">Exporting a map</h2>
+<h3 id="exporting-a-map-as-a-separate-package">Exporting a map as a separate package</h3>
+<p>To export a custom map as an independent content package, we use the <code>make package</code> command. Identify your custom map's location in the CARLA content directory through the Unreal content browser. We recommend creating your custom maps in with the existing CARLA maps in the <code>Content &gt; Carla &gt; Maps</code> directory. In this case, we are storing the map in its own folder named <em>MyMap</em>.</p>
+<p><img alt="mymap_to_export" src="../img/tuto_content_authoring_maps/mymap_export.png" /></p>
+<p>Remember that the map needs an associated OpenDRIVE file stored inside a directory named <code>OpenDrive</code> at the same level as the map asset (<code>.umap</code> file). The OpenDRIVE file should have the same name as the map itself with the <code>.xodr</code> extension. In this example I have named the map <em>MyMap</em> (the file will appear as <code>MyMap.umap</code> in a file browser), therefore my OpenDRIVE file is named <code>MyMap.xodr</code>. </p>
+<p><img alt="mymap_xodr" src="../img/tuto_content_authoring_maps/mymap_xodr.png" /></p>
+<p>Now we need to create a package config JSON file for the export process. In a file browser (not the Unreal content browser) navigate to <code>CARLA_ROOT/Unreal/CarlaUE4/Content/Carla/Config</code>. Inside this directory, you will see a number of JSON config files. Open a new one with a name corresponding to your map and the suffix <code>.Package.json</code>. In this case we name the file <code>exportMyMap.Package.json</code>.</p>
+<p><img alt="export_mymap_config" src="../img/tuto_content_authoring_maps/export_mymap_config.png" /></p>
+<p>The JSON file should have the following structure:</p>
+<pre><code class="language-json">{
+    &quot;props&quot;: [],
+    &quot;maps&quot;: [
+        {
+            &quot;name&quot;: &quot;MyMap&quot;,
+            &quot;path&quot;: &quot;/Game/Carla/Maps/MyMap&quot;,
+            &quot;use_carla_materials&quot;: true
+        }
+    ]
+}
+</code></pre>
+<p>The <code>name</code> parameter should be the same as the name of your map asset file (without the <code>.umap</code> suffix). Ensure that the <code>path</code> parameter points to the correct directory location of your map asset (<code>.umap</code> file). The first part of the path <code>CARLA_ROOT/Unreal/CarlaUE4/Content/</code> should be replaced with <code>/Game/</code>. </p>
+<p>Now we call the <code>make package</code> command from a terminal in the <code>CARLA_ROOT</code> directory, with the following argument:</p>
+<pre><code class="language-sh">make package ARGS=&quot;--packages=exportMyMap&quot;
+</code></pre>
+<p>The value of the argument <code>--packages</code> should match the name of the JSON configuration file without the <code>.Package.json</code> suffix. The package may take some time to build, depending on the size of the map. </p>
+<p>When the export process is finished, the exported map package will be saved as a compressed archive:</p>
+<ul>
+<li><strong>Linux</strong>: <code>.tar.gz</code> archive in the <code>CARLA_ROOT/Dist</code> directory</li>
+<li><strong>Windows</strong>: <code>.zip</code> archive in the <code>CARLA_ROOT/Build/UE4Carla</code> directory</li>
+</ul>
+<p>The map package must be built using the target operating system. I.e. a map package built in Linux cannot be imported into a CARLA package for Windows. </p>
+<p>To import the packaged map into a packaged version of CARLA, place the <code>.tar.gz</code> or <code>.zip</code> archive into the <code>CARLA_ROOT/Import</code> directory of an extracted CARLA package then run the <code>ImportAssets.bin/.sh</code> script. Once this is finished, launch CARLA and you will find the new custom map in the list of available maps. </p>
+<h3 id="exporting-a-map-as-part-of-a-complete-carla-package">Exporting a map as part of a complete CARLA package</h3>
+<p>To export the map as part of a complete CARLA package, such that the map is available on launch of the package, include the following line in the <code>DefaultGame.ini</code> file in <code>CARLA_ROOT/Unreal/CarlaUE4/Config/</code>:</p>
+<pre><code>+MapsToCook=(FilePath=&quot;/Game/Carla/Maps/MyMap/MyMap&quot;)
+</code></pre>
+<p>This line should be added in the <code>[/Script/UnrealEd.ProjectPackagingSettings]</code> section, preferably next to the other <code>MapsToCook(...)</code> entries. Then run <code>make package</code> command to build a package containing your map. The exported CARLA package with your map will be saved in the <code>Dist</code> folder on Linux and the <code>/Build/UE4Carla/</code> folder on Windows.</p>
+<hr />
+<h2 id="next-steps">Next steps</h2>
+<p>Continue customizing your map using the tools and guides below:</p>
+<ul>
+<li><a href="../tuto_M_custom_layers/">Implement sub-levels in your map.</a></li>
+<li><a href="../tuto_M_custom_buildings/">Add buildings with the procedural building tool.</a></li>
+<li><a href="../tuto_M_custom_weather_landscape/#weather-customization">Customize the weather</a></li>
+<li><a href="../tuto_M_custom_weather_landscape/#add-serial-meshes">Customize the landscape with serial meshes.</a>
+Once you have finished with the customization, you can <a href="../tuto_M_generate_pedestrian_navigation/">generate the pedestrian navigation information</a>.</li>
+</ul>
+<hr />
+<p>If you have any questions about the process, then you can ask in the <a href="https://github.com/carla-simulator/carla/discussions">forum</a>.</p>
+<div class="build-buttons">
+<p>
+<a href="https://github.com/carla-simulator/carla/discussions" target="_blank" class="btn btn-neutral" title="Go to the CARLA forum">
+CARLA forum</a>
+</p>
+</div>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="../build_carla/" class="btn btn-neutral float-left" title="Building CARLA"><span class="icon icon-circle-arrow-left"></span> 前一页</a>
+        <a href="../tuto_content_authoring_vehicles/" class="btn btn-neutral float-right" title="Content authoring - vehicles">后一页 <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+        <span>
+          <a href="https://github.com/carla-simulator/carla" class="fa fa-github" style="color: #fcfcfc"> GitHub</a>
+        </span>
+    
+    
+      <span><a href="../build_carla/" style="color: #fcfcfc">&laquo; 前一页</a></span>
+    
+    
+      <span><a href="../tuto_content_authoring_vehicles/" style="color: #fcfcfc">后一页 &raquo;</a></span>
+    
+  </span>
+</div>
+    <script src="../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "..";</script>
+    <script src="../js/theme_extra.js"></script>
+    <script src="../js/theme.js"></script>
+      <script src="../extra.js"></script>
+      <script src="../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>

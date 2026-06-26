@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <link rel="shortcut icon" href="../img/favicon.ico" />
+    <title>Working with CARLA x Cosmos Transfer - CARLA Simulator</title>
+    <link rel="stylesheet" href="../css/theme.css" />
+    <link rel="stylesheet" href="../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+        <link href="../extra.css" rel="stylesheet" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "Working with CARLA x Cosmos Transfer";
+        var mkdocs_page_input_path = "nvidia_cosmos_transfer.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href=".." class="icon icon-home"> CARLA Simulator
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+      <input type="text" name="q" placeholder="搜索文档" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="..">Home</a>
+                </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Getting started</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../start_introduction/">Introduction</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../start_quickstart/">Quick start package installation</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_first_steps/">First steps</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../build_carla/">Building CARLA</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Next steps</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_content_authoring_maps/">Content authoring - maps</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_content_authoring_vehicles/">Content authoring - vehicles</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../content_authoring_props/">Content authoring - props</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">CARLA topics</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../coordinates/">Coordinates and transformations</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../foundations/">Foundations</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../core_actors/">Actors</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../core_map/">Maps</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../core_sensors/">Sensors and data</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../ts_traffic_simulation_overview/">Traffic</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../ai_rendering/">AI rendering</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../development_tutorials/">Development</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../custom_assets_tutorials/">Custom assets</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Resources</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../python_api/">Python API</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../catalogue/">Catalogue</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../ref_cpp/">C++ reference</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../bp_library/">Blueprint library</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tutorials/">Tutorials</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../ext_docs/">Extended documentation</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../download/">Downloads</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">CARLA Ecosystem</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../ecosys_ansys/">ANSYS</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_G_rllib_integration/">AWS</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_G_carsim_integration/">CarSIM</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_G_chrono/">Chrono</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../large_map_roadrunner/">MathWorks</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../inverted_ai/">Inverted AI</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../nvidia/">NVIDIA</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../adv_opendrive/">ASAM OpenDRIVE</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../adv_ptv/">PTV Vissim</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../adv_rss/">RSS</a>
+                  </li>
+                  <li class="toctree-l1"><a class="" href="https://carla.readthedocs.io/projects/ros-bridge/en/latest/">ROS</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_G_scenic/">Scenic</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../adv_sumo/">SUMO</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../ecosys_synkrotron/">SYNKROTRON</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Contributing</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../cont_contribution_guidelines/">Guidelines</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../cont_coding_standard/">Coding standards</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../cont_doc_standard/">Documentation standard</a>
+                  </li>
+                  <li class="toctree-l1"><a class="" href=".."></a>
+                  </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="..">CARLA Simulator</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href=".." class="icon icon-home" aria-label="Docs"></a></li>
+      <li class="breadcrumb-item active">Working with CARLA x Cosmos Transfer</li>
+    <li class="wy-breadcrumbs-aside">
+          <a href="https://github.com/carla-simulator/carla/edit/master/Docs/nvidia_cosmos_transfer.md" class="icon icon-github"> 在 GitHub 上编辑</a>
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="working-with-carla-x-cosmos-transfer">Working with CARLA x Cosmos Transfer</h1>
+<p>CARLA can be connected to NVIDIA Cosmos Transfer to create hyper-realistic variations of the synthetic data generated in CARLA. </p>
+<p>In this integration, CARLA generates a set of videos, including RGB, semantic segmentation, depth, and edges, used to control Cosmos Transfer. These control videos are generated by using the <code>carla_cosmos_gen.py</code> script. Cosmos Transfer uses these control videos in combination with a text prompt and some additional tuning parameters to produce new variations of the video.</p>
+<p>This integration is presented in the form of a client-server architecture. The <code>cosmos_client.py</code> script sends queries to a Cosmos Transfer server, and the server is responsible for completing the request sending videos back to the client (This process takes 1-2 minutes). To this end, users need to first deploy a Cosmos Transfer service. In the next section, we explain the different options to deploy your own Cosmos Transfer service. </p>
+<ul>
+<li><strong><a href="#deploying-a-cosmos-transfer-server">Deploying a Cosmos Transfer server</a></strong><ul>
+<li><a href="#option-1-1-click-deployment-on-nvidia-brev">Option 1: 1-click deployment on NVIDIA Brev</a></li>
+<li><a href="#option-2-deploying-your-own-service-somewhere-else">Option 2: Deploying your own service somewhere else</a></li>
+</ul>
+</li>
+<li><strong><a href="#using-the-carla-x-cosmos-transfer-client">Using the CARLA x Cosmos Transfer Client</a></strong><ul>
+<li><a href="#install-dependencies">Dependency installation</a></li>
+<li><a href="#generating-cosmos-transfer-control-inputs">Generating Cosmos-Transfer control inputs</a></li>
+<li><a href="#generating-style-transfer-variations-using-cosmos-transfer">Generating style-transfer variations using Cosmos Transfer</a></li>
+<li><a href="#understainding-the-cosmos-transfer-configuration">Understanding the Cosmos-Transfer configuration</a></li>
+</ul>
+</li>
+</ul>
+<hr />
+<h1 id="deploying-a-cosmos-transfer-server">Deploying a Cosmos Transfer server</h1>
+<p>Cosmos Transfer requires high-performance datacenter GPUs such as the NVIDIA H100. We have created multiple ways to deploy Cosmos Transfer servers easily.</p>
+<h2 id="option-1-1-click-deployment-on-nvidia-brev">Option 1: 1-click deployment on NVIDIA Brev</h2>
+<p>The CARLA team has created a Brev launchable to enable users to create their own Cosmos Transfer servers with ease. To this end:</p>
+<p><strong>1.</strong> Sign up to NVIDIA Brev <a href="https://login.brev.nvidia.com/signin">here</a>. Follow the instructions on the website  to fund your account.</p>
+<p><strong>2.</strong> Go to the link <a href="https://brev.nvidia.com/launchable/deploy/now?launchableID=env-32CoARmRgbQdxkQeHHkWfvRj87T">carla-x-cosmos-transfer1-lambda</a>. Click on <em>Deploy Launchable</em>.
+<img alt="Brev launchable" src="../img/cosmos_transfer/brev_01.png" style="padding:1rem;" /></p>
+<p><strong>3.</strong> Click on <em>Go to Instance Page</em>.
+<img alt="Go to Instance Page" src="../img/cosmos_transfer/brev_02.png" style="padding:1rem;" /></p>
+<p><strong>5.</strong> Wait until the instance has started.
+<img alt="Started instance" src="../img/cosmos_transfer/brev_05.png" style="padding:1rem;" />
+<strong>6.</strong> Make the URL public. </p>
+<blockquote>
+<p>Click on <em>Edit Access</em> (take a note of the <em>Shareable URL</em> and port):</p>
+</blockquote>
+<p><img alt="Edit URL" src="../img/cosmos_transfer/brev_06.png" style="padding:1rem;" /></p>
+<blockquote>
+<p>Toggle <em>Make Public</em>:</p>
+</blockquote>
+<p><img alt="Public URL" src="../img/cosmos_transfer/brev_07.png" style="padding-left:5rem;padding-right:5em;padding-top:1rem;" /></p>
+<p><strong>7.</strong> Your Cosmos Transfer service is ready!</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>You may encounter limited amount of GPU instances in a particular cloud vendor. In those cases try changing to a different provider as follows: 
+<img alt="Edit compute" src="../img/cosmos_transfer/brev_03.png" style="padding:1rem;" />
+<img alt="Select new cloud" src="../img/cosmos_transfer/brev_04.png" style="padding:1rem;" /></p>
+</div>
+<hr />
+<h2 id="option-2-deploying-your-own-service-somewhere-else">Option 2: Deploying your own service somewhere else</h2>
+<p>If you have access to the appropriate hardware, you can deploy Cosmos Transfer in a Docker container. The files required to build the server image can be found in the <code>PythonAPI/examples/nvidia/cosmos/server</code> directory inside the root folder of your CARLA installation or package. Follow these steps to build and deploy a Cosmos Transfer server:</p>
+<p><strong>1.</strong> <strong>Install Docker</strong>: If Docker is not already installed on your system, <a href="https://docs.docker.com/engine/install/">install it</a>.</p>
+<p><strong>2.</strong> <strong>Install Conda</strong>: Follow <a href="https://docs.conda.io/projects/conda/en/latest/user-guide/install/index.html">these instructions</a> to install Conda.</p>
+<p><strong>3.</strong> <strong>Build the server</strong></p>
+<blockquote>
+<p>Open a terminal inside <code>PythonAPI/examples/nvidia/cosmos/server</code> and run the <code>make_docker.sh</code> script:</p>
+</blockquote>
+<pre><code class="language-sh">./make_docker.sh
+</code></pre>
+<blockquote>
+<p>This step is likely to take 1-2 hours.</p>
+</blockquote>
+<p><strong>4.</strong> <strong>Deploy</strong></p>
+<blockquote>
+<p>Deploy your docker image in your favorite environment. We recommend a cluster with at least 8 x H100 GPUs. A single H100 GPU should be enough for lower workloads. Run the docker image with the following command:</p>
+</blockquote>
+<pre><code class="language-bash">docker run -d --shm-size 96g --gpus=all --ipc=host -p 8080:8080 cosmos-transfer1-carla
+</code></pre>
+<p><strong>5.</strong> <strong>Make requests with the client</strong></p>
+<blockquote>
+<p>Once you have deployed your Cosmos server, you can make requests to it using the <code>cosmos_client.py</code> script, providing the appropriate IP address and port for the <code>endpoint</code> argument.</p>
+<p>For example, for a locally deployed server on port 8080:</p>
+</blockquote>
+<pre><code class="language-sh">python cosmos_client.py http://localhost:8080 example_data/prompts/rain.toml
+</code></pre>
+<hr />
+<h1 id="using-the-carla-x-cosmos-transfer-client">Using the CARLA x Cosmos Transfer Client</h1>
+<p>In order to start generating videos, you will need to <a href="#installing-dependencies">install the dependencies</a> for the Cosmos Transfer client. The Cosmos Transfer generation process involves two steps:</p>
+<p><strong>1.</strong> <a href="#generating-cosmos-transfer-control-inputs"><strong>Generating control videos for Cosmos Transfer with CARLA</strong></a></p>
+<blockquote>
+<p>This step generates several control videos for Cosmos Transfer from a CARLA simulation log file. The videos generated may include the following:</p>
+<ul>
+<li>RGB</li>
+<li>Depth</li>
+<li>Edges </li>
+<li>Semantic segmentation</li>
+<li>Instance segmentation</li>
+<li>Sky mask</li>
+</ul>
+</blockquote>
+<p><strong>2.</strong> <a href="#generating-style-transfer-variations-using-cosmos-transfer1"><strong>Generating style-transfer variations using Cosmos Transfer</strong></a></p>
+<blockquote>
+<p>This step generates style-transfer variations of the original control videos using the Cosmos Transfer1 model. The control videos created by CARLA are sent through to a server running the Cosmos Transfer1 model. Requests are sent to the server through a simple API using the <code>cosmos_client.py</code> script. </p>
+<p>The Cosmos Transfer1 model can be controlled using the prompt and several other control parameters defined in a TOML file. You can find numerous examples of Cosmos Transfer1 configurations inside the <code>client/example_data/prompts</code> directory. </p>
+</blockquote>
+<hr />
+<h2 id="install-dependencies">Install dependencies</h2>
+<p><strong>1.</strong> Download CARLA <a href="https://github.com/carla-simulator/carla/releases/tag/0.9.16">0.9.16</a> or the latest nightly build <a href="https://carla.readthedocs.io/en/latest/download/#nightly-build">here</a></p>
+<p><strong>2.</strong> Once downloaded, uncompress the archive:</p>
+<pre><code class="language-sh">tar -xzvf CARLA_0.9.16.tar.gz
+</code></pre>
+<p><strong>3.</strong> Install <code>conda</code>, see <a href="https://docs.conda.io/projects/conda/en/latest/user-guide/install/index.html">these instructions</a>. You can skip this step if conda is already installed on your system.</p>
+<p><strong>4.</strong> Create a conda environment (e.g., <code>carla-cosmos-client</code>) and install all dependencies:</p>
+<pre><code class="language-sh">cd PythonAPI/examples/nvidia/cosmos
+# Create the carla-cosmos-client conda environment.
+conda env create --file client/carla-cosmos-client.yaml
+# Activate the carla-cosmos-client conda environment.
+conda activate carla-cosmos-client
+# Install the dependencies.
+pip install -r requirements.txt
+pip install -r client/requirements_client.txt 
+</code></pre>
+<p><strong>5.</strong> To install CARLA Python Client navigate to the <code>PythonAPI/carla/dist</code> folder within the CARLA installation. Locate the <code>.whl</code> file corresponding to your Python version (e.g., <code>carla-0.9.16-cp310-cp310-linux_x86_64.whl</code>):</p>
+<pre><code class="language-sh"># Replace carla-0.9.16-cp310-cp310-linux_x86_64.whl with your actual filename
+pip install carla-0.9.16-cp310-cp310-linux_x86_64.whl
+</code></pre>
+<hr />
+<h2 id="generating-cosmos-transfer-control-inputs">Generating Cosmos-Transfer Control Inputs</h2>
+<p><strong>1.</strong> <strong>Start CARLA</strong></p>
+<blockquote>
+<p>Navigate to the root folder of your CARLA installation and execute the launch script:</p>
+</blockquote>
+<pre><code class="language-sh">./CarlaUE4.sh
+</code></pre>
+<p><strong>2.</strong> <strong>Generate control videos from a CARLA log</strong></p>
+<blockquote>
+<p>If you want to generate new control inputs using an example, you can run the <code>PythonAPI/examples/nvidia/cosmos/client/carla_cosmos_gen.py</code> with the example named <strong>iai_carla_synthetic_log_1731622446_actorPOV4641_startTime3.7s_log.log</strong> in the <code>PythonAPI/examples/nvidia/cosmos/client/example_data/logs/inverted_ai/</code> directory. You will find several other example log files in the same directory to experiment with.</p>
+<p>A typical invocation will look like this:</p>
+</blockquote>
+<pre><code class="language-sh">cd PythonAPI/examples/nvidia/cosmos/client
+# Replace /full_path_to_log/your_log.log with the absolute path to your log file and output_path with your path to store the results (can be a relative path)
+python carla_cosmos_gen.py -f full_path_to_log/your_log.log --sensors cosmos_aov.yaml --class-filter-config filter_semantic_classes.yaml -c ego_sim_id -s 0.0 -d 5.0 -o output_path
+</code></pre>
+<blockquote>
+<p>The <code>ego_sim_id</code> value is the actor ID of the ego vehicle, for the Cosmos generation script to identify it. If you are recording your own scenarios, remember to note the Ego vehicle's actor ID from the <code>id</code> attribute.</p>
+<p>For example:</p>
+</blockquote>
+<pre><code class="language-sh"> python carla_cosmos_gen.py -f ${PWD}/example_data/logs/inverted_ai/iai_carla_synthetic_log_1731622446_actorPOV4641_startTime3.7s_log.log \ 
+ --sensors cosmos_aov.yaml \
+ --class-filter-config filter_semantic_classes.yaml \
+ -c 4641 -s 0.0 -d 5.0 -o output
+</code></pre>
+<blockquote>
+<p><strong>Note</strong>: For the example log, replace <code>ego_sim_id</code> with 4641.</p>
+<p>This will produce a set of videos that will be later used to control Cosmos Transfer.</p>
+</blockquote>
+<hr />
+<h2 id="generating-style-transfer-variations-using-cosmos-transfer">Generating style-transfer variations using Cosmos Transfer</h2>
+<p>Once you have a set of artifacts and the Cosmos Transfer service has been deployed and is active, use the <code>cosmos_client.py</code> script to make requests. The following command will generate Cosmos Transfer style-transfer videos for the prompt and parameters found in the <code>rain.toml</code> example configuration file found in <code>client/example_data/prompts</code>. </p>
+<pre><code class="language-sh">cd PythonAPI/examples/nvidia/cosmos/client
+# Replace https://url_to_server with the URL to your CARLA-Cosmos-Transfer server
+python cosmos_client.py http://url_to_server:port example_data/prompts/rain.toml
+</code></pre>
+<p>The first argument is the URL and port of the Cosmos Transfer server. If you are running a local server from a Docker container, this may be <code>localhost</code> or the network IP address of your server. If you are using NVIDIA Brev, the appropriate URL and port are given in the details of the Brev instance.</p>
+<p>You can edit the text prompt and control parameters in the <code>rain.toml</code> configuration to experiment and see the effects. Numerous other examples are provided in the same directory and you can learn more about the parameters in the <a href="#understainding-the-cosmos-transfer-configuration">following section</a>.</p>
+<p>You can optionally override some fields from the TOML on the command line and choose where to save the output:</p>
+<pre><code class="language-sh">python cosmos_client.py http://url_to_server:port \
+  example_data/prompts/rain.toml \
+  --output outputs/ \
+  --input-video example_data/artifacts/rgb.mp4 \
+  --edge-video example_data/artifacts/edges.mp4 \
+  --depth-video example_data/artifacts/depth.mp4 \ # optional
+  --seg-video example_data/artifacts/semantic_segmentation.mp4 \
+  --vis-video example_data/artifacts/vis_control.mp4 \ # optional
+  --seed 2048
+</code></pre>
+<hr />
+<h2 id="understanding-the-cosmos-transfer-configuration">Understanding the Cosmos-Transfer Configuration</h2>
+<p>This section describes the TOML configuration (see <code>example_data/prompts/rain.toml</code>). The client accepts a flat schema as shown below, and also supports the same keys nested under a top-level <code>controlnet_specs</code> table.</p>
+<h3 id="required-fields">Required fields</h3>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>prompt</code></td>
+<td>string</td>
+<td>Text describing the desired scene</td>
+</tr>
+<tr>
+<td><code>input_video_path</code></td>
+<td>string</td>
+<td>Path to the input video file</td>
+</tr>
+<tr>
+<td><code>negative_prompt</code></td>
+<td>string</td>
+<td>Text describing what to avoid in the output</td>
+</tr>
+<tr>
+<td><code>num_steps</code></td>
+<td>int</td>
+<td>Number of diffusion steps</td>
+</tr>
+<tr>
+<td><code>guidance</code></td>
+<td>float</td>
+<td>CFG guidance scale</td>
+</tr>
+<tr>
+<td><code>sigma_max</code></td>
+<td>float</td>
+<td>Partial noise added to input; [0, 80]. <code>&gt;= 80</code> ignores the input video</td>
+</tr>
+<tr>
+<td><code>seed</code></td>
+<td>int</td>
+<td>Random seed for reproducibility</td>
+</tr>
+</tbody>
+</table>
+<h3 id="optional-scalar-fields">Optional scalar fields</h3>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>blur_strength</code></td>
+<td>string</td>
+<td>Blur strength for preparing the <code>vis</code> control input. One of: <code>very_low</code>, <code>low</code>, <code>medium</code>, <code>high</code>, <code>very_high</code></td>
+</tr>
+<tr>
+<td><code>canny_threshold</code></td>
+<td>string</td>
+<td>Optional threshold preset used when generating edges externally</td>
+</tr>
+</tbody>
+</table>
+<h3 id="controls-all-optional">Controls (all optional)</h3>
+<p>If present, controls must follow these rules:</p>
+<table>
+<thead>
+<tr>
+<th>Control</th>
+<th>Required keys</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>edge</code></td>
+<td><code>input_control</code> (string)<br><code>control_weight</code> (number)</td>
+<td>Path typically points to an edges video</td>
+</tr>
+<tr>
+<td><code>depth</code></td>
+<td><code>input_control</code> (string)<br><code>control_weight</code> (number)</td>
+<td>Path points to a depth video</td>
+</tr>
+<tr>
+<td><code>seg</code></td>
+<td><code>input_control</code> (string)<br><code>control_weight</code> (number)</td>
+<td>Path points to a semantic segmentation video</td>
+</tr>
+<tr>
+<td><code>vis</code></td>
+<td><code>control_weight</code> (number)</td>
+<td><code>input_control</code> is optional</td>
+</tr>
+</tbody>
+</table>
+<h4 id="validation-constraints">Validation constraints</h4>
+<p>The client validates the following aspects before sending the data:</p>
+<p><strong>1.</strong> All required scalar fields above must be present and of the correct type.</p>
+<p><strong>2.</strong> Controls are optional. If <code>edge</code>, <code>depth</code>, or <code>seg</code> are provided, both <code>control_weight</code> and <code>input_control</code> must be present. If <code>vis</code> is provided, <code>control_weight</code> must be present and <code>input_control</code> is optional.</p>
+<p>Example TOMLs are provided in <code>client/example_data/prompts/</code>.</p>
+<h3 id="command-line-arguments">Command-line arguments</h3>
+<p><code>cosmos_client.py</code> accepts the following arguments:</p>
+<table>
+<thead>
+<tr>
+<th>Argument</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>endpoint</code></td>
+<td>string</td>
+<td>Base URL of the server (e.g., <code>http://localhost:8080</code>)</td>
+</tr>
+<tr>
+<td><code>config_toml</code></td>
+<td>string</td>
+<td>Path to the TOML configuration</td>
+</tr>
+<tr>
+<td><code>--output</code></td>
+<td>string</td>
+<td>File or directory path to save the result video</td>
+</tr>
+<tr>
+<td><code>--input-video</code></td>
+<td>string</td>
+<td>Override <code>input_video_path</code> from the TOML</td>
+</tr>
+<tr>
+<td><code>--edge-video</code></td>
+<td>string</td>
+<td>Override <code>edge.input_control</code></td>
+</tr>
+<tr>
+<td><code>--depth-video</code></td>
+<td>string</td>
+<td>Override <code>depth.input_control</code></td>
+</tr>
+<tr>
+<td><code>--seg-video</code></td>
+<td>string</td>
+<td>Override <code>seg.input_control</code></td>
+</tr>
+<tr>
+<td><code>--vis-video</code></td>
+<td>string</td>
+<td>Override <code>vis.input_control</code></td>
+</tr>
+<tr>
+<td><code>--seed</code></td>
+<td>int</td>
+<td>Override <code>seed</code></td>
+</tr>
+<tr>
+<td><code>--retries</code></td>
+<td>int</td>
+<td>Max retries for uploads and generation (default: 3)</td>
+</tr>
+<tr>
+<td><code>--backoff-initial</code></td>
+<td>float</td>
+<td>Initial backoff seconds (default: 1.5)</td>
+</tr>
+<tr>
+<td><code>--backoff-multiplier</code></td>
+<td>float</td>
+<td>Exponential backoff multiplier (default: 2.0)</td>
+</tr>
+<tr>
+<td><code>--jitter</code></td>
+<td>float</td>
+<td>Random jitter added to backoff (default: 0.5)</td>
+</tr>
+<tr>
+<td><code>--poll-interval</code></td>
+<td>int</td>
+<td>Poll interval in seconds for job status (default: 5)</td>
+</tr>
+<tr>
+<td><code>--result-timeout</code></td>
+<td>int</td>
+<td>Timeout in seconds when fetching job results (default: 120)</td>
+</tr>
+</tbody>
+</table>
+              
+            </div>
+          </div><footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+        <span>
+          <a href="https://github.com/carla-simulator/carla" class="fa fa-github" style="color: #fcfcfc"> GitHub</a>
+        </span>
+    
+    
+    
+  </span>
+</div>
+    <script src="../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "..";</script>
+    <script src="../js/theme_extra.js"></script>
+    <script src="../js/theme.js"></script>
+      <script src="../extra.js"></script>
+      <script src="../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>

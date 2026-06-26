@@ -1,0 +1,703 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <link rel="shortcut icon" href="../img/favicon.ico" />
+    <title>How to add a new sensor - CARLA Simulator</title>
+    <link rel="stylesheet" href="../css/theme.css" />
+    <link rel="stylesheet" href="../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+        <link href="../extra.css" rel="stylesheet" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "How to add a new sensor";
+        var mkdocs_page_input_path = "tuto_D_create_sensor.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href=".." class="icon icon-home"> CARLA Simulator
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+      <input type="text" name="q" placeholder="搜索文档" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="..">Home</a>
+                </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Getting started</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../start_introduction/">Introduction</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../start_quickstart/">Quick start package installation</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_first_steps/">First steps</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../build_carla/">Building CARLA</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Next steps</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_content_authoring_maps/">Content authoring - maps</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_content_authoring_vehicles/">Content authoring - vehicles</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../content_authoring_props/">Content authoring - props</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">CARLA topics</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../coordinates/">Coordinates and transformations</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../foundations/">Foundations</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../core_actors/">Actors</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../core_map/">Maps</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../core_sensors/">Sensors and data</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../ts_traffic_simulation_overview/">Traffic</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../ai_rendering/">AI rendering</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../development_tutorials/">Development</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../custom_assets_tutorials/">Custom assets</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Resources</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../python_api/">Python API</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../catalogue/">Catalogue</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../ref_cpp/">C++ reference</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../bp_library/">Blueprint library</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tutorials/">Tutorials</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../ext_docs/">Extended documentation</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../download/">Downloads</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">CARLA Ecosystem</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../ecosys_ansys/">ANSYS</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_G_rllib_integration/">AWS</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_G_carsim_integration/">CarSIM</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_G_chrono/">Chrono</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../large_map_roadrunner/">MathWorks</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../inverted_ai/">Inverted AI</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../nvidia/">NVIDIA</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../adv_opendrive/">ASAM OpenDRIVE</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../adv_ptv/">PTV Vissim</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../adv_rss/">RSS</a>
+                  </li>
+                  <li class="toctree-l1"><a class="" href="https://carla.readthedocs.io/projects/ros-bridge/en/latest/">ROS</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_G_scenic/">Scenic</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../adv_sumo/">SUMO</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../ecosys_synkrotron/">SYNKROTRON</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Contributing</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../cont_contribution_guidelines/">Guidelines</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../cont_coding_standard/">Coding standards</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../cont_doc_standard/">Documentation standard</a>
+                  </li>
+                  <li class="toctree-l1"><a class="" href=".."></a>
+                  </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="..">CARLA Simulator</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href=".." class="icon icon-home" aria-label="Docs"></a></li>
+      <li class="breadcrumb-item active">How to add a new sensor</li>
+    <li class="wy-breadcrumbs-aside">
+          <a href="https://github.com/carla-simulator/carla/edit/master/Docs/tuto_D_create_sensor.md" class="icon icon-github"> 在 GitHub 上编辑</a>
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="how-to-add-a-new-sensor">How to add a new sensor</h1>
+<p>This tutorial explains the basics for adding a new sensor to CARLA. It provides
+the necessary steps to implement a sensor in Unreal Engine 4 (UE4) and expose
+its data via CARLA's Python API. We'll follow all the steps by creating a new
+sensor as an example.</p>
+<ul>
+<li><a href="#prerequisites"><strong>Prerequisites</strong></a>  </li>
+<li><a href="#introduction"><strong>Introduction</strong></a>  </li>
+<li><a href="#creating-a-new-sensor"><strong>Creating a new sensor</strong></a>  <ul>
+<li><a href="#1-sensor-actor">1. Sensor actor</a>  </li>
+<li><a href="#2-sensor-data-serializer">2. Sensor data serializer</a>  </li>
+<li><a href="#3-sensor-data-object">3. Sensor data object</a>  </li>
+<li><a href="#4-register-your-sensor">4. Register your sensor</a>  </li>
+<li><a href="#5-usage-example">5. Usage example</a>  </li>
+</ul>
+</li>
+<li><a href="#appendix"><strong>Appendix</strong></a>  <ul>
+<li><a href="#reusing-buffers">Reusing buffers</a>  </li>
+<li><a href="#sending-data-asynchronously">Sending data asynchronously</a>  </li>
+<li><a href="#client-side-sensors">Client-side sensors</a>  </li>
+</ul>
+</li>
+</ul>
+<hr />
+<h2 id="prerequisites">Prerequisites</h2>
+<p>In order to implement a new sensor, you'll need to compile CARLA source code,
+for detailed instructions on how to achieve this, see <a href="../build_linux/">building from source</a>.</p>
+<p>This tutorial also assumes the reader is fluent in C++ programming.</p>
+<hr />
+<h2 id="introduction">Introduction</h2>
+<p>Sensors in CARLA are a special type of actor that produce a stream of data. Some
+sensors produce data continuously, every time the sensor is updated, other
+produce data only after certain events. For instance, a camera produces an image
+on every update, but a collision sensor is only triggered in the event of a
+collision.</p>
+<p>Although most sensors compute their measurements in the server side (UE4), it's
+worth noticing that some sensors run in the client-side only. An example of such
+sensor is the LaneInvasion, it notifies every time a lane mark has been crossed.
+For further details see <a href="#appendix-client-side-sensors">Appendix: Client-side sensors</a>.</p>
+<p>In this tutorial, we'll be focusing on server-side sensors.</p>
+<p>In order to have a sensor running inside UE4 sending data all the way to a
+Python client, we need to cover the whole communication pipeline.</p>
+<p><img alt="Communication pipeline" src="../img/pipeline.png" /></p>
+<p>Thus we'll need the following classes covering the different steps of the
+pipeline</p>
+<ul>
+<li>
+<p><strong>Sensor actor</strong><br>
+    Actor in charge of measuring and/or simulating data. Running in Carla plugin
+    using UE4 framework. Accessible by the user as Sensor actor.</p>
+</li>
+<li>
+<p><strong>Serializer</strong><br>
+    Object containing methods for serializing and deserializing the data
+    generated by the sensor. Running in LibCarla, both server and client.</p>
+</li>
+<li>
+<p><strong>Sensor data</strong><br>
+    Object representing the data generated by the sensor. This is the object
+    that will be passed to the final user, both in C++ and Python APIs.</p>
+</li>
+</ul>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>To ensure best performance, sensors are registered and dispatched using a
+sort of "compile-time plugin system" based on template meta-programming.
+Most likely, the code won't compile until all the pieces are present.</p>
+</div>
+<hr />
+<h2 id="creating-a-new-sensor">Creating a new sensor</h2>
+<p>See <a href="https://gist.github.com/nsubiron/011fd1b9767cd441b1d8467dc11e00f9"><strong>source code</strong></a>.</p>
+<p>We're going to create a sensor that detects other actors around our vehicle. For
+that we'll create a trigger box that detects objects within, and we'll be
+reporting status to the client every time a vehicle is inside our trigger box.
+Let's call it <em>Safe Distance Sensor</em>.</p>
+<p><img alt="Trigger box" src="../img/safe_distance_sensor.jpg" /></p>
+<p><em>For the sake of simplicity we're not going to take into account all the edge
+cases, nor it will be implemented in the most efficient way. This is just an
+illustrative example.</em></p>
+<h3 id="1-sensor-actor">1. Sensor actor</h3>
+<p>This is the most complicated class we're going to create. Here we're running
+inside Unreal Engine framework, knowledge of UE4 API will be very helpful but
+not indispensable, we'll assume the reader has never worked with UE4 before.</p>
+<p>Inside UE4, we have a similar hierarchy as we have in the client-side, <code>ASensor</code>
+derives from <code>AActor</code>, and an actor is roughly any object that can be dropped
+into the world. <code>AActor</code> has a virtual function called <code>Tick</code> that we can use to
+update our sensor on every simulator update. Higher in the hierarchy we have
+<code>UObject</code>, base class for most of UE4 classes. It is important to know that
+objects deriving from <code>UObject</code> are handle via pointers and are garbage
+collected when they're no longer referenced. Class members pointing to
+<code>UObject</code>s need to be marked with <code>UPROPERTY</code> macros or they'll be garbage
+collected.</p>
+<p>Let's start.</p>
+<p>This class has to be located inside Carla plugin, we'll create two files for our
+new C++ class</p>
+<ul>
+<li><code>Unreal/CarlaUE4/Plugins/Carla/Source/Carla/Sensor/SafeDistanceSensor.h</code></li>
+<li><code>Unreal/CarlaUE4/Plugins/Carla/Source/Carla/Sensor/SafeDistanceSensor.cpp</code></li>
+</ul>
+<p>At the very minimum, the sensor is required to inherit <code>ASensor</code>, and provide a
+static method <code>GetSensorDefinition</code>; but we'll be overriding also the <code>Set</code>,
+<code>SetOwner</code>, and <code>Tick</code> methods. This sensor also needs a trigger box that will
+be detecting other actors around us. With this and some required boiler-plate
+UE4 code, the header file looks like</p>
+<pre><code class="language-cpp">#pragma once
+
+#include &quot;Carla/Sensor/Sensor.h&quot;
+
+#include &quot;Carla/Actor/ActorDefinition.h&quot;
+#include &quot;Carla/Actor/ActorDescription.h&quot;
+
+#include &quot;Components/BoxComponent.h&quot;
+
+#include &quot;SafeDistanceSensor.generated.h&quot;
+
+UCLASS()
+class CARLA_API ASafeDistanceSensor : public ASensor
+{
+  GENERATED_BODY()
+
+public:
+
+  ASafeDistanceSensor(const FObjectInitializer &amp;ObjectInitializer);
+
+  static FActorDefinition GetSensorDefinition();
+
+  void Set(const FActorDescription &amp;ActorDescription) override;
+
+  void SetOwner(AActor *Owner) override;
+
+  void Tick(float DeltaSeconds) override;
+
+private:
+
+  UPROPERTY()
+  UBoxComponent *Box = nullptr;
+};
+</code></pre>
+<p>In the cpp file, first we'll need some includes</p>
+<pre><code class="language-cpp">#include &quot;Carla.h&quot;
+#include &quot;Carla/Sensor/SafeDistanceSensor.h&quot;
+
+#include &quot;Carla/Actor/ActorBlueprintFunctionLibrary.h&quot;
+#include &quot;Carla/Game/CarlaEpisode.h&quot;
+#include &quot;Carla/Util/BoundingBoxCalculator.h&quot;
+#include &quot;Carla/Vehicle/CarlaWheeledVehicle.h&quot;
+</code></pre>
+<p>Then we can proceed to implement the functionality. The constructor will create
+the trigger box, and tell UE4 that we want our tick function to be called. If
+our sensor were not using the tick function, we can disable it here to avoid
+unnecessary ticks</p>
+<pre><code class="language-cpp">ASafeDistanceSensor::ASafeDistanceSensor(const FObjectInitializer &amp;ObjectInitializer)
+  : Super(ObjectInitializer)
+{
+  Box = CreateDefaultSubobject&lt;UBoxComponent&gt;(TEXT(&quot;BoxOverlap&quot;));
+  Box-&gt;SetupAttachment(RootComponent);
+  Box-&gt;SetHiddenInGame(true); // Disable for debugging.
+  Box-&gt;SetCollisionProfileName(FName(&quot;OverlapAll&quot;));
+
+  PrimaryActorTick.bCanEverTick = true;
+}
+</code></pre>
+<p>Now we need to tell Carla what attributes this sensor has, this is going to be
+used to create a new blueprint in our blueprint library, users can use this
+blueprint to configure and spawn this sensor. We're going to define here the
+attributes of our trigger box, in this example we'll expose only X and Y
+safe distances</p>
+<pre><code class="language-cpp">FActorDefinition ASafeDistanceSensor::GetSensorDefinition()
+{
+  auto Definition = UActorBlueprintFunctionLibrary::MakeGenericSensorDefinition(
+      TEXT(&quot;other&quot;),
+      TEXT(&quot;safe_distance&quot;));
+
+  FActorVariation Front;
+  Front.Id = TEXT(&quot;safe_distance_front&quot;);
+  Front.Type = EActorAttributeType::Float;
+  Front.RecommendedValues = { TEXT(&quot;1.0&quot;) };
+  Front.bRestrictToRecommended = false;
+
+  FActorVariation Back;
+  Back.Id = TEXT(&quot;safe_distance_back&quot;);
+  Back.Type = EActorAttributeType::Float;
+  Back.RecommendedValues = { TEXT(&quot;0.5&quot;) };
+  Back.bRestrictToRecommended = false;
+
+  FActorVariation Lateral;
+  Lateral.Id = TEXT(&quot;safe_distance_lateral&quot;);
+  Lateral.Type = EActorAttributeType::Float;
+  Lateral.RecommendedValues = { TEXT(&quot;0.5&quot;) };
+  Lateral.bRestrictToRecommended = false;
+
+  Definition.Variations.Append({ Front, Back, Lateral });
+
+  return Definition;
+}
+</code></pre>
+<p>With this, the sensor factory is able to create a <em>Safe Distance Sensor</em> on user
+demand. Immediately after the sensor is created, the <code>Set</code> function is called
+with the parameters that the user requested</p>
+<pre><code class="language-cpp">void ASafeDistanceSensor::Set(const FActorDescription &amp;Description)
+{
+  Super::Set(Description);
+
+  float Front = UActorBlueprintFunctionLibrary::RetrieveActorAttributeToFloat(
+      &quot;safe_distance_front&quot;,
+      Description.Variations,
+      1.0f);
+  float Back = UActorBlueprintFunctionLibrary::RetrieveActorAttributeToFloat(
+      &quot;safe_distance_back&quot;,
+      Description.Variations,
+      0.5f);
+  float Lateral = UActorBlueprintFunctionLibrary::RetrieveActorAttributeToFloat(
+      &quot;safe_distance_lateral&quot;,
+      Description.Variations,
+      0.5f);
+
+  constexpr float M_TO_CM = 100.0f; // Unit conversion.
+
+  float LocationX = M_TO_CM * (Front - Back) / 2.0f;
+  float ExtentX = M_TO_CM * (Front + Back) / 2.0f;
+  float ExtentY = M_TO_CM * Lateral;
+
+  Box-&gt;SetRelativeLocation(FVector{LocationX, 0.0f, 0.0f});
+  Box-&gt;SetBoxExtent(FVector{ExtentX, ExtentY, 0.0f});
+}
+</code></pre>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The set function is called before UE4's <code>BeginPlay</code>, we won't use this
+virtual function here, but it's important for other sensors.</p>
+</div>
+<p>Now we're going to extend the box volume based on the bounding box of the actor
+that we're attached to. For that, the most convenient method is to use the
+<code>SetOwner</code> virtual function. This function is called when our sensor is attached
+to another actor.</p>
+<pre><code class="language-cpp">void ASafeDistanceSensor::SetOwner(AActor *Owner)
+{
+  Super::SetOwner(Owner);
+
+  auto BoundingBox = UBoundingBoxCalculator::GetActorBoundingBox(Owner);
+
+  Box-&gt;SetBoxExtent(BoundingBox.Extent + Box-&gt;GetUnscaledBoxExtent());
+}
+</code></pre>
+<p>The only thing left to do is the actual measurement, for that we'll use the
+<code>Tick</code> function. We're going to look for all the vehicles currently overlapping
+our box, and we'll send this list to client</p>
+<pre><code class="language-cpp">void ASafeDistanceSensor::Tick(float DeltaSeconds)
+{
+  Super::Tick(DeltaSeconds);
+
+  TSet&lt;AActor *&gt; DetectedActors;
+  Box-&gt;GetOverlappingActors(DetectedActors, ACarlaWheeledVehicle::StaticClass());
+  DetectedActors.Remove(GetOwner());
+
+  if (DetectedActors.Num() &gt; 0)
+  {
+    auto Stream = GetDataStream(*this);
+    Stream.Send(*this, GetEpisode(), DetectedActors);
+  }
+}
+</code></pre>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>In production-ready sensors, the <code>Tick</code> function should be very optimized,
+specially if the sensor sends big chunks of data. This function is called
+every update in the game thread thus significantly affects the performance
+of the simulator.</p>
+</div>
+<p>Ok, a couple of things going on here that we haven't mentioned yet, what's this
+stream?</p>
+<p>Every sensor has a data stream associated. This stream is used to send data down
+to the client, and this is the stream you subscribe to when you use the
+<code>sensor.listen(callback)</code> method in the Python API. Every time you send here
+some data, the callback on the client-side is going to be triggered. But before
+that, the data is going to travel through several layers. First of them will be
+the serializer that we have to create next. We'll fully understand this part
+once we have completed the <code>Serialize</code> function in the next section.</p>
+<h3 id="2-sensor-data-serializer">2. Sensor data serializer</h3>
+<p>This class is actually rather simple, it's only required to have two static
+methods, <code>Serialize</code> and <code>Deserialize</code>. We'll add two files for it, this time to
+LibCarla</p>
+<ul>
+<li><code>LibCarla/source/carla/sensor/s11n/SafeDistanceSerializer.h</code></li>
+<li><code>LibCarla/source/carla/sensor/s11n/SafeDistanceSerializer.cpp</code></li>
+</ul>
+<p>Let's start with the <code>Serialize</code> function. This function is going to receive as
+arguments whatever we pass to the <code>Stream.Send(...)</code> function, with the only
+condition that the first argument has to be a sensor and it has to return a
+buffer.</p>
+<pre><code class="language-cpp">static Buffer Serialize(const Sensor &amp;, ...);
+</code></pre>
+<p>A <code>carla::Buffer</code> is just a dynamically allocated piece of raw memory with some
+convenient functionality, we're going to use it to send raw data to the client.</p>
+<p>In this example, we need to write the list of detected actors to a buffer in a
+way that it can be meaningful in the client-side. That's why we passed the
+episode object to this function.</p>
+<p>The <code>UCarlaEpisode</code> class represent the current <em>episode</em> running in the
+simulator, i.e. the state of the simulation since last time we loaded a map. It
+contains all the relevant information to Carla, and among other things, it
+allows searching for actor IDs. We can send these IDs to the client and the
+client will be able to recognise these as actors</p>
+<pre><code class="language-cpp">template &lt;typename SensorT, typename EpisodeT, typename ActorListT&gt;
+static Buffer Serialize(
+    const SensorT &amp;,
+    const EpisodeT &amp;episode,
+    const ActorListT &amp;detected_actors) {
+  const uint32_t size_in_bytes = sizeof(ActorId) * detected_actors.Num();
+  Buffer buffer{size_in_bytes};
+  unsigned char *it = buffer.data();
+  for (auto *actor : detected_actors) {
+    ActorId id = episode.FindActor(actor).GetActorId();
+    std::memcpy(it, &amp;id, sizeof(ActorId));
+    it += sizeof(ActorId);
+  }
+  return buffer;
+}
+</code></pre>
+<blockquote>
+<p><strong>Note</strong>: We templatize the UE4 classes to avoid including these files within LibCarla.</p>
+</blockquote>
+<p>This buffer we're returning is going to come back to us, except that this time
+in the client-side, in the <code>Deserialize</code> function packed in a <code>RawData</code> object</p>
+<pre><code class="language-cpp">static SharedPtr&lt;SensorData&gt; Deserialize(RawData &amp;&amp;data);
+</code></pre>
+<p>We'll implement this method in the cpp file, and it's rather simple</p>
+<pre><code class="language-cpp">SharedPtr&lt;SensorData&gt; SafeDistanceSerializer::Deserialize(RawData &amp;&amp;data) {
+  return SharedPtr&lt;SensorData&gt;(new data::SafeDistanceEvent(std::move(data)));
+}
+</code></pre>
+<p>except for the fact that we haven't defined yet what's a <code>SafeDistanceEvent</code>.</p>
+<h3 id="3-sensor-data-object">3. Sensor data object</h3>
+<p>We need to create a data object for the users of this sensor, representing the
+data of a <em>safe distance event</em>. We'll add this file to</p>
+<ul>
+<li><code>LibCarla/source/carla/sensor/data/SafeDistanceEvent.h</code></li>
+</ul>
+<p>This object is going to be equivalent to a list of actor IDs. For that, we'll
+derive from the Array template</p>
+<pre><code class="language-cpp">#pragma once
+
+#include &quot;carla/rpc/ActorId.h&quot;
+#include &quot;carla/sensor/data/Array.h&quot;
+
+namespace carla {
+namespace sensor {
+namespace data {
+
+  class SafeDistanceEvent : public Array&lt;rpc::ActorId&gt; {
+  public:
+
+    explicit SafeDistanceEvent(RawData &amp;&amp;data)
+      : Array&lt;rpc::ActorId&gt;(std::move(data)) {}
+  };
+
+} // namespace data
+} // namespace sensor
+} // namespace carla
+</code></pre>
+<p>The Array template is going to reinterpret the buffer we created in the
+<code>Serialize</code> method as an array of actor IDs, and it's able to do so directly
+from the buffer we received, without allocating any new memory. Although for
+this small example may seem a bit overkill, this mechanism is also used for big
+chunks of data; imagine we're sending HD images, we save a lot by reusing the
+raw memory.</p>
+<p>Now we need to expose this class to Python. In our example, we haven't add any
+extra methods, so we'll just expose the methods related to Array. We do so by
+using Boost.Python bindings, add the following to
+<em>PythonAPI/carla/source/libcarla/SensorData.cpp</em>.</p>
+<pre><code class="language-cpp">class_&lt;
+    csd::SafeDistanceEvent,                    // actual type.
+    bases&lt;cs::SensorData&gt;,                     // parent type.
+    boost::noncopyable,                        // disable copy.
+    boost::shared_ptr&lt;csd::SafeDistanceEvent&gt;  // use as shared_ptr.
+  &gt;(&quot;SafeDistanceEvent&quot;, no_init)              // name, and disable construction.
+  .def(&quot;__len__&quot;, &amp;csd::SafeDistanceEvent::size)
+  .def(&quot;__iter__&quot;, iterator&lt;csd::SafeDistanceEvent&gt;())
+  .def(&quot;__getitem__&quot;, +[](const csd::SafeDistanceEvent &amp;self, size_t pos) -&gt; cr::ActorId {
+    return self.at(pos);
+  })
+;
+</code></pre>
+<blockquote>
+<p><strong>Note</strong>: <code>csd</code> is an alias for the namespace <code>carla::sensor::data</code>.</p>
+</blockquote>
+<p>What we're doing here is exposing some C++ methods in Python. Just with this,
+the Python API will be able to recognise our new event and it'll behave similar
+to an array in Python, except that cannot be modified.</p>
+<h3 id="4-register-your-sensor">4- Register your sensor</h3>
+<p>Now that the pipeline is complete, we're ready to register our new sensor. We do
+so in <em>LibCarla/source/carla/sensor/SensorRegistry.h</em>. Follow the instruction in
+this header file to add the different includes and forward declarations, and add
+the following pair to the registry</p>
+<pre><code class="language-cpp">std::pair&lt;ASafeDistanceSensor *, s11n::SafeDistanceSerializer&gt;
+</code></pre>
+<p>With this, the sensor registry now can do its magic to dispatch the right data
+to the right serializer.</p>
+<p>Now recompile CARLA, hopefully everything goes ok and no errors. Unfortunately,
+most of the errors here will be related to templates and the error messages can
+be a bit cryptic.</p>
+<pre><code>make rebuild
+</code></pre>
+<h3 id="5-usage-example">5. Usage example</h3>
+<p>Finally, we have the sensor included and we have finished recompiling, our
+sensor by now should be available in Python.</p>
+<p>To spawn this sensor, we simply need to find it in the blueprint library, if
+everything went right, the sensor factory should have added our sensor to the
+library</p>
+<pre><code class="language-py">blueprint = blueprint_library.find('sensor.other.safe_distance')
+sensor = world.spawn_actor(blueprint, carla.Transform(), attach_to=vehicle)
+</code></pre>
+<p>and now we can start listening for events by registering a callback function</p>
+<pre><code class="language-py">world_ref = weakref.ref(world)
+
+def callback(event):
+    for actor_id in event:
+        vehicle = world_ref().get_actor(actor_id)
+        print('Vehicle too close: %s' % vehicle.type_id)
+
+sensor.listen(callback)
+</code></pre>
+<p>This callback is going to execute every update that another vehicle is inside
+our safety distance box, e.g.</p>
+<pre><code>Vehicle too close: vehicle.audi.a2
+Vehicle too close: vehicle.mercedes-benz.coupe
+</code></pre>
+<p>That's it, we have a new sensor working!</p>
+<hr />
+<h2 id="appendix">Appendix</h2>
+<h3 id="reusing-buffers">Reusing buffers</h3>
+<p>In order to optimize memory usage, we can use the fact that each sensor sends
+buffers of similar size; in particularly, in the case of cameras, the size of
+the image is constant during execution. In those cases, we can save a lot by
+reusing the allocated memory between frames.</p>
+<p>Each stream contains a <em>buffer pool</em> that can be used to avoid unnecessary
+memory allocations. Remember that each sensor has a stream associated thus each
+sensor has its own buffer pool.</p>
+<p>Use the following to retrieve a buffer from the pool</p>
+<pre><code class="language-cpp">auto Buffer = Stream.PopBufferFromPool();
+</code></pre>
+<p>If the pool is empty, it returns an empty buffer, i.e. a buffer with no memory
+allocated. In that case, when you resize the buffer new memory will be
+allocated. This will happen a few times during the first frames. However, if a
+buffer was retrieved from the pool, its memory will go back to the pool once the
+buffer goes out of the scope. Next time you get another buffer from the pool,
+it'll contain the allocated piece of memory from the previous buffer. As you can
+see, a buffer object acts actually as an smart pointer to a contiguous piece of
+raw memory. As long as you don't request more memory than the currently
+allocated, the buffer reuses the memory. If you request more, then it'll have to
+delete the current memory and allocate a bigger chunk.</p>
+<p>The following snippet illustrates how buffers work</p>
+<pre><code class="language-cpp">Buffer buffer;
+buffer.reset(1024u); // (size 1024 bytes, capacity 1024 bytes) -&gt; allocates
+buffer.reset(512u);  // (size  512 bytes, capacity 1024 bytes)
+buffer.reset(2048u); // (size 2048 bytes, capacity 2048 bytes) -&gt; allocates
+</code></pre>
+<h3 id="sending-data-asynchronously">Sending data asynchronously</h3>
+<p>Some sensors may require to send data asynchronously, either for performance or
+because the data is generated in a different thread, for instance, camera sensors send
+the images from the render thread.</p>
+<p>Using the data stream asynchronously is perfectly fine, as long as the stream
+itself is created in the game thread. For instance</p>
+<pre><code class="language-cpp">void MySensor::Tick(float DeltaSeconds)
+{
+  Super::Tick(DeltaSeconds);
+
+  auto Stream = GetDataStream(*this);
+
+  std::async(std::launch::async, [Stream=std::move(Stream)]() {
+    auto Data = ComputeData();
+    Stream.Send(*this, Data);
+  });
+}
+</code></pre>
+<h3 id="client-side-sensors">Client-side sensors</h3>
+<p>Some sensors do not require the simulator to do their measurements, those
+sensors may run completely in the client-side freeing the simulator from extra
+computations. Examples of such sensors is the <em>LaneInvasion</em> sensors.</p>
+<p>The usual approach is to create a "dummy" sensor in the server-side, just so the
+simulator is aware that such actor exists. However, this dummy sensor doesn't tick
+nor sends any sort of data. Its counterpart on the client-side however,
+registers a "on tick" callback to execute some code on every new update. For
+instance, the LaneInvasion sensor registers a callback that notifies every time a
+lane mark has been crossed.</p>
+<p>It is very important to take into account that the "on tick" callback in the
+client-side is executed concurrently, i.e., the same method may be executed
+simultaneously by different threads. Any data accessed must be properly
+synchronized, either with a mutex, using atomics, or even better making sure all
+the members accessed remain constant.</p>
+              
+            </div>
+          </div><footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+        <span>
+          <a href="https://github.com/carla-simulator/carla" class="fa fa-github" style="color: #fcfcfc"> GitHub</a>
+        </span>
+    
+    
+    
+  </span>
+</div>
+    <script src="../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "..";</script>
+    <script src="../js/theme_extra.js"></script>
+    <script src="../js/theme.js"></script>
+      <script src="../extra.js"></script>
+      <script src="../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>

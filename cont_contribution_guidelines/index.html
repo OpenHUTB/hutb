@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <link rel="shortcut icon" href="../img/favicon.ico" />
+    <title>Guidelines - CARLA Simulator</title>
+    <link rel="stylesheet" href="../css/theme.css" />
+    <link rel="stylesheet" href="../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+        <link href="../extra.css" rel="stylesheet" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "Guidelines";
+        var mkdocs_page_input_path = "cont_contribution_guidelines.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href=".." class="icon icon-home"> CARLA Simulator
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+      <input type="text" name="q" placeholder="搜索文档" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="..">Home</a>
+                </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Getting started</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../start_introduction/">Introduction</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../start_quickstart/">Quick start package installation</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_first_steps/">First steps</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../build_carla/">Building CARLA</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Next steps</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_content_authoring_maps/">Content authoring - maps</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_content_authoring_vehicles/">Content authoring - vehicles</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../content_authoring_props/">Content authoring - props</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">CARLA topics</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../coordinates/">Coordinates and transformations</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../foundations/">Foundations</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../core_actors/">Actors</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../core_map/">Maps</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../core_sensors/">Sensors and data</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../ts_traffic_simulation_overview/">Traffic</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../ai_rendering/">AI rendering</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../development_tutorials/">Development</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../custom_assets_tutorials/">Custom assets</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Resources</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../python_api/">Python API</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../catalogue/">Catalogue</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../ref_cpp/">C++ reference</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../bp_library/">Blueprint library</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tutorials/">Tutorials</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../ext_docs/">Extended documentation</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../download/">Downloads</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">CARLA Ecosystem</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../ecosys_ansys/">ANSYS</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_G_rllib_integration/">AWS</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_G_carsim_integration/">CarSIM</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_G_chrono/">Chrono</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../large_map_roadrunner/">MathWorks</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../inverted_ai/">Inverted AI</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../nvidia/">NVIDIA</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../adv_opendrive/">ASAM OpenDRIVE</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../adv_ptv/">PTV Vissim</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../adv_rss/">RSS</a>
+                  </li>
+                  <li class="toctree-l1"><a class="" href="https://carla.readthedocs.io/projects/ros-bridge/en/latest/">ROS</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_G_scenic/">Scenic</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../adv_sumo/">SUMO</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../ecosys_synkrotron/">SYNKROTRON</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Contributing</span></p>
+              <ul class="current">
+                  <li class="toctree-l1 current"><a class="reference internal current" href="#">Guidelines</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#report-bugs">Report bugs</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#request-features">Request features</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#code-contributions">Code contributions</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#learn-about-unreal-engine">Learn about Unreal Engine</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#before-getting-started">Before getting started</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#coding-standard">Coding standard</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#submission">Submission</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#checklist">Checklist</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#art-contributions">Art contributions</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#docs-contributions">Docs contributions</a>
+    </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../cont_coding_standard/">Coding standards</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../cont_doc_standard/">Documentation standard</a>
+                  </li>
+                  <li class="toctree-l1"><a class="" href=".."></a>
+                  </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="..">CARLA Simulator</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href=".." class="icon icon-home" aria-label="Docs"></a></li>
+          <li class="breadcrumb-item">Contributing</li>
+      <li class="breadcrumb-item active">Guidelines</li>
+    <li class="wy-breadcrumbs-aside">
+          <a href="https://github.com/carla-simulator/carla/edit/master/Docs/cont_contribution_guidelines.md" class="icon icon-github"> 在 GitHub 上编辑</a>
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="contributing-to-carla">Contributing to CARLA</h1>
+<p>The CARLA team is glad to accept contributions from anybody willing to collaborate. There are different ways to contribute to the project, depending on the capabilities of the contributor. The team will work as much as possible so that contributions are successfully integrated in CARLA.  </p>
+<p>Take a look and don't hesitate!  </p>
+<ul>
+<li><a href="#report-bugs"><strong>Report bugs</strong></a>  </li>
+<li><a href="#request-features"><strong>Request features</strong></a>  </li>
+<li><a href="#code-contributions"><strong>Code contributions</strong></a>  <ul>
+<li><a href="#learn-about-unreal-engine">Learn about Unreal Engine</a>  </li>
+<li><a href="#before-getting-started">Before getting started</a>  </li>
+<li><a href="#coding-standard">Coding standard</a>  </li>
+<li><a href="#submission">Submission</a>  </li>
+<li><a href="#checklist">Checklist</a>  </li>
+</ul>
+</li>
+<li><a href="#art-contributions"><strong>Art contributions</strong></a>  </li>
+<li><a href="#docs-contributions"><strong>Docs contributions</strong></a>  </li>
+</ul>
+<hr />
+<h2 id="report-bugs">Report bugs</h2>
+<p>Issues can be reported in the <a href="https://github.com/carla-simulator/carla/issues">issue section</a> on GitHub. Before reporting a new bug, make sure to do some checkups.  </p>
+<p><strong>1. Check if the bug has been reported.</strong> Look it up in that same issue section on GitHub.  </p>
+<p><strong>2. Read the docs.</strong> Make sure that the issue is a bug, not a misunderstanding on how is CARLA supposed to work. Read the pages related to the issue in the <a href="http://carla.readthedocs.io">Documentation</a> and take a look at the <a href="../build_faq/">FAQ</a> page.</p>
+<hr />
+<h2 id="request-features">Request features</h2>
+<p>Ideas for new features are also a great way to contribute. Any suggestion that could improve the users' experience  can be submitted in the corresponding GitHub section <a href="https://github.com/carla-simulator/carla/issues?q=is%3Aissue+is%3Aopen+label%3A%22feature+request%22+sort%3Acomments-desc">here</a>.</p>
+<hr />
+<h2 id="code-contributions">Code contributions</h2>
+<p>Before starting hands-on on coding, please check out the <a href="https://github.com/carla-simulator/carla/issues">issue board</a> to check what is the team already working on, to avoid overlapping. In case of doubt or to discuss how to proceed, please contact one of us (or send an email to <a href="&#109;&#97;&#105;&#108;&#116;&#111;&#58;&#99;&#97;&#114;&#108;&#97;&#46;&#115;&#105;&#109;&#117;&#108;&#97;&#116;&#111;&#114;&#64;&#103;&#109;&#97;&#105;&#108;&#46;&#99;&#111;&#109;">&#99;&#97;&#114;&#108;&#97;&#46;&#115;&#105;&#109;&#117;&#108;&#97;&#116;&#111;&#114;&#64;&#103;&#109;&#97;&#105;&#108;&#46;&#99;&#111;&#109;</a>).  </p>
+<p>In order to start working, <a href="https://docs.github.com/en/enterprise/2.13/user/articles/fork-a-repo">fork the CARLA repository</a>, and clone said fork in your computer. Remember to <a href="https://docs.github.com/en/enterprise/2.13/user/articles/syncing-a-fork">keep your fork in sync</a> with the original repository.  </p>
+<h3 id="learn-about-unreal-engine">Learn about Unreal Engine</h3>
+<p>A basic introduction to C++ programming with UE4 can be found at Unreal's <a href="https://docs.unrealengine.com/latest/INT/Programming/Tutorials/">C++ Programming Tutorials</a>. There are other options online, some of them not free of charge. The <a href="https://www.udemy.com/unrealcourse/">Unreal C++ Course at Udemy</a> it's pretty complete and there are usually offers that make it very affordable.</p>
+<h3 id="before-getting-started">Before getting started</h3>
+<p>Check out the <a href="../">CARLA Design</a><!-- @todo --> document to get an idea on the different modules that compose CARLA. Choose the most appropriate one
+to hold the new feature. Feel free to contact the team in the <a href="https://discord.com/invite/8kqACuC">Discord server</a> in case any doubt arises during the process.  </p>
+<h3 id="coding-standard">Coding standard</h3>
+<p>Follow the current <a href="../cont_coding_standard/">coding standard</a> when submitting new code.  </p>
+<h3 id="submission">Submission</h3>
+<p>Contributions and new features are not merged directly to the <code>master</code> branch, but to an intermediate branch named <code>dev</code>. This <a href="https://nvie.com/posts/a-successful-git-branching-model/">Gitflow</a> branching model makes it easier to maintain a stable master branch. This model requires a specific workflow for contributions.  </p>
+<ul>
+<li>Always keep your <code>dev</code> branch updated with the lastest changes.  </li>
+<li>Develop the contribution in child branch from <code>dev</code> named as <code>username/name_of_the_contribution</code>.  </li>
+<li>Once the contribution is ready, submit a pull-request from your branch to <code>dev</code>. Try to be as descriptive as possible when filling the description. Note that there are some checks that the new code is required to pass before merging. The checks are automatically run by the continuous integration system. A green tick mark will appear if the checks are successful. If a red mark, please correct the code accordingly.  </li>
+</ul>
+<p>Once the contribution is merged in <code>dev</code>, it can be tested with the rest of new features. By the time of the next release, the <code>dev</code> branch will be merged to <code>master</code>, and the contribution will be available and announced.  </p>
+<h3 id="checklist">Checklist</h3>
+<ul>
+<li>[ ] Your branch is up-to-date with the <code>dev</code> branch and tested with latest changes.  </li>
+<li>[ ] Extended the README/documentation, if necessary.  </li>
+<li>[ ] Code compiles correctly.  </li>
+<li>[ ] All tests passing with <code>make check</code>.  </li>
+</ul>
+<hr />
+<h2 id="art-contributions">Art contributions</h2>
+<p>Art contributions include vehicles, walkers, maps or any other type of assets to be used in CARLA. These are stored in a BitBucket repository, which has some account space limitations. For said reason, the contributor will have to get in touch with the CARLA team, and ask them to create a branch on the content repository for the contributions.  </p>
+<p><strong>1. Create a BitBucket account.</strong> Visit the <a href="https://bitbucket.org">Bitbucket page</a>.  </p>
+<p><strong>2. Contact the art team to get access to the content repository.</strong> Join the <a href="https://discord.com/invite/8kqACuC">Discord server</a>. Go to the <strong>Contributors</strong> channel and request for access to the content repostory.  </p>
+<p><strong>3. A branch will be created for each contributor.</strong> The branch will be named as <code>contributors/contributor_name</code>. All the contributions made by said user should be made in that corresponding branch.  </p>
+<p><strong>4. Build CARLA.</strong> In order to contribute, a CARLA build is necessary. Follow the instructions to build either in <a href="https://carla.readthedocs.io/en/latest/build_linux/">Linux</a> or <a href="https://carla.readthedocs.io/en/latest/build_windows/">Windows</a>.  </p>
+<p><strong>5. Download the content repository.</strong> Follow the instructions to update the content in <a href="https://carla.readthedocs.io/en/latest/build_update/#get-development-assets">here</a>.</p>
+<p><strong>6. Update the branch to be in sync with master.</strong> The branch should always be updated with the latest changes in master.  </p>
+<p><strong>7. Upload the contribution.</strong> Do the corresponding changes and push the branch to origin.  </p>
+<p><strong>8. Wait for the art team to check it up.</strong> Once the contribution is uploaded, the team will check that everything is prepared to be merged with master.  </p>
+<hr />
+<h2 id="docs-contributions">Docs contributions</h2>
+<p>If some documentation is missing, vague or imprecise, it can be reported as with any other bug (read the previous section on <a href="#report-bugs">how to report bugs</a>). However, users can contribute by writing documentation.  </p>
+<p>The documentation is written with a mix of <a href="https://www.markdownguide.org/">Markdown</a> and HTML tags, with a some extra CSS code for features such as tables or the <a href="https://carla.readthedocs.io/en/latest/core_map/#carla-maps">town slider</a>. Follow the steps below to start writing documentation. </p>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>To submit docs contributions, follow the same workflow explained right above in <a href="#submission">code contributions</a>. To sum up, contributions are made in a child branch from <code>dev</code> and merged to said branch.  </p>
+</div>
+<p><strong>1. Build CARLA from source.</strong> Follow the steps in the docs to build on <a href="../build_linux/">Linux</a> or <a href="../build_windows/">Windows</a>.  </p>
+<p><strong>2. Install <a href="http://www.mkdocs.org/">MkDocs</a>.</strong> MkDocs is a static site generator used to build documentation. </p>
+<pre><code class="language-sh">sudo pip install mkdocs
+</code></pre>
+<p><strong>3. Visualize the docs.</strong> In the main CARLA folder, run the following command and click the link that appears in the terminal (http://127.0.0.1:8000) to open a local visualization of the documentation.  </p>
+<pre><code class="language-sh">mkdocs serve
+</code></pre>
+<p><strong>4. Create a git branch.</strong> Make sure to be in the <code>dev</code> branch (updated to latest changes) when creating a new one. </p>
+<pre><code class="language-sh">git checkout -b &lt;contributor_name&gt;/&lt;branch_name&gt;
+</code></pre>
+<p><strong>5. Write the docs.</strong> Edit the files following the guidelines in the <a href="../cont_doc_standard/">documentation standard</a> page.  </p>
+<p><strong>6. Submit the changes.</strong> Create a pull request in the GitHub repository, and add one of the suggested reviewers. Try to be as descriptive as possible when filling the pull-request description.  </p>
+<p><strong>7. Wait for review.</strong> The team will check if everything is ready to be merged or any changes are needed.  </p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>The local repository must be updated with the latest updates in the <code>dev</code> branch.  </p>
+</div>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="../ecosys_synkrotron/" class="btn btn-neutral float-left" title="SYNKROTRON"><span class="icon icon-circle-arrow-left"></span> 前一页</a>
+        <a href="../cont_coding_standard/" class="btn btn-neutral float-right" title="Coding standards">后一页 <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+        <span>
+          <a href="https://github.com/carla-simulator/carla" class="fa fa-github" style="color: #fcfcfc"> GitHub</a>
+        </span>
+    
+    
+      <span><a href="../ecosys_synkrotron/" style="color: #fcfcfc">&laquo; 前一页</a></span>
+    
+    
+      <span><a href="../cont_coding_standard/" style="color: #fcfcfc">后一页 &raquo;</a></span>
+    
+  </span>
+</div>
+    <script src="../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "..";</script>
+    <script src="../js/theme_extra.js"></script>
+    <script src="../js/theme.js"></script>
+      <script src="../extra.js"></script>
+      <script src="../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>

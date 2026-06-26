@@ -1,0 +1,1220 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <link rel="shortcut icon" href="../img/favicon.ico" />
+    <title>Catalogue vehicles - CARLA Simulator</title>
+    <link rel="stylesheet" href="../css/theme.css" />
+    <link rel="stylesheet" href="../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+        <link href="../extra.css" rel="stylesheet" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "Catalogue vehicles";
+        var mkdocs_page_input_path = "catalogue_vehicles.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href=".." class="icon icon-home"> CARLA Simulator
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+      <input type="text" name="q" placeholder="搜索文档" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="..">Home</a>
+                </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Getting started</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../start_introduction/">Introduction</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../start_quickstart/">Quick start package installation</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_first_steps/">First steps</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../build_carla/">Building CARLA</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Next steps</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_content_authoring_maps/">Content authoring - maps</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_content_authoring_vehicles/">Content authoring - vehicles</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../content_authoring_props/">Content authoring - props</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">CARLA topics</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../coordinates/">Coordinates and transformations</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../foundations/">Foundations</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../core_actors/">Actors</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../core_map/">Maps</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../core_sensors/">Sensors and data</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../ts_traffic_simulation_overview/">Traffic</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../ai_rendering/">AI rendering</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../development_tutorials/">Development</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../custom_assets_tutorials/">Custom assets</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Resources</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../python_api/">Python API</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../catalogue/">Catalogue</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../ref_cpp/">C++ reference</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../bp_library/">Blueprint library</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tutorials/">Tutorials</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../ext_docs/">Extended documentation</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../download/">Downloads</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">CARLA Ecosystem</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../ecosys_ansys/">ANSYS</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_G_rllib_integration/">AWS</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_G_carsim_integration/">CarSIM</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_G_chrono/">Chrono</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../large_map_roadrunner/">MathWorks</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../inverted_ai/">Inverted AI</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../nvidia/">NVIDIA</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../adv_opendrive/">ASAM OpenDRIVE</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../adv_ptv/">PTV Vissim</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../adv_rss/">RSS</a>
+                  </li>
+                  <li class="toctree-l1"><a class="" href="https://carla.readthedocs.io/projects/ros-bridge/en/latest/">ROS</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_G_scenic/">Scenic</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../adv_sumo/">SUMO</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../ecosys_synkrotron/">SYNKROTRON</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Contributing</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../cont_contribution_guidelines/">Guidelines</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../cont_coding_standard/">Coding standards</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../cont_doc_standard/">Documentation standard</a>
+                  </li>
+                  <li class="toctree-l1"><a class="" href=".."></a>
+                  </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="..">CARLA Simulator</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href=".." class="icon icon-home" aria-label="Docs"></a></li>
+      <li class="breadcrumb-item active">Catalogue vehicles</li>
+    <li class="wy-breadcrumbs-aside">
+          <a href="https://github.com/carla-simulator/carla/edit/master/Docs/catalogue_vehicles.md" class="icon icon-github"> 在 GitHub 上编辑</a>
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <!--- 
+
+The images in this document were captured using the following settings in CARLA:
+
+Town: Town 10
+
+Vehicle location: Transform(Location(x=-46.885479, y=20.083447, z=-0.002633), Rotation(pitch=-0.000034, yaw=141.974243, roll=0.000000))
+
+Camera location, small vehicles: Transform(Location(x=-47.696186, y=24.049326, z=1.471929), Rotation(pitch=-10.843717, yaw=-77.215683, roll=0.000139))
+Camera location, standard vehicles: Transform(Location(x=-48.672256, y=24.830288, z=1.722733), Rotation(pitch=-13.396630, yaw=-75.692039, roll=0.000119))
+Camera location, large vehicles: Transform(Location(x=-49.470921, y=27.835310, z=2.931721), Rotation(pitch=-13.396630, yaw=-75.691978, roll=0.000119))
+
+The weather settings are: 
+
+weather.sun_altitude_angle = 50
+weather.sun_azimuth_angle = 260
+weather.wetness = 10
+weather.precipitation = 10
+weather.scattering_intensity = 5
+weather.mie_scattering_scale = 0.5
+weather.rayleigh_scattering_scale = 0.1
+
+Camera settings:
+
+camera_bp = bp_lib.find('sensor.camera.rgb')
+camera_bp.set_attribute('image_size_x', '1920')
+camera_bp.set_attribute('image_size_y', '1080')
+camera_bp.set_attribute('fstop', '6.0')
+
+Vehicle settings:
+
+control = vehicle.get_control()
+control.steer = -0.25
+vehicle.apply_control(control)
+
+--->
+
+<h1 id="vehicle-catalogue">Vehicle catalogue</h1>
+<h2 id="generation-2">Generation 2</h2>
+<ul>
+<li><strong>Car</strong><ul>
+<li><a href="#dodge-charger-2020"><strong>Dodge</strong> - Charger 2020</a></li>
+<li><a href="#dodge-police-charger-2020"><strong>Dodge</strong> - Police Charger 2020</a></li>
+<li><a href="#ford-crown-taxi"><strong>Ford</strong> - Crown (taxi)</a></li>
+<li><a href="#lincoln-mkz-2020"><strong>Lincoln</strong> - MKZ 2020</a></li>
+<li><a href="#mercedes-coupe-2020"><strong>Mercedes</strong> - Coupe 2020</a></li>
+<li><a href="#mini-cooper-s-2021"><strong>Mini</strong> - Cooper S 2021</a></li>
+<li><a href="#nissan-patrol-2021"><strong>Nissan</strong> - Patrol 2021</a></li>
+</ul>
+</li>
+<li><strong>Truck</strong><ul>
+<li><a href="#carla-motors-european-hgv-cab-over-engine-type"><strong>CARLA Motors</strong> - European HGV (cab-over-engine type)</a></li>
+<li><a href="#carla-motors-firetruck"><strong>CARLA Motors</strong> - Firetruck</a></li>
+<li><a href="#tesla-cybertruck"><strong>Tesla</strong> - Cybertruck</a></li>
+</ul>
+</li>
+<li><strong>Van</strong><ul>
+<li><a href="#ford-ambulance"><strong>Ford</strong> - Ambulance</a></li>
+<li><a href="#mercedes-sprinter"><strong>Mercedes</strong> - Sprinter</a></li>
+<li><a href="#volkswagen-t2-2021"><strong>Volkswagen</strong> - T2 2021</a></li>
+</ul>
+</li>
+<li><strong>Bus</strong><ul>
+<li><a href="#mitsubishi-fusorosa"><strong>Mitsubishi</strong> - Fusorosa</a></li>
+</ul>
+</li>
+</ul>
+<h2 id="generation-1">Generation 1</h2>
+<ul>
+<li><strong>Car</strong><ul>
+<li><a href="#audi-a2"><strong>Audi</strong> - A2</a></li>
+<li><a href="#audi-e-tron"><strong>Audi</strong> - E-Tron</a></li>
+<li><a href="#audi-tt"><strong>Audi</strong> - TT</a></li>
+<li><a href="#bmw-gran-tourer"><strong>BMW</strong> - Gran Tourer</a></li>
+<li><a href="#chevrolet-impala"><strong>Chevrolet</strong> - Impala</a></li>
+<li><a href="#citroen-c3"><strong>Citroen</strong> - C3</a></li>
+<li><a href="#dodge-police-charger"><strong>Dodge</strong> - Police Charger</a></li>
+<li><a href="#ford-mustang"><strong>Ford</strong> - Mustang</a></li>
+<li><a href="#jeep-wrangler-rubicon"><strong>Jeep</strong> - Wrangler Rubicon</a></li>
+<li><a href="#lincoln-mkz-2017"><strong>Lincoln</strong> - MKZ 2017</a></li>
+<li><a href="#mercedes-coupe"><strong>Mercedes</strong> - Coupe</a></li>
+<li><a href="#micro-microlino"><strong>Micro</strong> - Microlino</a></li>
+<li><a href="#mini-cooper-s"><strong>Mini</strong> - Cooper S</a></li>
+<li><a href="#nissan-micra"><strong>Nissan</strong> - Micra</a></li>
+<li><a href="#nissan-patrol"><strong>Nissan</strong> - Patrol</a></li>
+<li><a href="#seat-leon"><strong>Seat</strong> - Leon</a></li>
+<li><a href="#tesla-model-3"><strong>Tesla</strong> - Model 3</a></li>
+<li><a href="#toyota-prius"><strong>Toyota</strong> - Prius</a></li>
+</ul>
+</li>
+<li><strong>Truck</strong><ul>
+<li><a href="#carla-motors-carlacola"><strong>CARLA Motors</strong> - CarlaCola</a></li>
+</ul>
+</li>
+<li><strong>Van</strong><ul>
+<li><a href="#volkswagen-t2"><strong>Volkswagen</strong> - T2</a></li>
+</ul>
+</li>
+<li><strong>Motorcycle</strong><ul>
+<li><a href="#harley-davidson-low-rider"><strong>Harley Davidson</strong> - Low Rider</a></li>
+<li><a href="#kawasaki-ninja"><strong>Kawasaki</strong> - Ninja</a></li>
+<li><a href="#vespa-zx-125"><strong>Vespa</strong> - ZX 125</a></li>
+<li><a href="#yamaha-yzf"><strong>Yamaha</strong> - YZF</a></li>
+</ul>
+</li>
+<li><strong>Bicycle</strong><ul>
+<li><a href="#bh-crossbike"><strong>BH</strong> - Crossbike</a></li>
+<li><a href="#diamondback-century"><strong>Diamondback</strong> - Century</a></li>
+<li><a href="#gazelle-omafiets"><strong>Gazelle</strong> - Omafiets</a></li>
+</ul>
+</li>
+</ul>
+<hr />
+<h2 id="inspect-the-vehicles-in-the-simulator">Inspect the vehicles in the simulator</h2>
+<p>To examine a vehicle from the catalog, use the following code, retrieve the blueprint ID from the vehicle's details below and paste it into the line <code>bp_lib.find('blueprint.id.goes_here')</code>:</p>
+<pre><code class="language-py">client = carla.Client('localhost', 2000)
+world = client.get_world()
+bp_lib = world.get_blueprint_library()
+spectator = world.get_spectator()
+
+# Set up the vehicle transform
+vehicle_loc = carla.Location(x=-46.9, y=20.0, z=0.2)
+vehicle_rot = carla.Rotation(pitch=0.0, yaw=142.0, roll=0.0)
+vehicle_trans = carla.Transform(vehicle_loc,vehicle_rot)
+
+# Paste the blueprint ID here:
+vehicle_bp = bp_lib.find('vehicle.lincoln.mkz_2020') 
+
+# Set up the view transform
+camera_loc = carla.Location(x=-48.7, y=24.8, z=1.7)
+camera_rot = carla.Rotation(pitch=-13.4, yaw=-75.7, roll=0.0)
+camera_trans = carla.Transform(camera_loc,camera_rot)
+
+# Spawn the vehicle
+vehicle = world.spawn_actor(vehicle_bp, vehicle_trans)
+
+# Move the spectator
+spectator.set_transform(camera_trans)
+
+</code></pre>
+<p>Don't forget to destroy the vehicle before you try and spawn another to avoid a collision:</p>
+<pre><code class="language-py">vehicle.destroy()
+</code></pre>
+<hr />
+<h2 id="cars">Cars</h2>
+<h3 id="audi-a2">Audi - A2</h3>
+<p><img alt="audi_a2" src="../img/catalogue/vehicles/audi_a2.webp" /></p>
+<ul>
+<li><strong>Manufacturer</strong>: Audi</li>
+<li><strong>Model</strong>: A2</li>
+<li><strong>Class</strong>: Compact</li>
+<li><strong>Generation</strong>: 1</li>
+<li>
+<p><strong>Blueprint ID</strong>: <span style="color:#00a6ed;">vehicle.audi.a2<span></p>
+</li>
+<li>
+<p><strong>Base type</strong>: car</p>
+</li>
+<li>
+<p><strong>Has lights</strong>: <span style="color:#f16c6c;">False<span></p>
+</li>
+<li>
+<p><strong>Has opening doors</strong>: <span style="color:#f16c6c;">False<span></p>
+</li>
+</ul>
+<h3 id="audi-e-tron">Audi - E-Tron</h3>
+<p><img alt="audi_etron" src="../img/catalogue/vehicles/audi_etron.webp" /></p>
+<ul>
+<li><strong>Manufacturer</strong>: Audi</li>
+<li><strong>Model</strong>: E-Tron</li>
+<li><strong>Class</strong>: SUV</li>
+<li><strong>Generation</strong>: 1</li>
+<li>
+<p><strong>Blueprint ID</strong>: <span style="color:#00a6ed;">vehicle.audi.etron<span></p>
+</li>
+<li>
+<p><strong>Base type</strong>: car</p>
+</li>
+<li>
+<p><strong>Special type</strong>: electric</p>
+</li>
+<li>
+<p><strong>Has lights</strong>: <span style="color:#f16c6c;">False<span></p>
+</li>
+<li>
+<p><strong>Has opening doors</strong>: <span style="color:#f16c6c;">False<span></p>
+</li>
+</ul>
+<h3 id="audi-tt">Audi - TT</h3>
+<p><img alt="audi_tt" src="../img/catalogue/vehicles/audi_tt.webp" /></p>
+<ul>
+<li><strong>Manufacturer</strong>: Audi</li>
+<li><strong>Model</strong>: TT</li>
+<li><strong>Class</strong>: Standard</li>
+<li><strong>Generation</strong>: 1</li>
+<li>
+<p><strong>Blueprint ID</strong>: <span style="color:#00a6ed;">vehicle.audi.tt<span></p>
+</li>
+<li>
+<p><strong>Base type</strong>: car</p>
+</li>
+<li>
+<p><strong>Has lights</strong>: <span style="color:#f16c6c;">False<span></p>
+</li>
+<li>
+<p><strong>Has opening doors</strong>: <span style="color:#f16c6c;">False<span></p>
+</li>
+</ul>
+<h3 id="bmw-gran-tourer">BMW - Gran Tourer</h3>
+<p><img alt="bmw_grandtourer" src="../img/catalogue/vehicles/bmw_grandtourer.webp" /></p>
+<ul>
+<li><strong>Manufacturer</strong>: BMW</li>
+<li><strong>Model</strong>: Gran Tourer</li>
+<li><strong>Class</strong>: Compact</li>
+<li><strong>Generation</strong>: 1</li>
+<li>
+<p><strong>Blueprint ID</strong>: <span style="color:#00a6ed;">vehicle.bmw.grandtourer<span></p>
+</li>
+<li>
+<p><strong>Base type</strong>: car</p>
+</li>
+<li>
+<p><strong>Has lights</strong>: <span style="color:#f16c6c;">False<span></p>
+</li>
+<li>
+<p><strong>Has opening doors</strong>: <span style="color:#f16c6c;">False<span></p>
+</li>
+</ul>
+<h3 id="chevrolet-impala">Chevrolet - Impala</h3>
+<p><img alt="chevrolet_impala" src="../img/catalogue/vehicles/chevrolet_impala.webp" /></p>
+<ul>
+<li><strong>Manufacturer</strong>: Chevrolet</li>
+<li><strong>Model</strong>: Impala</li>
+<li><strong>Class</strong>: Standard</li>
+<li><strong>Generation</strong>: 1</li>
+<li>
+<p><strong>Blueprint ID</strong>: <span style="color:#00a6ed;">vehicle.chevrolet.impala<span></p>
+</li>
+<li>
+<p><strong>Base type</strong>: car</p>
+</li>
+<li>
+<p><strong>Has lights</strong>: <span style="color:#f16c6c;">False<span></p>
+</li>
+<li>
+<p><strong>Has opening doors</strong>: <span style="color:#f16c6c;">False<span></p>
+</li>
+</ul>
+<h3 id="citroen-c3">Citroen - C3</h3>
+<p><img alt="citroen_c3" src="../img/catalogue/vehicles/citroen_c3.webp" /></p>
+<ul>
+<li><strong>Manufacturer</strong>: Citroen</li>
+<li><strong>Model</strong>: C3</li>
+<li><strong>Class</strong>: Compact</li>
+<li><strong>Generation</strong>: 1</li>
+<li>
+<p><strong>Blueprint ID</strong>: <span style="color:#00a6ed;">vehicle.citroen.c3<span></p>
+</li>
+<li>
+<p><strong>Base type</strong>: car</p>
+</li>
+<li>
+<p><strong>Has lights</strong>: <span style="color:#f16c6c;">False<span></p>
+</li>
+<li>
+<p><strong>Has opening doors</strong>: <span style="color:#f16c6c;">False<span></p>
+</li>
+</ul>
+<h3 id="dodge-charger-2020">Dodge - Charger 2020</h3>
+<p><img alt="dodge_charger_2020" src="../img/catalogue/vehicles/dodge_charger_2020.webp" /></p>
+<ul>
+<li><strong>Manufacturer</strong>: Dodge</li>
+<li><strong>Model</strong>: Charger 2020</li>
+<li><strong>Class</strong>: Standard</li>
+<li><strong>Generation</strong>: 2</li>
+<li>
+<p><strong>Blueprint ID</strong>: <span style="color:#00a6ed;">vehicle.dodge.charger_2020<span></p>
+</li>
+<li>
+<p><strong>Base type</strong>: car</p>
+</li>
+<li>
+<p><strong>Has lights</strong>: <span style="color:#99c635;">True<span></p>
+</li>
+<li>
+<p><strong>Has opening doors</strong>: <span style="color:#99c635;">True<span></p>
+</li>
+</ul>
+<h3 id="dodge-police-charger">Dodge - Police Charger</h3>
+<p><img alt="dodge_charger_police" src="../img/catalogue/vehicles/dodge_charger_police.webp" /></p>
+<ul>
+<li><strong>Manufacturer</strong>: Dodge</li>
+<li><strong>Model</strong>: Police Charger</li>
+<li><strong>Class</strong>: Standard</li>
+<li><strong>Generation</strong>: 1</li>
+<li>
+<p><strong>Blueprint ID</strong>: <span style="color:#00a6ed;">vehicle.dodge.charger_police<span></p>
+</li>
+<li>
+<p><strong>Base type</strong>: car</p>
+</li>
+<li>
+<p><strong>Special type</strong>: emergency</p>
+</li>
+<li>
+<p><strong>Has lights</strong>: <span style="color:#f16c6c;">False<span></p>
+</li>
+<li>
+<p><strong>Has opening doors</strong>: <span style="color:#f16c6c;">False<span></p>
+</li>
+</ul>
+<h3 id="dodge-police-charger-2020">Dodge - Police Charger 2020</h3>
+<p><img alt="dodge_charger_police_2020" src="../img/catalogue/vehicles/dodge_charger_police_2020.webp" /></p>
+<ul>
+<li><strong>Manufacturer</strong>: Dodge</li>
+<li><strong>Model</strong>: Police Charger 2020</li>
+<li><strong>Class</strong>: Standard</li>
+<li><strong>Generation</strong>: 2</li>
+<li>
+<p><strong>Blueprint ID</strong>: <span style="color:#00a6ed;">vehicle.dodge.charger_police_2020<span></p>
+</li>
+<li>
+<p><strong>Base type</strong>: car</p>
+</li>
+<li>
+<p><strong>Special type</strong>: emergency</p>
+</li>
+<li>
+<p><strong>Has lights</strong>: <span style="color:#99c635;">True<span></p>
+</li>
+<li>
+<p><strong>Has opening doors</strong>: <span style="color:#99c635;">True<span></p>
+</li>
+</ul>
+<h3 id="ford-crown-taxi">Ford - Crown (taxi)</h3>
+<p><img alt="ford_crown" src="../img/catalogue/vehicles/ford_crown.webp" /></p>
+<ul>
+<li><strong>Manufacturer</strong>: Ford</li>
+<li><strong>Model</strong>: Crown (taxi)</li>
+<li><strong>Class</strong>: Standard</li>
+<li><strong>Generation</strong>: 2</li>
+<li>
+<p><strong>Blueprint ID</strong>: <span style="color:#00a6ed;">vehicle.ford.crown<span></p>
+</li>
+<li>
+<p><strong>Base type</strong>: car</p>
+</li>
+<li>
+<p><strong>Special type</strong>: taxi</p>
+</li>
+<li>
+<p><strong>Has lights</strong>: <span style="color:#99c635;">True<span></p>
+</li>
+<li>
+<p><strong>Has opening doors</strong>: <span style="color:#99c635;">True<span></p>
+</li>
+</ul>
+<h3 id="ford-mustang">Ford - Mustang</h3>
+<p><img alt="ford_mustang" src="../img/catalogue/vehicles/ford_mustang.webp" /></p>
+<ul>
+<li><strong>Manufacturer</strong>: Ford</li>
+<li><strong>Model</strong>: Mustang</li>
+<li><strong>Class</strong>: Standard</li>
+<li><strong>Generation</strong>: 1</li>
+<li>
+<p><strong>Blueprint ID</strong>: <span style="color:#00a6ed;">vehicle.ford.mustang<span></p>
+</li>
+<li>
+<p><strong>Base type</strong>: car</p>
+</li>
+<li>
+<p><strong>Has lights</strong>: <span style="color:#f16c6c;">False<span></p>
+</li>
+<li>
+<p><strong>Has opening doors</strong>: <span style="color:#f16c6c;">False<span></p>
+</li>
+</ul>
+<h3 id="jeep-wrangler-rubicon">Jeep - Wrangler Rubicon</h3>
+<p><img alt="jeep_wrangler_rubicon" src="../img/catalogue/vehicles/jeep_wrangler_rubicon.webp" /></p>
+<ul>
+<li><strong>Manufacturer</strong>: Jeep</li>
+<li><strong>Model</strong>: Wrangler Rubicon</li>
+<li><strong>Class</strong>: Compact</li>
+<li><strong>Generation</strong>: 1</li>
+<li>
+<p><strong>Blueprint ID</strong>: <span style="color:#00a6ed;">vehicle.jeep.wrangler_rubicon<span></p>
+</li>
+<li>
+<p><strong>Base type</strong>: car</p>
+</li>
+<li>
+<p><strong>Has lights</strong>: <span style="color:#f16c6c;">False<span></p>
+</li>
+<li>
+<p><strong>Has opening doors</strong>: <span style="color:#f16c6c;">False<span></p>
+</li>
+</ul>
+<h3 id="lincoln-mkz-2017">Lincoln - MKZ 2017</h3>
+<p><img alt="lincoln_mkz_2017" src="../img/catalogue/vehicles/lincoln_mkz_2017.webp" /></p>
+<ul>
+<li><strong>Manufacturer</strong>: Lincoln</li>
+<li><strong>Model</strong>: MKZ 2017</li>
+<li><strong>Class</strong>: Standard</li>
+<li><strong>Generation</strong>: 1</li>
+<li>
+<p><strong>Blueprint ID</strong>: <span style="color:#00a6ed;">vehicle.lincoln.mkz_2017<span></p>
+</li>
+<li>
+<p><strong>Base type</strong>: car</p>
+</li>
+<li>
+<p><strong>Has lights</strong>: <span style="color:#f16c6c;">False<span></p>
+</li>
+<li>
+<p><strong>Has opening doors</strong>: <span style="color:#f16c6c;">False<span></p>
+</li>
+</ul>
+<h3 id="lincoln-mkz-2020">Lincoln - MKZ 2020</h3>
+<p><img alt="lincoln_mkz_2020" src="../img/catalogue/vehicles/lincoln_mkz_2020.webp" /></p>
+<ul>
+<li><strong>Manufacturer</strong>: Lincoln</li>
+<li><strong>Model</strong>: MKZ 2020</li>
+<li><strong>Class</strong>: Standard</li>
+<li><strong>Generation</strong>: 2</li>
+<li>
+<p><strong>Blueprint ID</strong>: <span style="color:#00a6ed;">vehicle.lincoln.mkz_2020<span></p>
+</li>
+<li>
+<p><strong>Base type</strong>: car</p>
+</li>
+<li>
+<p><strong>Has lights</strong>: <span style="color:#99c635;">True<span></p>
+</li>
+<li>
+<p><strong>Has opening doors</strong>: <span style="color:#99c635;">True<span></p>
+</li>
+</ul>
+<h3 id="mercedes-coupe">Mercedes - Coupe</h3>
+<p><img alt="mercedes_coupe" src="../img/catalogue/vehicles/mercedes_coupe.webp" /></p>
+<ul>
+<li><strong>Manufacturer</strong>: Mercedes</li>
+<li><strong>Model</strong>: Coupe</li>
+<li><strong>Class</strong>: Standard</li>
+<li><strong>Generation</strong>: 1</li>
+<li>
+<p><strong>Blueprint ID</strong>: <span style="color:#00a6ed;">vehicle.mercedes.coupe<span></p>
+</li>
+<li>
+<p><strong>Base type</strong>: car</p>
+</li>
+<li>
+<p><strong>Has lights</strong>: <span style="color:#f16c6c;">False<span></p>
+</li>
+<li>
+<p><strong>Has opening doors</strong>: <span style="color:#f16c6c;">False<span></p>
+</li>
+</ul>
+<h3 id="mercedes-coupe-2020">Mercedes - Coupe 2020</h3>
+<p><img alt="mercedes_coupe_2020" src="../img/catalogue/vehicles/mercedes_coupe_2020.webp" /></p>
+<ul>
+<li><strong>Manufacturer</strong>: Mercedes</li>
+<li><strong>Model</strong>: Coupe 2020</li>
+<li><strong>Class</strong>: Standard</li>
+<li><strong>Generation</strong>: 2</li>
+<li>
+<p><strong>Blueprint ID</strong>: <span style="color:#00a6ed;">vehicle.mercedes.coupe_2020<span></p>
+</li>
+<li>
+<p><strong>Base type</strong>: car</p>
+</li>
+<li>
+<p><strong>Has lights</strong>: <span style="color:#99c635;">True<span></p>
+</li>
+<li>
+<p><strong>Has opening doors</strong>: <span style="color:#99c635;">True<span></p>
+</li>
+</ul>
+<h3 id="micro-microlino">Micro - Microlino</h3>
+<p><img alt="micro_microlino" src="../img/catalogue/vehicles/micro_microlino.webp" /></p>
+<ul>
+<li><strong>Manufacturer</strong>: Micro</li>
+<li><strong>Model</strong>: Microlino</li>
+<li><strong>Class</strong>: Micro</li>
+<li><strong>Generation</strong>: 1</li>
+<li>
+<p><strong>Blueprint ID</strong>: <span style="color:#00a6ed;">vehicle.micro.microlino<span></p>
+</li>
+<li>
+<p><strong>Base type</strong>: car</p>
+</li>
+<li>
+<p><strong>Special type</strong>: electric</p>
+</li>
+<li>
+<p><strong>Has lights</strong>: <span style="color:#f16c6c;">False<span></p>
+</li>
+<li>
+<p><strong>Has opening doors</strong>: <span style="color:#f16c6c;">False<span></p>
+</li>
+</ul>
+<h3 id="mini-cooper-s">Mini - Cooper S</h3>
+<p><img alt="mini_cooper_s" src="../img/catalogue/vehicles/mini_cooper_s.webp" /></p>
+<ul>
+<li><strong>Manufacturer</strong>: Mini</li>
+<li><strong>Model</strong>: Cooper S</li>
+<li><strong>Class</strong>: Compact</li>
+<li><strong>Generation</strong>: 1</li>
+<li>
+<p><strong>Blueprint ID</strong>: <span style="color:#00a6ed;">vehicle.mini.cooper_s<span></p>
+</li>
+<li>
+<p><strong>Base type</strong>: car</p>
+</li>
+<li>
+<p><strong>Has lights</strong>: <span style="color:#f16c6c;">False<span></p>
+</li>
+<li>
+<p><strong>Has opening doors</strong>: <span style="color:#f16c6c;">False<span></p>
+</li>
+</ul>
+<h3 id="mini-cooper-s-2021">Mini - Cooper S 2021</h3>
+<p><img alt="mini_cooper_s_2021" src="../img/catalogue/vehicles/mini_cooper_s_2021.webp" /></p>
+<ul>
+<li><strong>Manufacturer</strong>: Mini</li>
+<li><strong>Model</strong>: Cooper S 2021</li>
+<li><strong>Class</strong>: Standard</li>
+<li><strong>Generation</strong>: 2</li>
+<li>
+<p><strong>Blueprint ID</strong>: <span style="color:#00a6ed;">vehicle.mini.cooper_s_2021<span></p>
+</li>
+<li>
+<p><strong>Base type</strong>: car</p>
+</li>
+<li>
+<p><strong>Has lights</strong>: <span style="color:#99c635;">True<span></p>
+</li>
+<li>
+<p><strong>Has opening doors</strong>: <span style="color:#99c635;">True<span></p>
+</li>
+</ul>
+<h3 id="nissan-micra">Nissan - Micra</h3>
+<p><img alt="nissan_micra" src="../img/catalogue/vehicles/nissan_micra.webp" /></p>
+<ul>
+<li><strong>Manufacturer</strong>: Nissan</li>
+<li><strong>Model</strong>: Micra</li>
+<li><strong>Class</strong>: Compact</li>
+<li><strong>Generation</strong>: 1</li>
+<li>
+<p><strong>Blueprint ID</strong>: <span style="color:#00a6ed;">vehicle.nissan.micra<span></p>
+</li>
+<li>
+<p><strong>Base type</strong>: car</p>
+</li>
+<li>
+<p><strong>Has lights</strong>: <span style="color:#f16c6c;">False<span></p>
+</li>
+<li>
+<p><strong>Has opening doors</strong>: <span style="color:#f16c6c;">False<span></p>
+</li>
+</ul>
+<h3 id="nissan-patrol">Nissan - Patrol</h3>
+<p><img alt="nissan_patrol" src="../img/catalogue/vehicles/nissan_patrol.webp" /></p>
+<ul>
+<li><strong>Manufacturer</strong>: Nissan</li>
+<li><strong>Model</strong>: Patrol</li>
+<li><strong>Class</strong>: SUV</li>
+<li><strong>Generation</strong>: 1</li>
+<li>
+<p><strong>Blueprint ID</strong>: <span style="color:#00a6ed;">vehicle.nissan.patrol<span></p>
+</li>
+<li>
+<p><strong>Base type</strong>: car</p>
+</li>
+<li>
+<p><strong>Has lights</strong>: <span style="color:#f16c6c;">False<span></p>
+</li>
+<li>
+<p><strong>Has opening doors</strong>: <span style="color:#f16c6c;">False<span></p>
+</li>
+</ul>
+<h3 id="nissan-patrol-2021">Nissan - Patrol 2021</h3>
+<p><img alt="nissan_patrol_2021" src="../img/catalogue/vehicles/nissan_patrol_2021.webp" /></p>
+<ul>
+<li><strong>Manufacturer</strong>: Nissan</li>
+<li><strong>Model</strong>: Patrol 2021</li>
+<li><strong>Class</strong>: SUV</li>
+<li><strong>Generation</strong>: 2</li>
+<li>
+<p><strong>Blueprint ID</strong>: <span style="color:#00a6ed;">vehicle.nissan.patrol_2021<span></p>
+</li>
+<li>
+<p><strong>Base type</strong>: car</p>
+</li>
+<li>
+<p><strong>Has lights</strong>: <span style="color:#99c635;">True<span></p>
+</li>
+<li>
+<p><strong>Has opening doors</strong>: <span style="color:#99c635;">True<span></p>
+</li>
+</ul>
+<h3 id="seat-leon">Seat - Leon</h3>
+<p><img alt="seat_leon" src="../img/catalogue/vehicles/seat_leon.webp" /></p>
+<ul>
+<li><strong>Manufacturer</strong>: Seat</li>
+<li><strong>Model</strong>: Leon</li>
+<li><strong>Class</strong>: Compact</li>
+<li><strong>Generation</strong>: 1</li>
+<li>
+<p><strong>Blueprint ID</strong>: <span style="color:#00a6ed;">vehicle.seat.leon<span></p>
+</li>
+<li>
+<p><strong>Base type</strong>: car</p>
+</li>
+<li>
+<p><strong>Has lights</strong>: <span style="color:#f16c6c;">False<span></p>
+</li>
+<li>
+<p><strong>Has opening doors</strong>: <span style="color:#f16c6c;">False<span></p>
+</li>
+</ul>
+<h3 id="tesla-model-3">Tesla - Model 3</h3>
+<p><img alt="tesla_model3" src="../img/catalogue/vehicles/tesla_model3.webp" /></p>
+<ul>
+<li><strong>Manufacturer</strong>: Tesla</li>
+<li><strong>Model</strong>: Model 3</li>
+<li><strong>Class</strong>: Standard</li>
+<li><strong>Generation</strong>: 1</li>
+<li>
+<p><strong>Blueprint ID</strong>: <span style="color:#00a6ed;">vehicle.tesla.model3<span></p>
+</li>
+<li>
+<p><strong>Base type</strong>: car</p>
+</li>
+<li>
+<p><strong>Special type</strong>: electric</p>
+</li>
+<li>
+<p><strong>Has lights</strong>: <span style="color:#f16c6c;">False<span></p>
+</li>
+<li>
+<p><strong>Has opening doors</strong>: <span style="color:#f16c6c;">False<span></p>
+</li>
+</ul>
+<h3 id="toyota-prius">Toyota - Prius</h3>
+<p><img alt="toyota_prius" src="../img/catalogue/vehicles/toyota_prius.webp" /></p>
+<ul>
+<li><strong>Manufacturer</strong>: Toyota</li>
+<li><strong>Model</strong>: Prius</li>
+<li><strong>Class</strong>: Compact</li>
+<li><strong>Generation</strong>: 1</li>
+<li>
+<p><strong>Blueprint ID</strong>: <span style="color:#00a6ed;">vehicle.toyota.prius<span></p>
+</li>
+<li>
+<p><strong>Base type</strong>: car</p>
+</li>
+<li>
+<p><strong>Special type</strong>: electric</p>
+</li>
+<li>
+<p><strong>Has lights</strong>: <span style="color:#f16c6c;">False<span></p>
+</li>
+<li>
+<p><strong>Has opening doors</strong>: <span style="color:#f16c6c;">False<span></p>
+</li>
+</ul>
+<hr />
+<h2 id="trucks">Trucks</h2>
+<h3 id="carla-motors-carlacola">CARLA Motors - CarlaCola</h3>
+<p><img alt="carlamotors_carlacola" src="../img/catalogue/vehicles/carlamotors_carlacola.webp" /></p>
+<ul>
+<li><strong>Manufacturer</strong>: CARLA Motors</li>
+<li><strong>Model</strong>: CarlaCola</li>
+<li><strong>Class</strong>: Truck</li>
+<li><strong>Generation</strong>: 1</li>
+<li>
+<p><strong>Blueprint ID</strong>: <span style="color:#00a6ed;">vehicle.carlamotors.carlacola<span></p>
+</li>
+<li>
+<p><strong>Base type</strong>: truck</p>
+</li>
+<li>
+<p><strong>Has lights</strong>: <span style="color:#f16c6c;">False<span></p>
+</li>
+<li>
+<p><strong>Has opening doors</strong>: <span style="color:#f16c6c;">False<span></p>
+</li>
+</ul>
+<h3 id="carla-motors-european-hgv-cab-over-engine-type">CARLA Motors - European HGV (cab-over-engine type)</h3>
+<p><img alt="carlamotors_european_hgv" src="../img/catalogue/vehicles/carlamotors_european_hgv.webp" /></p>
+<ul>
+<li><strong>Manufacturer</strong>: CARLA Motors</li>
+<li><strong>Model</strong>: European HGV (cab-over-engine type)</li>
+<li><strong>Class</strong>: Truck</li>
+<li><strong>Generation</strong>: 2</li>
+<li>
+<p><strong>Blueprint ID</strong>: <span style="color:#00a6ed;">vehicle.carlamotors.european_hgv<span></p>
+</li>
+<li>
+<p><strong>Base type</strong>: truck</p>
+</li>
+<li>
+<p><strong>Has lights</strong>: <span style="color:#f16c6c;">False<span></p>
+</li>
+<li>
+<p><strong>Has opening doors</strong>: <span style="color:#f16c6c;">False<span></p>
+</li>
+</ul>
+<h3 id="carla-motors-firetruck">CARLA Motors - Firetruck</h3>
+<p><img alt="carlamotors_firetruck" src="../img/catalogue/vehicles/carlamotors_firetruck.webp" /></p>
+<ul>
+<li><strong>Manufacturer</strong>: CARLA Motors</li>
+<li><strong>Model</strong>: Firetruck</li>
+<li><strong>Class</strong>: Truck</li>
+<li><strong>Generation</strong>: 2</li>
+<li>
+<p><strong>Blueprint ID</strong>: <span style="color:#00a6ed;">vehicle.carlamotors.firetruck<span></p>
+</li>
+<li>
+<p><strong>Base type</strong>: truck</p>
+</li>
+<li>
+<p><strong>Special type</strong>: emergency</p>
+</li>
+<li>
+<p><strong>Has lights</strong>: <span style="color:#99c635;">True<span></p>
+</li>
+<li>
+<p><strong>Has opening doors</strong>: <span style="color:#99c635;">True<span></p>
+</li>
+</ul>
+<h3 id="tesla-cybertruck">Tesla - Cybertruck</h3>
+<p><img alt="tesla_cybertruck" src="../img/catalogue/vehicles/tesla_cybertruck.webp" /></p>
+<ul>
+<li><strong>Manufacturer</strong>: Tesla</li>
+<li><strong>Model</strong>: Cybertruck</li>
+<li><strong>Class</strong>: Truck</li>
+<li><strong>Generation</strong>: 2</li>
+<li>
+<p><strong>Blueprint ID</strong>: <span style="color:#00a6ed;">vehicle.tesla.cybertruck<span></p>
+</li>
+<li>
+<p><strong>Base type</strong>: truck</p>
+</li>
+<li>
+<p><strong>Special type</strong>: electric</p>
+</li>
+<li>
+<p><strong>Has lights</strong>: <span style="color:#f16c6c;">False<span></p>
+</li>
+<li>
+<p><strong>Has opening doors</strong>: <span style="color:#f16c6c;">False<span></p>
+</li>
+</ul>
+<hr />
+<h2 id="vans">Vans</h2>
+<h3 id="ford-ambulance">Ford - Ambulance</h3>
+<p><img alt="ford_ambulance" src="../img/catalogue/vehicles/ford_ambulance.webp" /></p>
+<ul>
+<li><strong>Manufacturer</strong>: Ford</li>
+<li><strong>Model</strong>: Ambulance</li>
+<li><strong>Class</strong>: Van</li>
+<li><strong>Generation</strong>: 2</li>
+<li>
+<p><strong>Blueprint ID</strong>: <span style="color:#00a6ed;">vehicle.ford.ambulance<span></p>
+</li>
+<li>
+<p><strong>Base type</strong>: van</p>
+</li>
+<li>
+<p><strong>Special type</strong>: emergency</p>
+</li>
+<li>
+<p><strong>Has lights</strong>: <span style="color:#99c635;">True<span></p>
+</li>
+<li>
+<p><strong>Has opening doors</strong>: <span style="color:#99c635;">True<span></p>
+</li>
+</ul>
+<h3 id="mercedes-sprinter">Mercedes - Sprinter</h3>
+<p><img alt="mercedes_sprinter" src="../img/catalogue/vehicles/mercedes_sprinter.webp" /></p>
+<ul>
+<li><strong>Manufacturer</strong>: Mercedes</li>
+<li><strong>Model</strong>: Sprinter</li>
+<li><strong>Class</strong>: Van</li>
+<li><strong>Generation</strong>: 2</li>
+<li>
+<p><strong>Blueprint ID</strong>: <span style="color:#00a6ed;">vehicle.mercedes.sprinter<span></p>
+</li>
+<li>
+<p><strong>Base type</strong>: van</p>
+</li>
+<li>
+<p><strong>Has lights</strong>: <span style="color:#99c635;">True<span></p>
+</li>
+<li>
+<p><strong>Has opening doors</strong>: <span style="color:#99c635;">True<span></p>
+</li>
+</ul>
+<h3 id="volkswagen-t2">Volkswagen - T2</h3>
+<p><img alt="volkswagen_t2" src="../img/catalogue/vehicles/volkswagen_t2.webp" /></p>
+<ul>
+<li><strong>Manufacturer</strong>: Volkswagen</li>
+<li><strong>Model</strong>: T2</li>
+<li><strong>Class</strong>: Standard</li>
+<li><strong>Generation</strong>: 1</li>
+<li>
+<p><strong>Blueprint ID</strong>: <span style="color:#00a6ed;">vehicle.volkswagen.t2<span></p>
+</li>
+<li>
+<p><strong>Base type</strong>: van</p>
+</li>
+<li>
+<p><strong>Has lights</strong>: <span style="color:#f16c6c;">False<span></p>
+</li>
+<li>
+<p><strong>Has opening doors</strong>: <span style="color:#f16c6c;">False<span></p>
+</li>
+</ul>
+<h3 id="volkswagen-t2-2021">Volkswagen - T2 2021</h3>
+<p><img alt="volkswagen_t2_2021" src="../img/catalogue/vehicles/volkswagen_t2_2021.webp" /></p>
+<ul>
+<li><strong>Manufacturer</strong>: Volkswagen</li>
+<li><strong>Model</strong>: T2 2021</li>
+<li><strong>Class</strong>: Van</li>
+<li><strong>Generation</strong>: 2</li>
+<li>
+<p><strong>Blueprint ID</strong>: <span style="color:#00a6ed;">vehicle.volkswagen.t2_2021<span></p>
+</li>
+<li>
+<p><strong>Base type</strong>: van</p>
+</li>
+<li>
+<p><strong>Has lights</strong>: <span style="color:#99c635;">True<span></p>
+</li>
+<li>
+<p><strong>Has opening doors</strong>: <span style="color:#99c635;">True<span></p>
+</li>
+</ul>
+<hr />
+<h2 id="buses">Buses</h2>
+<h3 id="mitsubishi-fusorosa">Mitsubishi - Fusorosa</h3>
+<p><img alt="mitsubishi_fusorosa" src="../img/catalogue/vehicles/mitsubishi_fusorosa.webp" /></p>
+<ul>
+<li><strong>Manufacturer</strong>: Mitsubishi</li>
+<li><strong>Model</strong>: Fusorosa</li>
+<li><strong>Class</strong>: Bus</li>
+<li><strong>Generation</strong>: 2</li>
+<li>
+<p><strong>Blueprint ID</strong>: <span style="color:#00a6ed;">vehicle.mitsubishi.fusorosa<span></p>
+</li>
+<li>
+<p><strong>Base type</strong>: bus</p>
+</li>
+<li>
+<p><strong>Has lights</strong>: <span style="color:#99c635;">True<span></p>
+</li>
+<li>
+<p><strong>Has opening doors</strong>: <span style="color:#f16c6c;">False<span></p>
+</li>
+</ul>
+<hr />
+<h2 id="motorcycles">Motorcycles</h2>
+<h3 id="harley-davidson-low-rider">Harley Davidson - Low Rider</h3>
+<p><img alt="harley-davidson_low_rider" src="../img/catalogue/vehicles/harley-davidson_low_rider.webp" /></p>
+<ul>
+<li><strong>Manufacturer</strong>: Harley Davidson</li>
+<li><strong>Model</strong>: Low Rider</li>
+<li><strong>Class</strong>: Motorcycle</li>
+<li><strong>Generation</strong>: 1</li>
+<li>
+<p><strong>Blueprint ID</strong>: <span style="color:#00a6ed;">vehicle.harley-davidson.low_rider<span></p>
+</li>
+<li>
+<p><strong>Base type</strong>: motorcycle</p>
+</li>
+<li>
+<p><strong>Has lights</strong>: <span style="color:#f16c6c;">False<span></p>
+</li>
+<li>
+<p><strong>Has opening doors</strong>: <span style="color:#f16c6c;">False<span></p>
+</li>
+</ul>
+<h3 id="kawasaki-ninja">Kawasaki - Ninja</h3>
+<p><img alt="kawasaki_ninja" src="../img/catalogue/vehicles/kawasaki_ninja.webp" /></p>
+<ul>
+<li><strong>Manufacturer</strong>: Kawasaki</li>
+<li><strong>Model</strong>: Ninja</li>
+<li><strong>Class</strong>: Motorcycle</li>
+<li><strong>Generation</strong>: 1</li>
+<li>
+<p><strong>Blueprint ID</strong>: <span style="color:#00a6ed;">vehicle.kawasaki.ninja<span></p>
+</li>
+<li>
+<p><strong>Base type</strong>: motorcycle</p>
+</li>
+<li>
+<p><strong>Has lights</strong>: <span style="color:#f16c6c;">False<span></p>
+</li>
+<li>
+<p><strong>Has opening doors</strong>: <span style="color:#f16c6c;">False<span></p>
+</li>
+</ul>
+<h3 id="vespa-zx-125">Vespa - ZX 125</h3>
+<p><img alt="vespa_zx125" src="../img/catalogue/vehicles/vespa_zx125.webp" /></p>
+<ul>
+<li><strong>Manufacturer</strong>: Vespa</li>
+<li><strong>Model</strong>: ZX 125</li>
+<li><strong>Class</strong>: Motorcycle</li>
+<li><strong>Generation</strong>: 1</li>
+<li>
+<p><strong>Blueprint ID</strong>: <span style="color:#00a6ed;">vehicle.vespa.zx125<span></p>
+</li>
+<li>
+<p><strong>Base type</strong>: motorcycle</p>
+</li>
+<li>
+<p><strong>Has lights</strong>: <span style="color:#f16c6c;">False<span></p>
+</li>
+<li>
+<p><strong>Has opening doors</strong>: <span style="color:#f16c6c;">False<span></p>
+</li>
+</ul>
+<h3 id="yamaha-yzf">Yamaha - YZF</h3>
+<p><img alt="yamaha_yzf" src="../img/catalogue/vehicles/yamaha_yzf.webp" /></p>
+<ul>
+<li><strong>Manufacturer</strong>: Yamaha</li>
+<li><strong>Model</strong>: YZF</li>
+<li><strong>Class</strong>: Motorcycle</li>
+<li><strong>Generation</strong>: 1</li>
+<li>
+<p><strong>Blueprint ID</strong>: <span style="color:#00a6ed;">vehicle.yamaha.yzf<span></p>
+</li>
+<li>
+<p><strong>Base type</strong>: motorcycle</p>
+</li>
+<li>
+<p><strong>Has lights</strong>: <span style="color:#f16c6c;">False<span></p>
+</li>
+<li>
+<p><strong>Has opening doors</strong>: <span style="color:#f16c6c;">False<span></p>
+</li>
+</ul>
+<hr />
+<h2 id="bicycles">Bicycles</h2>
+<h3 id="bh-crossbike">BH - Crossbike</h3>
+<p><img alt="bh_crossbike" src="../img/catalogue/vehicles/bh_crossbike.webp" /></p>
+<ul>
+<li><strong>Manufacturer</strong>: BH</li>
+<li><strong>Model</strong>: Crossbike</li>
+<li><strong>Class</strong>: Bicycle</li>
+<li><strong>Generation</strong>: 1</li>
+<li>
+<p><strong>Blueprint ID</strong>: <span style="color:#00a6ed;">vehicle.bh.crossbike<span></p>
+</li>
+<li>
+<p><strong>Base type</strong>: bicycle</p>
+</li>
+<li>
+<p><strong>Has lights</strong>: <span style="color:#f16c6c;">False<span></p>
+</li>
+<li>
+<p><strong>Has opening doors</strong>: <span style="color:#f16c6c;">False<span></p>
+</li>
+</ul>
+<h3 id="diamondback-century">Diamondback - Century</h3>
+<p><img alt="diamondback_century" src="../img/catalogue/vehicles/diamondback_century.webp" /></p>
+<ul>
+<li><strong>Manufacturer</strong>: Diamondback</li>
+<li><strong>Model</strong>: Century</li>
+<li><strong>Class</strong>: Bicycle</li>
+<li><strong>Generation</strong>: 1</li>
+<li>
+<p><strong>Blueprint ID</strong>: <span style="color:#00a6ed;">vehicle.diamondback.century<span></p>
+</li>
+<li>
+<p><strong>Base type</strong>: bicycle</p>
+</li>
+<li>
+<p><strong>Has lights</strong>: <span style="color:#f16c6c;">False<span></p>
+</li>
+<li>
+<p><strong>Has opening doors</strong>: <span style="color:#f16c6c;">False<span></p>
+</li>
+</ul>
+<h3 id="gazelle-omafiets">Gazelle - Omafiets</h3>
+<p><img alt="gazelle_omafiets" src="../img/catalogue/vehicles/gazelle_omafiets.webp" /></p>
+<ul>
+<li><strong>Manufacturer</strong>: Gazelle</li>
+<li><strong>Model</strong>: Omafiets</li>
+<li><strong>Class</strong>: Bicycle</li>
+<li><strong>Generation</strong>: 1</li>
+<li>
+<p><strong>Blueprint ID</strong>: <span style="color:#00a6ed;">vehicle.gazelle.omafiets<span></p>
+</li>
+<li>
+<p><strong>Base type</strong>: bicycle</p>
+</li>
+<li>
+<p><strong>Has lights</strong>: <span style="color:#f16c6c;">False<span></p>
+</li>
+<li>
+<p><strong>Has opening doors</strong>: <span style="color:#f16c6c;">False<span></p>
+</li>
+</ul>
+<hr />
+              
+            </div>
+          </div><footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+        <span>
+          <a href="https://github.com/carla-simulator/carla" class="fa fa-github" style="color: #fcfcfc"> GitHub</a>
+        </span>
+    
+    
+    
+  </span>
+</div>
+    <script src="../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "..";</script>
+    <script src="../js/theme_extra.js"></script>
+    <script src="../js/theme.js"></script>
+      <script src="../extra.js"></script>
+      <script src="../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>

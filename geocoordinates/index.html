@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <link rel="shortcut icon" href="../img/favicon.ico" />
+    <title>Geocoordinates - CARLA Simulator</title>
+    <link rel="stylesheet" href="../css/theme.css" />
+    <link rel="stylesheet" href="../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+        <link href="../extra.css" rel="stylesheet" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "Geocoordinates";
+        var mkdocs_page_input_path = "geocoordinates.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href=".." class="icon icon-home"> CARLA Simulator
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+      <input type="text" name="q" placeholder="搜索文档" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="..">Home</a>
+                </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Getting started</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../start_introduction/">Introduction</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../start_quickstart/">Quick start package installation</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_first_steps/">First steps</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../build_carla/">Building CARLA</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Next steps</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_content_authoring_maps/">Content authoring - maps</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_content_authoring_vehicles/">Content authoring - vehicles</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../content_authoring_props/">Content authoring - props</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">CARLA topics</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../coordinates/">Coordinates and transformations</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../foundations/">Foundations</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../core_actors/">Actors</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../core_map/">Maps</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../core_sensors/">Sensors and data</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../ts_traffic_simulation_overview/">Traffic</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../ai_rendering/">AI rendering</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../development_tutorials/">Development</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../custom_assets_tutorials/">Custom assets</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Resources</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../python_api/">Python API</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../catalogue/">Catalogue</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../ref_cpp/">C++ reference</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../bp_library/">Blueprint library</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tutorials/">Tutorials</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../ext_docs/">Extended documentation</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../download/">Downloads</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">CARLA Ecosystem</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../ecosys_ansys/">ANSYS</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_G_rllib_integration/">AWS</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_G_carsim_integration/">CarSIM</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_G_chrono/">Chrono</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../large_map_roadrunner/">MathWorks</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../inverted_ai/">Inverted AI</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../nvidia/">NVIDIA</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../adv_opendrive/">ASAM OpenDRIVE</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../adv_ptv/">PTV Vissim</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../adv_rss/">RSS</a>
+                  </li>
+                  <li class="toctree-l1"><a class="" href="https://carla.readthedocs.io/projects/ros-bridge/en/latest/">ROS</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_G_scenic/">Scenic</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../adv_sumo/">SUMO</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../ecosys_synkrotron/">SYNKROTRON</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Contributing</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../cont_contribution_guidelines/">Guidelines</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../cont_coding_standard/">Coding standards</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../cont_doc_standard/">Documentation standard</a>
+                  </li>
+                  <li class="toctree-l1"><a class="" href=".."></a>
+                  </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="..">CARLA Simulator</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href=".." class="icon icon-home" aria-label="Docs"></a></li>
+      <li class="breadcrumb-item active">Geocoordinates</li>
+    <li class="wy-breadcrumbs-aside">
+          <a href="https://github.com/carla-simulator/carla/edit/master/Docs/geocoordinates.md" class="icon icon-github"> 在 GitHub 上编辑</a>
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="geocoordinates">Geocoordinates</h1>
+<p>CARLA parses a georeference from metadata provided in the OpenDRIVE header that enables the conversion of a CARLA location given in <strong>X</strong>, <strong>Y</strong> and <strong>Z</strong> coordinates (in meters) into a geocoordinate given in <strong>latitude</strong> (degrees), <strong>longitude</strong> (degrees) and <strong>altitude</strong> (meters). The reverse transformation is also possible from latitude, longitude and altitude into a CARLA coordinate. </p>
+<p>A map projection is used to convert between CARLA coordinates and geocoordinates. This projection is used in the GNSS sensor and the <code>transform_to_geolocation()</code> and <code>geolocation_to_transform()</code> methods of the <a href="../python_api/#carlamap">Map object</a>. The type of projection, a reference ellipsoid along with the geolocation of the center of the map (i.e. X=Y=0) and other parameters associated with the projection are defined in the OpenDRIVE header information in the <code>&lt;geoReference&gt;</code> tag in a PROJ.4-style string.</p>
+<p>The following is an example of a <code>&lt;geoReference&gt;</code> tag provided in an OpenDRIVE file header. Details on the meaning of each parameter are given in the following sections:</p>
+<pre><code class="language-xml">&lt;geoReference&gt;&lt;![CDATA[+proj=tmerc +lat_0=0 +lon_0=0 +k=1 +x_0=0 +y_0=0 +ellps=WGS84]]&gt;&lt;/geoReference&gt;
+</code></pre>
+<p>The georeference defined in the OpenDRIVE and geoprojection can be queried through the CARLA Python API using the <code>get_georeference()</code> and <code>get_geoprojection()</code> methods of the <a href="../python_api/#carlamap">Map object</a>.</p>
+<hr />
+<h2 id="map-projection">Map projection</h2>
+<p>CARLA supports 4 different <a href="https://en.wikipedia.org/wiki/Map_projection">map projection types</a>. The projection type is denoted in the <code>+proj</code> field of the georeference:</p>
+<table>
+<thead>
+<tr>
+<th>Map projection</th>
+<th>OpenDRIVE header</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="https://en.wikipedia.org/wiki/Transverse_Mercator_projection">Transverse Mercator</a> (default)</td>
+<td><code>+proj=tmerc</code></td>
+</tr>
+<tr>
+<td><a href="https://en.wikipedia.org/wiki/Universal_Transverse_Mercator_coordinate_system">Universal Transverse Mercator</a></td>
+<td><code>+proj=utm</code></td>
+</tr>
+<tr>
+<td><a href="https://en.wikipedia.org/wiki/Web_Mercator_projection">Web Mercator</a></td>
+<td><code>+proj=merc</code></td>
+</tr>
+<tr>
+<td><a href="https://en.wikipedia.org/wiki/Lambert_conformal_conic_projection">Lambert Conformal Conic - 2SP version</a></td>
+<td><code>+proj=lcc</code></td>
+</tr>
+</tbody>
+</table>
+<p>Each map projection requires a specific set of parameters defined in the OpenDRIVE georeference:</p>
+<h3 id="transverse-mercator">Transverse mercator</h3>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>+proj</code></td>
+<td><code>tmerc</code></td>
+</tr>
+<tr>
+<td><code>+ellps</code></td>
+<td><a href="#reference-ellipsoid">Reference ellipsoid</a> used to model the Earth's shape</td>
+</tr>
+<tr>
+<td><code>+lat_0</code></td>
+<td>Latitude value for the origin of the map</td>
+</tr>
+<tr>
+<td><code>+lon_0</code></td>
+<td>Longitude value for the origin of the map</td>
+</tr>
+<tr>
+<td><code>k</code></td>
+<td>Scale factor at origin</td>
+</tr>
+<tr>
+<td><code>+a</code></td>
+<td>Semi-major axis of the ellipsoid model</td>
+</tr>
+<tr>
+<td><code>+b</code></td>
+<td>Semi-major axis of the ellipsoid model</td>
+</tr>
+<tr>
+<td><code>+f</code></td>
+<td>Flattening of the ellipsoid model (a-b)/a</td>
+</tr>
+<tr>
+<td><code>+f_inv</code></td>
+<td>Inverse flattening of the ellipsoid model 1/f</td>
+</tr>
+<tr>
+<td><code>x_0</code></td>
+<td>False Easting offset</td>
+</tr>
+<tr>
+<td><code>y_0</code></td>
+<td>False Northing offset</td>
+</tr>
+</tbody>
+</table>
+<h3 id="universal-transverse-mercator">Universal transverse mercator</h3>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>+proj</code></td>
+<td><code>utm</code></td>
+</tr>
+<tr>
+<td><code>+ellps</code></td>
+<td><a href="#reference-ellipsoid">Reference ellipsoid</a> used to model the Earth's shape</td>
+</tr>
+<tr>
+<td><code>+zone</code></td>
+<td>Defines the longitudinal zone for the UTM projection (1-60)</td>
+</tr>
+<tr>
+<td><code>+north</code></td>
+<td>Defines the geolocation as in the Northern hemisphere (default)</td>
+</tr>
+<tr>
+<td><code>+south</code></td>
+<td>Defines the geolocation as in the Southern hemisphere</td>
+</tr>
+<tr>
+<td><code>+a</code></td>
+<td>Semi-major axis of the ellipsoid model</td>
+</tr>
+<tr>
+<td><code>+b</code></td>
+<td>Semi-major axis of the ellipsoid model</td>
+</tr>
+<tr>
+<td><code>+f</code></td>
+<td>Flattening of the ellipsoid model (a-b)/a</td>
+</tr>
+<tr>
+<td><code>+f_inv</code></td>
+<td>Inverse flattening of the ellipsoid model 1/f</td>
+</tr>
+</tbody>
+</table>
+<h3 id="web-mercator">Web mercator</h3>
+<p>The Web mercator assumes a spherical Earth, therefore only the <strong>a</strong> parameter, the semi-major axis of the ellipsoid is used. </p>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>+proj</code></td>
+<td><code>merc</code></td>
+</tr>
+<tr>
+<td><code>+ellps</code></td>
+<td><a href="#reference-ellipsoid">Reference ellipsoid</a> used to model the Earth's shape</td>
+</tr>
+<tr>
+<td><code>+a</code></td>
+<td>Semi-major axis of the ellipsoid model</td>
+</tr>
+</tbody>
+</table>
+<h3 id="lambert-conformal-conic-2sp">Lambert conformal conic 2SP</h3>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>+proj</code></td>
+<td><code>lcc</code></td>
+</tr>
+<tr>
+<td><code>+ellps</code></td>
+<td><a href="#reference-ellipsoid">Reference ellipsoid</a> used to model the Earth's shape</td>
+</tr>
+<tr>
+<td><code>+lat_0</code></td>
+<td>Latitude value for the origin of the map</td>
+</tr>
+<tr>
+<td><code>+lat_1</code></td>
+<td>Latitude value for the upper latitude limit</td>
+</tr>
+<tr>
+<td><code>+lat_2</code></td>
+<td>Latitude value for the lower latitude limit</td>
+</tr>
+<tr>
+<td><code>+lon_0</code></td>
+<td>Longitude value for the origin of the map</td>
+</tr>
+<tr>
+<td><code>+a</code></td>
+<td>Semi-major axis of the ellipsoid model</td>
+</tr>
+<tr>
+<td><code>+b</code></td>
+<td>Semi-major axis of the ellipsoid model</td>
+</tr>
+<tr>
+<td><code>+f</code></td>
+<td>Flattening of the ellipsoid model (a-b)/a</td>
+</tr>
+<tr>
+<td><code>+f_inv</code></td>
+<td>Inverse flattening of the ellipsoid model 1/f</td>
+</tr>
+<tr>
+<td><code>x_0</code></td>
+<td>False Easting offset</td>
+</tr>
+<tr>
+<td><code>y_0</code></td>
+<td>False Northing offset</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="reference-ellipsoid">Reference ellipsoid</h2>
+<p>The reference ellipsoid is the ellipsoid model used to model the Earth's surface. Since the Earth is closer to ellipsoidal than spherical a simple spherical model may cause inaccuracies which are not acceptable for certain applications. The reference ellipsoid can be defined using several parameters:</p>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>a</strong></td>
+<td>Semi major axis</td>
+</tr>
+<tr>
+<td><strong>b</strong></td>
+<td>Semi minor axis</td>
+</tr>
+<tr>
+<td><strong>f</strong></td>
+<td>Flattening (a-b)/a</td>
+</tr>
+<tr>
+<td><strong>f_inv</strong></td>
+<td>Inverse flattening 1/f</td>
+</tr>
+</tbody>
+</table>
+<p>CARLA supports numerous commonly used reference ellipsoids. The type of ellipsoid to use is defined in the <code>+ellps</code> field of the <code>&lt;geoReference&gt;</code> tag:</p>
+<table>
+<thead>
+<tr>
+<th>Ref. ellipsoid</th>
+<th><strong>a</strong></th>
+<th><strong>f_inv</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>wgs84</code> (default)</td>
+<td>6378137.0</td>
+<td>298.257223563</td>
+</tr>
+<tr>
+<td><code>grs80</code></td>
+<td>6378137.0</td>
+<td>298.257222101</td>
+</tr>
+<tr>
+<td><code>intl</code></td>
+<td>6378388.0</td>
+<td>297.0</td>
+</tr>
+<tr>
+<td><code>bessel</code></td>
+<td>6377397.155</td>
+<td>299.1528128</td>
+</tr>
+<tr>
+<td><code>clrk66</code></td>
+<td>6378206.4</td>
+<td>294.9786982138</td>
+</tr>
+<tr>
+<td><code>airy</code></td>
+<td>6377563.396</td>
+<td>299.3249646</td>
+</tr>
+<tr>
+<td><code>wgs72</code></td>
+<td>6378135.0</td>
+<td>298.26</td>
+</tr>
+<tr>
+<td><code>wgs66</code></td>
+<td>6378145.0</td>
+<td>298.25</td>
+</tr>
+<tr>
+<td><code>sphere</code></td>
+<td>6370997.0</td>
+<td>inf</td>
+</tr>
+</tbody>
+</table>
+<p>If a reference ellipsoid is defined in the georeference tag and then parameters are also given, the given parameters will override those for the chosen reference ellipsoid. </p>
+<hr />
+<h2 id="geocoordinates-and-the-python-api">Geocoordinates and the Python API</h2>
+<p>The Python API provides the facility to convert between CARLA coordinates and geocoordinates and also to define projections with custom parameters. The CARLA <a href="../python_api/#carlamap">Map object</a> maintains the information about the georeference gathered from the OpenDRIVE header and provides methods for conversion:</p>
+<pre><code class="language-py"># Retrieve the map object
+carla_map = world.get_map()
+
+# Convert a carla.Location to a carla.Geolocation
+geolocation = carla_map.transform_to_geolocation(carla.Location(10,10,1))
+
+# Convert a carla.Geolocation to a carla.Location
+geolocation = carla.GeoLocation(latitude=41.400779, longitude=2.188103, altitude=0)
+location = carla_map.geolocation_to_transform(geolocation)
+</code></pre>
+<p>The Map object provides methods to inspect the current georeference and geoprojection:</p>
+<pre><code class="language-py"># Get the georeference
+carla_map.get_georeference() # returns a carla.GeoLocation
+
+# Get the geoprojection
+carla_map.get_geoprojection() # returns a carla.GeoProjection
+</code></pre>
+<h3 id="custom-projection">Custom projection</h3>
+<p>If an alternative georeference is desired, different from that provided in the OpenDRIVE metadata, one can be created using additional API objects.</p>
+<p>To define a custom ellipsoid use the <code>carla.GeoEllipsoid</code> object:</p>
+<pre><code class="language-py">geoellipsoid = carla.GeoEllipsoid(a=6378137.0, f_inv=297.0)
+</code></pre>
+<p>Then to define a projection, use the relevant GeoProjection object:</p>
+<table>
+<thead>
+<tr>
+<th>Projection type</th>
+<th>CARLA object</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Transverse Mercator</td>
+<td>carla.GeoProjectionTM</td>
+</tr>
+<tr>
+<td>Universal Transverse Mercator</td>
+<td>carla.GeoProjectionUTM</td>
+</tr>
+<tr>
+<td>Web Mercator</td>
+<td>carla.GeoProjectionWebMerc</td>
+</tr>
+<tr>
+<td>Lambert Conformal Conic 2SP</td>
+<td>carla.GeoProjectionLCC2SP</td>
+</tr>
+</tbody>
+</table>
+<pre><code class="language-py">geoprojection = carla.GeoProjectionTM(lat_0=41.400779, lon_0=2.188103, k=1.0, ellps=geoellipsoid)
+</code></pre>
+<p>This geoprojection can then be used to transform the coordinates using the geotransform methods:</p>
+<pre><code class="language-py"># Retrieve the map object
+carla_map = world.get_map()
+
+# Convert a carla.Location to a carla.Geolocation
+geolocation = carla_map.transform_to_geolocation(carla.Location(10,10,1), geoprojection)
+
+# Convert a carla.Geolocation to a carla.Location
+geolocation = carla.GeoLocation(latitude=41.400779, longitude=2.188103, altitude=0)
+location = carla_map.geolocation_to_transform(geolocation, geoprojection)
+</code></pre>
+              
+            </div>
+          </div><footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+        <span>
+          <a href="https://github.com/carla-simulator/carla" class="fa fa-github" style="color: #fcfcfc"> GitHub</a>
+        </span>
+    
+    
+    
+  </span>
+</div>
+    <script src="../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "..";</script>
+    <script src="../js/theme_extra.js"></script>
+    <script src="../js/theme.js"></script>
+      <script src="../extra.js"></script>
+      <script src="../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <link rel="shortcut icon" href="../img/favicon.ico" />
+    <title>Recorder Binary File Format - CARLA Simulator</title>
+    <link rel="stylesheet" href="../css/theme.css" />
+    <link rel="stylesheet" href="../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+        <link href="../extra.css" rel="stylesheet" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "Recorder Binary File Format";
+        var mkdocs_page_input_path = "ref_recorder_binary_file_format.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href=".." class="icon icon-home"> CARLA Simulator
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+      <input type="text" name="q" placeholder="搜索文档" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="..">Home</a>
+                </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Getting started</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../start_introduction/">Introduction</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../start_quickstart/">Quick start package installation</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_first_steps/">First steps</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../build_carla/">Building CARLA</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Next steps</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_content_authoring_maps/">Content authoring - maps</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_content_authoring_vehicles/">Content authoring - vehicles</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../content_authoring_props/">Content authoring - props</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">CARLA topics</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../coordinates/">Coordinates and transformations</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../foundations/">Foundations</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../core_actors/">Actors</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../core_map/">Maps</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../core_sensors/">Sensors and data</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../ts_traffic_simulation_overview/">Traffic</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../ai_rendering/">AI rendering</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../development_tutorials/">Development</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../custom_assets_tutorials/">Custom assets</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Resources</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../python_api/">Python API</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../catalogue/">Catalogue</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../ref_cpp/">C++ reference</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../bp_library/">Blueprint library</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tutorials/">Tutorials</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../ext_docs/">Extended documentation</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../download/">Downloads</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">CARLA Ecosystem</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../ecosys_ansys/">ANSYS</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_G_rllib_integration/">AWS</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_G_carsim_integration/">CarSIM</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_G_chrono/">Chrono</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../large_map_roadrunner/">MathWorks</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../inverted_ai/">Inverted AI</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../nvidia/">NVIDIA</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../adv_opendrive/">ASAM OpenDRIVE</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../adv_ptv/">PTV Vissim</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../adv_rss/">RSS</a>
+                  </li>
+                  <li class="toctree-l1"><a class="" href="https://carla.readthedocs.io/projects/ros-bridge/en/latest/">ROS</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_G_scenic/">Scenic</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../adv_sumo/">SUMO</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../ecosys_synkrotron/">SYNKROTRON</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Contributing</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../cont_contribution_guidelines/">Guidelines</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../cont_coding_standard/">Coding standards</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../cont_doc_standard/">Documentation standard</a>
+                  </li>
+                  <li class="toctree-l1"><a class="" href=".."></a>
+                  </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="..">CARLA Simulator</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href=".." class="icon icon-home" aria-label="Docs"></a></li>
+      <li class="breadcrumb-item active">Recorder Binary File Format</li>
+    <li class="wy-breadcrumbs-aside">
+          <a href="https://github.com/carla-simulator/carla/edit/master/Docs/ref_recorder_binary_file_format.md" class="icon icon-github"> 在 GitHub 上编辑</a>
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="recorder-binary-file-format">Recorder Binary File Format</h1>
+<p>The recorder system saves all the info needed to replay the simulation in a binary file,
+using little endian byte order for the multibyte values.</p>
+<ul>
+<li><a href="#1-strings-in-binary"><strong>1- Strings in binary</strong></a>  </li>
+<li><a href="#2-info-header"><strong>2- Info header</strong></a>  </li>
+<li><a href="#3-packets"><strong>3- Packets</strong></a>  <ul>
+<li><a href="#packet-0-frame-start">Packet 0 - Frame Start</a>  </li>
+<li><a href="#packet-1-frame-end">Packet 1 - Frame End</a>  </li>
+<li><a href="#packet-2-event-add">Packet 2 - Event Add</a>  </li>
+<li><a href="#packet-3-event-del">Packet 3 - Event Del</a>  </li>
+<li><a href="#packet-4-event-parent">Packet 4 - Event Parent</a>  </li>
+<li><a href="#packet-5-event-collision">Packet 5 - Event Collision</a>  </li>
+<li><a href="#packet-6-position">Packet 6 - Position</a>  </li>
+<li><a href="#packet-7-trafficlight">Packet 7 - TrafficLight</a>  </li>
+<li><a href="#packet-8-vehicle-animation">Packet 8 - Vehicle Animation</a>  </li>
+<li><a href="#packet-9-walker-animation">Packet 9 - Walker Animation</a>  </li>
+</ul>
+</li>
+<li><a href="#4-frame-layout"><strong>4- Frame Layout</strong></a>  </li>
+<li><a href="#5-file-layout"><strong>5- File Layout</strong></a>  </li>
+</ul>
+<p>In the next image representing the file format, we can get a quick view of all the detailed
+information. Each part that is visualized in the image will be explained in the following sections:</p>
+<p><img alt="file format 1" src="../img/RecorderFileFormat1.jpg" /></p>
+<p>In summary, the file format has a small header with general info
+(version, magic string, date and the map used) and a collection of packets of different types
+(currently we use 10 types, but that will continue growing up in the future).</p>
+<p><img alt="global file format" src="../img/RecorderFileFormat3.jpg" /></p>
+<hr />
+<h2 id="1-strings-in-binary">1- Strings in binary</h2>
+<p>Strings are encoded first with the length of it, followed by its characters without null
+character ending. For example, the string 'Town06' will be saved
+as hex values: 06 00 54 6f 77 6e 30 36</p>
+<p><img alt="binary dynamic string" src="../img/RecorderString.jpg" /></p>
+<hr />
+<h2 id="2-info-header">2- Info header</h2>
+<p>The info header has general information about the recorded file. Basically, it contains the version
+and a magic string to identify the file as a recorder file. If the header changes then the version
+will change also. Furthermore, it contains a date timestamp, with the number of seconds from the
+Epoch 1900, and also it contains a string with the name of the map that has been used for recording.</p>
+<p><img alt="info header" src="../img/RecorderInfoHeader.jpg" /></p>
+<p>A sample info header is:</p>
+<p><img alt="info header sample" src="../img/RecorderHeader.jpg" /></p>
+<hr />
+<h2 id="3-packets">3- Packets</h2>
+<p>Each packet starts with a little header of two fields (5 bytes):</p>
+<p><img alt="packet header" src="../img/RecorderPacketHeader.jpg" /></p>
+<ul>
+<li><strong>id</strong>: The packet type</li>
+<li><strong>size</strong>: Size of packet data</li>
+</ul>
+<p>Header information is then followed by the <strong>data</strong>.
+The <strong>data</strong> is optional, a <strong>size</strong> of 0 means there is no <strong>data</strong> in the packet.
+If the <strong>size</strong> is greater than 0 it means that the packet has <strong>data</strong> bytes. Therefore,
+the <strong>data</strong> needs to be reinterpreted depending on the type of the packet.</p>
+<p>The header of the packet is useful because we can just ignore those packets we are not interested
+in when doing playback. We only need to read the header (first 5 bytes) of the packet and jump to
+the next packet just skipping the data of the packet:</p>
+<p><img alt="packets size" src="../img/RecorderPackets.jpg" /></p>
+<p>The types of packets are:</p>
+<p><img alt="packets type list" src="../img/RecorderPacketsList.jpg" /></p>
+<p>We suggest to use <strong>id</strong> over 100 for user custom packets, because this list will keep growing in
+the future.</p>
+<h3 id="packet-0-frame-start">Packet 0 - Frame Start</h3>
+<p>This packet marks the start of a new frame, and it will be the first one to start each frame.
+All packets need to be placed between a <strong>Frame Start</strong> and a <strong>Frame End</strong>.</p>
+<p><img alt="frame start" src="../img/RecorderFrameStart.jpg" /></p>
+<p>So, elapsed + durationThis = elapsed time for next frame</p>
+<h3 id="packet-1-frame-end">Packet 1 - Frame End</h3>
+<p>This frame has no data and it only marks the end of the current frame. That helps the replayer
+to know the end of each frame just before the new one starts.
+Usually, the next frame should be a Frame Start packet to start a new frame.</p>
+<p><img alt="frame end" src="../img/RecorderFrameEnd.jpg" /></p>
+<h3 id="packet-2-event-add">Packet 2 - Event Add</h3>
+<p>This packet says how many actors we need to create at current frame.</p>
+<p><img alt="event add" src="../img/RecorderEventAdd.jpg" /></p>
+<p>The field <strong>total</strong> says how many records follow. Each record starts with the <strong>id</strong> field,
+that is the id the actor has when it was recorded (on playback that id could change internally,
+but we need to use this id ). The <strong>type</strong> of actor can have these possible values:</p>
+<ul>
+<li>0 = Other</li>
+<li>1 = Vehicle</li>
+<li>2 = Walker</li>
+<li>3 = TrafficLight</li>
+<li>4 = INVALID</li>
+</ul>
+<p>After that, the <strong>location</strong> and the <strong>rotation</strong> where we want to create the actor is proceeded.</p>
+<p>Right after we have the <strong>description</strong> of the actor. The description <strong>uid</strong> is the numeric id of
+the description and the <strong>id</strong> is the textual id, like 'vehicle.seat.leon'.</p>
+<p>Then comes a collection of its <strong>attributes</strong> like color, number of wheels, role, etc.
+The number of attributes is variable and should look similar to this:</p>
+<ul>
+<li>number_of_wheels = 4</li>
+<li>sticky_control = true</li>
+<li>color = 79,33,85</li>
+<li>role_name = autopilot</li>
+</ul>
+<h3 id="packet-3-event-del">Packet 3 - Event Del</h3>
+<p>This packet says how many actors need to be destroyed this frame.</p>
+<p><img alt="event del" src="../img/RecorderEventDel.jpg" /></p>
+<p>It has the <strong>total</strong> of records, and each record has the <strong>id</strong> of the actor to remove.</p>
+<p>For example, this packet could be like this:</p>
+<p><img alt="event del" src="../img/RecorderPacketSampleEventDel.jpg" /></p>
+<p>The number 3 identifies the packet as (Event Del). The number 16 is the size of the data of
+the packet (4 fields of 4 bytes each). So if we don't want to process this packet, we could skip
+the next 16 bytes and will be directly to the start of the next packet.
+The next 3 says the total records that follows, and each record is the id of the actor to remove.
+So, we need to remove at this frame the actors 100, 101 and 120.</p>
+<h3 id="packet-4-event-parent">Packet 4 - Event Parent</h3>
+<p>This packet says which actor is the child of another (the parent).</p>
+<p><img alt="event parent" src="../img/RecorderEventParent.jpg" /></p>
+<p>The first id is the child actor, and the second one will be the parent actor.</p>
+<h3 id="packet-5-event-collision">Packet 5 - Event Collision</h3>
+<p>If a collision happens between two actors, it will be registered in this packet. Currently only
+actors with a collision sensor will report collisions, so currently only hero vehicles have that
+sensor attached automatically.</p>
+<p><img alt="event collision" src="../img/RecorderCollision.jpg" /></p>
+<p>The <strong>id</strong> is just a sequence to identify each collision internally.
+Several collisions between the same pair of actors can happen in the same frame, because physics
+frame rate is fixed and usually there are several physics substeps in the same rendered frame.</p>
+<h3 id="packet-6-position">Packet 6 - Position</h3>
+<p>This packet records the position and orientation of all actors of type <strong>vehicle</strong> and
+<strong>walker</strong> that exist in the scene.</p>
+<p><img alt="position" src="../img/RecorderPosition.jpg" /></p>
+<h3 id="packet-7-trafficlight">Packet 7 - TrafficLight</h3>
+<p>This packet records the state of all <strong>traffic lights</strong> in the scene. Which means that it
+stores the state (red, orange or green) and the time it is waiting to change to a new state.</p>
+<p><img alt="state" src="../img/RecorderTrafficLight.png" /></p>
+<h3 id="packet-8-vehicle-animation">Packet 8 - Vehicle animation</h3>
+<p>This packet records the animation of the vehicles, bikes and cycles. This packet stores the
+<strong>throttle</strong>, <strong>sterring</strong>, <strong>brake</strong>, <strong>handbrake</strong> and <strong>gear</strong> inputs, and then set them at playback.</p>
+<p><img alt="state" src="../img/RecorderVehicle.jpg" /></p>
+<h3 id="packet-9-walker-animation">Packet 9 - Walker animation</h3>
+<p>This packet records the animation of the walker. It just saves the <strong>speed</strong> of the walker
+that is used in the animation.</p>
+<p><img alt="state" src="../img/RecorderWalker.jpg" /></p>
+<hr />
+<h2 id="4-frame-layout">4- Frame Layout</h2>
+<p>A frame consists of several packets, where all of them are optional, except the ones that
+have the <strong>start</strong> and <strong>end</strong> in that frame, that must be there always.</p>
+<p><img alt="layout" src="../img/RecorderFrameLayout.jpg" /></p>
+<p><strong>Event</strong> packets exist only in the frame where they happen.</p>
+<p><strong>Position</strong> and <strong>traffic light</strong> packets should exist in all frames, because they are
+required to move all actors and set the traffic lights to its state.
+They are optional but if they are not present then the replayer will not be able to move
+or set the state of traffic lights.</p>
+<p>The <strong>animation</strong> packets are also optional, but by default they are recorded. That way the walkers
+are animated and also the vehicle wheels follow the direction of the vehicles.</p>
+<hr />
+<h2 id="5-file-layout">5- File Layout</h2>
+<p>The layout of the file starts with the <strong>info header</strong> and then follows a collection of packets in
+groups. The first in each group is the <strong>Frame Start</strong> packet, and the last in the group is
+the <strong>Frame End</strong> packet. In between, we can find the rest of packets as well.</p>
+<p><img alt="layout" src="../img/RecorderLayout.jpg" /></p>
+<p>Usually, it is a good idea to have all packets regarding events first, and then the packets
+regarding position and state later.</p>
+<p>The event packets are optional, since they appear when they happen, so we could have a layout
+like this one:</p>
+<p><img alt="layout" src="../img/RecorderLayoutSample.jpg" /></p>
+<p>In <strong>frame 1</strong> some actors are created and reparented, so we can observe its events in the image.
+In <strong>frame 2</strong> there are no events. In <strong>frame 3</strong> some actors have collided so the collision event
+appears with that info. In <strong>frame 4</strong> the actors are destroyed.</p>
+              
+            </div>
+          </div><footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+        <span>
+          <a href="https://github.com/carla-simulator/carla" class="fa fa-github" style="color: #fcfcfc"> GitHub</a>
+        </span>
+    
+    
+    
+  </span>
+</div>
+    <script src="../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "..";</script>
+    <script src="../js/theme_extra.js"></script>
+    <script src="../js/theme.js"></script>
+      <script src="../extra.js"></script>
+      <script src="../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>

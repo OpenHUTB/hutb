@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <link rel="shortcut icon" href="../img/favicon.ico" />
+    <title>Ingesting Maps in a CARLA package - CARLA Simulator</title>
+    <link rel="stylesheet" href="../css/theme.css" />
+    <link rel="stylesheet" href="../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+        <link href="../extra.css" rel="stylesheet" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "Ingesting Maps in a CARLA package";
+        var mkdocs_page_input_path = "tuto_M_add_map_package.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href=".." class="icon icon-home"> CARLA Simulator
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+      <input type="text" name="q" placeholder="搜索文档" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="..">Home</a>
+                </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Getting started</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../start_introduction/">Introduction</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../start_quickstart/">Quick start package installation</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_first_steps/">First steps</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../build_carla/">Building CARLA</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Next steps</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_content_authoring_maps/">Content authoring - maps</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_content_authoring_vehicles/">Content authoring - vehicles</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../content_authoring_props/">Content authoring - props</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">CARLA topics</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../coordinates/">Coordinates and transformations</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../foundations/">Foundations</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../core_actors/">Actors</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../core_map/">Maps</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../core_sensors/">Sensors and data</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../ts_traffic_simulation_overview/">Traffic</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../ai_rendering/">AI rendering</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../development_tutorials/">Development</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../custom_assets_tutorials/">Custom assets</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Resources</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../python_api/">Python API</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../catalogue/">Catalogue</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../ref_cpp/">C++ reference</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../bp_library/">Blueprint library</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tutorials/">Tutorials</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../ext_docs/">Extended documentation</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../download/">Downloads</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">CARLA Ecosystem</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../ecosys_ansys/">ANSYS</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_G_rllib_integration/">AWS</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_G_carsim_integration/">CarSIM</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_G_chrono/">Chrono</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../large_map_roadrunner/">MathWorks</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../inverted_ai/">Inverted AI</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../nvidia/">NVIDIA</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../adv_opendrive/">ASAM OpenDRIVE</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../adv_ptv/">PTV Vissim</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../adv_rss/">RSS</a>
+                  </li>
+                  <li class="toctree-l1"><a class="" href="https://carla.readthedocs.io/projects/ros-bridge/en/latest/">ROS</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_G_scenic/">Scenic</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../adv_sumo/">SUMO</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../ecosys_synkrotron/">SYNKROTRON</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Contributing</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../cont_contribution_guidelines/">Guidelines</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../cont_coding_standard/">Coding standards</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../cont_doc_standard/">Documentation standard</a>
+                  </li>
+                  <li class="toctree-l1"><a class="" href=".."></a>
+                  </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="..">CARLA Simulator</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href=".." class="icon icon-home" aria-label="Docs"></a></li>
+      <li class="breadcrumb-item active">Ingesting Maps in a CARLA package</li>
+    <li class="wy-breadcrumbs-aside">
+          <a href="https://github.com/carla-simulator/carla/edit/master/Docs/tuto_M_add_map_package.md" class="icon icon-github"> 在 GitHub 上编辑</a>
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="ingesting-maps-in-a-carla-package">Ingesting Maps in a CARLA package</h1>
+<p>This section describes the process of ingesting maps into <strong>a package (binary) version of CARLA</strong>. If you are using a version of CARLA that has been built from source to ingest maps then follow the guidelines <a href="../tuto_M_add_map_source/">here</a> instead.</p>
+<p>This process is only available for Linux systems. The import process involves running a Docker image of Unreal Engine to import the relevant files and then export them as a standalone package which can then be configured to be used in CARLA. The Docker image takes around 4h and 600-700 GB to be built. This is only needed the first time the image is built.</p>
+<ul>
+<li><a href="#before-you-begin"><strong>Before you begin</strong></a></li>
+<li><a href="#map-ingestion-in-a-carla-package"><strong>Map ingestion in a CARLA package</strong></a></li>
+</ul>
+<hr />
+<h2 id="before-you-begin">Before you begin</h2>
+<ul>
+<li>You will need to fulfill the following system requirements:<ul>
+<li>64-bit version of <a href="https://docs.docker.com/engine/install/">Docker</a> in Ubuntu 16.04+</li>
+<li>Minimum 8GB of RAM</li>
+<li>Minimum 700 GB available disk space for building container images</li>
+<li><a href="https://git-scm.com/downloads">Git</a> version control</li>
+</ul>
+</li>
+<li>Ensure you are using a package (binary) version of CARLA. If you are using a version of CARLA that has been built from source to ingest maps then follow the guidelines <a href="../tuto_M_add_map_source/">here</a> instead.</li>
+<li>You should have at least two files, <code>&lt;mapName&gt;.xodr</code> and <code>&lt;mapName&gt;.fbx</code> that have been <a href="../tuto_M_generate_map/">generated</a> from a map editor such as RoadRunner. </li>
+<li>These files should have the same value for <code>&lt;mapName&gt;</code> in order to be recognised as the same map.</li>
+</ul>
+<hr />
+<h2 id="map-ingestion-in-a-carla-package">Map ingestion in a CARLA package</h2>
+<p><strong>1.</strong> CARLA provides all the utilities to build Unreal Engine in a Docker image and to compile CARLA using that image. The tools are found in the source code available in GitHub. Clone the repository using the following command:</p>
+<pre><code class="language-sh">    git clone https://github.com/carla-simulator/carla
+</code></pre>
+<p><strong>2.</strong> Build the Docker image of Unreal Engine by following <a href="https://github.com/carla-simulator/carla/tree/master/Util/Docker">these instructions</a>. </p>
+<p><strong>3.</strong> Create an <code>input_folder</code>.  This is where you will put the files to be imported. Docker will automatically create a <code>.json</code> file describing the package folder structure. Change permissions on the <code>input_folder</code> for this to be created successfully:</p>
+<pre><code class="language-sh">    #Go to the parent folder, where the input folder is contained
+    chmod 777 input_folder
+</code></pre>
+<blockquote>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This is not necessary if the package is <a href="../tuto_M_manual_map_package/">prepared manually</a>, and contains a <code>.json</code> file already. </p>
+</div>
+</blockquote>
+<p><strong>4.</strong> Create an <code>output_folder</code>. This is where the Docker image will write the output files after it has cooked the map. </p>
+<p><strong>5.</strong> Navigate to <code>~/carla/Util/Docker</code>. This is where the ingestion script is located. The script requires the path for the <code>input_folder</code> and <code>output_folder</code> and the name of the package to be ingested. If a <code>.json</code> file is provided, the name of that file is the package name, if no <code>.json</code> is provided, the name must be <code>map_package</code>:</p>
+<pre><code class="language-sh">    python3 docker_tools.py --input ~/path_to_input_folder --output ~/path_to_output_folder --packages map_package
+</code></pre>
+<blockquote>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>If the argument <code>--packages map_package</code> is not provided, the Docker image will make a package of CARLA. </p>
+</div>
+</blockquote>
+<p><strong>6.</strong> The package will be generated in the <code>output_folder</code> as <code>&lt;map_package&gt;.tar.gz</code>. This is the standalone package that is now ready to be imported into CARLA. Move the package to the <code>Import</code> folder in the CARLA root directory (of the package/binary version where you will be using the map), and run the following script from the root directory to import it: </p>
+<pre><code class="language-sh">        ./ImportAssets.sh
+</code></pre>
+<p><strong>7.</strong> To run a simulation with the new map, run CARLA and then change the map using the <code>config.py</code> file:</p>
+<pre><code class="language-sh">    cd PythonAPI/util
+    python3 config.py --map &lt;mapName&gt;
+</code></pre>
+<p><br></p>
+<hr />
+<p>Your map is now ready to run simulations in CARLA. If you have any questions about the process then you can ask in the <a href="https://github.com/carla-simulator/carla/discussions">forum</a> or you can try running some of our <a href="https://github.com/carla-simulator/carla/tree/master/PythonAPI/examples">example scripts</a> on your new map to test it out.</p>
+              
+            </div>
+          </div><footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+        <span>
+          <a href="https://github.com/carla-simulator/carla" class="fa fa-github" style="color: #fcfcfc"> GitHub</a>
+        </span>
+    
+    
+    
+  </span>
+</div>
+    <script src="../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "..";</script>
+    <script src="../js/theme_extra.js"></script>
+    <script src="../js/theme.js"></script>
+      <script src="../extra.js"></script>
+      <script src="../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>

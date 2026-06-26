@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <link rel="shortcut icon" href="../img/favicon.ico" />
+    <title>Maps - CARLA Simulator</title>
+    <link rel="stylesheet" href="../css/theme.css" />
+    <link rel="stylesheet" href="../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+        <link href="../extra.css" rel="stylesheet" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "Maps";
+        var mkdocs_page_input_path = "core_map.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href=".." class="icon icon-home"> CARLA Simulator
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+      <input type="text" name="q" placeholder="搜索文档" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="..">Home</a>
+                </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Getting started</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../start_introduction/">Introduction</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../start_quickstart/">Quick start package installation</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_first_steps/">First steps</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../build_carla/">Building CARLA</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Next steps</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_content_authoring_maps/">Content authoring - maps</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_content_authoring_vehicles/">Content authoring - vehicles</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../content_authoring_props/">Content authoring - props</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">CARLA topics</span></p>
+              <ul class="current">
+                  <li class="toctree-l1"><a class="reference internal" href="../coordinates/">Coordinates and transformations</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../foundations/">Foundations</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../core_actors/">Actors</a>
+                  </li>
+                  <li class="toctree-l1 current"><a class="reference internal current" href="#">Maps</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#the-map">The map</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#changing-the-map">Changing the map</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#landmarks">Landmarks</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#waypoints">Waypoints</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#lanes">Lanes</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#junctions">Junctions</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#environment-objects">Environment Objects</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#navigation-in-carla">Navigation in CARLA</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#navigating-through-waypoints">Navigating through waypoints</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#generating-map-navigation">Generating map navigation</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#carla-maps">CARLA maps</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#non-layered-maps">Non-layered maps</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#layered-maps">Layered maps</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#custom-maps">Custom maps</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#left-handed-traffic">Left handed traffic</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#additional-maps">Additional maps</a>
+    </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../core_sensors/">Sensors and data</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../ts_traffic_simulation_overview/">Traffic</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../ai_rendering/">AI rendering</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../development_tutorials/">Development</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../custom_assets_tutorials/">Custom assets</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Resources</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../python_api/">Python API</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../catalogue/">Catalogue</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../ref_cpp/">C++ reference</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../bp_library/">Blueprint library</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tutorials/">Tutorials</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../ext_docs/">Extended documentation</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../download/">Downloads</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">CARLA Ecosystem</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../ecosys_ansys/">ANSYS</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_G_rllib_integration/">AWS</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_G_carsim_integration/">CarSIM</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_G_chrono/">Chrono</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../large_map_roadrunner/">MathWorks</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../inverted_ai/">Inverted AI</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../nvidia/">NVIDIA</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../adv_opendrive/">ASAM OpenDRIVE</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../adv_ptv/">PTV Vissim</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../adv_rss/">RSS</a>
+                  </li>
+                  <li class="toctree-l1"><a class="" href="https://carla.readthedocs.io/projects/ros-bridge/en/latest/">ROS</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_G_scenic/">Scenic</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../adv_sumo/">SUMO</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../ecosys_synkrotron/">SYNKROTRON</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Contributing</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../cont_contribution_guidelines/">Guidelines</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../cont_coding_standard/">Coding standards</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../cont_doc_standard/">Documentation standard</a>
+                  </li>
+                  <li class="toctree-l1"><a class="" href=".."></a>
+                  </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="..">CARLA Simulator</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href=".." class="icon icon-home" aria-label="Docs"></a></li>
+          <li class="breadcrumb-item">CARLA topics</li>
+      <li class="breadcrumb-item active">Maps</li>
+    <li class="wy-breadcrumbs-aside">
+          <a href="https://github.com/carla-simulator/carla/edit/master/Docs/core_map.md" class="icon icon-github"> 在 GitHub 上编辑</a>
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="maps-and-navigation">Maps and navigation</h1>
+<p>After discussing about the world and its actors, it is time to put everything into place and understand the map and how do the actors navigate it.  </p>
+<ul>
+<li><a href="#the-map"><strong>The map</strong></a>  <ul>
+<li><a href="#changing-the-map">Changing the map</a>  </li>
+<li><a href="#landmarks">Landmarks</a>  </li>
+<li><a href="#lanes">Lanes</a>  </li>
+<li><a href="#junctions">Junctions</a>  </li>
+<li><a href="#waypoints">Waypoints</a>  </li>
+<li><a href="#environment-objects">Environment Objects</a></li>
+</ul>
+</li>
+<li><a href="#navigation-in-carla"><strong>Navigation in CARLA</strong></a>  <ul>
+<li><a href="#navigating-through-waypoints">Navigating through waypoints</a>  </li>
+<li><a href="#generating-a-map-navigation">Generating a map navigation</a>  </li>
+</ul>
+</li>
+<li><a href="#carla-maps"><strong>CARLA maps</strong></a>  <ul>
+<li><a href="#non-layered-maps">Non-layered maps</a></li>
+<li><a href="#layered-maps">Layered maps</a></li>
+</ul>
+</li>
+<li><a href="#custom-maps"><strong>Custom maps</strong></a><ul>
+<li><a href="../tuto_M_custom_map_overview/">Overview</a></li>
+<li><a href="../tuto_M_custom_road_painter/">Road painting</a></li>
+<li><a href="../tuto_M_custom_buildings/">Custom buildings</a> </li>
+<li><a href="../tuto_M_generate_map/">Generate map</a></li>
+<li><a href="../tuto_M_add_map_package/">Add map package</a></li>
+<li><a href="../tuto_M_add_map_source/">Add map source</a></li>
+<li><a href="../tuto_M_add_map_alternative/">Alternative methods</a></li>
+</ul>
+</li>
+<li><a href="#left-handed-traffic"><strong>Left handed traffic</strong></a></li>
+<li><a href="#additional-maps"><strong>Additional maps</strong></a></li>
+</ul>
+<hr />
+<h2 id="the-map">The map</h2>
+<p>A map includes both the 3D model of a town and its road definition. A map's road definition is based on an OpenDRIVE file, a standarized, annotated road definition format. The way the <a href="http://www.opendrive.org/docs/OpenDRIVEFormatSpecRev1.4H.pdf">OpenDRIVE standard 1.4</a> defines roads, lanes, junctions, etc. determines the functionality of the Python API and the reasoning behind decisions made.</p>
+<p>The Python API acts as a high level querying system to navigate these roads. It is constantly evolving to provide a wider set of tools.</p>
+<h3 id="changing-the-map">Changing the map</h3>
+<p><strong>To change the map, the world has to change too</strong>. The simulation will be recreated from scratch. You can either restart with the same map in a new world or you can change both the map and the world:</p>
+<ul>
+<li><code>reload_world()</code> creates a new instance of the world with the same map.</li>
+<li><code>load_world()</code> changes the current map and creates a new world.</li>
+</ul>
+<pre><code class="language-py">world = client.load_world('Town01')
+</code></pre>
+<p>Each map has a <code>name</code> attribute that matches the name of the currently loaded city, e.g. <em>Town01</em>. To get a list of the available maps:</p>
+<pre><code class="language-py">print(client.get_available_maps())
+</code></pre>
+<h3 id="landmarks">Landmarks</h3>
+<p>Traffic signs defined in the OpenDRIVE file are translated to CARLA as landmark objects that can be queried from the API. The following methods and classes can be used to manipulate and work with landmark objects:</p>
+<ul>
+<li><strong><a href="https://carla.readthedocs.io/en/latest/python_api/#carla.Landmark"><code>carla.Landmark</code></a></strong> objects represent OpenDRIVE signals. The attributes and methods of this class describe the landmark and its area of influence.<ul>
+<li><a href="https://carla.readthedocs.io/en/latest/python_api/#carla.LandmarkOrientation"><code>carla.LandmarkOrientation</code></a> states the orientation of the landmark with regard to the road's geometry definition.</li>
+<li><a href="https://carla.readthedocs.io/en/latest/python_api/#carla.LandmarkType"><code>carla.LandmarkType</code></a> contains common landmark types to facilitate translation to OpenDRIVE types.</li>
+</ul>
+</li>
+<li><strong><a href="https://carla.readthedocs.io/en/latest/python_api/#carla.Waypoint"><code>carla.Waypoint</code></a></strong> can get landmarks located a certain distance ahead of it. The landmark type to get can be specified.</li>
+<li><strong><a href="https://carla.readthedocs.io/en/latest/python_api/#carla.Map"><code>carla.Map</code></a></strong> retrieves sets of landmarks. It can return all landmarks in the map, or those which have a common ID, type or group.</li>
+<li><strong><a href="https://carla.readthedocs.io/en/latest/python_api/#carla.World"><code>carla.World</code></a></strong> acts as intermediary between landmarks and the <code>carla.TrafficSign</code> and <code>carla.TrafficLight</code> that represent them in the simulation.</li>
+</ul>
+<pre><code class="language-py">my_waypoint.get_landmarks(200.0,True)
+</code></pre>
+<h3 id="waypoints">Waypoints</h3>
+<p>A <a href="../python_api/#carla.Waypoint"><code>carla.Waypoint</code></a> is a 3D-directed point in the CARLA world corresponding to an OpenDRIVE lane. Everything related to waypoints happens on the client-side; communication with the server is only needed once to get the <a href="../python_api/#carlamap">map object</a> containing the waypoint information.</p>
+<p>Each waypoint contains a <a href="../python_api/#carla.Transform"><code>carla.Transform</code></a> which states its location on the map and the orientation of the lane containing it. The variables <code>road_id</code>,<code>section_id</code>,<code>lane_id</code> and <code>s</code> correspond to the OpenDRIVE road. The <code>id</code> of the waypoint is constructed from a hash combination of these four values.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Waypoints closer than <strong>2cm within the same road</strong> share the same <code>id</code>.</p>
+</div>
+<p>A waypoint holds information about the <strong>lane</strong> containing it. This information includes the lane's left and right <strong>lane markings</strong>, a boolean to determine if it's inside a junction, the lane type, width, and lane changing permissions.</p>
+<pre><code class="language-py"># Access lane information from a waypoint
+inside_junction = waypoint.is_junction()
+width = waypoint.lane_width
+right_lm_color = waypoint.right_lane_marking.color
+</code></pre>
+<h3 id="lanes">Lanes</h3>
+<p>The lane types defined by <a href="http://www.opendrive.org/docs/OpenDRIVEFormatSpecRev1.4H.pdf">OpenDRIVE standard 1.4</a> are translated to the API in <a href="../python_api/#carla.LaneType"><code>carla.LaneType</code></a> as a series of enum values.</p>
+<p>The lane markings surrounding a lane are accessed through <a href="../python_api/#carla.LaneMarking"><code>carla.LaneMarking</code></a>. Lane markings are defined by a series of variables:</p>
+<ul>
+<li><strong>color:</strong> <a href="../python_api/#carla.LaneMarkingColor"><code>carla.LaneMarkingColor</code></a> are enum values that define the marking's color.</li>
+<li><strong>lane_change:</strong> <a href="../python_api/#carla.LaneChange"><code>carla.LaneChange</code></a> states if the lane permits turning left, right, both or none.</li>
+<li><strong>type:</strong> <a href="../python_api/#carla.LaneMarkingType"><code>carla.LaneMarkingType</code></a> are enum values  that define the type of marking according to the OpenDRIVE standard.</li>
+<li><strong>width:</strong> defines the marking's thickness.</li>
+</ul>
+<p>The below example shows to get information about the lane type, lane markings, and lane change permissions at a specific waypoint:</p>
+<pre><code class="language-py"># Get the lane type of the waypoint
+lane_type = waypoint.lane_type
+
+# Get the type of lane marking on the left.
+left_lanemarking_type = waypoint.left_lane_marking.type()
+
+# Get available lane changes for this waypoint.
+lane_change = waypoint.lane_change
+</code></pre>
+<h3 id="junctions">Junctions</h3>
+<p>A <a href="../python_api/#carla.Junction"><code>carla.Junction</code></a> represents an OpenDRIVE junction. This class encompasses a junction with a bounding box to identify lanes or vehicles within it.</p>
+<p>The <code>carla.Junction</code> class contains the <code>get_waypoints</code> method which returns a pair of waypoints for every lane within the junction. Each pair is located at the start and end points of the junction boundaries.</p>
+<pre><code class="language-py">waypoints_junc = my_junction.get_waypoints()
+</code></pre>
+<h3 id="environment-objects">Environment Objects</h3>
+<p>Every object on a CARLA map has a set of associated variables which can be found <a href="https://carla.readthedocs.io/en/latest/python_api/#carla.EnvironmentObject">here</a>. Included in these variables is a <a href="https://carla.readthedocs.io/en/latest/python_api/#carla.EnvironmentObject.id">unique ID</a> that can be used to <a href="https://carla.readthedocs.io/en/latest/python_api/#carla.World.enable_environment_objects">toggle</a> that object's visibility on the map. You can use the Python API to <a href="https://carla.readthedocs.io/en/latest/python_api/#carla.World.get_environment_objects">fetch</a> the IDs of each environment object based on their <a href="https://carla.readthedocs.io/en/latest/python_api/#carla.CityObjectLabel">semantic tag</a>:</p>
+<pre><code>    # Get the buildings in the world
+    world = client.get_world()
+    env_objs = world.get_environment_objects(carla.CityObjectLabel.Buildings)
+
+    # Access individual building IDs and save in a set
+    building_01 = env_objs[0]
+    building_02 = env_objs[1]
+    objects_to_toggle = {building_01.id, building_02.id}
+
+    # Toggle buildings off
+    world.enable_environment_objects(objects_to_toggle, False)
+    # Toggle buildings on
+    world.enable_environment_objects(objects_to_toggle, True)
+</code></pre>
+<p>See an example of distinct objects being toggled:</p>
+<p><img alt="toggle_objects_gif" src="../img/objects_small.gif" /></p>
+<hr />
+<h2 id="navigation-in-carla">Navigation in CARLA</h2>
+<p>Navigation in CARLA is managed via the Waypoint API, a combination of methods from <a href="../python_api/#carla.Waypoint"><code>carla.Waypoint</code></a> and <a href="../python_api/#carla.Map"><code>carla.Map</code></a>.</p>
+<p>The client must initially communicate with the server to retrieve the map object containing the waypoint information. This is only required once, all subsequent queries are performed on the client side.</p>
+<h3 id="navigating-through-waypoints">Navigating through waypoints</h3>
+<p>The Waypoint API exposes methods that allow waypoints to connect to each other and construct a path along a road for vehicles to navigate:</p>
+<ul>
+<li><code>next(d)</code> creates a list of waypoints within an approximate distance, <code>d</code>, <strong>in the direction of the lane</strong>. The list contains one waypoint for each possible deviation.</li>
+<li><code>previous(d)</code> creates a list of waypoints waypoint within an approximate distance, <code>d</code>, <strong>in the opposite direction of the lane</strong>. The list contains one waypoint for each possible deviation.</li>
+<li><code>next_until_lane_end(d)</code> and <code>previous_until_lane_start(d)</code> return a list of waypoints a distance <code>d</code> apart. The lists go from the current waypoint to the end and beginning of its lane, respectively.</li>
+<li><code>get_right_lane()</code> and <code>get_left_lane()</code> return the equivalent waypoint in an adjacent lane, if one exists. A lane change maneuver can be made by finding the next waypoint to the one on its right/left lane, and moving to it.</li>
+</ul>
+<pre><code class="language-py"># Find next waypoint 2 meters ahead.
+waypoint = waypoint.next(2.0)
+</code></pre>
+<h3 id="generating-map-navigation">Generating map navigation</h3>
+<p>The client needs to make a request to the server to get the <code>.xodr</code> map file and parse it to a <a href="../python_api/#carla.Map"><code>carla.Map</code></a> object. This only needs to be done once.</p>
+<p>To get the map object:</p>
+<pre><code class="language-py">map = world.get_map()
+</code></pre>
+<p>The map object contains <strong>recommended spawn points</strong> for the creation of vehicles. You can get a list of these spawn points, each one containing a <a href="../python_api/#carlatransform"><code>carla.Transform</code></a>, using the method below. Bear in mind that the spawn points may be occupied already, resulting in failed creation of vehicles due to collisions.</p>
+<pre><code class="language-py">spawn_points = world.get_map().get_spawn_points()
+</code></pre>
+<p>You can get started with waypoints by <strong><a href="../python_api/#carla.Map.get_waypoint">getting</a> the closest waypoint</strong> to a specific location or to a particular <code>road_id</code>, <code>lane_id</code> and <code>s</code> value in the map's OpenDRIVE definition:</p>
+<pre><code class="language-py"># Nearest waypoint in the center of a Driving or Sidewalk lane.
+waypoint01 = map.get_waypoint(vehicle.get_location(),project_to_road=True, lane_type=(carla.LaneType.Driving | carla.LaneType.Sidewalk))
+
+#Nearest waypoint but specifying OpenDRIVE parameters. 
+waypoint02 = map.get_waypoint_xodr(road_id,lane_id,s)
+</code></pre>
+<p>The below example shows how to <strong>generate a collection of waypoints</strong> to visualize the city lanes. This will create waypoints all over the map, for every road and lane. All of them will approximately 2 meters apart:</p>
+<pre><code class="language-py">waypoint_list = map.generate_waypoints(2.0)
+</code></pre>
+<p>To <strong>generate a minimal graph of road topology</strong>, use the example below. This will return a list of pairs (tuples) of waypoints. The first element in each pair connects with the second element and both define the start and end points of each lane in the map. More information on this method is found in the <a href="../python_api/#carla.Map.get_topology">PythonAPI</a>.</p>
+<pre><code class="language-py">waypoint_tuple_list = map.get_topology()
+</code></pre>
+<p>The example below <strong>converts a <code>carla.Transform</code> to geographical latitude and longitude coordinates,</strong> in the form of a <a href="../python_api/#carla.GeoLocation"><code>carla.GeoLocation</code></a>:</p>
+<pre><code class="language-py">my_geolocation = map.transform_to_geolocation(vehicle.transform)
+</code></pre>
+<p>Use the following example to <strong>save road information</strong> in OpenDRIVE format to disk:</p>
+<pre><code class="language-py">info_map = map.to_opendrive()
+</code></pre>
+<hr />
+<h2 id="carla-maps">CARLA maps</h2>
+<p>There are eight towns in the CARLA ecosystem and each of those towns have two kinds of map, non-layered and layered. <a href="https://carla.readthedocs.io/en/latest/python_api/#carlamaplayer">Layers</a> refer to the grouped objects within a map and consist of the following:</p>
+<ul>
+<li>NONE</li>
+<li>Buildings</li>
+<li>Decals</li>
+<li>Foliage</li>
+<li>Ground</li>
+<li>ParkedVehicles</li>
+<li>Particles</li>
+<li>Props</li>
+<li>StreetLights</li>
+<li>Walls</li>
+<li>All</li>
+</ul>
+<h3 id="non-layered-maps">Non-layered maps</h3>
+<p>Non-layered maps are shown in the table below (click the town name to see an overhead image of the layout). All of the layers are present at all times and cannot be toggled on or off in these maps. Up until CARLA 0.9.11, these were the only kinds of map available.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Users can <a href="tuto_A_map_customization.md">customize a map</a> or even <a href="../tuto_M_custom_map_overview/">create a new map</a> to be used in CARLA.</p>
+</div>
+<table>
+<thead>
+<tr>
+<th>Town</th>
+<th>Summary</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="../map_town01/"><strong>Town01</strong></a></td>
+<td>A small, simple town with a river and several bridges.</td>
+</tr>
+<tr>
+<td><a href="../map_town02/"><strong>Town02</strong></a></td>
+<td>A small simple town with a mixture of residential and commercial buildings.</td>
+</tr>
+<tr>
+<td><a href="../map_town03/"><strong>Town03</strong></a></td>
+<td>A larger, urban map with a roundabout and large junctions.</td>
+</tr>
+<tr>
+<td><a href="../map_town04/"><strong>Town04</strong></a></td>
+<td>A small town embedded in the mountains with a special "figure of 8" <em>infinite</em> highway.</td>
+</tr>
+<tr>
+<td><a href="../map_town05/"><strong>Town05</strong></a></td>
+<td>Squared-grid town with cross junctions and a bridge. It has multiple lanes per direction. Useful to perform lane changes.</td>
+</tr>
+<tr>
+<td><a href="../map_town06/"><strong>Town06</strong></a></td>
+<td>Long many lane highways with many highway entrances and exits. It also has a <a href="https://en.wikipedia.org/wiki/Michigan_left"><strong>Michigan left</strong></a>.</td>
+</tr>
+<tr>
+<td><a href="../map_town07/"><strong>Town07</strong></a></td>
+<td>A rural environment with narrow roads, corn, barns and hardly any traffic lights.</td>
+</tr>
+<tr>
+<td><strong>Town08</strong></td>
+<td>Secret "unseen" town used for the <a href="https://leaderboard.carla.org/">Leaderboard</a> challenge</td>
+</tr>
+<tr>
+<td><strong>Town09</strong></td>
+<td>Secret "unseen" town used for the <a href="https://leaderboard.carla.org/">Leaderboard</a> challenge</td>
+</tr>
+<tr>
+<td><a href="../map_town10/"><strong>Town10</strong></a></td>
+<td>A downtown urban environment with skyscrapers, residential buildings and an ocean promenade.</td>
+</tr>
+<tr>
+<td><a href="../map_town11/"><strong>Town11</strong></a></td>
+<td>A Large Map that is undecorated. Serves as a proof of concept for the Large Maps feature.</td>
+</tr>
+<tr>
+<td><a href="../map_town12/"><strong>Town12</strong></a></td>
+<td>A Large Map with numerous different regions, including high-rise, residential and rural environments.</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Town06 and Town07 are additional content which does not come with the standard CARLA package. Please see the <a href="#additional-maps">additional maps section</a> for details on how to import these. </p>
+</div>
+<h3 id="layered-maps">Layered maps</h3>
+<p>The layout of layered maps is the same as non-layered maps but it is possible to toggle off and on the layers of the map. There is a minimum layout that cannot be toggled off and consists of roads, sidewalks, traffic lights and traffic signs. Layered maps can be identified by the suffix <code>_Opt</code>, for example, <code>Town01_Opt</code>. With these maps it is possible to <a href="https://carla.readthedocs.io/en/latest/python_api/#carla.World.load_map_layer">load</a> and <a href="https://carla.readthedocs.io/en/latest/python_api/#carla.World.unload_map_layer">unload</a> layers via the Python API:</p>
+<pre><code>    # Load layered map for Town 01 with minimum layout plus buildings and parked vehicles
+    world = client.load_world('Town01_Opt', carla.MapLayer.Buildings | carla.MapLayer.ParkedVehicles)
+
+    # Toggle all buildings off
+    world.unload_map_layer(carla.MapLayer.Buildings)
+
+    # Toggle all buildings on   
+    world.load_map_layer(carla.MapLayer.Buildings)
+</code></pre>
+<p>See an example of all layers being loaded and unloaded in sequence:</p>
+<p><img alt="map-layers" src="../img/sublevels.gif" /></p>
+<hr />
+<h2 id="custom-maps">Custom maps</h2>
+<p>CARLA is designed to be extensible and highly customisable for specialist applications. Therefore, in addition to the many maps and assets already avaiable in CARLA out of the box, it is possible to create and import new maps, road networks and assets to populate bespoke environments in a CARLA simulation. The following documents detail the steps needed to build and integrate custom maps:  </p>
+<ul>
+<li><a href="../tuto_M_custom_map_overview/"><strong>Overview</strong></a></li>
+<li><a href="../tuto_M_custom_road_painter/"><strong>Road painting</strong></a></li>
+<li><a href="../tuto_M_custom_buildings/"><strong>Custom buildings</strong></a> </li>
+<li><a href="../tuto_M_generate_map/"><strong>Generate map</strong></a></li>
+<li><a href="../tuto_M_add_map_package/"><strong>Add map package</strong></a></li>
+<li><a href="../tuto_M_add_map_source/"><strong>Add map source</strong></a></li>
+<li><a href="../tuto_M_add_map_alternative/"><strong>Alternative methods</strong></a></li>
+</ul>
+<h2 id="left-handed-traffic">Left handed traffic</h2>
+<p>CARLA supports left-handed traffic rules defined in the OpenDRIVE files. To invoke a left-handed traffic rule on any road, apply the left-handed traffic attribute in the OpenDRIVE XML file like so:</p>
+<pre><code class="language-xml">&lt;road name=&quot;Road 0&quot; length=&quot;1.3310253693587601e+1&quot; id=&quot;0&quot; junction=&quot;-1&quot; rule=&quot;LHT&quot;&gt;
+    &lt;link&gt;
+        &lt;predecessor elementType=&quot;road&quot; elementId=&quot;3&quot; contactPoint=&quot;end&quot; /&gt;
+        &lt;successor elementType=&quot;road&quot; elementId=&quot;10&quot; contactPoint=&quot;start&quot; /&gt;
+    &lt;/link&gt;
+...
+&lt;/road&gt;
+</code></pre>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The right-handed traffic convention is the default. A road with no <code>rule</code> attribute (or an unrecognized parameter) will be considered a right-handed road. You may also wish to explicitly set it by adding <code>rule="RHT"</code>. </p>
+</div>
+<p>CARLA will apply left handed traffic conventions to each road with the <code>rule="LHT"</code> attribute applied.</p>
+<p>Note that the left or right-handed traffic conventions don't only affect the behaviour of traffic but also traffic signs and signals affecting the road. Therefore if the map has assets placed manually for right handed traffic conventions (e.g. road signs or traffic lights), these will need to be adjusted. Traffic lights defined in the OpenDRIVE definition for left-handed traffic will be automatically placed by CARLA in the appropriate position upon importing the map.</p>
+<h2 id="additional-maps">Additional maps</h2>
+<p>Each release has it's own additional package of extra assets and maps. This additional package includes the maps <strong>Town06</strong> and <strong>Town07</strong>. These are stored separately to reduce the size of the build, so they can only be imported after the main package has been installed. </p>
+<p><strong>1.</strong> <a href="https://github.com/carla-simulator/carla/blob/master/Docs/download.md">Download</a> the appropriate package for your desired version of CARLA.</p>
+<p><strong>2.</strong> Extract the package:</p>
+<ul>
+<li>
+<p><strong>On Linux</strong>:</p>
+<ul>
+<li>move the package to the <em>Import</em> folder and run the following script to extract the contents:  </li>
+</ul>
+</li>
+</ul>
+<pre><code class="language-sh">        cd path/to/carla/root
+
+        ./ImportAssets.sh
+</code></pre>
+<ul>
+<li>
+<p><strong>On Windows</strong>:</p>
+<ul>
+<li>Extract the contents directly in the root folder. </li>
+</ul>
+</li>
+</ul>
+<hr />
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="../core_actors/" class="btn btn-neutral float-left" title="Actors"><span class="icon icon-circle-arrow-left"></span> 前一页</a>
+        <a href="../core_sensors/" class="btn btn-neutral float-right" title="Sensors and data">后一页 <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+        <span>
+          <a href="https://github.com/carla-simulator/carla" class="fa fa-github" style="color: #fcfcfc"> GitHub</a>
+        </span>
+    
+    
+      <span><a href="../core_actors/" style="color: #fcfcfc">&laquo; 前一页</a></span>
+    
+    
+      <span><a href="../core_sensors/" style="color: #fcfcfc">后一页 &raquo;</a></span>
+    
+  </span>
+</div>
+    <script src="../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "..";</script>
+    <script src="../js/theme_extra.js"></script>
+    <script src="../js/theme.js"></script>
+      <script src="../extra.js"></script>
+      <script src="../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>

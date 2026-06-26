@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <link rel="shortcut icon" href="../img/favicon.ico" />
+    <title>CARLA Docker Dev Environment - CARLA Simulator</title>
+    <link rel="stylesheet" href="../css/theme.css" />
+    <link rel="stylesheet" href="../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+        <link href="../extra.css" rel="stylesheet" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "CARLA Docker Dev Environment";
+        var mkdocs_page_input_path = "build_devcontainer.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href=".." class="icon icon-home"> CARLA Simulator
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+      <input type="text" name="q" placeholder="搜索文档" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="..">Home</a>
+                </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Getting started</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../start_introduction/">Introduction</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../start_quickstart/">Quick start package installation</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_first_steps/">First steps</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../build_carla/">Building CARLA</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Next steps</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_content_authoring_maps/">Content authoring - maps</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_content_authoring_vehicles/">Content authoring - vehicles</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../content_authoring_props/">Content authoring - props</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">CARLA topics</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../coordinates/">Coordinates and transformations</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../foundations/">Foundations</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../core_actors/">Actors</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../core_map/">Maps</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../core_sensors/">Sensors and data</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../ts_traffic_simulation_overview/">Traffic</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../ai_rendering/">AI rendering</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../development_tutorials/">Development</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../custom_assets_tutorials/">Custom assets</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Resources</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../python_api/">Python API</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../catalogue/">Catalogue</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../ref_cpp/">C++ reference</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../bp_library/">Blueprint library</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tutorials/">Tutorials</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../ext_docs/">Extended documentation</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../download/">Downloads</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">CARLA Ecosystem</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../ecosys_ansys/">ANSYS</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_G_rllib_integration/">AWS</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_G_carsim_integration/">CarSIM</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_G_chrono/">Chrono</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../large_map_roadrunner/">MathWorks</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../inverted_ai/">Inverted AI</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../nvidia/">NVIDIA</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../adv_opendrive/">ASAM OpenDRIVE</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../adv_ptv/">PTV Vissim</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../adv_rss/">RSS</a>
+                  </li>
+                  <li class="toctree-l1"><a class="" href="https://carla.readthedocs.io/projects/ros-bridge/en/latest/">ROS</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_G_scenic/">Scenic</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../adv_sumo/">SUMO</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../ecosys_synkrotron/">SYNKROTRON</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Contributing</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../cont_contribution_guidelines/">Guidelines</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../cont_coding_standard/">Coding standards</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../cont_doc_standard/">Documentation standard</a>
+                  </li>
+                  <li class="toctree-l1"><a class="" href=".."></a>
+                  </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="..">CARLA Simulator</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href=".." class="icon icon-home" aria-label="Docs"></a></li>
+      <li class="breadcrumb-item active">CARLA Docker Dev Environment</li>
+    <li class="wy-breadcrumbs-aside">
+          <a href="https://github.com/carla-simulator/carla/edit/master/Docs/build_devcontainer.md" class="icon icon-github"> 在 GitHub 上编辑</a>
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="carla-docker-dev-environment">CARLA Docker Dev Environment</h1>
+<p>CARLA can be built and developed entirely inside Docker containers. This approach eliminates concerns about dependencies, Python versions, or system configuration—everything is already set up in our Dockerfiles. For example, our Dockerfiles provide support for multiple Python versions, with all required libraries pre-installed.</p>
+<p>We offer two Docker-based approaches for building CARLA: <strong>monolith mode</strong> and <strong>lightweight mode</strong>.</p>
+<p>Your choice between <strong>monolith</strong> and <strong>lightweight</strong> depends on your intended use, as well as factors such as disk space, build time, and whether you prefer a fully self-contained environment (monolith) or one that reuses a locally compiled Unreal Engine (lightweight).</p>
+<h2 id="monolith">Monolith</h2>
+<p>This Docker image is intended for use with the <code>docker_tools.py</code> scripts. Refer to <a href="../build_docker_unreal/">Build Unreal Engine and CARLA in Docker</a> for more information.</p>
+<ul>
+<li>Bundles Unreal Engine (UE4) and CARLA into a single Docker image.  </li>
+<li>Requires a long build process and produces a large final image (often 100+ GB).  </li>
+<li>Provides a fully self-contained environment with everything compiled inside Docker.</li>
+</ul>
+<h2 id="lightweight-recommended">Lightweight (Recommended)</h2>
+<p>This Docker image is intended for development purposes and is the recommended way to build packages and work with CARLA. Compared to monolith mode, it offers greater flexibility and faster iteration.</p>
+<ul>
+<li>Installs only the dependencies (plus NVIDIA support) required to build and run CARLA.  </li>
+<li>Requires mounting an existing <strong>UE4</strong> build from the host into the container.</li>
+<li>Much faster to build but relies on a locally compiled Unreal Engine folder.</li>
+</ul>
+<hr />
+<h2 id="build-the-docker-image">Build the docker image</h2>
+<h3 id="monolith_1">Monolith</h3>
+<p>As previously said, the monolith build bundles both Unreal Engine (UE4) and CARLA into a single Docker image. The process can take several hours and the resulting image may exceed 200 GB in size.</p>
+<p>Because this build clones Unreal Engine from Epic Games’ private GitHub repository, you must have valid Epic credentials linked to your GitHub account. <strong>If you don't have this set up, please follow <a href="https://www.unrealengine.com/en-US/ue4-on-github">this guide</a> before proceeding</strong>.</p>
+<p>To build the monolith image, run the following command:</p>
+<pre><code class="language-sh">Util/Docker/build.sh --monolith --epic-user &lt;GITHUB_USERNAME&gt; --epic-token &lt;GITHUB_ACCESS_TOKEN&gt;
+
+# Or build the monolith image for a specific CARLA branch
+Util/Docker/build.sh --monolith --epic-user &lt;GITHUB_USERNAME&gt; --epic-token &lt;GITHUB_ACCESS_TOKEN&gt; --branch &lt;BRANCH_NAME_OR_TAG&gt;
+</code></pre>
+<p>This will create a Docker image named <code>carla-monolith:&lt;branch&gt;</code>.</p>
+<h3 id="lightweight-development">Lightweight (development)</h3>
+<p>The lightweight build installs only CARLA’s dependencies, so no additional setup is required at this stage:</p>
+<pre><code class="language-sh">Util/Docker/build.sh --dev
+</code></pre>
+<hr />
+<h2 id="run-the-docker-images">Run the docker images</h2>
+<h3 id="monolith_2">Monolith</h3>
+<p>This image is not intended to be run directly. Instead, it is used through the docker_tools.py script. Refer to <a href="../build_docker_unreal/">Build Unreal Engine and CARLA in Docker</a> for more information.</p>
+<pre><code class="language-sh"># Build a CARLA package
+# Note: The package will be created using the branch that was used to build the image
+./docker_tools.py
+
+# Import some assets
+./docker_tools.py --input /assets/to/import/path --output /output/path
+</code></pre>
+<h3 id="lightweight">Lightweight</h3>
+<p>The lightweight/development workflow requires a compiled Unreal Engine folder on your host machine that matches CARLA’s requirements. This folder will remain on your host and be mounted into the container. You can either build it natively following the official CARLA documentation or use the lightweight container to compile it inside Docker:</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Ensure your GitHub account is linked to Epic’s UnrealEngine repository before attempting to clone.</p>
+</div>
+<pre><code class="language-sh"># Clone a Carla-specific Unreal Engine repository
+git clone git@github.com:wambitz/CarlaUnrealEngine.git CarlaUE4
+
+# Export UE4_ROOT so it can be mounted inside the dev container
+export UE4_ROOT=$(pwd)/CarlaUE4
+
+# From the CARLA root, start the lightweight container
+Util/Docker/run.sh --dev
+
+# Inside the container, build UE4.26 following the official steps:
+cd /workspace/unreal-engine
+./Setup.sh &amp;&amp; ./GenerateProjectFiles.sh &amp;&amp; make
+
+# Exit the container
+exit
+</code></pre>
+<p>After building Unreal Engine, you can run the lightweight container again:</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Make sure the <code>UE4_ROOT</code> environment variable points to the root directory of your compiled UE4 build.</p>
+</div>
+<pre><code class="language-sh">Util/Docker/run.sh --dev
+</code></pre>
+<p>Once inside the container, you can continue with the normal CARLA build steps:</p>
+<pre><code class="language-bash">./Update.sh
+make PythonAPI
+make CarlaUE4Editor
+make package ARGS=&quot;--python-version=3.10,3.11,3.12&quot;
+</code></pre>
+<hr />
+<h2 id="using-a-devcontainer-for-carla-serverclient-development">Using a Devcontainer for CARLA Server/Client Development</h2>
+<p>You can use a <strong>Visual Studio Code devcontainer</strong> with the lightweight approach. This setup mounts your host’s directories (including UE4) into a Docker environment. Note that the monolith image is not well suited to devcontainers since it stores everything inside the image.</p>
+<p>Create a <code>.devcontainer/devcontainer.json</code> in your CARLA repository with the following content:</p>
+<pre><code class="language-json">{
+    &quot;name&quot;: &quot;CARLA UE4 Dev&quot;,
+    &quot;image&quot;: &quot;carla-development:ue4-20.04&quot;,
+
+    &quot;initializeCommand&quot;: &quot;./Util/Docker/build.sh --dev --ubuntu-distro 20.04&quot;,
+
+    // We do NOT need to set &quot;remoteUser&quot; if the Dockerfile's default user is already correct
+    // but you can if you want to be explicit. Also &quot;updateRemoteUserUID&quot; can be false, since
+    // our Dockerfile already set the user to our exact UID/GID.
+    &quot;updateRemoteUserUID&quot;: false,
+
+    &quot;customizations&quot;: {
+      &quot;vscode&quot;: {
+        &quot;settings&quot;: {
+          &quot;terminal.integrated.defaultProfile.linux&quot;: &quot;bash&quot;
+        },
+        &quot;extensions&quot;: [
+          &quot;ms-vscode.cpptools&quot;
+        ]
+      }
+    },
+
+    // NOTE1: DO NOT pass --user here (we want the Dockerfile default user, not an override)
+    // NOTE3: Ensure UE4_ROOT environment variable is defined in host
+    &quot;runArgs&quot;: [
+      &quot;--rm&quot;,
+      &quot;--runtime&quot;, &quot;nvidia&quot;,
+      &quot;--name&quot;, &quot;carla-ue4-development-20.04&quot;,
+      &quot;--env&quot;, &quot;NVIDIA_VISIBLE_DEVICES=all&quot;,
+      &quot;--env&quot;, &quot;NVIDIA_DRIVER_CAPABILITIES=all&quot;,
+      &quot;--env&quot;, &quot;UE4_ROOT=/workspaces/unreal-engine&quot;,
+      &quot;--env&quot;, &quot;CARLA_UE4_ROOT=/workspaces/carla&quot;,
+      &quot;--env&quot;, &quot;DISPLAY=${localEnv:DISPLAY}&quot;,
+      &quot;--volume&quot;, &quot;/tmp/.X11-unix:/tmp/.X11-unix&quot;,
+      &quot;--volume&quot;, &quot;/var/run/docker.sock:/var/run/docker.sock&quot;,
+      &quot;--volume&quot;, &quot;${localEnv:UE4_ROOT}:/workspaces/unreal-engine&quot;,
+      &quot;--mount&quot;, &quot;source=carla-development-ue4-20.04,target=/home/carla&quot;,
+      &quot;--gpus&quot;, &quot;all&quot;
+    ]
+}
+</code></pre>
+<hr />
+<h2 id="tips-known-issues">Tips &amp; Known Issues</h2>
+<ol>
+<li>
+<p><strong>Running Binaries on the Host</strong><br />
+<strong>Do not</strong> run <code>make launch</code> or <code>make launch-only</code> on your host after building in the container, because internal container paths (e.g., <code>/workspaces/unreal-engine</code>) do not match your host environment.<br />
+  If you need host access to CARLA binaries, first build a shipping package (<code>make package</code>), then run them from the resulting files in <code>Dist/</code> on the host.</p>
+</li>
+<li>
+<p><strong>Truncated Output in <code>./Update.sh</code></strong><br />
+   Sometimes, <code>./Update.sh</code> in the CARLA repository may truncate logs. A workaround is redirecting the output to a file and tailing it.</p>
+</li>
+<li>
+<p><strong>Audio Support</strong><br />
+   ALSA and PulseAudio are not pre-configured, so you might see audio warnings when executing some scripts inside the container.</p>
+</li>
+</ol>
+<hr />
+              
+            </div>
+          </div><footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+        <span>
+          <a href="https://github.com/carla-simulator/carla" class="fa fa-github" style="color: #fcfcfc"> GitHub</a>
+        </span>
+    
+    
+    
+  </span>
+</div>
+    <script src="../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "..";</script>
+    <script src="../js/theme_extra.js"></script>
+    <script src="../js/theme.js"></script>
+      <script src="../extra.js"></script>
+      <script src="../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>

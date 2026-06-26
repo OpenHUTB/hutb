@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <link rel="shortcut icon" href="../img/favicon.ico" />
+    <title>Scenic - CARLA Simulator</title>
+    <link rel="stylesheet" href="../css/theme.css" />
+    <link rel="stylesheet" href="../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+        <link href="../extra.css" rel="stylesheet" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "Scenic";
+        var mkdocs_page_input_path = "tuto_G_scenic.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href=".." class="icon icon-home"> CARLA Simulator
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+      <input type="text" name="q" placeholder="搜索文档" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="..">Home</a>
+                </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Getting started</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../start_introduction/">Introduction</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../start_quickstart/">Quick start package installation</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_first_steps/">First steps</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../build_carla/">Building CARLA</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Next steps</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_content_authoring_maps/">Content authoring - maps</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_content_authoring_vehicles/">Content authoring - vehicles</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../content_authoring_props/">Content authoring - props</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">CARLA topics</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../coordinates/">Coordinates and transformations</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../foundations/">Foundations</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../core_actors/">Actors</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../core_map/">Maps</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../core_sensors/">Sensors and data</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../ts_traffic_simulation_overview/">Traffic</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../ai_rendering/">AI rendering</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../development_tutorials/">Development</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../custom_assets_tutorials/">Custom assets</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Resources</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../python_api/">Python API</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../catalogue/">Catalogue</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../ref_cpp/">C++ reference</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../bp_library/">Blueprint library</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tutorials/">Tutorials</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../ext_docs/">Extended documentation</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../download/">Downloads</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">CARLA Ecosystem</span></p>
+              <ul class="current">
+                  <li class="toctree-l1"><a class="reference internal" href="../ecosys_ansys/">ANSYS</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_G_rllib_integration/">AWS</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_G_carsim_integration/">CarSIM</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_G_chrono/">Chrono</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../large_map_roadrunner/">MathWorks</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../inverted_ai/">Inverted AI</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../nvidia/">NVIDIA</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../adv_opendrive/">ASAM OpenDRIVE</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../adv_ptv/">PTV Vissim</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../adv_rss/">RSS</a>
+                  </li>
+                  <li class="toctree-l1"><a class="" href="https://carla.readthedocs.io/projects/ros-bridge/en/latest/">ROS</a>
+                  </li>
+                  <li class="toctree-l1 current"><a class="reference internal current" href="#">Scenic</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#before-you-begin">Before you begin</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#scenic-domains">Scenic Domains</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#creating-a-scenic-scenario-to-use-with-carla">Creating a Scenic scenario to use with CARLA</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#run-the-scenario">Run the scenario</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#additional-parameters">Additional parameters</a>
+    </li>
+        </ul>
+    </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../adv_sumo/">SUMO</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../ecosys_synkrotron/">SYNKROTRON</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Contributing</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../cont_contribution_guidelines/">Guidelines</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../cont_coding_standard/">Coding standards</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../cont_doc_standard/">Documentation standard</a>
+                  </li>
+                  <li class="toctree-l1"><a class="" href=".."></a>
+                  </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="..">CARLA Simulator</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href=".." class="icon icon-home" aria-label="Docs"></a></li>
+          <li class="breadcrumb-item">CARLA Ecosystem</li>
+      <li class="breadcrumb-item active">Scenic</li>
+    <li class="wy-breadcrumbs-aside">
+          <a href="https://github.com/carla-simulator/carla/edit/master/Docs/tuto_G_scenic.md" class="icon icon-github"> 在 GitHub 上编辑</a>
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="scenic">Scenic</h1>
+<p>This guide provides an overview of how to use Scenic with CARLA to generate multiple, diverse scenarios with a single scenario definition. It assumes that users have prior knowledge of the Scenic syntax. If you need to learn more about Scenic, then read their <a href="https://scenic-lang.readthedocs.io/en/latest/quickstart.html">"Getting Started with Scenic"</a> guide and have a look at their tutorials for creating <a href="https://scenic-lang.readthedocs.io/en/latest/tutorials/tutorial.html">static</a> and <a href="https://scenic-lang.readthedocs.io/en/latest/tutorials/dynamics.html">dynamic</a> scenarios.</p>
+<p>By the end of the guide you will know:</p>
+<ul>
+<li>The minimum requirements needed to run a Scenic script on CARLA.</li>
+<li>How to write a simple scenario definition to generate a multitude of scenario simulations.</li>
+<li>How to run a Scenic script on CARLA.</li>
+<li>Parameters used to configure Scenic simulations on CARLA.</li>
+</ul>
+<hr />
+<ul>
+<li><a href="#before-you-begin"><strong>Before you begin</strong></a></li>
+<li><a href="#scenic-domains"><strong>Scenic domains</strong></a></li>
+<li><a href="#creating-a-scenic-scenario-to-use-with-carla"><strong>Creating a Scenic scenario to use with CARLA</strong></a></li>
+<li><a href="#run-the-scenario"><strong>Run the scenario</strong></a></li>
+<li><a href="#additional-parameters"><strong>Additional parameters</strong></a></li>
+</ul>
+<hr />
+<h2 id="before-you-begin">Before you begin</h2>
+<p>Before using Scenic with CARLA, you will need to fulfill the following requirements:</p>
+<ul>
+<li>Install <a href="https://www.python.org/downloads/">Python 3.8</a> or higher. </li>
+<li>Install <a href="https://scenic-lang.readthedocs.io/en/latest/quickstart.html#installation">Scenic</a>.</li>
+</ul>
+<hr />
+<h2 id="scenic-domains">Scenic Domains</h2>
+<p>Scenic has a general driving domain which allows users to define scenarios that can be run on any driving simulator. In addition, it has other domains that are specific to each simulator. Check <a href="https://scenic-lang.readthedocs.io/en/latest/libraries.html">here</a> for more information on Scenic domains.</p>
+<p>Of particular importance within each domain are the behaviour and actions definitions. Check the links below for reference material to behaviours and actions from the Scenic driving domain and the CARLA domain:</p>
+<ul>
+<li><a href="https://scenic-lang.readthedocs.io/en/latest/modules/scenic.domains.driving.behaviors.html">Behaviours in the Scenic driving domain</a></li>
+<li><a href="https://scenic-lang.readthedocs.io/en/latest/modules/scenic.simulators.carla.behaviors.html">Behaviours in the CARLA domain</a></li>
+<li><a href="https://scenic-lang.readthedocs.io/en/latest/modules/scenic.domains.driving.actions.html">Actions in the Scenic driving domain</a></li>
+<li><a href="https://scenic-lang.readthedocs.io/en/latest/modules/scenic.simulators.carla.actions.html#module-scenic.simulators.carla.actions">Actions in the CARLA domain</a></li>
+</ul>
+<hr />
+<h2 id="creating-a-scenic-scenario-to-use-with-carla">Creating a Scenic scenario to use with CARLA</h2>
+<p>This section walks through how to write a basic Scenic script in which a leading vehicle decelerates suddenly due to an obstacle in the road. An ego vehicle then needs to brake suddenly to avoid a collison with the leading vehicle. The <a href="https://github.com/BerkeleyLearnVerify/Scenic/blob/master/examples/carla/Carla_Challenge/carlaChallenge2.scenic">full script</a> is found in the Scenic repository along with other examples involving more complex road networks. </p>
+<p><strong>1.</strong> Set the map parameters and declare the model to be used in the scenario:</p>
+<ul>
+<li>An <code>.xodr</code> file should be set as the value for the <a href="https://scenic-lang.readthedocs.io/en/latest/modules/scenic.domains.driving.model.html?highlight=map#module-scenic.domains.driving.model"><code>map</code></a> parameter, this will be used later to generate road network information. </li>
+<li>The parameter <code>carla_map</code> refers to the name of the CARLA map you would like to use in the simulation. If this is defined then Scenic will load all the assets of the map (buildings, trees, etc.), and if not, then the <a href="../adv_opendrive/">OpenDRIVE standalone mode</a> will be used.</li>
+<li>The model includes all the utilities specific to running scenarios on CARLA. This should be defined in all the scripts you want to run on CARLA.</li>
+</ul>
+<pre><code class="language-scenic">## SET MAP AND MODEL
+param map = localPath('../../../tests/formats/opendrive/maps/CARLA/Town01.xodr')
+param carla_map = 'Town01'
+model scenic.simulators.carla.model
+</code></pre>
+<p><strong>2.</strong> Define the constants to be used in the scenario:</p>
+<p>The scenario involves two vehicles, the leading vehicle and the ego vehicle. We will define the ego vehicle model, the speeds of both cars, the distance threshold for braking and the amount of brake to apply.</p>
+<pre><code class="language-scenic">## CONSTANTS
+EGO_MODEL = &quot;vehicle.lincoln.mkz_2017&quot;
+EGO_SPEED = 10
+EGO_BRAKING_THRESHOLD = 12
+
+LEAD_CAR_SPEED = 10
+LEADCAR_BRAKING_THRESHOLD = 10
+
+BRAKE_ACTION = 1.0
+</code></pre>
+<p><strong>3</strong>. Define the scenario behaviours:</p>
+<p>In this scenario we will use the Scenic <a href="https://scenic-lang.readthedocs.io/en/latest/modules/scenic.domains.driving.behaviors.html">behaviour library</a> to instruct the ego vehicle to follow the lane at the predefined speed and then brake hard when it gets within a certain distance of another vehicle. The leading vehicle will also follow the lane at the predefined speed and brake hard within a certain distance of any objects:</p>
+<pre><code class="language-scenic">## DEFINING BEHAVIORS
+# EGO BEHAVIOR: Follow lane, and brake after passing a threshold distance to the leading car
+behavior EgoBehavior(speed=10):
+    try:
+        do FollowLaneBehavior(speed)
+
+    interrupt when withinDistanceToAnyCars(self, EGO_BRAKING_THRESHOLD):
+        take SetBrakeAction(BRAKE_ACTION)
+
+# LEAD CAR BEHAVIOR: Follow lane, and brake after passing a threshold distance to obstacle
+behavior LeadingCarBehavior(speed=10):
+    try: 
+        do FollowLaneBehavior(speed)
+
+    interrupt when withinDistanceToAnyObjs(self, LEADCAR_BRAKING_THRESHOLD):
+        take SetBrakeAction(BRAKE_ACTION)
+</code></pre>
+<p><strong>4.</strong> Generate the road network:</p>
+<p>The Scenic <a href="https://scenic-lang.readthedocs.io/en/latest/modules/scenic.domains.driving.roads.html">roads library</a> is used to generate the road network geometry and traffic information. The road network is represented by an instance of the <a href="https://scenic-lang.readthedocs.io/en/latest/modules/scenic.domains.driving.roads.html#scenic.domains.driving.roads.Network"><code>Network</code></a> class and is generated from the <code>.xodr</code> file defined at the beginning of the script.</p>
+<pre><code class="language-scenic">## DEFINING SPATIAL RELATIONS
+# make sure to put '*' to uniformly randomly select from all elements of the list, 'lanes'
+lane = Uniform(*network.lanes)
+</code></pre>
+<p><strong>5.</strong> Set the scene:</p>
+<p>We will now define the starting positions for the vehicles and placement of objects. </p>
+<ul>
+<li>Place a trash can in the middle of the lane:</li>
+</ul>
+<pre><code class="language-scenic">obstacle = new Trash on lane.centerline
+</code></pre>
+<ul>
+<li>Place the leading car driving at the predefined speed along the road at a distance of between 50 and 30 meters behind the obstacle:</li>
+</ul>
+<pre><code class="language-scenic">leadCar = new Car following roadDirection from obstacle for Range(-50, -30),
+        with behavior LeadingCarBehavior(LEAD_CAR_SPEED)
+</code></pre>
+<ul>
+<li>Place the ego vehicle driving at the predefined speed along the road at a distance of between 15 to 10 meters behind the leading vehicle:</li>
+</ul>
+<pre><code class="language-scenic">ego = new Car following roadDirection from leadCar for Range(-15, -10),
+        with blueprint EGO_MODEL,
+        with behavior EgoBehavior(EGO_SPEED)
+</code></pre>
+<ul>
+<li>Make it a requirement that the scene takes place more than 80 meters from an intersection:</li>
+</ul>
+<pre><code class="language-scenic">require (distance to intersection) &gt; 80
+</code></pre>
+<p><strong>6.</strong> Set an end point so the script knows when the scene is finished:</p>
+<p>The scenario will end when the speed of the ego vehicle goes below 0.1 meters per second and is situated less than 30 meters from the obstacle.</p>
+<pre><code class="language-scenic">terminate when ego.speed &lt; 0.1 and (distance to obstacle) &lt; 30
+</code></pre>
+<hr />
+<h3 id="run-the-scenario">Run the scenario</h3>
+<p>To run the Scenic scenario:</p>
+<p><strong>1.</strong> Start the CARLA server.</p>
+<p><strong>2.</strong> Run the following command:</p>
+<pre><code class="language-scenic">scenic path/to/scenic/script.scenic --simulate
+</code></pre>
+<p>A pygame window will appear and the scenario will play out repeatedly, each time generating a unique scenario within the bounds of the restrictions set in the script. To stop the scenario generation, press <code>ctrl + C</code> in the terminal. </p>
+<hr />
+<h3 id="additional-parameters">Additional parameters</h3>
+<p>The CARLA model provides several global parameters than can be overridden in scenarios using the <a href="https://scenic-lang.readthedocs.io/en/latest/syntax_details.html#param-identifier-value"><code>param</code> statement</a> or via the command line using the <a href="https://scenic-lang.readthedocs.io/en/latest/options.html#cmdoption-p"><code>--param</code> option</a>.</p>
+<p>Below is a table of configurable parameters in the CARLA model:</p>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Value</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>carla_map</code></td>
+<td><code>str</code></td>
+<td>Name of the CARLA map to use (e.g. 'Town01'). If set to <code>None</code>, CARLA will attempt to create a world in the OpenDRIVE standalone mode using the <code>.xodr</code> file defined in the <a href="https://scenic-lang.readthedocs.io/en/latest/modules/scenic.domains.driving.model.html?highlight=map#module-scenic.domains.driving.model"><code>map</code></a> parameter.</td>
+</tr>
+<tr>
+<td><code>timestep</code></td>
+<td><code>float</code></td>
+<td>Timestep to use for simulations (how frequently Scenic interrupts CARLA to run behaviors, check requirements, etc.) in seconds. Default is 0.1 seconds.</td>
+</tr>
+<tr>
+<td><code>weather</code></td>
+<td><code>str</code> or <code>dict</code></td>
+<td>Weather to use for the simulation. Can be either a string identifying one of the CARLA weather presets (e.g. 'ClearSunset') or a dictionary specifying all the <a href="../python_api/#carla.WeatherParameters">weather parameters</a>). Default is a uniform distribution over all the weather presets.</td>
+</tr>
+<tr>
+<td><code>address</code></td>
+<td><code>str</code></td>
+<td>IP address to connect to CARLA. Default is localhost (127.0.0.1).</td>
+</tr>
+<tr>
+<td><code>port</code></td>
+<td><code>int</code></td>
+<td>Port to connect to CARLA. Default is 2000.</td>
+</tr>
+<tr>
+<td><code>timeout</code></td>
+<td><code>float</code></td>
+<td>Maximum time in seconds to wait when attempting to connect to CARLA. Default is 10.</td>
+</tr>
+<tr>
+<td><code>render</code></td>
+<td><code>int</code></td>
+<td>Whether or not to have CARLA create a window showing the simulations from the point of view of the ego object: <code>1</code> for yes, <code>0</code> for no. Default <code>1</code>.</td>
+</tr>
+<tr>
+<td><code>record</code></td>
+<td><code>str</code></td>
+<td>If nonempty, folder in which to save CARLA record files for replaying simulations.</td>
+</tr>
+</tbody>
+</table>
+<p><br></p>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="../adv_rss/" class="btn btn-neutral float-left" title="RSS"><span class="icon icon-circle-arrow-left"></span> 前一页</a>
+        <a href="../adv_sumo/" class="btn btn-neutral float-right" title="SUMO">后一页 <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+        <span>
+          <a href="https://github.com/carla-simulator/carla" class="fa fa-github" style="color: #fcfcfc"> GitHub</a>
+        </span>
+    
+    
+      <span><a href="../adv_rss/" style="color: #fcfcfc">&laquo; 前一页</a></span>
+    
+    
+      <span><a href="../adv_sumo/" style="color: #fcfcfc">后一页 &raquo;</a></span>
+    
+  </span>
+</div>
+    <script src="../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "..";</script>
+    <script src="../js/theme_extra.js"></script>
+    <script src="../js/theme.js"></script>
+      <script src="../extra.js"></script>
+      <script src="../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>

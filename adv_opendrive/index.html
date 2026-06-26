@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <link rel="shortcut icon" href="../img/favicon.ico" />
+    <title>ASAM OpenDRIVE - CARLA Simulator</title>
+    <link rel="stylesheet" href="../css/theme.css" />
+    <link rel="stylesheet" href="../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+        <link href="../extra.css" rel="stylesheet" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "ASAM OpenDRIVE";
+        var mkdocs_page_input_path = "adv_opendrive.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href=".." class="icon icon-home"> CARLA Simulator
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+      <input type="text" name="q" placeholder="搜索文档" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="..">Home</a>
+                </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Getting started</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../start_introduction/">Introduction</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../start_quickstart/">Quick start package installation</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_first_steps/">First steps</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../build_carla/">Building CARLA</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Next steps</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_content_authoring_maps/">Content authoring - maps</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_content_authoring_vehicles/">Content authoring - vehicles</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../content_authoring_props/">Content authoring - props</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">CARLA topics</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../coordinates/">Coordinates and transformations</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../foundations/">Foundations</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../core_actors/">Actors</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../core_map/">Maps</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../core_sensors/">Sensors and data</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../ts_traffic_simulation_overview/">Traffic</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../ai_rendering/">AI rendering</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../development_tutorials/">Development</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../custom_assets_tutorials/">Custom assets</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Resources</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../python_api/">Python API</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../catalogue/">Catalogue</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../ref_cpp/">C++ reference</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../bp_library/">Blueprint library</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tutorials/">Tutorials</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../ext_docs/">Extended documentation</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../download/">Downloads</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">CARLA Ecosystem</span></p>
+              <ul class="current">
+                  <li class="toctree-l1"><a class="reference internal" href="../ecosys_ansys/">ANSYS</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_G_rllib_integration/">AWS</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_G_carsim_integration/">CarSIM</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_G_chrono/">Chrono</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../large_map_roadrunner/">MathWorks</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../inverted_ai/">Inverted AI</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../nvidia/">NVIDIA</a>
+                  </li>
+                  <li class="toctree-l1 current"><a class="reference internal current" href="#">ASAM OpenDRIVE</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#overview">Overview</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#run-a-standalone-map">Run a standalone map</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#mesh-generation">Mesh generation</a>
+    </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../adv_ptv/">PTV Vissim</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../adv_rss/">RSS</a>
+                  </li>
+                  <li class="toctree-l1"><a class="" href="https://carla.readthedocs.io/projects/ros-bridge/en/latest/">ROS</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_G_scenic/">Scenic</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../adv_sumo/">SUMO</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../ecosys_synkrotron/">SYNKROTRON</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Contributing</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../cont_contribution_guidelines/">Guidelines</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../cont_coding_standard/">Coding standards</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../cont_doc_standard/">Documentation standard</a>
+                  </li>
+                  <li class="toctree-l1"><a class="" href=".."></a>
+                  </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="..">CARLA Simulator</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href=".." class="icon icon-home" aria-label="Docs"></a></li>
+          <li class="breadcrumb-item">CARLA Ecosystem</li>
+      <li class="breadcrumb-item active">ASAM OpenDRIVE</li>
+    <li class="wy-breadcrumbs-aside">
+          <a href="https://github.com/carla-simulator/carla/edit/master/Docs/adv_opendrive.md" class="icon icon-github"> 在 GitHub 上编辑</a>
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="asam-opendrive-standalone-mode">ASAM OpenDRIVE standalone mode</h1>
+<p>This feature allows users to ingest any ASAM OpenDRIVE file as a CARLA map out-of-the-box. In order to do so, the simulator will automatically generate a road mesh for actors to navigate through.  </p>
+<ul>
+<li><a href="#overview"><strong>Overview</strong></a>  </li>
+<li><a href="#run-a-standalone-map"><strong>Run a standalone map</strong></a>  </li>
+<li><a href="#mesh-generation"><strong>Mesh generation</strong></a>  </li>
+</ul>
+<hr />
+<h2 id="overview">Overview</h2>
+<p>This mode runs a full simulation using only an OpenDRIVE file, without the need of any additional geometries or assets. To this end, the simulator takes an OpenDRIVE file and procedurally creates a temporal 3D mesh to run the simulation with.  </p>
+<p>The resulting mesh describes the road definition in a minimalistic manner. All the elements will correspond with the OpenDRIVE file, but besides that, there will be only void. In order to prevent vehicles from falling off the road, two measures have been taken. </p>
+<ul>
+<li>Lanes are a bit wider at junctions, where the flow of vehicles is most complex.  </li>
+<li>Visible walls are created at the boundaries of the road, to act as a last safety measure. </li>
+</ul>
+<p>Traffic lights, stops and yields will be generated on the fly. Pedestrians will navigate over the sidewalks and crosswalks that appear in the map. All of these elements, and every detail on the road, are based on the OpenDRIVE file. As the standalone mode uses the <code>.xodr</code> directly, any issues in it will propagate to the simulation. This could be an issue especially at junctions, where many lanes are mixed.</p>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>It is especially important to double check the OpenDRIVE file. Any issues in it will propagate when running the simulation.</p>
+</div>
+<p><img alt="opendrive_standalone" src="../img/opendrive_standalone.jpg" /></p>
+<hr />
+<h2 id="run-a-standalone-map">Run a standalone map</h2>
+<p>Open an ASAM OpenDRIVE file is just a matter of calling <a href="../python_api/#carla.Client.generate_opendrive_world"><code>client.generate_opendrive_world()</code></a> through the API. This will generate the new map, and block the simulation until it is ready. The method needs for two parameters.  </p>
+<ul>
+<li><strong><code>opendrive</code></strong> is the content of the ASAM OpenDRIVE file parsed as a string.  </li>
+<li>
+<p><strong><code>parameters</code></strong> is a <a href="../python_api/#carla.OpendriveGenerationParameters">carla.OpendriveGenerationParameters</a> containing settings for the generation of the mesh. <strong>This argument is optional</strong>.  </p>
+<ul>
+<li><strong><code>vertex_distance</code></strong> <em>(default 2.0 meters)</em> — Distance between the vertices of the mesh. The bigger, the distance, the more inaccurate the mesh will be. However, if the distance is too small, the resulting mesh will be too heavy to work with.  </li>
+<li><strong><code>max_road_length</code></strong> <em>(default 50.0 meters)</em> — Maximum length of a portion of the mesh. The mesh is divide in portions to reduce rendering overhead. If a portion is not visible, UE will not render it. The smaller the portions, the more probably they are discarded. However, if the portions are too small, UE will have too many objects to manage, and performance will be affected too.  </li>
+<li><strong><code>wall_height</code></strong> <em>(default 1.0 meters)</em> — Height of the additional walls created on the boundaries of the road. These prevent vehicles from falling to the void.  </li>
+<li><strong><code>additional_width</code></strong> <em>(default 0.6 meters, 0.3 on each side)</em> — Small width increment applied to the junction lanes. This is a safety measure to prevent vehicles from falling.  </li>
+<li><strong><code>smooth_junctions</code></strong> <em>(default True)</em> — If <strong>True</strong>, some information of the OpenDRIVE will be reinterpreted to smooth the final mesh at junctions. This is done to prevent some inaccuracies that may occur when various lanes meet. If set to <strong>False</strong>, the mesh will be generated exactly as described in the OpenDRIVE.  </li>
+<li><strong><code>enable_mesh_visibility</code></strong> <em>(default True)</em> — If <strong>False</strong>, the mesh will not be rendered, which could save a lot of rendering work to the simulator.  </li>
+</ul>
+</li>
+</ul>
+<p>In order to easily test this feature, the <code>config.py</code> script in <code>PythonAPI/util/</code> has a new argument, <code>-x</code> or <code>--xodr-path</code>. This argument expects a string with the path to the <code>.xodr</code> file, such as <code>path/example.xodr</code>. If the mesh is generated with this script, the parameters used will always be the default ones. </p>
+<p>This feature can be tested with the new <strong>TownBig</strong> provided by CARLA.  </p>
+<pre><code class="language-sh">python3 config.py -x opendrive/TownBig.xodr
+</code></pre>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p><strong><a href="../python_api/#carla.Client.generate_opendrive_world">client.generate_opendrive_world()</a></strong> uses <strong>content of the OpenDRIVE file parsed as string</strong>. On the contrary, <strong><code>config.py</code></strong> script needs <strong>the path to the <code>.xodr</code> file</strong>. </p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>If you experience the error <code>opendrive could not be correctly parsed</code>, ensure that there are write permissions on the <code>CarlaUE4/Content/Carla/Maps/OpenDrive/</code> directory. This is required by the server to parse the <code>xodr</code> file correctly.</p>
+</div>
+<hr />
+<h2 id="mesh-generation">Mesh generation</h2>
+<p>The generation of the mesh is the key element of this mode. The feature can only be successful if the resulting mesh is smooth and fits its definition perfectly. For that reason, this step is constantly being improved. In the last iterations, junctions have been polished to avoid inaccuracies that occur, especially where uneven lanes joined.  </p>
+<p><img alt="opendrive_meshissue" src="../img/opendrive_meshissue.jpg" /></p>
+<div style="text-align: right"><i>When generating junction meshes, higher lanes tend to block the ones below them. <br>The parameter <code>smooth_junctions</code> prevents this kind of issue.</i></div>
+
+<p>Besides that, instead of creating the whole map as a unique mesh, different portions are created. By dividing the mesh, the simulator can avoid rendering portions that are not visible, and save up costs. Working smaller also allows to generate huge maps and contain issues that may occur on a small portion of the mesh.</p>
+<p>Regarding the current state of the mesh generation, some considerations should be taken into account.  </p>
+<ul>
+<li><strong>Junction smoothing</strong>. The default smoothing prevents the issues at tilted junctions described above. However, it will modify the original mesh in the process. Set <code>smooth_junctions</code> to <strong>False</strong> to disable the smoothing if preferred.  </li>
+<li><strong>Lateral slope</strong>. This feature is currently not integrated in CARLA. </li>
+<li><strong>Sidewalk height</strong>. This is currently hard-coded for all the sidewalks the same. Sidewalks must be higher than the road level for collisions to be detected, but RoadRunner does not export this value to the OpenDRIVE file. The height is hard-coded to guarantee collisions. </li>
+</ul>
+<hr />
+<p>That covers all there is to know so far, regarding the OpenDRIVE standalone mode. Take the chance and use any OpenDRIVE map to test it in CARLA.  </p>
+<p>Doubts and suggestions in the forum. </p>
+<div class="build-buttons">
+<p>
+<a href="https://github.com/carla-simulator/carla/discussions/" target="_blank" class="btn btn-neutral" title="Go to the CARLA forum">
+CARLA forum</a>
+</p>
+</div>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="../nvidia/" class="btn btn-neutral float-left" title="NVIDIA"><span class="icon icon-circle-arrow-left"></span> 前一页</a>
+        <a href="../adv_ptv/" class="btn btn-neutral float-right" title="PTV Vissim">后一页 <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+        <span>
+          <a href="https://github.com/carla-simulator/carla" class="fa fa-github" style="color: #fcfcfc"> GitHub</a>
+        </span>
+    
+    
+      <span><a href="../nvidia/" style="color: #fcfcfc">&laquo; 前一页</a></span>
+    
+    
+      <span><a href="../adv_ptv/" style="color: #fcfcfc">后一页 &raquo;</a></span>
+    
+  </span>
+</div>
+    <script src="../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "..";</script>
+    <script src="../js/theme_extra.js"></script>
+    <script src="../js/theme.js"></script>
+      <script src="../extra.js"></script>
+      <script src="../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <link rel="shortcut icon" href="../img/favicon.ico" />
+    <title>SimReady content with NVIDIA Omniverse - CARLA Simulator</title>
+    <link rel="stylesheet" href="../css/theme.css" />
+    <link rel="stylesheet" href="../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+        <link href="../extra.css" rel="stylesheet" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "SimReady content with NVIDIA Omniverse";
+        var mkdocs_page_input_path = "ecosys_simready.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href=".." class="icon icon-home"> CARLA Simulator
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+      <input type="text" name="q" placeholder="搜索文档" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="..">Home</a>
+                </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Getting started</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../start_introduction/">Introduction</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../start_quickstart/">Quick start package installation</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_first_steps/">First steps</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../build_carla/">Building CARLA</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Next steps</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_content_authoring_maps/">Content authoring - maps</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_content_authoring_vehicles/">Content authoring - vehicles</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../content_authoring_props/">Content authoring - props</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">CARLA topics</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../coordinates/">Coordinates and transformations</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../foundations/">Foundations</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../core_actors/">Actors</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../core_map/">Maps</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../core_sensors/">Sensors and data</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../ts_traffic_simulation_overview/">Traffic</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../ai_rendering/">AI rendering</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../development_tutorials/">Development</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../custom_assets_tutorials/">Custom assets</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Resources</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../python_api/">Python API</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../catalogue/">Catalogue</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../ref_cpp/">C++ reference</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../bp_library/">Blueprint library</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tutorials/">Tutorials</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../ext_docs/">Extended documentation</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../download/">Downloads</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">CARLA Ecosystem</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../ecosys_ansys/">ANSYS</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_G_rllib_integration/">AWS</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_G_carsim_integration/">CarSIM</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_G_chrono/">Chrono</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../large_map_roadrunner/">MathWorks</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../inverted_ai/">Inverted AI</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../nvidia/">NVIDIA</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../adv_opendrive/">ASAM OpenDRIVE</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../adv_ptv/">PTV Vissim</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../adv_rss/">RSS</a>
+                  </li>
+                  <li class="toctree-l1"><a class="" href="https://carla.readthedocs.io/projects/ros-bridge/en/latest/">ROS</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_G_scenic/">Scenic</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../adv_sumo/">SUMO</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../ecosys_synkrotron/">SYNKROTRON</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Contributing</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../cont_contribution_guidelines/">Guidelines</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../cont_coding_standard/">Coding standards</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../cont_doc_standard/">Documentation standard</a>
+                  </li>
+                  <li class="toctree-l1"><a class="" href=".."></a>
+                  </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="..">CARLA Simulator</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href=".." class="icon icon-home" aria-label="Docs"></a></li>
+      <li class="breadcrumb-item active">SimReady content with NVIDIA Omniverse</li>
+    <li class="wy-breadcrumbs-aside">
+          <a href="https://github.com/carla-simulator/carla/edit/master/Docs/ecosys_simready.md" class="icon icon-github"> 在 GitHub 上编辑</a>
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="simready-content-with-nvidia-omniverse">SimReady content with NVIDIA Omniverse</h1>
+<p>NVIDIA's <a href="https://developer.nvidia.com/omniverse/simready-assets"><strong>SimReady</strong></a> specification supports the preparation of <strong>3D content that is purpose-built for simulation</strong> to help streamline content creation pipelines for simulating 3D virtual environments for machine learning purposes in robotics and autonomous driving. Through the Omniverse Unreal Engine plugin now integrated into CARLA users can import, in just a few clicks, SimReady content such as vehicles already configured with working lights, doors and wheels and props ready for use instantaneously to decorate CARLA maps. CARLA's Omniverse integration boasts to significantly accelerate your environment building pipeline and opens the door to a whole world of applications in the <a href="https://www.nvidia.com/en-us/omniverse/ecosystem/"><strong>Omniverse ecosystem</strong></a>. </p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The Omniverse Unreal Engine Connector is currently only available in Windows.</p>
+</div>
+<p>Follow these steps to start using Omniverse and using SimReady content in CARLA:</p>
+<p>Before anything else, you should first <a href="https://docs.omniverse.nvidia.com/install-guide/latest/index.html">install NVIDIA Omniverse</a></p>
+<h3 id="1-installing-the-unreal-engine-omniverse-connector">1. Installing the Unreal Engine Omniverse Connector</h3>
+<ol>
+<li>Launch the NVIDIA Omniverse Launcher</li>
+<li>Navigate to the <strong>Exchange</strong> tab</li>
+<li>Locate the <strong>Epic Games Unreal Engine 4.26 Omniverse Connector</strong></li>
+<li>Ensure the install version is <strong>Release 105.1.578</strong></li>
+<li>Click <em>Install</em></li>
+<li>Omniverse will not be able to find Unreal Engine, click <strong>OK</strong>.</li>
+<li>It will prompt you to find your Unreal Engine installation, select this path: {UE4_ROOT}\Engine\Plugins\Marketplace\NVIDIA</li>
+<li>Press <em>Install</em>.</li>
+</ol>
+<h3 id="2-set-up-local-omniverse-server">2. Set Up Local Omniverse Server</h3>
+<ol>
+<li>Open NVIDIA Omniverse with the launcher</li>
+<li>Navigate to the <em>Nucleus</em> tab</li>
+<li>Click on <em>Create Local Server</em></li>
+<li>Create administrator details</li>
+<li>Select the folder icon next to <em>Local Nucleus Service</em>, this should open your localhost server in your web browser</li>
+</ol>
+<h3 id="3-connecting-to-carla-simulator">3. Connecting to CARLA Simulator</h3>
+<ol>
+<li>Launch CARLA using <code>make launch</code> from the command line the CARLA root folder</li>
+<li>If an existing server is active and you want to restart the setup, click on <em>Clean Local Assets</em> (optional)</li>
+<li>Select the <em>Omniverse</em> icon and click on <em>Add Server</em></li>
+<li>Name the server and click <em>Add to Content Browser</em></li>
+<li>A login form should launch in your browser, click <em>Create Account</em></li>
+<li>Create administrator details</li>
+<li>Omniverse folders should now be visible in your Content/Omniverse folder in the Unreal Engine content browser</li>
+<li>Go to your web browser again</li>
+<li>Click on <em>Connect to a Server</em></li>
+<li>Authenticate using the server name you set for the CARLA server</li>
+<li>Use the administrator details that you set for the CARLA server</li>
+<li>The server folders should now show up in your browser</li>
+</ol>
+<h3 id="4-importing-a-simready-asset">4. Importing a SimReady asset</h3>
+<ol>
+<li>Navigate to the Projects folder within the browser navigator</li>
+<li>Right click, and select <em>Upload Folder</em></li>
+<li>Select your SimReady folders</li>
+<li>Upload the files</li>
+</ol>
+<h3 id="5-using-the-omniverse-connector-to-load-the-vehicle-to-carla">5. Using the Omniverse Connector to Load the Vehicle to CARLA</h3>
+<ol>
+<li>Open the CARLA project in Unreal Engine</li>
+<li>Navigate to <code>CarlaTools/Content/USDImporter</code></li>
+<li>Right click on <em>UW_USDVehicleImporterEditorWidget</em></li>
+<li>Select <em>Run Editor Utility Widget</em></li>
+<li>Find the Vehicle within your Omniverse browser navigator</li>
+<li>Copy the path (should look something like: omniverse://localhost/Projects/SimReadyUSD.../vehicle.usd)</li>
+<li>Paste it inside the Omiverse URL tab within the Widget</li>
+<li>Select <em>Import Asset</em></li>
+<li>You should see the vehicle show up in the engine within the folder that you specified in the <em>Import destination</em> field</li>
+<li>Open another map scene (it may have opened a new scene with the imported data) a <em>Save Content</em> prompt should appear. Uncheck the <em>Untitled</em> scene, and click on <em>Save selected</em> to save new content</li>
+<li>The vehicle is now usable within CARLA and will be available through the Python API</li>
+</ol>
+              
+            </div>
+          </div><footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+        <span>
+          <a href="https://github.com/carla-simulator/carla" class="fa fa-github" style="color: #fcfcfc"> GitHub</a>
+        </span>
+    
+    
+    
+  </span>
+</div>
+    <script src="../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "..";</script>
+    <script src="../js/theme_extra.js"></script>
+    <script src="../js/theme.js"></script>
+      <script src="../extra.js"></script>
+      <script src="../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>

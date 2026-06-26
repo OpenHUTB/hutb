@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <link rel="shortcut icon" href="../img/favicon.ico" />
+    <title>1st. World and client - CARLA Simulator</title>
+    <link rel="stylesheet" href="../css/theme.css" />
+    <link rel="stylesheet" href="../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+        <link href="../extra.css" rel="stylesheet" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "1st. World and client";
+        var mkdocs_page_input_path = "core_world.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href=".." class="icon icon-home"> CARLA Simulator
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+      <input type="text" name="q" placeholder="搜索文档" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="..">Home</a>
+                </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Getting started</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../start_introduction/">Introduction</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../start_quickstart/">Quick start package installation</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_first_steps/">First steps</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../build_carla/">Building CARLA</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Next steps</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_content_authoring_maps/">Content authoring - maps</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_content_authoring_vehicles/">Content authoring - vehicles</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../content_authoring_props/">Content authoring - props</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">CARLA topics</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../coordinates/">Coordinates and transformations</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../foundations/">Foundations</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../core_actors/">Actors</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../core_map/">Maps</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../core_sensors/">Sensors and data</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../ts_traffic_simulation_overview/">Traffic</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../ai_rendering/">AI rendering</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../development_tutorials/">Development</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../custom_assets_tutorials/">Custom assets</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Resources</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../python_api/">Python API</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../catalogue/">Catalogue</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../ref_cpp/">C++ reference</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../bp_library/">Blueprint library</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tutorials/">Tutorials</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../ext_docs/">Extended documentation</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../download/">Downloads</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">CARLA Ecosystem</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../ecosys_ansys/">ANSYS</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_G_rllib_integration/">AWS</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_G_carsim_integration/">CarSIM</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_G_chrono/">Chrono</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../large_map_roadrunner/">MathWorks</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../inverted_ai/">Inverted AI</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../nvidia/">NVIDIA</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../adv_opendrive/">ASAM OpenDRIVE</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../adv_ptv/">PTV Vissim</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../adv_rss/">RSS</a>
+                  </li>
+                  <li class="toctree-l1"><a class="" href="https://carla.readthedocs.io/projects/ros-bridge/en/latest/">ROS</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_G_scenic/">Scenic</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../adv_sumo/">SUMO</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../ecosys_synkrotron/">SYNKROTRON</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Contributing</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../cont_contribution_guidelines/">Guidelines</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../cont_coding_standard/">Coding standards</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../cont_doc_standard/">Documentation standard</a>
+                  </li>
+                  <li class="toctree-l1"><a class="" href=".."></a>
+                  </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="..">CARLA Simulator</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href=".." class="icon icon-home" aria-label="Docs"></a></li>
+      <li class="breadcrumb-item active">1st. World and client</li>
+    <li class="wy-breadcrumbs-aside">
+          <a href="https://github.com/carla-simulator/carla/edit/master/Docs/core_world.md" class="icon icon-github"> 在 GitHub 上编辑</a>
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="1st-world-and-client">1st. World and client</h1>
+<p>The client and the world are two of the fundamentals of CARLA, a necessary abstraction to operate the simulation and its actors.  </p>
+<p>This tutorial goes from defining the basics and creation of these elements, to describing their possibilities. If any doubt or issue arises during the reading, the <a href="https://github.com/carla-simulator/carla/discussions/">CARLA forum</a> is there to solve them.  </p>
+<ul>
+<li><a href="#the-client"><strong>The client</strong></a>  <ul>
+<li><a href="#client-creation">Client creation</a>  </li>
+<li><a href="#world-connection">World connection</a>  </li>
+<li><a href="#other-client-utilities">Other client utilities</a>  </li>
+</ul>
+</li>
+<li><a href="#the-world"><strong>The world</strong></a>  <ul>
+<li><a href="#actors">Actors</a>  </li>
+<li><a href="#weather">Weather</a>  </li>
+<li><a href="#lights">Lights</a>  </li>
+<li><a href="#debugging">Debugging</a>  </li>
+<li><a href="#world-snapshots">World snapshots</a>  </li>
+<li><a href="#world-settings">World settings</a>  </li>
+</ul>
+</li>
+</ul>
+<hr />
+<h2 id="the-client">The client</h2>
+<p>Clients are one of the main elements in the CARLA architecture. They connect to the server, retrieve information, and command changes. That is done via scripts. The client identifies itself, and connects to the world to then operate with the simulation.  </p>
+<p>Besides that, clients are able to access advanced CARLA modules, features, and apply command batches. Only command batches will be covered in this section. These are useful for basic things such as spawning lots of actors. The rest of features are more complex, and they will be addressed in their respective pages in <strong>Advanced steps</strong>.  </p>
+<p>Take a look at <a href="../python_api/#carla.Client"><strong>carla.Client</strong></a> in the Python API reference to learn on specific methods and variables of the class. </p>
+<h3 id="client-creation">Client creation</h3>
+<p>Two things are needed. The <strong>IP</strong> address identifying it, and <strong>two TCP ports</strong> to communicate with the server. An optional third parameter sets the amount of working threads. By default this is set to all (<code>0</code>). The <a href="../python_api/#carla.Client.__init__">carla.Client</a> in the Python API reference contains a snipet that shows how to parse these as arguments when running the script. </p>
+<pre><code class="language-py">client = carla.Client('localhost', 2000)
+</code></pre>
+<p>By default, CARLA uses local host IP, and port 2000 to connect but these can be changed at will. The second port will always be <code>n+1</code>, 2001 in this case.  </p>
+<p>Once the client is created, set its <strong>time-out</strong>. This limits all networking operations so that these don't block the client forever. An error will be returned if connection fails. </p>
+<pre><code class="language-py">client.set_timeout(10.0) # seconds
+</code></pre>
+<p>It is possible to have many clients connected, as it is common to have more than one script running at a time. Working in a multiclient scheme with advanced CARLA features, such as the traffic manager, is bound to make communication more complex.  </p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Client and server have different <code>libcarla</code> modules. If the versions differ, issues may arise. This can be checked using the <code>get_client_version()</code> and <code>get_server_version()</code> methods. </p>
+</div>
+<h3 id="world-connection">World connection</h3>
+<p>A client can connect and retrieve the current world fairly easily. </p>
+<pre><code class="language-py">world = client.get_world()
+</code></pre>
+<p>The client can also get a list of available maps to change the current one. This will destroy the current world and create a new one.</p>
+<pre><code class="language-py">print(client.get_available_maps())
+...
+world = client.load_world('Town01')
+# client.reload_world() creates a new instance of the world with the same map. 
+</code></pre>
+<p>Every world object has an <code>id</code> or episode. Everytime the client calls for <code>load_world()</code> or <code>reload_world()</code> the previous one is destroyed. A new one is created from scratch with a new episode. Unreal Engine is not rebooted in the process. </p>
+<h3 id="using-commands">Using commands</h3>
+<p><strong>Commands</strong> are adaptations of some of the most-common CARLA methods, that can be applied in batches. For instance, the <a href="../python_api/#command.SetAutopilot">command.SetAutopilot</a> is equivalent to <a href="../python_api/#carla.Vehicle.set_autopilot">Vehicle.set_autopilot()</a>, enables the autopilot for a vehicle. However, using the methods <a href="../python_api/#carla.Client.apply_batch">Client.apply_batch</a> or <a href="../python_api/#carla.Client.apply_batch_sync">Client.apply_batch_sync()</a>, a list of commands can be applied in one single simulation step. This becomes extremely useful for methods that are usually applied to even hundreds of elements.  </p>
+<p>The following example uses a batch to destroy a list of vehicles all at once.  </p>
+<pre><code class="language-py">client.apply_batch([carla.command.DestroyActor(x) for x in vehicles_list])
+</code></pre>
+<p>All the commands available are listed in the <a href="../python_api/#command.ApplyAngularVelocity">latest section</a> of the Python API reference.  </p>
+<h3 id="other-client-utilities">Other client utilities</h3>
+<p>The main purpose of the client object is to get or change the world, and apply commands. However, it also provides access to some additional features.  </p>
+<ul>
+<li><strong>Traffic manager.</strong> This module is in charge of every vehicle set to autopilot to recreate urban traffic.  </li>
+<li><strong><a href="../adv_recorder/">Recorder</a>.</strong> Allows to reenact a previous simulation. Uses <a href="./#world-snapshots">snapshots</a> summarizing the simulation state per frame.  </li>
+</ul>
+<hr />
+<h2 id="the-world">The world</h2>
+<p>The major ruler of the simulation. Its instance should be retrieved by the client. It does not contain the model of the world itself, that is part of the <a href="../core_map/">Map</a> class. Instead, most of the information, and general settings can be accessed from this class.</p>
+<ul>
+<li>Actors in the simulation and the spectator.  </li>
+<li>Blueprint library.  </li>
+<li>Map.  </li>
+<li>Simulation settings.  </li>
+<li>Snapshots.  </li>
+<li>Weather and light manager.  </li>
+</ul>
+<p>Some of its most important methods are <em>getters</em>, precisely to retrieve information or instances of these elements. Take a look at <a href="../python_api/#carla.World">carla.World</a> to learn more about it.  </p>
+<h3 id="actors">Actors</h3>
+<p>The world has different methods related with actors that allow for different functionalities.  </p>
+<ul>
+<li>Spawn actors (but not destroy them). </li>
+<li>Get every actor on scene, or find one in particular.  </li>
+<li>Access the blueprint library.  </li>
+<li>Access the spectator actor, the simulation's point of view.  </li>
+<li>Retrieve a random location that is fitting to spawn an actor.  </li>
+</ul>
+<p>Spawning will be explained in <a href="../core_actors/">2nd. Actors and blueprints</a>. It requires some understanding on the blueprint library, attributes, etc.  </p>
+<h3 id="weather">Weather</h3>
+<p>The weather is not a class on its own, but a set of parameters accessible from the world. The parametrization includes sun orientation, cloudiness, wind, fog, and much more. The helper class <a href="../python_api/#carla.WeatherParameters">carla.WeatherParameters</a> is used to define a custom weather.  </p>
+<pre><code class="language-py">weather = carla.WeatherParameters(
+    cloudiness=80.0,
+    precipitation=30.0,
+    sun_altitude_angle=70.0)
+
+world.set_weather(weather)
+
+print(world.get_weather())
+</code></pre>
+<p>There are some weather presets that can be directly applied to the world. These are listed in <a href="../python_api/#carla.WeatherParameters">carla.WeatherParameters</a> and accessible as an enum.  </p>
+<pre><code class="language-py">world.set_weather(carla.WeatherParameters.WetCloudySunset)
+</code></pre>
+<p>The weather can also be customized using two scripts provided by CARLA. </p>
+<ul>
+<li><strong><code>environment.py</code></strong> <em>(in <code>PythonAPI/util</code>)</em> — Provides access to weather and light parameters so that these can be changed in real time.  </li>
+</ul>
+<details>
+<summary> Optional arguments in <b>environment.py</b> </summary>
+
+
+<pre><code class="language-sh">  -h, --help            show this help message and exit
+  --host H              IP of the host server (default: 127.0.0.1)
+  -p P, --port P        TCP port to listen to (default: 2000)
+  --sun SUN             Sun position presets [sunset | day | night]
+  --weather WEATHER     Weather condition presets [clear | overcast | rain]
+  --altitude A, -alt A  Sun altitude [-90.0, 90.0]
+  --azimuth A, -azm A   Sun azimuth [0.0, 360.0]
+  --clouds C, -c C      Clouds amount [0.0, 100.0]
+  --rain R, -r R        Rain amount [0.0, 100.0]
+  --puddles Pd, -pd Pd  Puddles amount [0.0, 100.0]
+  --wind W, -w W        Wind intensity [0.0, 100.0]
+  --fog F, -f F         Fog intensity [0.0, 100.0]
+  --fogdist Fd, -fd Fd  Fog Distance [0.0, inf)
+  --wetness Wet, -wet Wet
+                        Wetness intensity [0.0, 100.0]
+</code></pre>
+
+</details>
+<p><br></p>
+<ul>
+<li><strong><code>dynamic_weather.py</code></strong> <em>(in <code>PythonAPI/examples</code>)</em> — Enables a particular weather cycle prepared by developers for each CARLA map.  </li>
+</ul>
+<details>
+<summary> Optional arguments in <b>dynamic_weather.py</b> </summary>
+
+
+<pre><code class="language-sh">  -h, --help            show this help message and exit
+  --host H              IP of the host server (default: 127.0.0.1)
+  -p P, --port P        TCP port to listen to (default: 2000)
+  -s FACTOR, --speed FACTOR
+                        rate at which the weather changes (default: 1.0)
+</code></pre>
+
+</details>
+<p><br></p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Changes in the weather do not affect physics. They are only visuals that can be captured by the camera sensors. </p>
+</div>
+<p><strong>Night mode starts when sun_altitude_angle &lt; 0</strong>, which is considered sunset. This is when lights become especially relevant.  </p>
+<h3 id="lights">Lights</h3>
+<ul>
+<li><strong>Street lights</strong> automatically turn on when the simulation enters night mode. The lights are placed by the developers of the map, and accessible as <a href="../python_api/#carla.Light"><strong>carla.Light</strong></a> objects. Properties such as color and intensity can be changed at will. The variable <strong>light_state</strong> of type <a href="../python_api/#carla.LightState"><strong>carla.LightState</strong></a> allows setting all of these in one call.<br />
+Street lights are categorized using their attribute <strong>light_group</strong>, of type <a href="../python_api/#carla.LightGroup"><strong>carla.LightGroup</strong></a>. This allows to classify lights as street lights, building lights... An instance of <a href="../python_api/#carla.LightManager"><strong>carla.LightManager</strong></a> can be retrieved to handle groups of lights in one call.  </li>
+</ul>
+<pre><code class="language-py"># Get the light manager and lights
+lmanager = world.get_lightmanager()
+mylights = lmanager.get_all_lights()
+
+# Custom a specific light
+light01 = mylights[0]
+light01.turn_on()
+light01.set_intensity(100.0)
+state01 = carla.LightState(200.0,red,carla.LightGroup.Building,True)
+light01.set_light_state(state01)
+
+# Custom a group of lights
+my_lights = lmanager.get_light_group(carla.LightGroup.Building)
+lmanager.turn_on(my_lights)
+lmanager.set_color(my_lights,carla.Color(255,0,0))
+lmanager.set_intensities(my_lights,list_of_intensities)
+</code></pre>
+<ul>
+<li><strong>Vehicle lights</strong> have to be turned on/off by the user. Each vehicle has a set of lights listed in <a href="../python_api/#carla.VehicleLightState"><strong>carla.VehicleLightState</strong></a>. So far, not all vehicles have lights integrated. Here is a list of those that are available by the time of writing.  <ul>
+<li><strong>Bikes.</strong> All of them have a front and back position light.  </li>
+<li><strong>Motorcycles.</strong> Yamaha and Harley Davidson models.  </li>
+<li><strong>Cars.</strong> Audi TT, Chevrolet, Dodge (the police car), Etron, Lincoln, Mustang, Tesla 3S, Wolkswagen T2 and the new guests coming to CARLA.  </li>
+</ul>
+</li>
+</ul>
+<p>The lights of a vehicle can be retrieved and updated anytime using the methods <a href="../python_api/#carla.Vehicle.get_light_state">carla.Vehicle.get_light_state</a> and <a href="#python_api.md#carla.Vehicle.set_light_state">carla.Vehicle.set_light_state</a>. These use binary operations to customize the light setting.  </p>
+<pre><code class="language-py"># Turn on position lights
+current_lights = carla.VehicleLightState.NONE
+current_lights |= carla.VehicleLightState.Position
+vehicle.set_light_state(current_lights)
+</code></pre>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Lights can also be set in real time using the <code>environment.py</code> described in the <a href="#weather">weather</a> section.  </p>
+</div>
+<h3 id="debugging">Debugging</h3>
+<p>World objects have a <a href="../python_api/#carla.DebugHelper">carla.DebugHelper</a> object as a public attribute. It allows for different shapes to be drawn during the simulation. These are used to  trace the events happening. The following example would draw a red box at an actor's location and rotation. </p>
+<pre><code class="language-py">debug = world.debug
+debug.draw_box(carla.BoundingBox(actor_snapshot.get_transform().location,carla.Vector3D(0.5,0.5,2)),actor_snapshot.get_transform().rotation, 0.05, carla.Color(255,0,0,0),0)
+</code></pre>
+<p>This example is extended in a snipet in <a href="../python_api/#carla.DebugHelper.draw_box">carla.DebugHelper</a> that shows how to draw boxes for every actor in a world snapshot. </p>
+<h3 id="world-snapshots">World snapshots</h3>
+<p>Contains the state of every actor in the simulation at a single frame. A sort of still image of the world with a time reference. The information comes from the same simulation step, even in asynchronous mode.  </p>
+<pre><code class="language-py"># Retrieve a snapshot of the world at current frame.
+world_snapshot = world.get_snapshot()
+</code></pre>
+<p>A <a href="../python_api/#carla.WorldSnapshot">carla.WorldSnapshot</a> contains a <a href="../python_api/#carla.Timestamp">carla.Timestamp</a> and a list of <a href="../python_api/#carla.ActorSnapshot">carla.ActorSnapshot</a>. Actor snapshots can be searched using the <code>id</code> of an actor. A snapshot lists the <code>id</code> of the actors appearing in it.  </p>
+<pre><code class="language-py">timestamp = world_snapshot.timestamp # Get the time reference 
+
+for actor_snapshot in world_snapshot: # Get the actor and the snapshot information
+    actual_actor = world.get_actor(actor_snapshot.id)
+    actor_snapshot.get_transform()
+    actor_snapshot.get_velocity()
+    actor_snapshot.get_angular_velocity()
+    actor_snapshot.get_acceleration()  
+
+actor_snapshot = world_snapshot.find(actual_actor.id) # Get an actor's snapshot
+</code></pre>
+<h3 id="world-settings">World settings</h3>
+<p>The world has access to some advanced configurations for the simulation. These determine rendering conditions, simulation time-steps, and synchrony between clients and server. They are accessible from the helper class <a href="../python_api/#carla.WorldSettings">carla.WorldSettings</a>.  </p>
+<p>For the time being, default CARLA runs with the best graphics quality, a variable time-step, and asynchronously. To dive further in this matters take a look at the <strong>Advanced steps</strong> section. The pages on <a href="../adv_synchrony_timestep/">synchrony and time-step</a>, and <a href="../adv_rendering_options/">rendering options</a> could be a great starting point.</p>
+<hr />
+<p>That is a wrap on the world and client objects. The next step takes a closer look into actors and blueprints to give life to the simulation.  </p>
+<p>Keep reading to learn more. Visit the forum to post any doubts or suggestions that have come to mind during this reading.  </p>
+<div text-align: center>
+<div class="build-buttons">
+<p>
+<a href="https://github.com/carla-simulator/carla/discussions/" target="_blank" class="btn btn-neutral" title="CARLA forum">
+CARLA forum</a>
+</p>
+</div>
+<div class="build-buttons">
+<p>
+<a href="../core_actors" target="_blank" class="btn btn-neutral" title="2nd. Actors and blueprints">
+2nd. Actors and blueprints</a>
+</p>
+</div>
+</div>
+              
+            </div>
+          </div><footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+        <span>
+          <a href="https://github.com/carla-simulator/carla" class="fa fa-github" style="color: #fcfcfc"> GitHub</a>
+        </span>
+    
+    
+    
+  </span>
+</div>
+    <script src="../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "..";</script>
+    <script src="../js/theme_extra.js"></script>
+    <script src="../js/theme.js"></script>
+      <script src="../extra.js"></script>
+      <script src="../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>

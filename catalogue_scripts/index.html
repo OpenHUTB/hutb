@@ -1,0 +1,1558 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <link rel="shortcut icon" href="../img/favicon.ico" />
+    <title>Scripts catalogue - CARLA Simulator</title>
+    <link rel="stylesheet" href="../css/theme.css" />
+    <link rel="stylesheet" href="../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+        <link href="../extra.css" rel="stylesheet" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "Scripts catalogue";
+        var mkdocs_page_input_path = "catalogue_scripts.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href=".." class="icon icon-home"> CARLA Simulator
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+      <input type="text" name="q" placeholder="搜索文档" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="..">Home</a>
+                </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Getting started</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../start_introduction/">Introduction</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../start_quickstart/">Quick start package installation</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_first_steps/">First steps</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../build_carla/">Building CARLA</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Next steps</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_content_authoring_maps/">Content authoring - maps</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_content_authoring_vehicles/">Content authoring - vehicles</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../content_authoring_props/">Content authoring - props</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">CARLA topics</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../coordinates/">Coordinates and transformations</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../foundations/">Foundations</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../core_actors/">Actors</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../core_map/">Maps</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../core_sensors/">Sensors and data</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../ts_traffic_simulation_overview/">Traffic</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../ai_rendering/">AI rendering</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../development_tutorials/">Development</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../custom_assets_tutorials/">Custom assets</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Resources</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../python_api/">Python API</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../catalogue/">Catalogue</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../ref_cpp/">C++ reference</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../bp_library/">Blueprint library</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tutorials/">Tutorials</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../ext_docs/">Extended documentation</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../download/">Downloads</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">CARLA Ecosystem</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../ecosys_ansys/">ANSYS</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_G_rllib_integration/">AWS</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_G_carsim_integration/">CarSIM</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_G_chrono/">Chrono</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../large_map_roadrunner/">MathWorks</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../inverted_ai/">Inverted AI</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../nvidia/">NVIDIA</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../adv_opendrive/">ASAM OpenDRIVE</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../adv_ptv/">PTV Vissim</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../adv_rss/">RSS</a>
+                  </li>
+                  <li class="toctree-l1"><a class="" href="https://carla.readthedocs.io/projects/ros-bridge/en/latest/">ROS</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_G_scenic/">Scenic</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../adv_sumo/">SUMO</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../ecosys_synkrotron/">SYNKROTRON</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Contributing</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../cont_contribution_guidelines/">Guidelines</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../cont_coding_standard/">Coding standards</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../cont_doc_standard/">Documentation standard</a>
+                  </li>
+                  <li class="toctree-l1"><a class="" href=".."></a>
+                  </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="..">CARLA Simulator</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href=".." class="icon icon-home" aria-label="Docs"></a></li>
+      <li class="breadcrumb-item active">Scripts catalogue</li>
+    <li class="wy-breadcrumbs-aside">
+          <a href="https://github.com/carla-simulator/carla/edit/master/Docs/catalogue_scripts.md" class="icon icon-github"> 在 GitHub 上编辑</a>
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="scripts-catalogue">Scripts catalogue</h1>
+<p>This document outlines the available example Python scripts and utilities for the CARLA Python API. You can use these scripts for learning CARLA's Python API, performing utility functions or testing and to form the basis of your own scripts. The example scripts documented below can by found in the <code>PythonAPI/examples</code> directory of the CARLA repository or package. </p>
+<ul>
+<li><a href="#manual-control">Manual control</a></li>
+<li><a href="#automatic-control">Automatic control</a></li>
+<li><a href="#generate-traffic">Generate traffic</a></li>
+<li><a href="#inverted-ai-traffic">Inverted AI traffic</a></li>
+<li><a href="#start-recording">Start recording</a></li>
+<li><a href="#start-replaying">Start replaying</a></li>
+<li><a href="#open3d-lidar">Open3D LIDAR</a></li>
+<li><a href="#bounding-boxes">Bounding boxes</a></li>
+<li><a href="#no-rendering-mode">No rendering mode</a></li>
+<li><a href="#dynamic-weather">Dynamic weather</a></li>
+<li><a href="#lidar-to-camera">LIDAR to camera</a></li>
+<li><a href="#vehicle-gallery">Vehicle gallery</a></li>
+</ul>
+<hr />
+<h2 id="manual-control">Manual control</h2>
+<ul>
+<li>Script filename: <code>manual_control.py</code></li>
+<li>Example usage: <code>python3 manual_control.py --res 800x600 --sync</code></li>
+</ul>
+<p>This script allows a user to manually control a vehicle through a CARLA map using the keyboard, with a visualization of sensor output in a Pygame window. It is one of the first scripts new users should experiment with to explore CARLA maps and to understand the behavior of vehicles and sensors. It is also very useful for testing and debugging when changes have been made to core CARLA functionality relating to rendering, physics, traffic or sensing that might affect appearance, driving behavior or sensor output.</p>
+<p>The script spawns a vehicle (the ego vehicle) at a randomly selected spawn point in the map and allows manual control of the vehicle through the arrow keys or WASD keys. Other keyboard shortcuts are available to change vehicles, change gears, change sensor type or start recording and many other functions. </p>
+<p>Manual control can be combined with the <a href="#generate-traffic">generate traffic script</a> to drive a vehicle through traffic. Launch the generate traffic script prior to launching manual control. Do not attempt to run both scripts in synchronous mode, there should only be 1 client running in synchronous mode. By default manual control runs in asynchronous mode and generate traffic runs in synchronous mode, hence they will work together smoothly in their default synchrony configuration. </p>
+<h3 id="key-commands">Key commands</h3>
+<table>
+<thead>
+<tr>
+<th>Key</th>
+<th>Control</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>W, &uarr;</td>
+<td>Throttle</td>
+</tr>
+<tr>
+<td>S, &darr;</td>
+<td>Brake</td>
+</tr>
+<tr>
+<td>A/D, &larr;, &rarr;</td>
+<td>Steer left/right</td>
+</tr>
+<tr>
+<td>Q</td>
+<td>Toggle reverse</td>
+</tr>
+<tr>
+<td>Space</td>
+<td>Hand-brake</td>
+</tr>
+<tr>
+<td>P</td>
+<td>Toggle autopilot</td>
+</tr>
+<tr>
+<td>M</td>
+<td>Toggle manual transmission</td>
+</tr>
+<tr>
+<td>,/.</td>
+<td>Gear up/down</td>
+</tr>
+<tr>
+<td>CTRL + W</td>
+<td>Toggle constant velocity mode at 60 km/h</td>
+</tr>
+<tr>
+<td>L</td>
+<td>Toggle next light type</td>
+</tr>
+<tr>
+<td>SHIFT + L</td>
+<td>Toggle high beam</td>
+</tr>
+<tr>
+<td>Z/X</td>
+<td>Toggle right/left blinker</td>
+</tr>
+<tr>
+<td>I</td>
+<td>Toggle interior light</td>
+</tr>
+<tr>
+<td>TAB</td>
+<td>Change sensor position</td>
+</tr>
+<tr>
+<td>` or N</td>
+<td>Next sensor</td>
+</tr>
+<tr>
+<td>[1-9]</td>
+<td>Change to sensor [1-9]</td>
+</tr>
+<tr>
+<td>G</td>
+<td>Toggle radar visualization</td>
+</tr>
+<tr>
+<td>C</td>
+<td>Change weather (Shift+C reverse)</td>
+</tr>
+<tr>
+<td>Backspace</td>
+<td>Change vehicle</td>
+</tr>
+<tr>
+<td>O</td>
+<td>Open/close all doors of vehicle</td>
+</tr>
+<tr>
+<td>T</td>
+<td>Toggle vehicle's telemetry</td>
+</tr>
+<tr>
+<td>V</td>
+<td>Select next map layer (Shift+V reverse)</td>
+</tr>
+<tr>
+<td>B</td>
+<td>Load current selected map layer (Shift+B to unload)</td>
+</tr>
+<tr>
+<td>R</td>
+<td>Toggle recording images to disk</td>
+</tr>
+<tr>
+<td>CTRL + R</td>
+<td>Toggle recording of simulation (replacing any previous)</td>
+</tr>
+<tr>
+<td>CTRL + P</td>
+<td>Start replaying last recorded simulation</td>
+</tr>
+<tr>
+<td>CTRL + +</td>
+<td>Increments the start time of the replay by 1 second (+SHIFT = 10 seconds)</td>
+</tr>
+<tr>
+<td>CTRL + -</td>
+<td>Decrements the start time of the replay by 1 second (+SHIFT = 10 seconds)</td>
+</tr>
+<tr>
+<td>F1</td>
+<td>Toggle HUD</td>
+</tr>
+<tr>
+<td>H/?</td>
+<td>Toggle help</td>
+</tr>
+<tr>
+<td>ESC</td>
+<td>Quit</td>
+</tr>
+</tbody>
+</table>
+<h3 id="command-line-arguments">Command line arguments</h3>
+<p>The manual control script has multiple command line arguments for configuration:</p>
+<table>
+<thead>
+<tr>
+<th>Argument</th>
+<th>Short form</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>--verbose</td>
+<td>-v</td>
+<td>-</td>
+<td>Print debug info</td>
+</tr>
+<tr>
+<td>--host</td>
+<td>-h</td>
+<td>127.0.0.1</td>
+<td>Host IP address</td>
+</tr>
+<tr>
+<td>--port</td>
+<td>-p</td>
+<td>2000</td>
+<td>TCP port for CARLA client</td>
+</tr>
+<tr>
+<td>--autopilot</td>
+<td>-a</td>
+<td>Not active</td>
+<td>Enable autopilot for ego vehicle</td>
+</tr>
+<tr>
+<td>--res</td>
+<td></td>
+<td>1280x720</td>
+<td>Pixel resolution of all camera sensors</td>
+</tr>
+<tr>
+<td>--filter</td>
+<td></td>
+<td>vehicle.*</td>
+<td>Filter for vehicle type</td>
+</tr>
+<tr>
+<td>--generation</td>
+<td></td>
+<td>2</td>
+<td>Specify vehicle model generation</td>
+</tr>
+<tr>
+<td>--rolename</td>
+<td></td>
+<td>hero</td>
+<td>Rolename assigned to the ego vehicle</td>
+</tr>
+<tr>
+<td>--gamma</td>
+<td></td>
+<td>2.2</td>
+<td>Gamma correction of the RGB camera</td>
+</tr>
+<tr>
+<td>--sync</td>
+<td></td>
+<td>Not active</td>
+<td>Activate the script in synchronous mode</td>
+</tr>
+</tbody>
+</table>
+<h3 id="script-variants">Script variants</h3>
+<p>There are multiple variants of the manual control script for different purposes. They maintain the same key commands and most of the same command line arguments, some have command line arguments.</p>
+<h4 id="chrono">Chrono</h4>
+<ul>
+<li>Script filename: <code>manual_control_chrono.py</code></li>
+</ul>
+<p>This script launches manual control with Chrono physics, using the Sedan powertrain parameters found in the <code>Co-Simulation/Chrono/Vehicles</code> directory of the CARLA repository/package. </p>
+<h4 id="fisheye">Fisheye</h4>
+<ul>
+<li>Script filename: <code>manual_control_fisheye.py</code></li>
+</ul>
+<p>This script launches manual control with the fisheye camera model. This script has the same key commands and command line arguments as <a href="#manual-control">Manual control</a>. It has some additional command line arguments for camera model parameters:</p>
+<table>
+<thead>
+<tr>
+<th>Argument</th>
+<th>Short form</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>--fov</td>
+<td></td>
+<td>90.0</td>
+<td>Camera field of view angle</td>
+</tr>
+<tr>
+<td>--fov_mask</td>
+<td></td>
+<td>Not active</td>
+<td>Mask pixels outside of FOV</td>
+</tr>
+<tr>
+<td>--fov_fade_size</td>
+<td></td>
+<td>0.0</td>
+<td>Fade of FOV edge, with the given broadening factor</td>
+</tr>
+<tr>
+<td>--model</td>
+<td></td>
+<td>perspective</td>
+<td>Camera model: <br>perspective <br>equidistant <br>equisolid <br>orthographic <br>stereographic <br>kannala-brandt</td>
+</tr>
+<tr>
+<td>--k0</td>
+<td></td>
+<td>0.0831</td>
+<td>k0 Kannala-Brandt parameter</td>
+</tr>
+<tr>
+<td>--k1</td>
+<td></td>
+<td>0.0111</td>
+<td>k1 Kannala-Brandt parameter</td>
+</tr>
+<tr>
+<td>--k2</td>
+<td></td>
+<td>0.00858</td>
+<td>k2 Kannala-Brandt parameter</td>
+</tr>
+<tr>
+<td>--k3</td>
+<td></td>
+<td>0.000854</td>
+<td>k3 Kannala-Brandt parameter</td>
+</tr>
+<tr>
+<td>--equirectangular</td>
+<td></td>
+<td>Not active</td>
+<td>Equirectangular projection</td>
+</tr>
+<tr>
+<td>--perspective</td>
+<td></td>
+<td>Not active</td>
+<td>Perspective projection</td>
+</tr>
+<tr>
+<td>--longitude_shift</td>
+<td>0.0</td>
+<td>Shifts view center by degrees for equirectangular model</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h4 id="steering-wheel">Steering wheel</h4>
+<ul>
+<li>Script filename: <code>manual_control_steeringwheel.py</code></li>
+</ul>
+<p>This script demonstrates how to control CARLA using an external steering wheel through Pygame's Joystick module. </p>
+<hr />
+<h2 id="automatic-control">Automatic control</h2>
+<ul>
+<li>Script filename: <code>automatic_control.py</code></li>
+<li>Example usage: <code>python3 automatic_control.py --agent Basic --loop</code></li>
+</ul>
+<p>Automatic control makes use of the CARLA Agents library to automatically control a vehicle around a CARLA map. The CARLA agents library contains various simple driving agent implementations intended for demonstrative purposes. A Pygame window visualizes the vehicle's camera view. </p>
+<table>
+<thead>
+<tr>
+<th>Argument</th>
+<th>Short form</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>--verbose</td>
+<td>-v</td>
+<td></td>
+<td>Print debug info</td>
+</tr>
+<tr>
+<td>--host</td>
+<td>-h</td>
+<td>127.0.0.1</td>
+<td>Host IP address</td>
+</tr>
+<tr>
+<td>--port</td>
+<td>-p</td>
+<td>2000</td>
+<td>TCP port for CARLA client</td>
+</tr>
+<tr>
+<td>--res</td>
+<td></td>
+<td>1280x720</td>
+<td>Pixel resolution of all camera sensors</td>
+</tr>
+<tr>
+<td>--filter</td>
+<td></td>
+<td>vehicle.*</td>
+<td>Filter for vehicle type</td>
+</tr>
+<tr>
+<td>--generation</td>
+<td></td>
+<td>2</td>
+<td>Specify vehicle model generation</td>
+</tr>
+<tr>
+<td>--sync</td>
+<td></td>
+<td>Not active</td>
+<td>Activate the script in synchronous mode</td>
+</tr>
+<tr>
+<td>--loop</td>
+<td>-l</td>
+<td>Not active</td>
+<td>Sets a new random destination upon reaching the previous one</td>
+</tr>
+<tr>
+<td>--agent</td>
+<td>-a</td>
+<td></td>
+<td>Agent type, "Behavior", "Basic" or "Constant"</td>
+</tr>
+<tr>
+<td>--behavior</td>
+<td>-b</td>
+<td></td>
+<td>Agent behavior, "cautious", "normal" or "aggressive"</td>
+</tr>
+<tr>
+<td>--seed</td>
+<td>-s</td>
+<td></td>
+<td>Seed for repeat executions</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="generate-traffic">Generate traffic</h2>
+<ul>
+<li>Script filename: <code>generate_traffic.py</code></li>
+<li>Example usage: <code>python3 generate_traffic.py -n 100</code></li>
+</ul>
+<p>This script generates traffic of varying density distributed across a chosen CARLA map. Pedestrians are also generated. The density of traffic and pedestrians can be chosen via command line arguments. The generate traffic script can be run in combination with manual control to drive a vehicle around a map populated with traffic, </p>
+<h3 id="command-line-arguments_1">Command line arguments</h3>
+<table>
+<thead>
+<tr>
+<th>Argument</th>
+<th>Short form</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>--number-of-vehicles</td>
+<td>-n</td>
+<td>30</td>
+<td>Number of vehicles to spawn</td>
+</tr>
+<tr>
+<td>--number-of-walkers</td>
+<td>-w</td>
+<td>10</td>
+<td>Number of pedestrians to spawn</td>
+</tr>
+<tr>
+<td>--host</td>
+<td>-h</td>
+<td>127.0.0.1</td>
+<td>Host IP address</td>
+</tr>
+<tr>
+<td>--port</td>
+<td>-p</td>
+<td>2000</td>
+<td>TCP port for CARLA client</td>
+</tr>
+<tr>
+<td>--safe</td>
+<td></td>
+<td></td>
+<td>Don't spawn vehicles prone to accidents</td>
+</tr>
+<tr>
+<td>--filterv</td>
+<td></td>
+<td>vehicle.*</td>
+<td>Filter vehicle models with string</td>
+</tr>
+<tr>
+<td>--filterw</td>
+<td></td>
+<td>walker.pedestrian.*</td>
+<td>Filter pedestrian models with string</td>
+</tr>
+<tr>
+<td>--generationv</td>
+<td></td>
+<td>All</td>
+<td>Specify vehicle generation, "1", "2" or "All"</td>
+</tr>
+<tr>
+<td>--generationw</td>
+<td></td>
+<td>All</td>
+<td>Specify pedestrian generation, "1", "2" or "All"</td>
+</tr>
+<tr>
+<td>--tm-port</td>
+<td></td>
+<td>8000</td>
+<td>Specify TCP port for the TM</td>
+</tr>
+<tr>
+<td>--asynch</td>
+<td></td>
+<td>Not active</td>
+<td>Run the script in synchronous mode</td>
+</tr>
+<tr>
+<td>--hybrid</td>
+<td></td>
+<td>Not active</td>
+<td>Activate hybrid mode for the TM</td>
+</tr>
+<tr>
+<td>--seed</td>
+<td>-s</td>
+<td></td>
+<td>Integer seed for random generation (activates the deterministic mode for the TM)</td>
+</tr>
+<tr>
+<td>--seedw</td>
+<td></td>
+<td></td>
+<td>Integer seed for the pedestrian module</td>
+</tr>
+<tr>
+<td>--car-lights-on</td>
+<td></td>
+<td>False</td>
+<td>Enable automatic light managment by the TM</td>
+</tr>
+<tr>
+<td>--hero</td>
+<td></td>
+<td>False</td>
+<td>Nominate a hero vehicle</td>
+</tr>
+<tr>
+<td>--respawn</td>
+<td></td>
+<td>False</td>
+<td>Automatically respawn dormant vehicles in large maps</td>
+</tr>
+<tr>
+<td>--no-rendering</td>
+<td></td>
+<td>Not active</td>
+<td>Activate no-rendering mode for the CARLA server</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="inverted-ai-traffic">Inverted AI traffic</h2>
+<ul>
+<li>Script filename: <code>invertedai_traffic.py</code></li>
+<li>Example usage: <code>python3 invertedai_traffic.py -iai-key &lt;token&gt; --record</code></li>
+</ul>
+<p>This script demonstrates how to launch a traffic simulation in CARLA driven by <a href="https://www.inverted.ai/home">Inverted AI's</a> AI traffic engine. You will need to provide an Inverted AI API key, please <a href="https://www.inverted.ai/portal/login">register</a> on the website to obtain one. </p>
+<h3 id="command-line-arguments_2">Command line arguments</h3>
+<table>
+<thead>
+<tr>
+<th>Argument</th>
+<th>Short form</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>--number-of-vehicles</td>
+<td>-n</td>
+<td>30</td>
+<td>Number of vehicles to spawn</td>
+</tr>
+<tr>
+<td>--number-of-walkers</td>
+<td>-w</td>
+<td>10</td>
+<td>Number of pedestrians to spawn</td>
+</tr>
+<tr>
+<td>--host</td>
+<td>-h</td>
+<td>127.0.0.1</td>
+<td>Host IP address</td>
+</tr>
+<tr>
+<td>--port</td>
+<td>-p</td>
+<td>2000</td>
+<td>TCP port for CARLA client</td>
+</tr>
+<tr>
+<td>--safe</td>
+<td></td>
+<td></td>
+<td>Don't spawn vehicles prone to accidents</td>
+</tr>
+<tr>
+<td>--filterv</td>
+<td></td>
+<td>vehicle.*</td>
+<td>Filter vehicle models with string</td>
+</tr>
+<tr>
+<td>--filterw</td>
+<td></td>
+<td>walker.pedestrian.*</td>
+<td>Filter pedestrian models with string</td>
+</tr>
+<tr>
+<td>--generationv</td>
+<td></td>
+<td>All</td>
+<td>Specify vehicle generation, "1", "2" or "All"</td>
+</tr>
+<tr>
+<td>--generationw</td>
+<td></td>
+<td>All</td>
+<td>Specify pedestrian generation, "1", "2" or "All"</td>
+</tr>
+<tr>
+<td>--seed</td>
+<td>-s</td>
+<td></td>
+<td>Integer seed for random generation (activates the deterministic mode for the TM)</td>
+</tr>
+<tr>
+<td>--hero</td>
+<td></td>
+<td>Not active</td>
+<td>Set one of the vehicles as a hero</td>
+</tr>
+<tr>
+<td>--iai-key</td>
+<td></td>
+<td></td>
+<td>Inverted AI API key</td>
+</tr>
+<tr>
+<td>--record</td>
+<td></td>
+<td>Not active</td>
+<td>Record the simulation using the CARLA recorder</td>
+</tr>
+<tr>
+<td>--sim-length</td>
+<td></td>
+<td>60</td>
+<td>Simulation length in seconds</td>
+</tr>
+<tr>
+<td>--location</td>
+<td></td>
+<td>carla:Town10HD</td>
+<td>IAI formatted map for simulation</td>
+</tr>
+<tr>
+<td>--capacity</td>
+<td></td>
+<td>100</td>
+<td>Quadtree leaf split threshold</td>
+</tr>
+<tr>
+<td>--width</td>
+<td></td>
+<td>250</td>
+<td>Width of area to initialize traffic</td>
+</tr>
+<tr>
+<td>--height</td>
+<td></td>
+<td>250</td>
+<td>Height of area to initialize traffic</td>
+</tr>
+<tr>
+<td>--map-center</td>
+<td></td>
+<td>-50,20</td>
+<td>Center of the area to initialize</td>
+</tr>
+<tr>
+<td>--iai-async</td>
+<td></td>
+<td>Not active</td>
+<td>Call IAI DRIVE asynchronously</td>
+</tr>
+<tr>
+<td>--api-model</td>
+<td></td>
+<td>bI5p</td>
+<td>IAI API model version</td>
+</tr>
+<tr>
+<td>--iai-log</td>
+<td></td>
+<td>Not active</td>
+<td>Store a log file for the co-simulation</td>
+</tr>
+<tr>
+<td>--iai-waypoint-distance</td>
+<td></td>
+<td>15</td>
+<td>Distance to next waypoint for IAI agents</td>
+</tr>
+<tr>
+<td>--iai-waypoint-detection-threshold</td>
+<td></td>
+<td>2</td>
+<td>Distance from waypoint to consider as completed</td>
+</tr>
+<tr>
+<td>--iai-max-distance-away</td>
+<td></td>
+<td>20</td>
+<td>Max distance away before a new waypoint is set for an agent</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="start-recording">Start recording</h2>
+<ul>
+<li>Script filename: <code>start_recording.py</code></li>
+<li>Example usage: <code>python3 start_recording.py</code></li>
+</ul>
+<p>This script demonstrates how to use the CARLA recorder. Some traffic is spawned and the movement is recorded as a log by the <a href="../foundations/#recorder">CARLA recorder</a>. </p>
+<table>
+<thead>
+<tr>
+<th>Argument</th>
+<th>Short form</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>--host</td>
+<td>-h</td>
+<td>127.0.0.1</td>
+<td>Host IP address</td>
+</tr>
+<tr>
+<td>--port</td>
+<td>-p</td>
+<td>2000</td>
+<td>TCP port for CARLA client</td>
+</tr>
+<tr>
+<td>--number-of-vehicles</td>
+<td>-n</td>
+<td>30</td>
+<td>Number of vehicles to spawn</td>
+</tr>
+<tr>
+<td>--delay</td>
+<td>-d</td>
+<td>2.0</td>
+<td>Delay in seconds between spawns</td>
+</tr>
+<tr>
+<td>--safe</td>
+<td></td>
+<td></td>
+<td>Don't spawn vehicles prone to accidents</td>
+</tr>
+<tr>
+<td>--recorder_filename</td>
+<td>-f</td>
+<td>test1.log</td>
+<td>Filename of recorded log</td>
+</tr>
+<tr>
+<td>--recorder_time</td>
+<td>-t</td>
+<td>0</td>
+<td>Recording duration</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="start-replaying">Start replaying</h2>
+<ul>
+<li>Script filename: <code>start_recording.py</code></li>
+<li>Example usage: <code>python3 start_recording.py -f carla.log</code> </li>
+</ul>
+<p>This script demonstrates how to use the CARLA replayer.  </p>
+<table>
+<thead>
+<tr>
+<th>Argument</th>
+<th>Short form</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>--host</td>
+<td>-h</td>
+<td>127.0.0.1</td>
+<td>Host IP address</td>
+</tr>
+<tr>
+<td>--port</td>
+<td>-p</td>
+<td>2000</td>
+<td>TCP port for CARLA client</td>
+</tr>
+<tr>
+<td>--duration</td>
+<td>-d</td>
+<td>0.0</td>
+<td>Duration to replay</td>
+</tr>
+<tr>
+<td>--recorder_filename</td>
+<td>-f</td>
+<td>test1.log</td>
+<td>Filename of recorded log</td>
+</tr>
+<tr>
+<td>--camera</td>
+<td>-c</td>
+<td>0</td>
+<td>Camera follows actor with given integer ID</td>
+</tr>
+<tr>
+<td>--time-factor</td>
+<td>-x</td>
+<td>1.0</td>
+<td>Time multiplier for playback, e.g. 2.0 for double speed</td>
+</tr>
+<tr>
+<td>--ignore-hero</td>
+<td>-i</td>
+<td>Not active</td>
+<td>Ignore the hero vehicle</td>
+</tr>
+<tr>
+<td>--move-spectator</td>
+<td></td>
+<td>Not active</td>
+<td>Move spectator camera</td>
+</tr>
+<tr>
+<td>--top-view</td>
+<td></td>
+<td>Not active</td>
+<td>Activate top-down birdseye view</td>
+</tr>
+<tr>
+<td>--spawn-sensors</td>
+<td></td>
+<td>Not active</td>
+<td>Spawn sensors in the replaying simulation</td>
+</tr>
+<tr>
+<td>--map-override</td>
+<td>-m</td>
+<td></td>
+<td>Map name to replace OpenDRIVE in log file</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="open3d-lidar">Open3D LIDAR</h2>
+<ul>
+<li>Script filename: <code>open3d_lidar.py</code></li>
+<li>Example usage: <code>python3 open3d_lidar.py --semantic --points-per-second 100000</code> </li>
+</ul>
+<p>This script demonstrates the visualization of LIDAR point clouds generated by the CARLA LIDAR sensor and semantic LIDAR sensor. The <a href="https://www.open3d.org">Open3D library</a> is used for visualization and is recommended by the CARLA development team for performant point-cloud visualization. </p>
+<h3 id="command-line-arguments_3">Command line arguments</h3>
+<table>
+<thead>
+<tr>
+<th>Argument</th>
+<th>Short form</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>--host</td>
+<td>-h</td>
+<td>127.0.0.1</td>
+<td>Host IP address</td>
+</tr>
+<tr>
+<td>--port</td>
+<td>-p</td>
+<td>2000</td>
+<td>TCP port for CARLA client</td>
+</tr>
+<tr>
+<td>--no-rendering</td>
+<td></td>
+<td></td>
+<td>Activate no-rendering mode</td>
+</tr>
+<tr>
+<td>--semantic</td>
+<td></td>
+<td>Not active</td>
+<td>Use semantic LIDAR</td>
+</tr>
+<tr>
+<td>--no-noise</td>
+<td></td>
+<td>Not active</td>
+<td>Don't add noise and dropoff</td>
+</tr>
+<tr>
+<td>--no-autopilot</td>
+<td></td>
+<td>Not active</td>
+<td>Disable's autopilot, vehicle remains motionless</td>
+</tr>
+<tr>
+<td>--show-axis</td>
+<td></td>
+<td>Not active</td>
+<td>Show the Cartesian axes</td>
+</tr>
+<tr>
+<td>--filter</td>
+<td></td>
+<td>vehicle.*</td>
+<td>Filter vehicle models with string</td>
+</tr>
+<tr>
+<td>--upper-fov</td>
+<td></td>
+<td>15.0</td>
+<td>LIDAR's upper field of view in degrees</td>
+</tr>
+<tr>
+<td>--lower-fov</td>
+<td></td>
+<td>-25.0</td>
+<td>LIDAR's lower field of view in degrees</td>
+</tr>
+<tr>
+<td>--channels</td>
+<td></td>
+<td>64.0</td>
+<td>Number of LIDAR channels</td>
+</tr>
+<tr>
+<td>--range</td>
+<td></td>
+<td>100.0</td>
+<td>LIDAR's max range in meters</td>
+</tr>
+<tr>
+<td>--points-per-second</td>
+<td></td>
+<td>500000</td>
+<td>LIDAR points per second</td>
+</tr>
+<tr>
+<td>-x</td>
+<td></td>
+<td>0.0</td>
+<td>X-offset of LIDAR sensor</td>
+</tr>
+<tr>
+<td>-y</td>
+<td></td>
+<td>0.0</td>
+<td>Y-offset of LIDAR sensor</td>
+</tr>
+<tr>
+<td>-z</td>
+<td></td>
+<td>0.0</td>
+<td>Z-offset of LIDAR sensor</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="bounding-boxes">Bounding boxes</h2>
+<ul>
+<li>Script filename: <code>bounding_boxes.py</code></li>
+<li>Example usage: <code>python3 bounding_boxes.py -d 100</code> </li>
+</ul>
+<p>This script demonstrates how to derive 3D and 2D bounding boxes through the Python API and visualize them projected into a camera viewplane. The script also has the facitlity to record both 3D and 2D bounding boxes in JSON format alongside camera frames in PNG. The bounding boxes are visualized in a Pygame window. The visualization can be switched between the 3D and 2D bounding boxes using the <em>2</em> and <em>3</em> number keys. A distance threshold can be set as a command line argument, bounding boxes beyond this threshold will not be visualized or recorded.</p>
+<ul>
+<li>
+<p><strong>3D bounding boxes</strong>: The 3D bounding box coordinates are given in the vehicle's local coordinate system, centered on the center of the vehicle's bounding box. For visualization the 3D bounding boxes are projected into the camera plane using the camera's intrinsic parameters. They are derived from each actor's <code>bounding_box</code> attribute.</p>
+</li>
+<li>
+<p><strong>2D bounding boxes</strong>: The 2D bounding boxes are given in pixel-based image coordinates of the camera's viewplane. The 2D bounding boxes are derived from the instance segmentation image.</p>
+</li>
+</ul>
+<h3 id="key-commands_1">Key commands</h3>
+<table>
+<thead>
+<tr>
+<th>Key</th>
+<th>Control</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>R</td>
+<td>Start recording bounding boxes and camera frames</td>
+</tr>
+<tr>
+<td>3</td>
+<td>Visualize 3D bounding boxes</td>
+</tr>
+<tr>
+<td>2</td>
+<td>Visualize 2D bounding boxes</td>
+</tr>
+<tr>
+<td>ESC</td>
+<td>Quit</td>
+</tr>
+</tbody>
+</table>
+<h3 id="command-line-arguments_4">Command line arguments</h3>
+<table>
+<thead>
+<tr>
+<th>Argument</th>
+<th>Short form</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>--host</td>
+<td>-h</td>
+<td>127.0.0.1</td>
+<td>Host IP address</td>
+</tr>
+<tr>
+<td>--port</td>
+<td>-p</td>
+<td>2000</td>
+<td>TCP port for CARLA client</td>
+</tr>
+<tr>
+<td>--distance</td>
+<td>-d</td>
+<td>50</td>
+<td>Distance threshold for bounding boxes</td>
+</tr>
+<tr>
+<td>--res</td>
+<td></td>
+<td>1280x720</td>
+<td>Pixel resolution of the camera sensor (including the instance segmentation camera)</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="no-rendering-mode">No rendering mode</h2>
+<ul>
+<li>Script filename: <code>no_rendering_mode.py</code></li>
+<li>Example usage: <code>python3 no_rendering_mode.py --res 800x600 --filter lincoln_mkz_2020</code></li>
+</ul>
+<p>To use this script effectively, you should launch the CARLA server in no-rendering mode like so:</p>
+<pre><code class="language-sh">./CarlaUE4.sh --no-rendering
+</code></pre>
+<p>This script demonstrates how to visualize the map and vehicles when using the no-rendering mode of CARLA, which disables the spectator view, allowing CARLA to run in a higher performance configuration. This enables frame rates at or above 100 FPS. A Pygame window visualizes a top-down 2D representation of the scene with simple bounding boxes and 2D road surfaces. This is useful when using CARLA without sensors for traffic simulation or driving 3rd party renderers.</p>
+<h3 id="key-commands_2">Key commands</h3>
+<table>
+<thead>
+<tr>
+<th>Key</th>
+<th>Control</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>TAB</td>
+<td>Toggle hero mode</td>
+</tr>
+<tr>
+<td>Mouse Wheel</td>
+<td>Zoom in / zoom out</td>
+</tr>
+<tr>
+<td>Mouse Drag</td>
+<td>Move map (map mode only)</td>
+</tr>
+<tr>
+<td>W, &uarr;</td>
+<td>Throttle</td>
+</tr>
+<tr>
+<td>S, &darr;</td>
+<td>Brake</td>
+</tr>
+<tr>
+<td>A/D, &larr;, &rarr;</td>
+<td>Steer left/right</td>
+</tr>
+<tr>
+<td>Q</td>
+<td>Toggle reverse</td>
+</tr>
+<tr>
+<td>Space</td>
+<td>Hand-brake</td>
+</tr>
+<tr>
+<td>P</td>
+<td>Toggle autopilot</td>
+</tr>
+<tr>
+<td>M</td>
+<td>Toggle manual transmission</td>
+</tr>
+<tr>
+<td>,/.</td>
+<td>Gear up/down</td>
+</tr>
+<tr>
+<td>F1</td>
+<td>Toggle HUD</td>
+</tr>
+<tr>
+<td>I</td>
+<td>Toggle actor ids</td>
+</tr>
+<tr>
+<td>H/?</td>
+<td>Toggle help</td>
+</tr>
+<tr>
+<td>ESC</td>
+<td>Quit</td>
+</tr>
+</tbody>
+</table>
+<h3 id="command-line-arguments_5">Command line arguments</h3>
+<table>
+<thead>
+<tr>
+<th>Argument</th>
+<th>Short form</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>--verbose</td>
+<td>-v</td>
+<td></td>
+<td>Print debug info</td>
+</tr>
+<tr>
+<td>--host</td>
+<td>-h</td>
+<td>127.0.0.1</td>
+<td>Host IP address</td>
+</tr>
+<tr>
+<td>--port</td>
+<td>-p</td>
+<td>2000</td>
+<td>TCP port for CARLA client</td>
+</tr>
+<tr>
+<td>--res</td>
+<td></td>
+<td>1280x720</td>
+<td>Pixel resolution of the display window</td>
+</tr>
+<tr>
+<td>--filter</td>
+<td></td>
+<td>vehicle.*</td>
+<td>Filter vehicle models with string</td>
+</tr>
+<tr>
+<td>--map</td>
+<td></td>
+<td>None</td>
+<td>Start a new episode in a given map</td>
+</tr>
+<tr>
+<td>--no-rendering</td>
+<td></td>
+<td>Not active</td>
+<td>Switch off server rendering</td>
+</tr>
+<tr>
+<td>--show-triggers</td>
+<td></td>
+<td>Not active</td>
+<td>Show trigger boxes for traffic lights</td>
+</tr>
+<tr>
+<td>--show-connections</td>
+<td></td>
+<td>Not active</td>
+<td>Show waypoint connections</td>
+</tr>
+<tr>
+<td>--show-spawn-points</td>
+<td></td>
+<td>Not active</td>
+<td>Show recommended spawn points</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="dynamic-weather">Dynamic weather</h2>
+<ul>
+<li>Script filename: <code>dynamic_weather.py</code></li>
+<li>Example usage: <code>python3 no_rendering_mode.py --res 800x600 --filter lincoln_mkz_2020</code></li>
+</ul>
+<p>This script demonstrates how to modify the weather settings in CARLA during runtime, enabling changing weather conditions within a simulation. </p>
+<h3 id="command-line-arguments_6">Command line arguments</h3>
+<table>
+<thead>
+<tr>
+<th>Argument</th>
+<th>Short form</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>--host</td>
+<td>-h</td>
+<td>127.0.0.1</td>
+<td>Host IP address</td>
+</tr>
+<tr>
+<td>--port</td>
+<td>-p</td>
+<td>2000</td>
+<td>TCP port for CARLA client</td>
+</tr>
+<tr>
+<td>--speed</td>
+<td></td>
+<td>1.0</td>
+<td>Rate of weather changes</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="lidar-to-camera">LIDAR to camera</h2>
+<ul>
+<li>Script filename: <code>lidar_to_camera.py</code></li>
+<li>Example usage: <code>python3 lidar_to_camera.py --res 800x600 --points-per-second 50000</code></li>
+</ul>
+<p>This script demonstrates how to project a LIDAR pointcloud into the camera plane. The script stores camera frames with the projected LIDAR points in a directory named <code>_out</code> in the root directory of the terminal used to run the script.</p>
+<h3 id="command-line-arguments_7">Command line arguments</h3>
+<table>
+<thead>
+<tr>
+<th>Argument</th>
+<th>Short form</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>--verbose</td>
+<td>-v</td>
+<td></td>
+<td>Print debug info</td>
+</tr>
+<tr>
+<td>--host</td>
+<td>-h</td>
+<td>127.0.0.1</td>
+<td>Host IP address</td>
+</tr>
+<tr>
+<td>--port</td>
+<td>-p</td>
+<td>2000</td>
+<td>TCP port for CARLA client</td>
+</tr>
+<tr>
+<td>--res</td>
+<td></td>
+<td>1280x720</td>
+<td>Pixel resolution of the display window</td>
+</tr>
+<tr>
+<td>--frames</td>
+<td></td>
+<td>500</td>
+<td>Number of frames to record</td>
+</tr>
+<tr>
+<td>--dot-extent</td>
+<td></td>
+<td>2</td>
+<td>LIDAR point extent in pixels</td>
+</tr>
+<tr>
+<td>--no-noise</td>
+<td></td>
+<td>Not active</td>
+<td>Don't add noise and dropoff</td>
+</tr>
+<tr>
+<td>--upper-fov</td>
+<td></td>
+<td>15.0</td>
+<td>LIDAR's upper field of view in degrees</td>
+</tr>
+<tr>
+<td>--lower-fov</td>
+<td></td>
+<td>-25.0</td>
+<td>LIDAR's lower field of view in degrees</td>
+</tr>
+<tr>
+<td>--channels</td>
+<td></td>
+<td>64.0</td>
+<td>Number of LIDAR channels</td>
+</tr>
+<tr>
+<td>--range</td>
+<td></td>
+<td>100.0</td>
+<td>LIDAR's max range in meters</td>
+</tr>
+<tr>
+<td>--points-per-second</td>
+<td></td>
+<td>100000</td>
+<td>LIDAR points per second</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="vehicle-gallery">Vehicle gallery</h2>
+<ul>
+<li>Script filename: <code>vehicle_gallery.py</code></li>
+<li>Example usage: <code>python3 vehicle_gallery.py</code> </li>
+</ul>
+<p>This script gives 360 degree views of all CARLA vehicles in sequence.</p>
+              
+            </div>
+          </div><footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+        <span>
+          <a href="https://github.com/carla-simulator/carla" class="fa fa-github" style="color: #fcfcfc"> GitHub</a>
+        </span>
+    
+    
+    
+  </span>
+</div>
+    <script src="../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "..";</script>
+    <script src="../js/theme_extra.js"></script>
+    <script src="../js/theme.js"></script>
+      <script src="../extra.js"></script>
+      <script src="../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>

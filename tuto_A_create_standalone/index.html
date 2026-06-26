@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <link rel="shortcut icon" href="../img/favicon.ico" />
+    <title>Create distribution packages for assets - CARLA Simulator</title>
+    <link rel="stylesheet" href="../css/theme.css" />
+    <link rel="stylesheet" href="../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+        <link href="../extra.css" rel="stylesheet" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "Create distribution packages for assets";
+        var mkdocs_page_input_path = "tuto_A_create_standalone.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href=".." class="icon icon-home"> CARLA Simulator
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+      <input type="text" name="q" placeholder="搜索文档" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="..">Home</a>
+                </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Getting started</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../start_introduction/">Introduction</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../start_quickstart/">Quick start package installation</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_first_steps/">First steps</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../build_carla/">Building CARLA</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Next steps</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_content_authoring_maps/">Content authoring - maps</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_content_authoring_vehicles/">Content authoring - vehicles</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../content_authoring_props/">Content authoring - props</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">CARLA topics</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../coordinates/">Coordinates and transformations</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../foundations/">Foundations</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../core_actors/">Actors</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../core_map/">Maps</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../core_sensors/">Sensors and data</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../ts_traffic_simulation_overview/">Traffic</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../ai_rendering/">AI rendering</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../development_tutorials/">Development</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../custom_assets_tutorials/">Custom assets</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Resources</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../python_api/">Python API</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../catalogue/">Catalogue</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../ref_cpp/">C++ reference</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../bp_library/">Blueprint library</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tutorials/">Tutorials</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../ext_docs/">Extended documentation</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../download/">Downloads</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">CARLA Ecosystem</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../ecosys_ansys/">ANSYS</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_G_rllib_integration/">AWS</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_G_carsim_integration/">CarSIM</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_G_chrono/">Chrono</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../large_map_roadrunner/">MathWorks</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../inverted_ai/">Inverted AI</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../nvidia/">NVIDIA</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../adv_opendrive/">ASAM OpenDRIVE</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../adv_ptv/">PTV Vissim</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../adv_rss/">RSS</a>
+                  </li>
+                  <li class="toctree-l1"><a class="" href="https://carla.readthedocs.io/projects/ros-bridge/en/latest/">ROS</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_G_scenic/">Scenic</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../adv_sumo/">SUMO</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../ecosys_synkrotron/">SYNKROTRON</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Contributing</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../cont_contribution_guidelines/">Guidelines</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../cont_coding_standard/">Coding standards</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../cont_doc_standard/">Documentation standard</a>
+                  </li>
+                  <li class="toctree-l1"><a class="" href=".."></a>
+                  </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="..">CARLA Simulator</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href=".." class="icon icon-home" aria-label="Docs"></a></li>
+      <li class="breadcrumb-item active">Create distribution packages for assets</li>
+    <li class="wy-breadcrumbs-aside">
+          <a href="https://github.com/carla-simulator/carla/edit/master/Docs/tuto_A_create_standalone.md" class="icon icon-github"> 在 GitHub 上编辑</a>
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="create-distribution-packages-for-assets">Create distribution packages for assets</h1>
+<p>It is a common practice in CARLA to manage assets with standalone packages. Keeping them aside allows to reduce the size of the build. These asset packages can be easily imported into a CARLA package anytime. They also become really useful to easily distribute assets in an organized way. </p>
+<ul>
+<li><a href="#export-a-package-in-a-carla-build-from-source"><strong>Export a package in a CARLA build from source</strong></a>  </li>
+<li><a href="#export-a-package-using-docker"><strong>Export a package using Docker</strong></a></li>
+<li><a href="#import-assets-into-a-carla-package"><strong>Import assets into a CARLA package</strong></a>  </li>
+</ul>
+<hr />
+<h2 id="export-a-package-in-a-carla-build-from-source">Export a package in a CARLA build from source</h2>
+<p>Once assets are imported into Unreal, users can generate a <strong>standalone package</strong> for them. This will be used to distribute the content to CARLA packages such as 0.9.8.</p>
+<p>To export packages, simply run the command below.</p>
+<pre><code class="language-sh">make package ARGS=&quot;--packages=Package1,Package2&quot;
+</code></pre>
+<p>This will create a standalone package compressed in a <code>.tar.gz</code> file for each of the packages listed. </p>
+<h2 id="exporting-a-specific-map-as-a-package">Exporting a specific map as a package</h2>
+<p>To export a custom map as an independent content package, we use the <code>make package</code> command. Identify your custom map's location in the CARLA content directory through the Unreal content browser. We recommend creating your custom maps in with the existing CARLA maps in the <code>Content &gt; Carla &gt; Maps</code> directory. In this case, we are storing the map in its own folder named <em>MyMap</em>.</p>
+<p><img alt="mymap_to_export" src="../img/tuto_content_authoring_maps/mymap_export.png" /></p>
+<p>Remember that the map needs an associated OpenDRIVE file stored inside a directory named <code>OpenDrive</code> at the same level as the map asset (<code>.umap</code> file). The OpenDRIVE file should have the same name as the map itself with the <code>.xodr</code> extension. In this example I have named the map <em>MyMap</em> (the file will appear as <code>MyMap.umap</code> in a file browser), therefore my OpenDRIVE file is named <code>MyMap.xodr</code>. </p>
+<p><img alt="mymap_xodr" src="../img/tuto_content_authoring_maps/mymap_xodr.png" /></p>
+<p>Now we need to create a package config JSON file for the export process. In a file browser (not the Unreal content browser) navigate to <code>CARLA_ROOT/Unreal/CarlaUE4/Content/Carla/Config</code>. Inside this directory, you will see a number of JSON config files. Open a new one with a name corresponding to your map and the suffix <code>.Package.json</code>. In this case we name the file <code>exportMyMap.Package.json</code>.</p>
+<p><img alt="export_mymap_config" src="../img/tuto_content_authoring_maps/export_mymap_config.png" /></p>
+<p>The JSON file should have the following structure:</p>
+<pre><code class="language-json">{
+    &quot;props&quot;: [],
+    &quot;maps&quot;: [
+        {
+            &quot;name&quot;: &quot;MyMap&quot;,
+            &quot;path&quot;: &quot;/Game/Carla/Maps/MyMap&quot;,
+            &quot;use_carla_materials&quot;: true
+        }
+    ]
+}
+</code></pre>
+<p>The <code>name</code> parameter should be the same as the name of your map asset file (without the <code>.umap</code> suffix). Ensure that the <code>path</code> parameter points to the correct directory location of your map asset (<code>.umap</code> file). The first part of the path <code>CARLA_ROOT/Unreal/CarlaUE4/Content/</code> should be replaced with <code>/Game/</code>. </p>
+<p>Now we call the <code>make package</code> command from a terminal in the <code>CARLA_ROOT</code> directory, with the following argument:</p>
+<pre><code class="language-sh">make package ARGS=&quot;--packages=exportMyMap&quot;
+</code></pre>
+<p>The value of the argument <code>--packages</code> should match the name of the JSON configuration file without the <code>.Package.json</code> suffix. The package may take some time to build, depending on the size of the map. </p>
+<p>When the export process is finished, the exported map package will be saved as a compressed archive:</p>
+<ul>
+<li><strong>Linux</strong>: <code>.tar.gz</code> archive in the <code>CARLA_ROOT/Dist</code> directory</li>
+<li><strong>Windows</strong>: <code>.zip</code> archive in the <code>CARLA_ROOT/Build/UE4Carla</code> directory</li>
+</ul>
+<p>The map package must be built using the target operating system. I.e. a map package built in Linux cannot be imported into a CARLA package for Windows. </p>
+<h2 id="to-import-the-packaged-map-into-a-packaged-version-of-carla-place-the-targz-or-zip-archive-into-the-carla_rootimport-directory-of-an-extracted-carla-package-then-run-the-importassetsbinsh-script-once-this-is-finished-launch-carla-and-you-will-find-the-new-custom-map-in-the-list-of-available-maps">To import the packaged map into a packaged version of CARLA, place the <code>.tar.gz</code> or <code>.zip</code> archive into the <code>CARLA_ROOT/Import</code> directory of an extracted CARLA package then run the <code>ImportAssets.bin/.sh</code> script. Once this is finished, launch CARLA and you will find the new custom map in the list of available maps.</h2>
+<h2 id="export-a-package-using-docker">Export a package using Docker</h2>
+<p>Unreal Engine and CARLA can be built in a Docker image which can then be used to create a package or export assets for use in a package.</p>
+<p>To create the Docker image, follow the tutorial <a href="../build_docker_unreal/">here</a>.</p>
+<p>When you have the image ready:</p>
+<ol>
+<li>Navigate to <code>Util/Docker</code>.</li>
+<li>Create a CARLA package or prepare assets for use in a package by running one of the following commands:</li>
+</ol>
+<pre><code class="language-sh"># To create a standalone package
+./docker_tools.py --output /output/path
+
+#To cook assets to be consumed in a CARLA package
+./docker_tools.py --input /assets/to/import/path --output /output/path --packages PkgeName1,PkgeName2
+</code></pre>
+<hr />
+<h2 id="import-assets-into-a-carla-package">Import assets into a CARLA package</h2>
+<p>A standalone package is contained in a <code>.tar.gz</code> file. The way this is extracted depends on the platform.  </p>
+<ul>
+<li><strong>On Windows</strong> extract the compressed file in the main root CARLA folder.  </li>
+<li><strong>On Linux</strong> move the compressed file to the <code>Import</code> folder and run the following script.  </li>
+</ul>
+<pre><code class="language-sh">cd Import
+./ImportAssets.sh
+</code></pre>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Standalone packages cannot be directly imported into a CARLA build. Follow the tutorials to import <a href="../tuto_A_add_props/">props</a>, <a href="../tuto_M_custom_map_overview/">maps</a> or <a href="../tuto_A_add_vehicle/">vehicles</a>.</p>
+</div>
+<hr />
+<p>That sumps up how to create and use standalone packages in CARLA. If there is any unexpected issue, feel free to post in the forum. </p>
+<div class="build-buttons">
+<p>
+<a href="https://github.com/carla-simulator/carla/discussions/" target="_blank" class="btn btn-neutral" title="Go to the CARLA forum">
+CARLA forum</a>
+</p>
+</div>
+              
+            </div>
+          </div><footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+        <span>
+          <a href="https://github.com/carla-simulator/carla" class="fa fa-github" style="color: #fcfcfc"> GitHub</a>
+        </span>
+    
+    
+    
+  </span>
+</div>
+    <script src="../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "..";</script>
+    <script src="../js/theme_extra.js"></script>
+    <script src="../js/theme.js"></script>
+      <script src="../extra.js"></script>
+      <script src="../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>

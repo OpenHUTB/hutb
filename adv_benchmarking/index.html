@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <link rel="shortcut icon" href="../img/favicon.ico" />
+    <title>Benchmarking Performance - CARLA Simulator</title>
+    <link rel="stylesheet" href="../css/theme.css" />
+    <link rel="stylesheet" href="../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+        <link href="../extra.css" rel="stylesheet" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "Benchmarking Performance";
+        var mkdocs_page_input_path = "adv_benchmarking.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href=".." class="icon icon-home"> CARLA Simulator
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+      <input type="text" name="q" placeholder="搜索文档" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="..">Home</a>
+                </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Getting started</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../start_introduction/">Introduction</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../start_quickstart/">Quick start package installation</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_first_steps/">First steps</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../build_carla/">Building CARLA</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Next steps</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_content_authoring_maps/">Content authoring - maps</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_content_authoring_vehicles/">Content authoring - vehicles</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../content_authoring_props/">Content authoring - props</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">CARLA topics</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../coordinates/">Coordinates and transformations</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../foundations/">Foundations</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../core_actors/">Actors</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../core_map/">Maps</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../core_sensors/">Sensors and data</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../ts_traffic_simulation_overview/">Traffic</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../ai_rendering/">AI rendering</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../development_tutorials/">Development</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../custom_assets_tutorials/">Custom assets</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Resources</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../python_api/">Python API</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../catalogue/">Catalogue</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../ref_cpp/">C++ reference</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../bp_library/">Blueprint library</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tutorials/">Tutorials</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../ext_docs/">Extended documentation</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../download/">Downloads</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">CARLA Ecosystem</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../ecosys_ansys/">ANSYS</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_G_rllib_integration/">AWS</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_G_carsim_integration/">CarSIM</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_G_chrono/">Chrono</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../large_map_roadrunner/">MathWorks</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../inverted_ai/">Inverted AI</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../nvidia/">NVIDIA</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../adv_opendrive/">ASAM OpenDRIVE</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../adv_ptv/">PTV Vissim</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../adv_rss/">RSS</a>
+                  </li>
+                  <li class="toctree-l1"><a class="" href="https://carla.readthedocs.io/projects/ros-bridge/en/latest/">ROS</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_G_scenic/">Scenic</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../adv_sumo/">SUMO</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../ecosys_synkrotron/">SYNKROTRON</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Contributing</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../cont_contribution_guidelines/">Guidelines</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../cont_coding_standard/">Coding standards</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../cont_doc_standard/">Documentation standard</a>
+                  </li>
+                  <li class="toctree-l1"><a class="" href=".."></a>
+                  </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="..">CARLA Simulator</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href=".." class="icon icon-home" aria-label="Docs"></a></li>
+      <li class="breadcrumb-item active">Benchmarking Performance</li>
+    <li class="wy-breadcrumbs-aside">
+          <a href="https://github.com/carla-simulator/carla/edit/master/Docs/adv_benchmarking.md" class="icon icon-github"> 在 GitHub 上编辑</a>
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="benchmarking-performance">Benchmarking Performance</h1>
+<p>We provide a benchmarking script to enable users to easily analyze the performance of CARLA in their own environment. The script can be configured to run a number of scenarios that combine different maps, sensors and weather conditions. It reports the average and standard deviation of FPS under the requested scenarios. </p>
+<p>In this section we detail the requirements to run the benchmark, where to find the script, the flags available to customize the scenarios that are run and examples on how to run the commands.</p>
+<p>We have also included our results of a separate benchmark which measures performance in CARLA in a specific environment when using different combinations of number of vehicles, enabling physics and/or enabling Traffic Manager. The results are presented alongside the CARLA version used and the environment the test was performed in.</p>
+<ul>
+<li><a href="#the-benchmark-script"><strong>The benchmark script</strong></a><ul>
+<li><a href="#before-you-begin"><strong>Before you begin</strong></a></li>
+<li><a href="#synopsis"><strong>Synopsis</strong></a><ul>
+<li><a href="#flags"><strong>Flags</strong></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#carla-performance-report"><strong>CARLA performance report</strong></a></li>
+</ul>
+<hr />
+<h2 id="the-benchmark-script">The benchmark script</h2>
+<p>The benchmark script can be found in <code>PythonAPI/util</code>. It has several flags available to customize the scenarios to be tested which are detailed in the synopsis below.</p>
+<h3 id="before-you-begin">Before you begin</h3>
+<p>The benchmarking script requires some dependencies to be installed before you can run it:</p>
+<pre><code class="language-python">python -m pip install -U py-cpuinfo==5.0.0
+python -m pip install psutil
+python -m pip install python-tr
+python -m pip install gpuinfo
+python -m pip install GPUtil
+</code></pre>
+<h3 id="synopsis">Synopsis</h3>
+<p><code>python3</code> <a href="https://github.com/carla-simulator/carla/blob/master/PythonAPI/util/performance_benchmark.py"><code>performance_benchmark.py</code></a> <a href="#-host-ip_address"><code>[--host HOST]</code></a> <a href="#-port-port"><code>[--port PORT]</code></a> <a href="#-file-filenamemd"><code>[--file FILE]</code></a> <a href="#-tm"><code>[--tm]</code></a>
+<a href="#-ticks"><code>[--ticks TICKS]</code></a> <a href="#-sync"><code>[--sync]</code></a> <a href="#-async"><code>[--async]</code></a>)
+<a href="#-fixed_dt"><code>[--fixed_dt FIXED_DT]</code></a> <a href="#-render_mode"><code>[--render_mode]</code></a>)
+<a href="#-no_render_mode"><code>[--no_render_mode]</code></a> <a href="#-show_scenarios"><code>[--show_scenarios]</code></a>)
+<a href="#-sensors-integer"><code>[--sensors SENSORS [SENSORS ...]]</code></a>)
+<a href="#-maps-townname"><code>[--maps MAPS [MAPS ...]]</code></a>)
+<a href="#-weather-integer"><code>[--weather WEATHER [WEATHER ...]]</code></a></p>
+<h4 id="flags">Flags</h4>
+<h6 id="-host-ip_address"><code>--host</code>: IP_ADDRESS</h6>
+<blockquote>
+<blockquote>
+<p><strong>Default</strong>: Localhost.</p>
+<p>Configures the host of the server.</p>
+</blockquote>
+</blockquote>
+<h6 id="-port-port"><code>--port</code>: PORT</h6>
+<blockquote>
+<blockquote>
+<p><strong>Default</strong>: 2000</p>
+<p>Configures the TCP port to listen to.</p>
+</blockquote>
+</blockquote>
+<h6 id="-file-filenamemd"><code>--file</code>: filename.md</h6>
+<blockquote>
+<blockquote>
+<p><strong>Default</strong>: benchmark.md </p>
+<p>Writes results in markdown table format to a file.</p>
+</blockquote>
+</blockquote>
+<h6 id="-tm"><code>--tm</code></h6>
+<blockquote>
+<blockquote>
+<p>Switch to Traffic Manager benchmark</p>
+</blockquote>
+</blockquote>
+<h6 id="-ticks"><code>--ticks</code></h6>
+<blockquote>
+<blockquote>
+<p><strong>Default</strong>: 100</p>
+<p>Sets the number of ticks to use for each scenario.</p>
+</blockquote>
+</blockquote>
+<h6 id="-sync"><code>--sync</code></h6>
+<blockquote>
+<blockquote>
+<p><strong>Default mode.</strong></p>
+<p>Runs benchmark in synchronous mode. </p>
+</blockquote>
+</blockquote>
+<h6 id="-async"><code>--async</code></h6>
+<blockquote>
+<blockquote>
+<p>Runs benchmark in asynchronous mode.</p>
+</blockquote>
+</blockquote>
+<h6 id="-fixed_dt"><code>--fixed_dt</code></h6>
+<blockquote>
+<blockquote>
+<p><strong>Default</strong>: 0.05</p>
+<p>For use with synchronous mode if you would like to set the delta timestep.</p>
+</blockquote>
+</blockquote>
+<h6 id="-render_mode"><code>--render_mode</code></h6>
+<blockquote>
+<blockquote>
+<p>Runs benchmark in rendering mode.</p>
+</blockquote>
+</blockquote>
+<h6 id="-no_render_mode"><code>--no_render_mode</code></h6>
+<blockquote>
+<blockquote>
+<p><strong>Default mode.</strong></p>
+<p>Runs benchmark in non-rendering mode.</p>
+</blockquote>
+</blockquote>
+<h6 id="-show_scenarios"><code>--show_scenarios</code></h6>
+<blockquote>
+<blockquote>
+<p>When the script is run with only this flag you will see a list of all the scenario parameters available.</p>
+<p>When combined with other flags you will see a preview of the scenarios that will be run without actually executing them.</p>
+</blockquote>
+</blockquote>
+<h6 id="-sensors-integer"><code>--sensors</code>: INTEGER</h6>
+<blockquote>
+<blockquote>
+<p><strong>Default</strong>: All</p>
+<p>Sensors to be used in the benchmark. Chose between LIDAR and RGB camera:</p>
+<ul>
+<li><strong><code>0</code></strong>: cam-300x200</li>
+<li><strong><code>1</code></strong>: cam-800x600</li>
+<li><strong><code>2</code></strong>: cam-1900x1080</li>
+<li><strong><code>3</code></strong>: cam-300x200 cam-300x200 (two cameras)</li>
+<li><strong><code>4</code></strong>: LIDAR: 100k</li>
+<li><strong><code>5</code></strong>: LIDAR: 500k</li>
+<li><strong><code>6</code></strong>: LIDAR: 1M</li>
+</ul>
+</blockquote>
+</blockquote>
+<h6 id="-maps-townname"><code>--maps</code>: TownName</h6>
+<blockquote>
+<blockquote>
+<p><strong>Default</strong>: All maps</p>
+<p>All <a href="https://carla.readthedocs.io/en/latest/core_map/#carla-maps">CARLA maps</a>, both layered and sub-layered, are available.</p>
+</blockquote>
+</blockquote>
+<h6 id="-weather-integer"><code>--weather</code>: INTEGER</h6>
+<blockquote>
+<blockquote>
+<p><strong>Default</strong>: All weather conditions</p>
+<p>Change the weather conditions:</p>
+<ul>
+<li><strong><code>0</code></strong>: ClearNoon</li>
+<li><strong><code>1</code></strong>: CloudyNoon</li>
+<li><strong><code>2</code></strong>: SoftRainSunset</li>
+</ul>
+</blockquote>
+</blockquote>
+<h2 id="how-to-run-the-benchmark">How to run the benchmark</h2>
+<ol>
+<li>
+<p>Start CARLA:</p>
+<pre><code># Linux:
+./CarlaUE4.sh
+# Windows:
+CarlaUE4.exe
+# Source:
+make launch
+</code></pre>
+</li>
+<li>
+<p>In a separate terminal navigate to <code>PythonAPI/util</code> to find the <code>performance_benchmark.py</code> script:</p>
+</li>
+</ol>
+<blockquote>
+<blockquote>
+<ul>
+<li>Show all possible scenarios without running them:</li>
+</ul>
+</blockquote>
+</blockquote>
+<pre><code class="language-shell">python3 performance_benchmark.py --show_scenarios
+</code></pre>
+<blockquote>
+<blockquote>
+<ul>
+<li>Show what scenarios will run when configurations are applied without actually executing them:</li>
+</ul>
+</blockquote>
+</blockquote>
+<pre><code class="language-shell">python3 performance_benchmark.py --sensors 2 5 --maps Town03 Town05 --weather 0 1 --show_scenarios
+</code></pre>
+<blockquote>
+<blockquote>
+<ul>
+<li>Execute the performance benchmark for those scenarios:</li>
+</ul>
+</blockquote>
+</blockquote>
+<pre><code class="language-shell">python3 performance_benchmark.py --sensors 2 5 --maps Town03 Town05 --weather 0 1
+</code></pre>
+<blockquote>
+<blockquote>
+<ul>
+<li>Perform the benchmark for asynchronous mode and rendering mode:</li>
+</ul>
+</blockquote>
+</blockquote>
+<pre><code class="language-shell">python3 performance_benchmark.py --async --render_mode
+</code></pre>
+<hr />
+<h2 id="carla-performance-report">CARLA performance report</h2>
+<p>The following table details the performance effect on average FPS when running CARLA with increasing numbers of vehicles and different combinations of enabling and/or disabling physics and Traffic Manager.</p>
+<ul>
+<li>CARLA Version: Dev branch on 29/01/21 (commit 198fa38c9b1317c114ac15dff130766253c02832)</li>
+<li>Environment Specs: Intel(R) Xeon(R) CPU E5-1620 v3 @ 3.50GHz / 32 GB / NVIDIA GeForce GTX 1080 Ti</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>Num Vehicles</th>
+<th>Phy: Off TM: Off</th>
+<th>Phy: On TM: Off</th>
+<th>Phy: Off TM: On</th>
+<th>Phy: On TM: On</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0</td>
+<td>1220</td>
+<td>1102</td>
+<td>702</td>
+<td>729</td>
+</tr>
+<tr>
+<td>1</td>
+<td>805</td>
+<td>579</td>
+<td>564</td>
+<td>422</td>
+</tr>
+<tr>
+<td>10</td>
+<td>473</td>
+<td>223</td>
+<td>119</td>
+<td>98</td>
+</tr>
+<tr>
+<td>50</td>
+<td>179</td>
+<td>64</td>
+<td>37</td>
+<td>26</td>
+</tr>
+<tr>
+<td>100</td>
+<td>92</td>
+<td>34</td>
+<td>22</td>
+<td>15</td>
+</tr>
+<tr>
+<td>150</td>
+<td>62</td>
+<td>21</td>
+<td>17</td>
+<td>10</td>
+</tr>
+<tr>
+<td>200</td>
+<td>47</td>
+<td>15</td>
+<td>14</td>
+<td>7</td>
+</tr>
+<tr>
+<td>250</td>
+<td>37</td>
+<td>11</td>
+<td>12</td>
+<td>6</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<p>If you have any questions regarding the performance benchmarks then don't hesitate to post in the forum.</p>
+<div class="build-buttons">
+<!-- Latest release button -->
+<p>
+<a href="https://github.com/carla-simulator/carla/discussions/" target="_blank" class="btn btn-neutral" title="Go to the latest CARLA release">
+CARLA forum</a>
+</p>
+</div>
+              
+            </div>
+          </div><footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+        <span>
+          <a href="https://github.com/carla-simulator/carla" class="fa fa-github" style="color: #fcfcfc"> GitHub</a>
+        </span>
+    
+    
+    
+  </span>
+</div>
+    <script src="../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "..";</script>
+    <script src="../js/theme_extra.js"></script>
+    <script src="../js/theme.js"></script>
+      <script src="../extra.js"></script>
+      <script src="../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>
