@@ -4,8 +4,8 @@ import numpy as np
 import time
 
 import sys, os
-sys.path.append(os.path.join(os.getenv("CARLA_ROOT"), "PythonAPI"))
-import examples  # calls ./__init__.py to add all the necessary things to path
+# sys.path.append(os.path.join(os.getenv("CARLA_ROOT"), "PythonAPI"))
+# import examples  # calls ./__init__.py to add all the necessary things to path
 
 
 def find_ego_vehicle(world: carla.libcarla.World) -> Optional[carla.libcarla.Vehicle]:
@@ -22,23 +22,23 @@ def find_ego_vehicle(world: carla.libcarla.World) -> Optional[carla.libcarla.Veh
     if len(available_ego_vehicles) == 1:
         bp = available_ego_vehicles[0]
         print(f'Spawning only available EgoVehicle: "{bp.id}"')
-    else:
-        print(
-            f"Found {len(available_ego_vehicles)} available EgoVehicles. Which one to use?"
-        )
-        for i, ego in enumerate(available_ego_vehicles):
-            print(f"\t[{i}] - {ego.id}")
-        print()
-        ego_choice = f"Pick EgoVehicle to spawn [0-{len(available_ego_vehicles) - 1}]: "
-        i: int = int(input(ego_choice))
-        assert 0 <= i < len(available_ego_vehicles)
-        bp = available_ego_vehicles[i]
-    i: int = 0
-    spawn_pts = world.get_map().get_spawn_points()
-    while DReyeVR_vehicle is None:
-        print(f'Spawning DReyeVR EgoVehicle: "{bp.id}" at {spawn_pts[i]}')
-        DReyeVR_vehicle = world.spawn_actor(bp, transform=spawn_pts[i])
-        i = (i + 1) % len(spawn_pts)
+    # else:
+    #     print(
+    #         f"Found {len(available_ego_vehicles)} available EgoVehicles. Which one to use?"
+    #     )
+    #     for i, ego in enumerate(available_ego_vehicles):
+    #         print(f"\t[{i}] - {ego.id}")
+    #     print()
+    #     ego_choice = f"Pick EgoVehicle to spawn [0-{len(available_ego_vehicles) - 1}]: "
+    #     i: int = int(input(ego_choice))
+    #     assert 0 <= i < len(available_ego_vehicles)
+    #     bp = available_ego_vehicles[i]
+    # i: int = 0
+    # spawn_pts = world.get_map().get_spawn_points()
+    # while DReyeVR_vehicle is None:
+    #     print(f'Spawning DReyeVR EgoVehicle: "{bp.id}" at {spawn_pts[i]}')
+    #     DReyeVR_vehicle = world.spawn_actor(bp, transform=spawn_pts[i])
+    #     i = (i + 1) % len(spawn_pts)
     return DReyeVR_vehicle
 
 

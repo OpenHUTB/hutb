@@ -91,6 +91,9 @@ check.upload:
 check.air:
 	@"${CARLA_BUILD_TOOLS_FOLDER}/Check.bat" --air $(ARGS)
 
+check.vr:
+	@"${CARLA_BUILD_TOOLS_FOLDER}/Check.bat" --vr $(ARGS)
+
 run-examples:
 	@for D in ${CARLA_EXAMPLES_FOLDER}/*; do [ -d "$${D}" ] && make -C $${D} run.only; done
 

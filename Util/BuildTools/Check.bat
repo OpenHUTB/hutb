@@ -38,11 +38,13 @@ rem ============================================================================
 set DOC_STRING="Run unit tests."
 set USAGE_STRING="Usage: %FILE_N% [-h|--help] [--gdb] [--xml] [--gtest_args=ARGS] [--python-version=VERSION]"
 
+set IS_DEBUG=false
 
 set XML_OUTPUT=false
 set LIBCARLA_RELEASE=false
 set LIBCARLA_DEBUG=false
 set SMOKE_TESTS=false
+set VR_TESTS=false
 set PYTHON_API=false
 set RUN_BENCHMARK=false
 set AIR_TESTS=false
@@ -88,6 +90,11 @@ if not "%1"=="" (
 
     if "%1"=="--air" (
         set AIR_TESTS=true
+        shift
+    )
+
+    if "%1"=="--vr" (
+        set VR_TESTS=true
         shift
     )
 
@@ -150,7 +157,6 @@ if %UPLOAD_DOWNLOAD%==true (
 rem The directory of CarlaUE4.exe
 set BUILD_FOLDER=%INSTALLATION_DIR%UE4Carla/%CARLA_VERSION%/
 rem debug only (rename with no dirty)
-rem set IS_DEBUG=true
 if %IS_DEBUG%==true (
     set BUILD_FOLDER=%INSTALLATION_DIR%UE4Carla\debug\
 )
@@ -161,11 +167,17 @@ set exe_path=%BUILD_FOLDER:/=\%WindowsNoEditor\CarlaUE4.exe
 rem If exist CarlaUE4.exe process, kill it
 for /f "tokens=5" %%a in ('netstat -ano ^| findstr :3654') do taskkill /F /PID %%a
 :: use command "start" to launch a new service process. Otherwise stuck
-echo Unreal service is launching with command: start %exe_path% -RenderOffscreen --carla-rpc-port=3654 --carla-streaming-port=0 -nosound
 if exist %exe_path% (
     :: prevent to Choose Vehicle when launching the service, which will cause the service to be stuck and fail to run smoke tests.
     cd /d %exe_dir%
-    start %exe_path% -RenderOffscreen --carla-rpc-port=3654 --carla-streaming-port=0 -nosound
+    if %IS_DEBUG%==false (
+        echo Unreal service is launching with command: start %exe_path% -RenderOffscreen --carla-rpc-port=3654 --carla-streaming-port=0 -nosound
+        start %exe_path% -RenderOffscreen --carla-rpc-port=3654 --carla-streaming-port=0 -nosound
+    ) else (
+        echo Unreal service is launching with command: start %exe_path% --carla-rpc-port=3654 --carla-streaming-port=0 -nosound
+        start %exe_path% --carla-rpc-port=3654 --carla-streaming-port=0 -nosound
+    )
+    
 ) else (
     echo Error: %exe_path% not exitst.
     goto bad_exit
@@ -175,21 +187,23 @@ if exist %exe_path% (
 rem ============================================================================
 rem -- Install Python packages -------------------------------------------------
 rem ============================================================================
-
-for /l %%i in (14,-1,7) do (
-    call conda activate hutb_3.%%i
-    pip install -r %ROOT_PATH:/=\%PythonAPI\test\requirements.txt -i http://mirrors.aliyun.com/pypi/simple --trusted-host mirrors.aliyun.com
-    if %%i==7 (
-        rem Python 3.7 whl file has "cp37m" in its name, while Python 3.8-3.11 whl files have "cp3%%i" in their names.
-        echo pip install --force-reinstall  %BUILD_FOLDER:\=/%WindowsNoEditor/PythonAPI/carla/dist/hutb-%API_VERSION%-cp3%%i-cp3%%im-win_amd64.whl
-        pip uninstall --yes hutb
-        pip install  %BUILD_FOLDER:\=/%WindowsNoEditor/PythonAPI/carla/dist/hutb-%API_VERSION%-cp3%%i-cp3%%im-win_amd64.whl
-    ) else (
-        echo pip install --force-reinstall  %BUILD_FOLDER:\=/%WindowsNoEditor/PythonAPI/carla/dist/hutb-%API_VERSION%-cp3%%i-cp3%%i-win_amd64.whl
-        pip uninstall --yes hutb
-        pip install  %BUILD_FOLDER:\=/%WindowsNoEditor/PythonAPI/carla/dist/hutb-%API_VERSION%-cp3%%i-cp3%%i-win_amd64.whl
+if %IS_DEBUG%==false (
+    for /l %%i in (14,-1,7) do (
+        call conda activate hutb_3.%%i
+        pip install -r %ROOT_PATH:/=\%PythonAPI\test\requirements.txt -i http://mirrors.aliyun.com/pypi/simple --trusted-host mirrors.aliyun.com
+        if %%i==7 (
+            rem Python 3.7 whl file has "cp37m" in its name, while Python 3.8-3.11 whl files have "cp3%%i" in their names.
+            echo pip install --force-reinstall  %BUILD_FOLDER:\=/%WindowsNoEditor/PythonAPI/carla/dist/hutb-%API_VERSION%-cp3%%i-cp3%%im-win_amd64.whl
+            pip uninstall --yes hutb
+            pip install  %BUILD_FOLDER:\=/%WindowsNoEditor/PythonAPI/carla/dist/hutb-%API_VERSION%-cp3%%i-cp3%%im-win_amd64.whl
+        ) else (
+            echo pip install --force-reinstall  %BUILD_FOLDER:\=/%WindowsNoEditor/PythonAPI/carla/dist/hutb-%API_VERSION%-cp3%%i-cp3%%i-win_amd64.whl
+            pip uninstall --yes hutb
+            pip install  %BUILD_FOLDER:\=/%WindowsNoEditor/PythonAPI/carla/dist/hutb-%API_VERSION%-cp3%%i-cp3%%i-win_amd64.whl
+        )
     )
 )
+
 
 :: goto success
 
@@ -286,9 +300,47 @@ set /A ELAPSED_TIME=!T_END_DO_TEST! - !T_START_DO_TEST!
 if %MEASURE_TIME%==true if %SMOKE_TESTS%==true echo %FILE_N% [TIME]: Running smoke test took !ELAPSED_TIME! seconds.
 
 
+rem ============================================================================
+rem -- Run VR tests ---------------------------------------------------------
+rem ============================================================================
+
+call :get_current_time_in_seconds T_START_DO_TEST
+
+
+if %VR_TESTS%==true (
+    echo Testing VR... 
+    echo Current directory: %cd%
+    for /l %%i in (14,-1,7) do (
+        echo Running VR tests for Python 3.%%i
+        call conda activate hutb_3.%%i
+        echo Current Python path: 
+        where python
+        timeout /t 10 /nobreak > NUL
+        echo Switch to VR mode...
+        python ../util/config.py -p 3654 --map Town10HD?GAME=VR
+        python ./function/test_VR_diagram_mode.py
+        rem 判断是否正常退出
+        if %errorlevel% equ 0 (
+            echo VR test passed.
+        ) else (
+            echo VR test failed with errorlevel %errorlevel%.
+            goto bad_exit
+        )
+    )
+)
+
+
+call :get_current_time_in_seconds T_END_DO_TEST
+set /A ELAPSED_TIME=!T_END_DO_TEST! - !T_START_DO_TEST!
+if %MEASURE_TIME%==true if %VR_TESTS%==true echo %FILE_N% [TIME]: Running VR test took !ELAPSED_TIME! seconds.
+
 
 rem ============================================================================
-:: kill service process after test
+rem -- kill service process after test -----------------------------------------
+rem ============================================================================
+:: pause 5 seconds to wait for the service to be ready, otherwise the service process will be not killed with no test task.
+timeout /t 10 /nobreak > NUL
+echo Killing Unreal service process after test...
 for /f "tokens=5" %%a in ('netstat -ano ^| findstr :3654') do taskkill /F /PID %%a
 
 
