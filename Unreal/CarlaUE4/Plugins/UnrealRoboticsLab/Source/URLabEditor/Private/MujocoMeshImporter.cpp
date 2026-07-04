@@ -187,6 +187,7 @@ UStaticMesh* UMujocoGenerationAction::AttemptMeshImport(const FString& SourcePat
 
     // 获取结果
     TArray<UObject*> ImportedAssets;
+	// TArray t = ImportTask->ImportedObjectPaths;
     for (UObject* Obj : ImportTask->Result)  // for (UObject* Obj : ImportTask->GetObjects())
     {
         if (Obj) ImportedAssets.Add(Obj);
@@ -327,7 +328,7 @@ bool UMujocoGenerationAction::ValidateMesh(UStaticMesh* Mesh, const FString& Mes
     //     return false;
     // }
 
-    // Log mesh statistics
+    // 记录网格统计信息
     int32 NumVertices; // = LOD0.VertexBuffers.StaticMeshVertexBuffer.GetNumVertices();
     int32 NumTriangles; // = LOD0.IndexBuffer.GetNumIndices() / 3;
     int32 NumUVChannels; // = LOD0.VertexBuffers.StaticMeshVertexBuffer.GetNumTexCoords();
@@ -335,7 +336,7 @@ bool UMujocoGenerationAction::ValidateMesh(UStaticMesh* Mesh, const FString& Mes
     UE_LOG(LogURLabEditor, Log, TEXT("Mesh '%s' validation: %d vertices, %d triangles, %d UV channels"),
         *MeshName, NumVertices, NumTriangles, NumUVChannels);
 
-    // Warn if no UV channel 0
+    // 如果没有 UV 通道 0，就发出警告
     if (NumUVChannels == 0)
     {
         UE_LOG(LogURLabEditor, Warning, TEXT("Mesh '%s' has no UV channels - materials may not display correctly"), *MeshName);

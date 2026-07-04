@@ -51,18 +51,12 @@ UMjGeom::UMjGeom()
 {
 	PrimaryComponentTick.bCanEverTick = false;
     
-    // Default collision settings (matching MuJoCo defaults)
+    // 默认碰撞设置（与MuJoCo默认设置相同）
     Contype = MujocoDefaults::Geom::Contype;
     Conaffinity = MujocoDefaults::Geom::Conaffinity;
     bOverride_Pos = false;
     bOverride_Quat = false;
 }
-
-
-
-
-
-
 
 
 void UMjGeom::ImportFromXml(const FXmlNode* Node)
@@ -345,7 +339,6 @@ void UMjGeom::ExportTo(mjsGeom* Geom, mjsDefault* Default)
         }
     }
 
-
     if (bOverride_Friction)
     {
         for (int i = 0; i < Friction.Num() && i < 3; ++i)
@@ -448,6 +441,7 @@ FVector UMjGeom::GetWorldLocation() const
     }
     return GetComponentLocation();
 }
+
 void UMjGeom::SetFriction(float NewFriction)
 {
     if (Friction.Num() == 0) Friction.Add(NewFriction);
@@ -663,7 +657,10 @@ void UMjGeom::SetGeomVisibility(bool bNewVisibility)
     }
 }
 
+
 #if WITH_EDITOR
+// 将一个复杂的网格几何体分解为若干凸壳（hull），以用于更可靠的物理/碰撞表示
+// （使用 CoACD 或导出后的外部分解工具）
 void UMjGeom::DecomposeMesh()
 {
     UE_LOG(LogURLab, Log, TEXT("[MjGeom] DecomposeMesh called on '%s'. Type=%d, bOverride_Type=%d"),
@@ -782,8 +779,10 @@ void UMjGeom::DecomposeMesh()
 
     const int32 GeometryIndex = 0;
 	// auto& TriGeom = BodySetup->TriMeshGeometries[GeometryIndex];
+    // 从 UBodySetup 的碰撞三角网格集合中取得索引为 GeometryIndex 的三角形几何描述的引用（也就是代表碰撞网格的数据结构）
 	auto& TriGeom = BodySetup->TriMeshes[GeometryIndex];
 	// auto& Vertices = TriGeom->GetReference()->Particles().X();
+	// auto& Vertices = TriGeom.GetReference()->Particles().X();
 
 	int MeshCount = 0;
 	IO::DeleteMeshCache(FullFilePath, true);
