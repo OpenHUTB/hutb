@@ -227,6 +227,12 @@ if %AIR_TESTS%==true (
         python 03_spawn_traffic.py --port 3654
         python 04_sensor_capture.py --port 3654
         echo Finished Carla-Air Python API for Python %%i example tests.
+        if %errorlevel% equ 0 (
+            echo AIR test passed with errorlevel %errorlevel%.
+        ) else (
+            echo AIR test failed with errorlevel %errorlevel%.
+            goto bad_exit
+        )
     )
 )
 
