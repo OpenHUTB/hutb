@@ -3,6 +3,6 @@ numpy==2.2.5
 scipy==1.15.3
 grpcio==1.64.0
 protobuf==4.23.3
-hutb>=2.9.16
+hutb>=2.10.0
 nvidia-nvimgcodec-cu12
 pyyaml

@@ -196,7 +196,7 @@ class CleanADStubFiles(install_lib):
 # also increase version number API_VERSION in Uitl/BuildTools/Windows.mk
 setup(
     name='hutb',
-    version='2.9.16',
+    version='2.10.0',
     author='OpenHUTB',
     package_dir={'': 'source'},
     packages=['carla', 'airsim', 'carla.ad', 'carla.ad.rss', 'carla.ad.map'] if is_rss_variant_enabled() else ['carla', 'airsim'],
