@@ -1283,7 +1283,7 @@ void AMjArticulation::OnConstruction(const FTransform& Transform)
     Super::OnConstruction(Transform);
     UpdateGroup3Visibility();
 
-    // Register for Blueprint compile callback
+    // 注册蓝图编译回调
     if (bValidateOnBlueprintCompile && !BlueprintCompiledHandle.IsValid())
     {
         if (UBlueprint* BP = UBlueprint::GetBlueprintFromClass(GetClass()))
@@ -1360,8 +1360,8 @@ void AMjArticulation::OnBlueprintCompiled(UBlueprint* Blueprint)
 
 void AMjArticulation::ValidateSpec()
 {
-    // Create a temporary spec, export this articulation's components, and try to compile.
-    // This mirrors the runtime compile pipeline but in isolation.
+    // 创建一个临时规范，导出这个铰链的组件，并尝试编译。
+    // 这类似于运行时的编译流程，但是在隔离的环境中进行。
     mjSpec* TempSpec = mj_parseXMLString("<mujoco><worldbody/></mujoco>", nullptr, nullptr, 0);
     if (!TempSpec)
     {
@@ -1372,10 +1372,10 @@ void AMjArticulation::ValidateSpec()
     mjVFS TempVFS;
     mj_defaultVFS(&TempVFS);
 
-    // Run the same Setup path that the runtime uses
+    // 运行与运行时使用相同的 Setup 路径
     Setup(TempSpec, &TempVFS);
 
-    // Attempt compile
+    // 尝试编译
     mjModel* TempModel = mj_compile(TempSpec, &TempVFS);
     if (TempModel)
     {

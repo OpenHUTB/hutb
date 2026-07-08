@@ -52,11 +52,11 @@ UStaticMesh* UMujocoGenerationAction::ImportSingleMesh(const FString& SourcePath
 
     UE_LOG(LogURLabEditor, Log, TEXT("Importing mesh from: %s to %s"), *SourcePath, *DestinationPath);
 
-    // Prioritize file formats: FBX > GLB > GLTF > Original (OBJ/STL)
+    // 优先考虑文件格式： FBX > GLB > GLTF > Original (OBJ/STL)
     FString ActualSourcePath = SourcePath;
     FString BasePath = FPaths::ChangeExtension(SourcePath, "");
 
-    // Check for formats in priority order
+    // 按优先顺序检查格式
     TArray<FString> Extensions = { TEXT("fbx"), TEXT("glb"), TEXT("gltf") };
     bool bFoundHigherPriority = false;
 
@@ -72,7 +72,7 @@ UStaticMesh* UMujocoGenerationAction::ImportSingleMesh(const FString& SourcePath
         }
     }
 
-    // If no high priority format found, ensure original exists
+    // 如果没有找到高优先级格式，确保原始存在
     if (!bFoundHigherPriority && !FPaths::FileExists(ActualSourcePath))
     {
          UE_LOG(LogURLabEditor, Error, TEXT("Source mesh file does not exist: %s"), *ActualSourcePath);
@@ -81,18 +81,18 @@ UStaticMesh* UMujocoGenerationAction::ImportSingleMesh(const FString& SourcePath
 
     IAssetTools& AssetTools = FModuleManager::LoadModuleChecked<FAssetToolsModule>("AssetTools").Get();
 
-    // Try import with MikkTSpace first (best quality)
-    // Use ActualSourcePath instead of SourcePath
+    // 先试着用 MikkTSpace 导入（效果最好）
+    // 使用 ActualSourcePath 替代 SourcePath
     UStaticMesh* ImportedMesh = AttemptMeshImport(ActualSourcePath, DestinationPath, EFBXNormalGenerationMethod::MikkTSpace);
 
-    // Validate mesh
+    // 验证网格
     if (ImportedMesh && ValidateMesh(ImportedMesh, FileName))
     {
         UE_LOG(LogURLabEditor, Log, TEXT("Successfully imported mesh '%s' with MikkTSpace"), *FileName);
         return ImportedMesh;
     }
 
-    // MikkTSpace failed or mesh invalid - try fallback with BuiltIn normals
+    // MikkTSpace 失败或网格无效 - 尝试使用内置法线作为备用
     if (ImportedMesh)
     {
         UE_LOG(LogURLabEditor, Warning, TEXT("Mesh '%s' has issues with MikkTSpace, attempting fallback with BuiltIn normals"), *FileName);
@@ -120,7 +120,7 @@ UStaticMesh* UMujocoGenerationAction::AttemptMeshImport(const FString& SourcePat
 
     // 配置自动导入任务
     UAssetImportTask* ImportTask = NewObject<UAssetImportTask>();
-	// Normalize slashes and make absolute
+	// 规范斜杠并转为绝对路径
 	FString NormalizedSourcePath = SourcePath;
 	FPaths::MakeStandardFilename(NormalizedSourcePath);                             // 使用标准分隔符（'/'）
 	NormalizedSourcePath = FPaths::ConvertRelativePathToFull(NormalizedSourcePath); // 变为绝对路径
@@ -298,14 +298,14 @@ bool UMujocoGenerationAction::ValidateMesh(UStaticMesh* Mesh, const FString& Mes
         return false;
     }
 
-    // Check if mesh has render data
+    // 检查网格是否有渲染数据
     // if (!Mesh->GetRenderData())
     // {
     //     UE_LOG(LogURLabEditor, Error, TEXT("Mesh '%s' has no render data"), *MeshName);
     //     return false;
     // }
 
-    // Check LOD 0 exists
+    // 检查 LOD 0 是否存在
     // if (Mesh->GetRenderData()->LODResources.Num() == 0)
     // {
     //     UE_LOG(LogURLabEditor, Error, TEXT("Mesh '%s' has no LOD resources"), *MeshName);
@@ -314,14 +314,14 @@ bool UMujocoGenerationAction::ValidateMesh(UStaticMesh* Mesh, const FString& Mes
 
     // const FStaticMeshLODResources& LOD0 = Mesh->GetRenderData()->LODResources[0];
 // 
-    // // Check vertex buffer
+    // // 检查顶点缓冲
     // if (LOD0.VertexBuffers.StaticMeshVertexBuffer.GetNumVertices() == 0)
     // {
     //     UE_LOG(LogURLabEditor, Error, TEXT("Mesh '%s' has empty vertex buffer"), *MeshName);
     //     return false;
     // }
 // 
-    // // Check index buffer
+    // // 检查索引缓冲区
     // if (LOD0.IndexBuffer.GetNumIndices() == 0)
     // {
     //     UE_LOG(LogURLabEditor, Error, TEXT("Mesh '%s' has empty index buffer"), *MeshName);
