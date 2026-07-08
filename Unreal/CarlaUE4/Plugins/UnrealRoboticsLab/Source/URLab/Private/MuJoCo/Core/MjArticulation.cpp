@@ -1293,12 +1293,14 @@ void AMjArticulation::OnConstruction(const FTransform& Transform)
     }
 }
 
+
+// 蓝图编译后同步名验证铰链相关组件 的回调函数
 void AMjArticulation::OnBlueprintCompiled(UBlueprint* Blueprint)
 {
-    // Sync MjDefault ClassName and ParentClassName from SCS hierarchy, and
-    // auto-populate MjName on user-authored non-Default components from their
-    // SCS variable name when it hasn't been set explicitly (e.g. by the XML
-    // importer, which writes the raw MJCF name= attribute into MjName).
+    // 从 简单构造脚本（SimpleConstructionScript, SCS）层级同步 Mujoco 默认的（MjDefault）类名（ClassName）和父类名（ParentClassName），
+    // 并在用户创建的非默认组件上自动填充 Mujoco 名（MjName），
+    // 当它没有被明确设置时（例如由 XML 导入器设置），
+    // 它会将原始 MJCF 的 name 属性写入 MjName
     if (Blueprint && Blueprint->SimpleConstructionScript)
     {
         USimpleConstructionScript* SCS = Blueprint->SimpleConstructionScript;
@@ -1309,14 +1311,14 @@ void AMjArticulation::OnBlueprintCompiled(UBlueprint* Blueprint)
 
             if (UMjDefault* DefComp = Cast<UMjDefault>(MjComp))
             {
-                // Sync ClassName from variable name
+                // 从变量名同步类名（ClassName）
                 FString VarName = Node->GetVariableName().ToString();
                 if (DefComp->ClassName != VarName)
                 {
                     DefComp->ClassName = VarName;
                 }
 
-                // Sync ParentClassName from SCS parent hierarchy
+                // 从简单构造脚本（SCS）的父层级同步 父类名（ParentClassName）
                 USCS_Node* ParentNode = SCS->FindParentNode(Node);
                 if (ParentNode)
                 {
@@ -1330,20 +1332,19 @@ void AMjArticulation::OnBlueprintCompiled(UBlueprint* Blueprint)
                     }
                     else
                     {
-                        // Parent is not a UMjDefault (e.g. DefaultsRoot) — no parent class
+                        // 父类不是 UMjDefault（例如 DefaultsRoot）——没有父类
                         DefComp->ParentClassName.Empty();
                     }
                 }
             }
             else
             {
-                // Non-Default MjComponent: sync MjName from SCS variable name
-                // only when empty. Imported components have MjName set from
-                // the MJCF name= attribute and must not be overwritten here,
-                // because SCS uniqueness may have disambiguated the variable
-                // name (e.g. joint "waist" -> "waist1" when a Default class
-                // already claimed "waist"), and MjName is the source of truth
-                // for the MuJoCo spec lookup.
+                // 非默认 MjComponent：
+                // 仅当为空时才从简单构造脚本（SCS）变量名同步 MjName。
+                // 导入的组件其 MjName 是从 MJCF 的 name= 属性设置的，这里不能被覆盖，
+                // 因为 SCS 的唯一性可能已经使变量名不再歧义
+                // （例如，当默认类已经使用了“waist”时，关节“waist”会变成“waist1”），
+                // 而 MjName 是 MuJoCo 规格查找的真实来源。
                 if (MjComp->MjName.IsEmpty())
                 {
                     MjComp->MjName = Node->GetVariableName().ToString();
@@ -1354,7 +1355,7 @@ void AMjArticulation::OnBlueprintCompiled(UBlueprint* Blueprint)
 
     if (bValidateOnBlueprintCompile)
     {
-        ValidateSpec();
+        ValidateSpec();  // 在隔离的临时规范上执行编译流程，帮助尽快发现 Mujoco 规范问题
     }
 }
 
@@ -1403,7 +1404,7 @@ void AMjArticulation::ValidateSpec()
 
 void AMjArticulation::UpdateGroup3Visibility()
 {
-    // 1. Gather all Defaults to support lookups
+    // 1. 收集所有默认值以支持查找
     TMap<FString, UMjDefault*> DefaultMap;
     TArray<UMjDefault*> Defaults;
     GetComponents<UMjDefault>(Defaults);
@@ -1415,7 +1416,7 @@ void AMjArticulation::UpdateGroup3Visibility()
         }
     }
 
-    // Build a map of ClassName -> Group by finding geoms that define defaults
+    // 构建 ClassName -> Group 的映射，通过查找定义默认值的几何体
     TMap<FString, int> DefaultGroupMap;
     TArray<UMjDefault*> ArticulationDefaults;
     GetComponents<UMjDefault>(ArticulationDefaults);
@@ -1424,9 +1425,9 @@ void AMjArticulation::UpdateGroup3Visibility()
     {
         if (!Def) continue;
 
-        // Find geoms attached to this default
+        // 查找附加到此默认值的几何体
         TArray<USceneComponent*> DefaultChildren;
-        Def->GetChildrenComponents(false, DefaultChildren); // Geoms should be direct children of the default
+        Def->GetChildrenComponents(false, DefaultChildren); // Geoms 应该是默认值的直接子级
 
         for (USceneComponent* Child : DefaultChildren)
         {
@@ -1440,23 +1441,23 @@ void AMjArticulation::UpdateGroup3Visibility()
         }
     }
 
-    // 2. Iterate over ALL UMjGeom components
+    // 2. 遍历所有 UMjGeom 组件
     TArray<UMjGeom*> ArticulationGeoms;
     GetComponents<UMjGeom>(ArticulationGeoms);
 
     int Count = 0;
     for (UMjGeom* Geom : ArticulationGeoms)
     {
-        // Skip template geoms used for defaults
+        // 跳过用于默认值的模板几何体
         if (Geom->bIsDefault)
         {
             continue;
         }
 
-        // Resolve effective Group
+        // 解析有效组
         int EffectiveGroup = Geom->Group;
 
-        // If geom doesn't override Group, check defaults
+        // 如果几何体没有覆盖组，则检查默认值
         if (!Geom->bOverride_Group && !Geom->MjClassName.IsEmpty())
         {
             if (int* FoundGroup = DefaultGroupMap.Find(Geom->MjClassName))
@@ -1465,7 +1466,7 @@ void AMjArticulation::UpdateGroup3Visibility()
             }
         }
 
-        // Apply visibility based on Group 3 and bShowGroup3
+        // 应用基于 Group 3 和 bShowGroup3 的可见性
         if (EffectiveGroup == 3)
         {
             Geom->SetGeomVisibility(bShowGroup3);
