@@ -62,7 +62,7 @@ AMjArticulation::AMjArticulation()
 {
     PrimaryActorTick.bCanEverTick = true;
 
-    // 1. Create the Scene Component to act as the Root
+    // 1. 创建场景组件作为根组件
     DefaultSceneRoot = CreateDefaultSubobject<USceneComponent>(TEXT("ArticulationRoot"));
     RootComponent = DefaultSceneRoot;
 }
@@ -77,12 +77,12 @@ void AMjArticulation::BeginPlay()
     Super::BeginPlay();
     UpdateGroup3Visibility();
 
-    // Auto-create TwistController if none exists
+    // 如果没有找到 TwistController，则自动创建
     if (!FindComponentByClass<UMjTwistController>())
     {
         UMjTwistController* TwistCtrl = NewObject<UMjTwistController>(this, TEXT("TwistController"));
 
-        // Load default input assets from plugin content
+        // 从插件内容加载默认输入资产（需要转成UE4资产）
         static UInputMappingContext* DefaultIMC = LoadObject<UInputMappingContext>(
             nullptr, TEXT("/UnrealRoboticsLab/Input/IMC_TwistControl.IMC_TwistControl"));
         static UInputAction* DefaultMove = LoadObject<UInputAction>(
@@ -142,7 +142,7 @@ void AMjArticulation::PossessedBy(AController* NewController)
     APlayerController* PC = Cast<APlayerController>(NewController);
     if (!PC) return;
 
-    // Add twist mapping context
+    // 添加扭转映射上下文
     UMjTwistController* TwistCtrl = FindComponentByClass<UMjTwistController>();
     if (TwistCtrl && TwistCtrl->TwistMappingContext)
     {
@@ -156,7 +156,7 @@ void AMjArticulation::PossessedBy(AController* NewController)
         }
     }
 
-    // Attach a spring arm + camera to the root body so the camera follows physics
+    // 附加弹簧臂 和 相机到根身体，以便相机跟随物理
     UMjBody* RootBody = nullptr;
     TArray<UMjBody*> Bodies;
     GetComponents<UMjBody>(Bodies);
@@ -189,7 +189,7 @@ void AMjArticulation::PossessedBy(AController* NewController)
         Cam->SetupAttachment(Arm);
         Cam->RegisterComponent();
 
-        // Tag them so we can clean up on unpossess
+        // 标记它们，以便我们可以在取消占有时清理
         Arm->ComponentTags.Add(TEXT("PossessCamera"));
         Cam->ComponentTags.Add(TEXT("PossessCamera"));
 
@@ -202,7 +202,7 @@ void AMjArticulation::UnPossessed()
     AController* OldController = GetController();
     APlayerController* PC = Cast<APlayerController>(OldController);
 
-    // Remove twist mapping context and zero state
+    // 移除扭转映射上下文并重置状态
     UMjTwistController* TwistCtrl = FindComponentByClass<UMjTwistController>();
     if (TwistCtrl)
     {
@@ -220,7 +220,7 @@ void AMjArticulation::UnPossessed()
         }
     }
 
-    // Remove the follow camera components we created on possession
+    // 移除我们在占有时创建的跟随相机组件
     TArray<UActorComponent*> ToRemove;
     for (UActorComponent* Comp : GetComponents())
     {
@@ -246,8 +246,8 @@ void AMjArticulation::Setup(mjSpec* Spec, mjVFS* VFS)
     m_ChildSpec = mj_makeSpec();
     m_ChildSpec->compiler.degree = false;
 
-    // Apply this articulation's simulation options to the child spec.
-    // mjs_attach will merge these into the root spec at compile time.
+    // 将此关节的仿真选项应用于子规格。
+    // mjs_attach将在编译时将这些合并到根规格中。
     SimOptions.ApplyToSpec(m_ChildSpec);
 
     m_prefix = GetName() + TEXT("_");
@@ -255,8 +255,8 @@ void AMjArticulation::Setup(mjSpec* Spec, mjVFS* VFS)
     m_wrapper = new FMujocoSpecWrapper(m_ChildSpec, m_vfs);
     m_wrapper->MeshCacheSubDir = GetClass()->GetName();
 
-    // 1b. Auto-resolve bIsDefault and sync ParentClassName from hierarchy.
-    // This ensures correctness even if OnBlueprintCompiled hasn't run.
+    // 1b. 自动解析 bIsDefault 并从层次结构同步 ParentClassName。
+    // 这确保了即使 OnBlueprintCompiled 尚未运行，也能正确。
     {
         TArray<UMjDefault*> AllDefaults;
         GetComponents<UMjDefault>(AllDefaults);
@@ -264,16 +264,16 @@ void AMjArticulation::Setup(mjSpec* Spec, mjVFS* VFS)
         {
             Def->bIsDefault = true;
 
-            // Sync ParentClassName from attachment parent if attached to another UMjDefault.
-            // If not (e.g. attached to root), keep existing ParentClassName as fallback
-            // for programmatically created defaults that set it explicitly.
+            // 如果附加到另一个 UMjDefault，则从附加父级同步 ParentClassName。
+            // 如果没有（例如，附加到根），则保留现有的 ParentClassName 作为后备
+            // 对于以编程方式创建的默认值，明确设置它。
             if (UMjDefault* ParentDef = Cast<UMjDefault>(Def->GetAttachParent()))
             {
                 Def->ParentClassName = ParentDef->ClassName;
             }
             else if (Def->ParentClassName.IsEmpty())
             {
-                // No parent default in hierarchy and no explicit ParentClassName — root default
+                // 层级中没有父类默认值，也没有明确的 ParentClassName — 使用根默认
             }
 
             TArray<USceneComponent*> DefChildren;
@@ -288,18 +288,18 @@ void AMjArticulation::Setup(mjSpec* Spec, mjVFS* VFS)
         }
     }
 
-    // 2. Process Defaults in hierarchy order (parents before children) so that
-    //    mjs_findDefault can resolve parent classes during AddDefault.
+    // 2. 按层次顺序处理默认值（父级在子级之前），以便
+    //    mjs_findDefault 可以在 AddDefault 期间解析父类。
     {
         TArray<UMjDefault*> AllDefaults;
         GetComponents<UMjDefault>(AllDefaults);
 
-        // Find root defaults (those whose parent is NOT a UMjDefault)
-        // and process them recursively, depth-first
+        // 找到根默认值（其父级不是 UMjDefault 的那些）
+        // 并递归处理它们，深度优先
         TFunction<void(UMjDefault*)> ProcessDefaultTree = [&](UMjDefault* Def)
         {
             m_wrapper->AddDefault(Def);
-            // Find child defaults attached to this one
+            // 找到附加到此默认值的子默认值
             TArray<USceneComponent*> Children;
             Def->GetChildrenComponents(false, Children);
             for (USceneComponent* Child : Children)
@@ -313,7 +313,7 @@ void AMjArticulation::Setup(mjSpec* Spec, mjVFS* VFS)
 
         for (UMjDefault* Def : AllDefaults)
         {
-            // Only start from roots (parent is not a UMjDefault)
+            // 仅从根开始（父级不是 UMjDefault）
             UMjDefault* ParentDef = Cast<UMjDefault>(Def->GetAttachParent());
             if (!ParentDef)
             {
@@ -321,8 +321,8 @@ void AMjArticulation::Setup(mjSpec* Spec, mjVFS* VFS)
             }
         }
     }
-    
-    // 3. Find UMjWorldBody and build body hierarchy normally (into child spec)
+
+    // 3. 查找 UMjWorldBody 并正常构建身体层次结构（进入子规格）
     UMjWorldBody* WorldBody = nullptr;
     TArray<UMjWorldBody*> AllWorldBodies;
     GetComponents<UMjWorldBody>(AllWorldBodies);
@@ -358,10 +358,8 @@ void AMjArticulation::Setup(mjSpec* Spec, mjVFS* VFS)
           }
      }
 
-     // Worldbody-level IMjSpecElement children (sites, etc. attached directly to
-     // <worldbody>) need to register against the child spec's world body so
-     // downstream references (tendons wrapping worldbody sites, for instance)
-     // resolve at compile time.
+     // Worldbody 级别的 IMjSpecElement 子项（直接附加到 <worldbody> 的站点等）需要在子规范的 world body 上进行注册，
+     // 以便下游引用（例如包裹 worldbody 位点的肌腱）在编译时就能解析。
      mjsBody* ChildWorld = mjs_findBody(m_ChildSpec, "world");
      if (ChildWorld)
      {
@@ -379,7 +377,7 @@ void AMjArticulation::Setup(mjSpec* Spec, mjVFS* VFS)
           }
      }
 
-    // 3b. Register flexcomp components (can be worldbody children or body children)
+    // 3b. 注册 flexcomp 组件（可以是 worldbody 子级或 body 子级）
     TArray<UMjFlexcomp*> Flexcomps;
     GetComponents<UMjFlexcomp>(Flexcomps);
     for (UMjFlexcomp* Flex : Flexcomps)
@@ -409,7 +407,7 @@ void AMjArticulation::Setup(mjSpec* Spec, mjVFS* VFS)
         }
     }
 
-    // 4. Add Tendons (into child spec, after bodies so joint names are set)
+    // 4. 添加肌腱（进入子规范，在身体之后，以便关节名称被设置）
     TArray<UMjTendon*> Tendons;
     GetComponents<UMjTendon>(Tendons);
     for (UMjTendon* Tendon : Tendons)
@@ -418,7 +416,7 @@ void AMjArticulation::Setup(mjSpec* Spec, mjVFS* VFS)
             Tendon->RegisterToSpec(*m_wrapper);
     }
 
-    // 5. Add Sensors and Actuators (into child spec, after tendons strings might be referenced)
+    // 5. 添加传感器和执行器（进入子规范，在肌腱之后，可能会引用字符串）
     TArray<UMjSensor*> Sensors;
     GetComponents<UMjSensor>(Sensors);
     for (UMjSensor* Sensor : Sensors)
@@ -475,7 +473,7 @@ void AMjArticulation::Setup(mjSpec* Spec, mjVFS* VFS)
 
     if (!attachResult)
     {
-        // Get error from both specs
+        // 获取两个规格的错误
         const char* childErr = mjs_getError(m_ChildSpec);
         const char* rootErr = mjs_getError(Spec);
         bAttachFailed = true;
@@ -483,7 +481,7 @@ void AMjArticulation::Setup(mjSpec* Spec, mjVFS* VFS)
         UE_LOG(LogURLab, Error, TEXT("[mjs_attach] '%s' — Child spec error: %hs"), *GetName(), childErr ? childErr : "(none)");
         UE_LOG(LogURLab, Error, TEXT("[mjs_attach] '%s' — Root spec error: %hs"), *GetName(), rootErr ? rootErr : "(none)");
 
-        // Log child spec body count for diagnosis
+        // 记录子规格体计数以进行诊断
         mjsBody* childWorld = mjs_findBody(m_ChildSpec, "world");
         UE_LOG(LogURLab, Error, TEXT("[mjs_attach] '%s' — Child spec world body: %p, child spec element: %p"),
             *GetName(), childWorld, m_ChildSpec ? m_ChildSpec->element : nullptr);
@@ -491,8 +489,8 @@ void AMjArticulation::Setup(mjSpec* Spec, mjVFS* VFS)
     else
     {
         UE_LOG(LogURLab, Log, TEXT("[mjs_attach] '%s' — SUCCESS (returned %p). Prefix='%s'"), *GetName(), attachResult, *m_prefix);
-        // Child spec elements have been moved into the root spec — the child spec is now consumed.
-        // Null it out so EndPlay doesn't try to double-free it.
+        // 子规格元素已移入根规格 — 子规格现在已被消耗。
+        // 将其置为空，以便 EndPlay 不会尝试双重释放它。
     }
 
     FTransform ActorTransform = GetActorTransform();
@@ -521,7 +519,7 @@ TArray<USceneComponent*> AMjArticulation::GetRuntimeComponentsOfClass(TSubclassO
     UWorld* MyWorld = GetWorld();
     for (USceneComponent* Comp : AllComponents)
     {
-        // Skip SCS template components that leak into PIE
+        // 跳过泄漏到 PIE（Play In Editor）的 SCS 模板组件
         if (MyWorld && Comp->GetWorld() != MyWorld) continue;
 
         if (UMjComponent* MjComp = Cast<UMjComponent>(Comp))
@@ -553,8 +551,8 @@ void AMjArticulation::PostSetup(mjModel* Model, mjData* Data)
         if (MjComp) MjComp->Bind(Model, Data, m_prefix);
     }
 
-    // Build component-name maps for Blueprint API (O(1) look up by name)
-    // We use the MuJoCo-side name (GetMjName()) as the key for consistency with UI/data.
+    // 为蓝图 API 构建组件名称映射（O(1) 按名称查找）
+    // 我们使用 MuJoCo 侧名称（GetMjName()）作为一致性键，以便与 UI/数据保持一致。
     ActuatorComponentMap.Empty();
     JointComponentMap.Empty();
     SensorComponentMap.Empty();
@@ -586,7 +584,7 @@ void AMjArticulation::PostSetup(mjModel* Model, mjData* Data)
     UE_LOG(LogURLab, Log, TEXT("AMjArticulation::PostSetup - %s maps (using prefix '%s'): %d actuators, %d joints, %d sensors, %d bodies, %d tendons"),
            *GetName(), *m_prefix, ActuatorComponentMap.Num(), JointComponentMap.Num(), SensorComponentMap.Num(), BodyComponentMap.Num(), TendonComponentMap.Num());
 
-    // Build MuJoCo ID maps (O(1) resolve from ID to Component)
+    // 构建 MuJoCo ID 映射（O(1) 从 ID 解析到组件）
     BodyIdMap.Empty();
     GeomIdMap.Empty();
     JointIdMap.Empty();
@@ -610,9 +608,9 @@ void AMjArticulation::PostSetup(mjModel* Model, mjData* Data)
     UE_LOG(LogURLab, Log, TEXT("AMjArticulation::PostSetup - %s maps (using prefix '%s'): %d actuators, %d joints, %d sensors, %d bodies, %d tendons"),
            *GetName(), *m_prefix, ActuatorIdMap.Num(), JointIdMap.Num(), SensorIdMap.Num(), BodyIdMap.Num(), TendonIdMap.Num());
 
-    // Bind any articulation controller component (PD, passthrough, or user-custom)
-    // and cache it so ApplyControls (physics thread) doesn't have to iterate
-    // OwnedComponents on every step — that race causes crashes under flex load.
+    // 绑定任何关节控制器组件（PD、直通或用户自定义）
+    // 并缓存它，以便 ApplyControls（物理线程）不必在每个步骤中迭代
+    // OwnedComponents — 这种竞争会导致在 flex 负载下崩溃。
     CachedController = FindComponentByClass<UMjArticulationController>();
     if (CachedController)
     {
@@ -624,18 +622,18 @@ void AMjArticulation::PostSetup(mjModel* Model, mjData* Data)
 
 void AMjArticulation::ApplyControls()
 {
-    // Thread safety: ActuatorIdMap is built during PostSetup (game thread) and
-    // only read here (physics thread). The map is never modified after construction.
-    // RunMujocoAsync starts after PostSetup completes, guaranteeing visibility.
+    // 线程安全：ActuatorIdMap 在 PostSetup（游戏线程）期间构建，这里（物理线程）只读。
+    // 构建完成后，这个映射从未被修改。
+    // RunMujocoAsync 会在 PostSetup 完成后启动，保证可见性。
     if (!m_model || !m_data) return;
 
-    // If holding a keyframe, override normal control flow
+    // 如果按住关键帧，则覆盖正常的控制流程
     if (bHoldingKeyframe)
     {
         if (bHoldViaQpos && HeldKeyframeQpos.Num() > 0)
         {
-            // Direct qpos injection — kinematic hold, bypasses actuators.
-            // Skip freejoint DOFs to preserve world position.
+            // 直接 qpos 注入 — 运动学保持，绕过执行器。
+            // 跳过自由关节 DOF 以保持世界位置。
             for (int32 j = 0; j < m_model->njnt; j++)
             {
                 int32 JointType = m_model->jnt_type[j];
@@ -658,7 +656,7 @@ void AMjArticulation::ApplyControls()
         }
         else if (HeldKeyframeCtrl.Num() > 0)
         {
-            // Ctrl-based hold — actuators drive to target positions
+            // 基于Ctrl的保持 — 执动器驱动到目标位置
             int32 Count = FMath::Min((float)(HeldKeyframeCtrl.Num()), (float)(m_model->nu));
             for (int32 i = 0; i < Count; i++)
             {
@@ -668,16 +666,15 @@ void AMjArticulation::ApplyControls()
         return;
     }
 
-    // Delegate to custom controller if present and active. Use the cached
-    // pointer from PostSetup — iterating OwnedComponents on the physics
-    // thread races against game-thread mutations and corrupts nearby heap.
+    // 如果存在且激活，就委托给自定义控制器。
+    // 使用 PostSetup 缓存的指针——在物理线程上迭代 OwnedComponents 会与游戏线程的修改产生竞争，并破坏附近的堆。
     if (CachedController && CachedController->bEnabled && CachedController->IsBound())
     {
         CachedController->ComputeAndApply(m_model, m_data, ControlSource);
         return;
     }
 
-    // Default path: write control values directly to d->ctrl
+    // 默认路径：直接将控制值写入 d->ctrl
     for (auto& Elem : ActuatorIdMap)
     {
         if (UMjActuator* Actuator = Elem.Value)
@@ -692,7 +689,7 @@ void AMjArticulation::ApplyControls()
 }
 
 // =========================================================================
-// Blueprint Runtime API — Discovery
+// 蓝图运行时 API — 发现
 // =========================================================================
 
 TArray<FString> AMjArticulation::GetActuatorNames() const
@@ -876,20 +873,20 @@ bool AMjArticulation::ResetToKeyframe(const FString& KeyframeName)
 {
     if (!m_model || !m_data) return false;
 
-    // Find the keyframe index by name
+    // 通过名称找到关键帧索引
     int32 KeyId = -1;
     if (KeyframeName.IsEmpty())
     {
-        KeyId = 0; // Default to first keyframe
+        KeyId = 0; // 默认使用第一个关键帧
     }
     else
     {
-        // Search by prefixed name (mjs_attach prepends the articulation prefix)
+        // 通过前缀名称搜索（mjs_attach 会添加关节前缀）
         FString PrefixedName = m_prefix + KeyframeName;
         KeyId = mj_name2id(m_model, mjOBJ_KEY, TCHAR_TO_UTF8(*PrefixedName));
         if (KeyId < 0)
         {
-            // Try without prefix
+            // 尝试不带前缀
             KeyId = mj_name2id(m_model, mjOBJ_KEY, TCHAR_TO_UTF8(*KeyframeName));
         }
     }
@@ -901,9 +898,9 @@ bool AMjArticulation::ResetToKeyframe(const FString& KeyframeName)
         return false;
     }
 
-    // Copy joint qpos from the keyframe, skipping freejoint DOFs.
-    // mj_resetDataKeyframe would also set the freejoint (world position),
-    // which teleports the robot — we only want to set joint angles.
+    // 从关键帧复制关节 qpos，跳过自由关节 DOF。
+    // mj_resetDataKeyframe 还会设置自由关节（世界位置），
+    // 这会传送机器人 — 我们只想设置关节角度。
     const mjtNum* KeyQpos = m_model->key_qpos + KeyId * m_model->nq;
     const mjtNum* KeyQvel = m_model->key_qvel + KeyId * m_model->nv;
     const mjtNum* KeyCtrl = m_model->key_ctrl + KeyId * m_model->nu;
@@ -911,19 +908,19 @@ bool AMjArticulation::ResetToKeyframe(const FString& KeyframeName)
     for (int32 j = 0; j < m_model->njnt; j++)
     {
         int32 JointType = m_model->jnt_type[j];
-        if (JointType == mjJNT_FREE) continue; // Skip freejoints
+        if (JointType == mjJNT_FREE) continue; // 跳过自由关节
 
         int32 QposAdr = m_model->jnt_qposadr[j];
         int32 DofAdr = m_model->jnt_dofadr[j];
 
-        // Copy qpos (1 for hinge/slide, 4 for ball)
+        // 复制 qpos（1 表示铰链/滑动，4 表示球型）
         int32 NqPos = (JointType == mjJNT_BALL) ? 4 : 1;
         for (int32 k = 0; k < NqPos; k++)
         {
             m_data->qpos[QposAdr + k] = KeyQpos[QposAdr + k];
         }
 
-        // Copy qvel (1 for hinge/slide, 3 for ball)
+        // 复制 qvel（1 表示铰链/滑动，3 表示球型）
         int32 NvDof = (JointType == mjJNT_BALL) ? 3 : 1;
         for (int32 k = 0; k < NvDof; k++)
         {
@@ -931,7 +928,7 @@ bool AMjArticulation::ResetToKeyframe(const FString& KeyframeName)
         }
     }
 
-    // Copy ctrl (actuators have no freejoint involvement)
+    // 复制 ctrl（执行器不涉及自由关节）
     for (int32 i = 0; i < m_model->nu; i++)
     {
         m_data->ctrl[i] = KeyCtrl[i];
@@ -948,7 +945,7 @@ bool AMjArticulation::HoldKeyframe(const FString& KeyframeName)
 {
     if (!m_model || !m_data) return false;
 
-    // Find keyframe
+    // 查找关键帧
     TArray<UMjKeyframe*> Keyframes = GetKeyframes();
     UMjKeyframe* Target = nullptr;
 
@@ -975,7 +972,7 @@ bool AMjArticulation::HoldKeyframe(const FString& KeyframeName)
         return false;
     }
 
-    // Strategy 1: ctrl values available — drive actuators
+    // 策略 1：可用的 ctrl 值 — 驱动执行器
     if (Target->bOverride_Ctrl && Target->Ctrl.Num() > 0)
     {
         HeldKeyframeCtrl = Target->Ctrl;
@@ -986,7 +983,7 @@ bool AMjArticulation::HoldKeyframe(const FString& KeyframeName)
         return true;
     }
 
-    // Strategy 2: qpos available — inject directly into d->qpos each step
+    // 策略 2：可用的 qpos — 每步直接注入到 d->qpos
     if (Target->bOverride_Qpos && Target->Qpos.Num() > 0)
     {
         HeldKeyframeQpos = Target->Qpos;
@@ -1138,7 +1135,7 @@ void AMjArticulation::DrawDebugJoints()
 
         if (Joint->IsBound() && m_model)
         {
-            // Runtime mode: use compiled model data
+            // 运行时模式：使用编译的模型数据
             const JointView& JV = Joint->GetMj();
             MjType = JV.type;
             Anchor = Joint->GetWorldAnchor();
@@ -1155,17 +1152,17 @@ void AMjArticulation::DrawDebugJoints()
                 bLimited = false;
             }
 
-            // Current position for 1-DOF joints
+            // 当前 1-DOF 关节的位置
             if ((MjType == mjJNT_HINGE || MjType == mjJNT_SLIDE) && JV.qpos)
             {
                 CurrentPos = (float)JV.qpos[0];
             }
 
-            // Reference position (qpos0) from compiled model
+            // 参考位置（qpos0）来自编译模型
             int qposAdr = m_model->jnt_qposadr[JV.id];
             RefPos = (float)m_model->qpos0[qposAdr];
 
-            // Slide joints: MuJoCo stores in meters, DrawDebugJoint expects cm
+            // 滑动关节：MuJoCo 以米为单位存储，DrawDebugJoint 期望以厘米为单位
             if (MjType == mjJNT_SLIDE)
             {
                 RangeMin *= 100.0f;
@@ -1176,7 +1173,7 @@ void AMjArticulation::DrawDebugJoints()
         }
         else
         {
-            // Editor-preview mode: use resolved defaults
+            // 编辑器预览模式：使用解析的默认值
             EMjJointType ResolvedType = Joint->GetResolvedType();
             switch (ResolvedType)
             {
@@ -1192,14 +1189,14 @@ void AMjArticulation::DrawDebugJoints()
             RangeMax = Range.Y;
             bLimited = Joint->GetResolvedLimited() || (RangeMin != 0.0f || RangeMax != 0.0f);
 
-            // Ref from component property
+            // 参考来自组件属性
             if (Joint->bOverride_Ref)
             {
                 RefPos = Joint->Ref;
             }
             else
             {
-                RefPos = 0.0f; // MuJoCo default
+                RefPos = 0.0f; // MuJoCo 的默认值
             }
         }
 
@@ -1227,7 +1224,7 @@ void AMjArticulation::DrawDebugSites()
 
         if (Site->IsBound())
         {
-            // Runtime: use compiled model data
+            // 运行时：使用编译的模型数据
             const SiteView& SV = Site->GetMj();
             if (!SV.xpos) continue;
 
@@ -1239,17 +1236,17 @@ void AMjArticulation::DrawDebugSites()
         }
         else
         {
-            // Editor: use component transform and properties
+            // 编辑器：使用组件变换和属性
             Pos = Site->GetComponentLocation();
-            Radius = Site->Size.X * 100.0f; // Size is in meters on UMjSite
+            Radius = Site->Size.X * 100.0f; // UMjSite上的尺寸是以米为单位
             Color = Site->Rgba.ToFColor(true);
             Color.A = 200;
         }
 
-        // Clamp radius for visibility
+        // 限制半径以提高可见性
         Radius = FMath::Max(Radius, 0.5f);
 
-        // Draw cross-hair at site location
+        // 在位点位置绘制十字准线
         float CrossSize = FMath::Max(Radius * 2.0f, 2.0f);
         DrawDebugPoint(World, Pos, 6.0f, Color, false, -1);
         DrawDebugLine(World, Pos - FVector(CrossSize, 0, 0), Pos + FVector(CrossSize, 0, 0), Color, false, -1, 0, 1.0f);

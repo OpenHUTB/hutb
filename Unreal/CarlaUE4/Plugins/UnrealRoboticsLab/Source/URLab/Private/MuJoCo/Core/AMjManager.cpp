@@ -53,8 +53,8 @@ AAMjManager::AAMjManager() {
     Perturbation = CreateDefaultSubobject<UMjPerturbation>(TEXT("Perturbation"));
 }
 
-// --- Forwarding shims: PreCompile, PostCompile, Compile, ApplyOptions ---
-// Actual implementations live in UMjPhysicsEngine.
+// --- 转发 shims: PreCompile, PostCompile, Compile, ApplyOptions ---
+// 实际的实现存在于 UMjPhysicsEngine 中。
 
 void AAMjManager::PreCompile()
 {
@@ -75,7 +75,7 @@ void AAMjManager::Compile()
 
     PhysicsEngine->Compile();
 
-    // Sync discovery lists from PhysicsEngine
+    // 从物理引擎同步发现列表
     m_MujocoComponents = PhysicsEngine->m_MujocoComponents;
     m_articulations = PhysicsEngine->m_articulations;
     m_heightfieldActors = PhysicsEngine->m_heightfieldActors;
@@ -94,7 +94,7 @@ void AAMjManager::BeginPlay() {
     }
     Instance = this;
 
-    // Auto-create ZMQ components if none exist on this actor
+    // 如果该参与者没有零代价消息队列（ZMQ）组件，就自动创建
     {
         TArray<UActorComponent*> ExistingZmq;
         GetComponents(UMjZmqComponent::StaticClass(), ExistingZmq);
@@ -118,7 +118,7 @@ void AAMjManager::BeginPlay() {
         }
     }
 
-    // Auto-create ReplayManager if none exists in the scene
+    // 如果场景中没有回放管理器（ReplayManager），则自动创建
     {
         AMjReplayManager* ExistingReplay = Cast<AMjReplayManager>(
             UGameplayStatics::GetActorOfClass(GetWorld(), AMjReplayManager::StaticClass()));
@@ -133,11 +133,11 @@ void AAMjManager::BeginPlay() {
         }
     }
 
-    // Compile via PhysicsEngine (also discovers ZMQ components in PreCompile)
+    // 通过物理引擎编译（还会在预编译阶段发现 ZMQ 组件）
     Compile();
     if (NetworkManager) NetworkManager->UpdateCameraStreamingState();
 
-    // Register ZMQ callbacks on PhysicsEngine
+    // 在物理引擎上注册 ZMQ 回调
     if (PhysicsEngine && NetworkManager)
     {
         UE_LOG(LogURLab, Log, TEXT("[AAMjManager] Registering %d ZMQ callbacks on PhysicsEngine"), NetworkManager->ZmqComponents.Num());
@@ -157,9 +157,8 @@ void AAMjManager::BeginPlay() {
 
     if (PhysicsEngine)
     {
-        // Register debug data capture as a post-step callback. Fires whenever any
-        // debug overlay needs fresh mjData — contact forces (key 1), body shader
-        // overlays (Island / Segmentation modes), or tendon/muscle rendering.
+        // 将调试数据捕获注册为后置步骤回调。
+        // 每当任何调试覆盖需要新的 mjData 时都会触发 — 接触力（按键 1）、身体着色器覆盖（岛屿/分割模式）或肌腱/肌肉渲染。
         PhysicsEngine->RegisterPostStepCallback([this](mjModel* m, mjData* d) {
             if (!DebugVisualizer) return;
             const bool bNeedsCapture =
@@ -175,7 +174,7 @@ void AAMjManager::BeginPlay() {
         PhysicsEngine->RunMujocoAsync();
     }
 
-    // Auto-create simulate widget AFTER Compile so articulations are registered
+    // 在编译后自动创建模拟小部件，以便注册关节动作
     if (bAutoCreateSimulateWidget && !SimulateWidget)
     {
         static const TCHAR* WidgetBPPath = TEXT("/UnrealRoboticsLab/UI/WBP_MjSimulate.WBP_MjSimulate_C");
@@ -214,14 +213,11 @@ void AAMjManager::EndPlay(const EEndPlayReason::Type EndPlayReason) {
     Super::EndPlay(EndPlayReason);
     if (Instance == this) Instance = nullptr;
 
-    // Signal the async thread to stop and wait for it to exit — but bound the
-    // wait. If mj_step is mid-call on a pathological flex state, the step can
-    // take many seconds (or effectively hang). An unbounded Wait() here would
-    // freeze the editor's PIE-stop; the user sees UE never coming back. With
-    // the timeout we instead detach: the async thread keeps running in the
-    // background until its current mj_step returns, then finds bShouldStopTask
-    // set and exits cleanly on its own. Cost is a one-time memory leak (we
-    // can't delete m_model / m_data while the thread may still read them).
+    // 向异步线程发出停止信号并等待它退出——但要限制等待时间。
+    // 如果 mj_step 在一个病态的 flex 状态中调用中途，步骤可能需要好几秒（或者实际上会挂掉）。
+    // 这里如果使用无限制的 Wait() 会冻结编辑器的 PIE 停止；用户会看到 UE 永远回不来。
+    // 有了超时，我们就会改为分离线程：异步线程会在后台继续运行，直到当前的 mj_step 返回，然后发现 bShouldStopTask 被设置了，自行干净地退出。
+    // 代价是一次性的内存泄漏（在线程可能仍会读取它们的时候，我们不能删除 m_model / m_data）。 
     bool bAsyncExited = true;
     if (PhysicsEngine)
     {
@@ -243,12 +239,12 @@ void AAMjManager::EndPlay(const EEndPlayReason::Type EndPlayReason) {
         PhysicsEngine->ClearCallbacks();
     }
 
-    // Clear tracked actors to prevent dangling pointers on level restart
+    // 清除已追踪的参与者，以防关卡重启时出现悬挂指针
     m_heightfieldActors.Empty();
     m_articulations.Empty();
     m_MujocoComponents.Empty();
 
-    // Cleanup ZMQ Components
+    // 清理 ZMQ 组件
     if (NetworkManager)
     {
         for (UMjZmqComponent* Comp : NetworkManager->ZmqComponents)
@@ -257,8 +253,8 @@ void AAMjManager::EndPlay(const EEndPlayReason::Type EndPlayReason) {
         }
     }
 
-    // Only touch MuJoCo resources if the async thread actually exited — a
-    // detached thread may still be executing mj_step and reading these.
+    // 只有在异步线程实际上已经退出的情况下才接触 MuJoCo 资源：
+    // 一个分离的线程可能仍在执行 mj_step 并读取这些资源。
     if (PhysicsEngine && bAsyncExited)
     {
         if (PhysicsEngine->m_data)
@@ -286,8 +282,8 @@ void AAMjManager::EndPlay(const EEndPlayReason::Type EndPlayReason) {
 
 void AAMjManager::Tick(float DeltaTime) {
     Super::Tick(DeltaTime);
-    // Hotkey processing handled by UMjInputHandler::TickComponent
-    // Debug drawing handled by UMjDebugVisualizer::TickComponent
+    // 热键处理由 UMjInputHandler::TickComponent 负责
+    // 调试绘制由 UMjDebugVisualizer::TickComponent 负责
 }
 
 AAMjManager* AAMjManager::GetManager()
@@ -326,7 +322,7 @@ bool AAMjManager::CompileModel()
 
     bool Result = PhysicsEngine->CompileModel();
 
-    // Re-sync discovery lists after recompile
+    // 重新编译后重新同步发现列表
     m_MujocoComponents = PhysicsEngine->m_MujocoComponents;
     m_articulations = PhysicsEngine->m_articulations;
     m_heightfieldActors = PhysicsEngine->m_heightfieldActors;
@@ -365,7 +361,7 @@ float AAMjManager::GetTimestep() const
     return PhysicsEngine ? PhysicsEngine->GetTimestep() : 0.002f;
 }
 
-// --- Replay Testing ---
+// --- 重放测试 ---
 
 void AAMjManager::StartRecording()
 {
@@ -389,8 +385,8 @@ void AAMjManager::StopRecording()
         ReplayMgr->StopRecording();
         UE_LOG(LogURLab, Log, TEXT("Test: Called StopRecording on ReplayManager."));
     }
-    // NOTE: OnPostStep callback is kept alive — the replay manager gates recording with bIsRecording.
-    // The callback must remain set so recording can be restarted without re-registering.
+    // 注意：OnPostStep 回调会一直保持活跃——回放管理器通过 bIsRecording 控制录制。
+    // 回调必须保持设置状态，这样录制才能在不重新注册的情况下重新启动。
 }
 
 void AAMjManager::StartReplay()
