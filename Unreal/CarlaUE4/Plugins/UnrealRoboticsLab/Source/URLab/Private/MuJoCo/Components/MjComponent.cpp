@@ -50,8 +50,7 @@ void UMjComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorCom
 
 mjsDefault* UMjComponent::ResolveDefault(mjSpec* Spec, const FString& ClassName)
 {
-    // When no explicit class is set, return nullptr so the MuJoCo spec API
-    // resolves the parent body's childclass chain automatically.
+    // 当没有明确设置类时，返回 nullptr，让 MuJoCo 规范 API 自动解析父刚体的子类链。
     if (ClassName.IsEmpty()) return nullptr;
 
     mjsDefault* def = mjs_findDefault(Spec, TCHAR_TO_UTF8(*ClassName));
@@ -104,14 +103,14 @@ UMjDefault* UMjComponent::FindEditorDefault() const
     const AActor* Owner = GetOwner();
     if (!Owner) return nullptr;
 
-    // 1. Check this component's own MjClassName (subclass provides via GetMjClassName)
+    // 1. 检查这个组件自身的 MjClassName（子类通过 GetMjClassName 提供）
     FString MyClassName = GetMjClassName();
     if (!MyClassName.IsEmpty())
     {
         return FindDefaultByClassName(Owner, MyClassName);
     }
 
-    // 2. Walk up attachment parents to find nearest UMjBody with ChildClassName set
+    // 2. 向上遍历附加父级以查找最近的 UMjBody，并设置 ChildClassName
     USceneComponent* Parent = GetAttachParent();
     while (Parent)
     {
@@ -132,11 +131,11 @@ UMjDefault* UMjComponent::FindEditorDefault() const
 TArray<FString> UMjComponent::GetSiblingComponentOptions(const UObject* CallerComponent, UClass* FilterClass, bool bIncludeDefaults)
 {
     TArray<FString> Options;
-    Options.Add(TEXT(""));  // Empty = no selection
+    Options.Add(TEXT(""));  // Empty = 未选择
 
     if (!CallerComponent || !FilterClass) return Options;
 
-    // Walk the outer chain to find the owning Blueprint
+    // 遍历外部链以查找拥有的蓝图
     UBlueprint* BP = nullptr;
     for (UObject* Outer = CallerComponent->GetOuter(); Outer; Outer = Outer->GetOuter())
     {

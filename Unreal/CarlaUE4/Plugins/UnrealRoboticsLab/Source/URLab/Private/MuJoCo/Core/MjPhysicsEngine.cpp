@@ -39,16 +39,12 @@
 #include "Misc/MessageDialog.h"
 #endif
 
-// Installed as mju_user_error / mju_user_warning so MuJoCo's fatal-error
-// path logs via UE_LOG instead of calling exit(1). Without this, any MuJoCo
-// internal invariant violation (e.g. "mj_sleep: found sleeping tree N in
-// island M" on flex × free-body + SLEEP + MULTICCD) terminates the process:
-// exit() unwinds every live FRHIBreadcrumbEventManual's TOptional across
-// threads and trips the !Node assertion, killing the editor. Messages are
-// deduplicated + throttled so pathological per-step errors can't flood the
-// log at step rate.
-static FCriticalSection GMujocoLogMutex;
-static TMap<FString, int64> GMujocoMsgHistory;  // message text -> next step count at which to log
+// 被安装为 mju_user_error / mju_user_warning，这样 MuJoCo 的致命错误路径会通过 UE_LOG 记录，而不是调用 exit(1)。
+// 如果没有这个设置，任何 MuJoCo 内部的不变性违规（例如在 flex × 自由体 SLEEP MULTICCD 上出现的 “mj_sleep: 在岛屿 M 中找到正在睡眠的树 N”）都会终止进程：
+// exit() 会在各线程中展开所有活跃的 FRHIBreadcrumbEventManual 的 TOptional 并触发 !Node 断言，从而杀掉编辑器。
+// 消息会去重和限流，所以每步的异常错误不会在步骤速率下淹没日志。
+static FCriticalSection GMujocoLogMutex;       // Mujoco 日志记录的互斥锁（UE 中的临界区）
+static TMap<FString, int64> GMujocoMsgHistory;  // 消息文本 -> 要记录的下一步计数
 static std::atomic<int64>   GMujocoMsgStepCounter{0};
 
 static void URLab_LogMujocoMessage(const TCHAR* Severity, const char* Msg, ELogVerbosity::Type Verbosity)
@@ -63,13 +59,13 @@ static void URLab_LogMujocoMessage(const TCHAR* Severity, const char* Msg, ELogV
         int64* NextLog = GMujocoMsgHistory.Find(Text);
         if (!NextLog)
         {
-            // First occurrence — log it and start counting future hits.
-            GMujocoMsgHistory.Add(Text, Step + 500);  // log again after 500 more messages
+            // 第一次出现——记录下来，并开始计算之后的命中次数。
+            GMujocoMsgHistory.Add(Text, Step + 500);  // 500 条消息后再次记录
             FirstHitStep = Step;
         }
         else if (Step >= *NextLog)
         {
-            HitCountSinceLastLog = 500;  // approx — we don't track exact
+            HitCountSinceLastLog = 500;  // 近似值 — 我们不跟踪精确值
             *NextLog = Step + 500;
             FirstHitStep = Step;
         }
@@ -105,14 +101,16 @@ static void URLab_OnMujocoWarning(const char* Msg)
     URLab_LogMujocoMessage(TEXT("warn"), Msg, ELogVerbosity::Warning);
 }
 
+
+// 安装 MuJoCo 的全局错误/警告回调，把 MuJoCo 的致命错误与警告路径重定向到插件的日志函数（URLab_OnMujocoError / URLab_OnMujocoWarning），
+// 从而用 UE_LOG 记录而不是让库调用 exit() 终止进程。
 static bool GMujocoCallbacksInstalled = false;
 static void URLab_InstallMujocoCallbacks()
 {
     if (GMujocoCallbacksInstalled) return;
 
-    // mujoco.dll is delay-loaded in URLab's Build.cs, and the linker refuses
-    // to bind data symbols through a delayed import. Resolve the two
-    // mju_user_* function pointers manually via GetDllExport.
+    // mujoco.dll 在 URLab 的 Build.cs 中是延迟加载的，而链接器拒绝通过延迟导入绑定数据符号。
+    // 通过 GetDllExport 手动解决这两个 mju_user_* 函数指针。
     void* Handle = FPlatformProcess::GetDllHandle(TEXT("mujoco.dll"));
     if (!Handle)
     {
@@ -121,8 +119,7 @@ static void URLab_InstallMujocoCallbacks()
     }
 
     using ErrorFnPtr = void(*)(const char*);
-    // GetDllExport(hMod, "mju_user_error") returns the address of the
-    // exported variable itself — i.e. an ErrorFnPtr*.
+    // GetDllExport(hMod, "mju_user_error") 返回导出变量本身的地址 —— 也就是一个 ErrorFnPtr*。
     ErrorFnPtr* PErr  = reinterpret_cast<ErrorFnPtr*>(FPlatformProcess::GetDllExport(Handle, TEXT("mju_user_error")));
     ErrorFnPtr* PWarn = reinterpret_cast<ErrorFnPtr*>(FPlatformProcess::GetDllExport(Handle, TEXT("mju_user_warning")));
     if (PErr)  { *PErr  = &URLab_OnMujocoError;   }
@@ -300,9 +297,7 @@ void UMjPhysicsEngine::Compile()
     ApplyOptions();
     PostCompile();
 
-    // Step once then reset to ensure all derived quantities (contacts,
-    // constraints, sensor data) are fully computed and synced before the
-    // user sees the paused scene.
+    // 先执行一步，然后重置，以确保在用户看到暂停的场景之前，所有派生量（接触、约束、传感器数据）都已完全计算并同步。
     mj_step(m_model, m_data);
     mj_resetData(m_model, m_data);
     mj_forward(m_model, m_data);
@@ -351,8 +346,7 @@ void UMjPhysicsEngine::RunMujocoAsync()
                     mj_forward(m_model, m_data);
                     bPendingReset = false;
 
-                    // Zero all actuator control values so stale commands
-                    // don't persist after reset.
+                    // 将所有执行器控制值归零，这样重置后旧命令就不会保留。
                     for (AMjArticulation* Art : m_articulations)
                     {
                         if (!Art) continue;
@@ -407,9 +401,9 @@ void UMjPhysicsEngine::RunMujocoAsync()
                 {
                     OnPostStep(m_model, m_data);
                 }
-            } // FScopeLock released here
+            } // FScopeLock 在这里释放
 
-            // Spin-wait for precise timing at small timesteps
+            // 在小时间步长下自旋等待精确计时
             const float SpeedFactor = FMath::Clamp(SimSpeedPercent, 5.0f, 100.0f) / 100.0f;
             const double TargetTime = LoopStartTime + (TargetInterval / SpeedFactor);
             while (FPlatformTime::Seconds() < TargetTime)
@@ -478,7 +472,7 @@ bool UMjPhysicsEngine::CompileModel()
     }
     if (m_spec)  { mj_deleteSpec(m_spec);   m_spec  = nullptr; }
 
-    // Clear registered scene objects for re-scan
+    // 清除已注册的场景对象以重新扫描
     m_MujocoComponents.Empty();
     m_articulations.Empty();
     m_heightfieldActors.Empty();

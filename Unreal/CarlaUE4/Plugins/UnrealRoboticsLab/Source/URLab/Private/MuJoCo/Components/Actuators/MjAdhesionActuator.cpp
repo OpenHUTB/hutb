@@ -26,6 +26,8 @@
 #include "MuJoCo/Utils/MjXmlUtils.h"
 #include "Utils/URLabLogging.h"
 
+// 实现 MuJoCo 中“粘附/吸附”类型执行器的导入、绑定与导出逻辑，
+// 把编辑器/XML 配置映射到 MuJoCo 的 mjsActuator 预设与参数上。
 UMjAdhesionActuator::UMjAdhesionActuator()
 {
     Type = EMjActuatorType::Adhesion;
@@ -54,23 +56,23 @@ void UMjAdhesionActuator::ExportTo(mjsActuator* act, mjsDefault* def)
     UE_LOG(LogURLabImport, Log, TEXT("[MjAdhesion] '%s' BEFORE Super::ExportTo: ctrlrange=[%.3f, %.3f], ctrllimited=%d"),
         *GetName(), act->ctrlrange[0], act->ctrlrange[1], act->ctrllimited);
 
-    Super::ExportTo(act, def); // 1. Common attributes
+    Super::ExportTo(act, def); // 1. 常见属性
 
     UE_LOG(LogURLabImport, Log, TEXT("[MjAdhesion] '%s' AFTER Super::ExportTo: ctrlrange=[%.3f, %.3f], ctrllimited=%d, bOverride_CtrlRange=%s"),
         *GetName(), act->ctrlrange[0], act->ctrlrange[1], act->ctrllimited,
         bOverride_CtrlRange ? TEXT("true") : TEXT("false"));
 
-    // Mirror OneActuator: gain = act->gainprm[0] as inherited default, override only if explicitly set.
+    // 镜像单执行器：增益 = act->gainprm[0]，作为继承的默认值，只有在明确设置时才覆盖。
     double gain = bOverride_Kp ? (double)Kp : act->gainprm[0];
 
     UE_LOG(LogURLabImport, Log, TEXT("[MjAdhesion] '%s' BEFORE mjs_setToAdhesion: gain=%.3f, ctrlrange=[%.3f, %.3f]"),
         *GetName(), gain, act->ctrlrange[0], act->ctrlrange[1]);
 
-    const char* err = mjs_setToAdhesion(act, gain); // 2. Type preset
+    const char* err = mjs_setToAdhesion(act, gain); // 2. 输入预设
 
     UE_LOG(LogURLabImport, Log, TEXT("[MjAdhesion] '%s' AFTER mjs_setToAdhesion: ctrlrange=[%.3f, %.3f], ctrllimited=%d, err='%s'"),
         *GetName(), act->ctrlrange[0], act->ctrlrange[1], act->ctrllimited,
         err && err[0] ? UTF8_TO_TCHAR(err) : TEXT("none"));
 
-    ApplyRawOverrides(act, def);  // 3. Raw prm overrides
+    ApplyRawOverrides(act, def);  // 3. 原始参数覆盖
 }

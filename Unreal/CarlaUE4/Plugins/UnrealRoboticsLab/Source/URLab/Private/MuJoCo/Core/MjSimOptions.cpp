@@ -22,6 +22,9 @@
 #include "MuJoCo/Core/MjSimOptions.h"
 #include <mujoco/mujoco.h>
 
+
+// 将插件中配置的 MuJoCo 模拟选项写入一个新的/待编译的 mjSpec（编译前的规范/描述），以便在后续调用 mj_compile 时这些选项生效。
+// 通常在 UMjPhysicsEngine::PreCompile() -> Compile() 路径中被调用。
 void FMuJoCoOptions::ApplyToSpec(mjSpec* Spec) const
 {
     if (!Spec) return;
@@ -33,7 +36,7 @@ void FMuJoCoOptions::ApplyToSpec(mjSpec* Spec) const
 
     Spec->option.timestep = Timestep;
 
-    // Gravity: UE cm/s² → MuJoCo m/s², negate Y for handedness
+    // 重力：UE cm/s² → MuJoCo m/s²，为了手性把 Y 值取反
     Spec->option.gravity[0] =  Gravity.X / 100.0;
     Spec->option.gravity[1] = -Gravity.Y / 100.0;
     Spec->option.gravity[2] =  Gravity.Z / 100.0;
@@ -69,7 +72,7 @@ void FMuJoCoOptions::ApplyToSpec(mjSpec* Spec) const
     else
         Spec->option.enableflags &= ~MJ_ENBL_MULTICCD;
 
-    // Sleep
+    // 睡眠
     constexpr int MJ_ENBL_SLEEP = 1 << 5;
     if (bEnableSleep)
     {
@@ -78,6 +81,9 @@ void FMuJoCoOptions::ApplyToSpec(mjSpec* Spec) const
     }
 }
 
+
+// 将插件中以 bOverride_* 标记的运行时仿真选项写入已编译的 MuJoCo mjModel->opt（即把配置“应用到模型上”），
+// 以便在不重新生成 mjSpec 的情况下调整模型的运行时参数。
 void FMuJoCoOptions::ApplyOverridesToModel(mjModel* Model) const
 {
     if (!Model) return;
@@ -128,7 +134,7 @@ void FMuJoCoOptions::ApplyOverridesToModel(mjModel* Model) const
     else
         Model->opt.enableflags &= ~MJ_ENBL_MULTICCD;
 
-    // Sleep
+    // 睡眠
     constexpr int MJ_ENBL_SLEEP = 1 << 5;
     if (bEnableSleep)
     {

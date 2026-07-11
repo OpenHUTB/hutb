@@ -121,7 +121,7 @@ void UMjDebugVisualizer::CaptureDebugData()
         FVector Pos = MjUtils::MjToUEPosition(Data->contact[i].pos);
         DebugData.ContactPoints.Add(Pos);
 
-        // Normal: first row of contact frame, Y-flipped for UE coordinate convention
+        // 正常：接触框的第一行，针对UE坐标习惯进行了Y轴翻转
         double* f = Data->contact[i].frame;
         FVector NormalArg(f[0], -f[1], f[2]);
         DebugData.ContactNormals.Add(NormalArg);
@@ -137,12 +137,9 @@ void UMjDebugVisualizer::CaptureDebugData()
     //     DebugData.BodyAwake[i] = Data->body_awake ? Data->body_awake[i] : 1;
     // }
 
-    // Per-body Halton seed, matching MuJoCo's native islandColor algorithm in
-    // engine_vis_visualize.c: use the active constraint island's dof-address if
-    // available, otherwise fall back to the kinematic tree's dof-address so
-    // sleeping bodies keep a stable colour. When asleep, mj_sleepCycle collapses
-    // connected sleep-cycle trees to their smallest index so a group of bodies
-    // resting on each other share one colour.
+    // 每个物体的 Halton 种子，匹配 MuJoCo 在 engine_vis_visualize.c 中的原生 islandColor 算法：
+    // 如果可用的话，使用活动约束岛屿的自由度地址，否则回退到运动学树的自由度地址，这样静止的物体可以保持稳定的颜色。
+    // 休眠时，mj_sleepCycle 会将连接的休眠循环树折叠到最小索引，这样一组彼此依靠的物体会共享同一种颜色。
     DebugData.BodyIslandSeed.Init(-1, Model->nbody);
     const bool bSleepEnabled = (Model->opt.enableflags & mjENBL_SLEEP) != 0;
     for (int32 b = 0; b < Model->nbody; ++b)
@@ -186,11 +183,10 @@ void UMjDebugVisualizer::CaptureDebugData()
         DebugData.BodyIslandSeed[b] = H;
     }
 
-    // Tendon wrap points — mirror MuJoCo's own renderer (engine_vis_visualize.c
-    // addSpatialTendonGeoms). It iterates wrap-point index j from ten_wrapadr[t]
-    // to ...+ten_wrapnum[t]-1 and connects wrap_xpos[3*j] -> wrap_xpos[3*j+3],
-    // skipping pulleys (wrap_obj == -2). Declared layout is `nwrap x 6` so we
-    // snapshot 2*nwrap 3D points.
+    // 肌腱包裹点——镜像 MuJoCo 自带的渲染器（engine_vis_visualize.c 中的 addSpatialTendonGeoms）。
+    // 它会迭代绕点索引 j，从 ten_wrapadr[t] 到… ten_wrapnum[t]-1，
+    // 并连接 wrap_xpos[3*j] -> wrap_xpos[3*j+3]，跳过滑轮（wrap_obj == -2）。
+    // 声明的布局是 `nwrap x 6`，所以我们会快照 2*nwrap 个三维点。
     const int32 NumWrapPoints = 2 * Model->nwrap;
     DebugData.WrapPointsFlat.SetNumUninitialized(NumWrapPoints);
     if (Data->wrap_xpos && Model->nwrap > 0)
@@ -225,8 +221,8 @@ void UMjDebugVisualizer::CaptureDebugData()
         DebugData.TendonRangeHi[t]  = Model->tendon_range ? (float)Model->tendon_range[t * 2 + 1] : 0.0f;
     }
 
-    // Resolve muscle activation per tendon by scanning actuators. Muscles drive
-    // tendons via trntype == TENDON; act[actadr] holds activation in [0, 1].
+    // 通过扫描执行器来解析每条肌腱的肌肉激活。
+    // 肌肉通过 trntype == TENDON 驱动肌腱；act[actadr] 的激活值在 [0, 1] 之间。
     for (int32 a = 0; a < Model->nu; ++a)
     {
         if (Model->actuator_trntype[a] != mjTRN_TENDON) continue;
@@ -487,7 +483,7 @@ void UMjDebugVisualizer::UpdateBodyOverlays()
     {
         if (!Art) continue;
 
-        // Semantic grouping hashes the Blueprint class so two instances share colour.
+        // 语义分组会对蓝图类进行哈希处理，这样两个实例就可以共享颜色。
         const uint32 ArtHash = GetTypeHash(Art->GetClass()->GetFName());
 
         TArray<UMjGeom*> Geoms;
@@ -523,7 +519,7 @@ void UMjDebugVisualizer::UpdateBodyOverlays()
         TArray<UStaticMeshComponent*> MeshComps;
         Owner->GetComponents<UStaticMeshComponent>(MeshComps);
 
-        // Semantic grouping hashes the first static mesh so props sharing a mesh read as one "type".
+        // 语义分组会对第一个静态网格进行哈希处理，所以共享同一网格的道具会被视作同一“类型”。
         uint32 GroupHash = GetTypeHash(Owner->GetClass()->GetFName());
         for (UStaticMeshComponent* SMC : MeshComps)
         {
@@ -542,7 +538,7 @@ void UMjDebugVisualizer::UpdateBodyOverlays()
 }
 
 // ---------------------------------------------------------------------------
-// Per-camera segmentation pool
+// 每个相机的分割池
 // ---------------------------------------------------------------------------
 
 TArray<UObject*>* UMjDebugVisualizer::GetSegPoolArray(EMjCameraMode Mode)
@@ -565,6 +561,9 @@ TSet<TWeakObjectPtr<UMjCamera>>* UMjDebugVisualizer::GetSegSubscribers(EMjCamera
     }
 }
 
+
+// 为给定的原始 UStaticMeshComponent 创建一个“兄弟”静态网格组件（sibling），用于分割相机（instance/semantic segmentation）渲染。
+// 这个兄弟组件使用单一无光照的动态材质（带指定色彩），并附加到与原件相同的父组件以自动继承变换，从而无需每帧同步位置。
 UStaticMeshComponent* UMjDebugVisualizer::SpawnSegSibling(
     UStaticMeshComponent* Original, int32 BodyId, uint32 GroupHash, EMjCameraMode Mode)
 {
@@ -577,20 +576,17 @@ UStaticMeshComponent* UMjDebugVisualizer::SpawnSegSibling(
     UStaticMeshComponent* Sibling = NewObject<UStaticMeshComponent>(Owner);
     Sibling->SetStaticMesh(Original->GetStaticMesh());
 
-    // Attach to the same parent as the original so it inherits body transforms
-    // for free — no per-tick sync needed.
+    // 附加到与原始对象相同的父对象，这样它就能随意继承身体变换——不需要每帧同步。
     if (USceneComponent* Parent = Original->GetAttachParent())
     {
         Sibling->SetupAttachment(Parent);
     }
     Sibling->SetRelativeTransform(Original->GetRelativeTransform());
 
-    // Isolation: siblings must not contribute indirect lighting, shadows, or
-    // reflections to other views. bVisibleInSceneCaptureOnly hides the primitive
-    // from the main viewport; the rest prevents secondary lighting/reflection
-    // passes from picking it up (source of the "faint tinge" in viewport
-    // otherwise). Leave bRenderInMainPass at default true — the seg capture's
-    // own rendering uses the main pass.
+    // 隔离：兄弟节点不能向其他视图贡献间接光照、阴影或反射。
+    // bVisibleInSceneCaptureOnly 会把这个原件从主视口隐藏；
+    // 其他设置则防止次要光照/反射通道捕捉它（否则会在视口里出现“淡淡的色调”）。
+    // 保持 bRenderInMainPass 默认 true ——分割捕捉自己的渲染会使用主通道。
     // Sibling->bVisibleInSceneCaptureOnly         = true;
     Sibling->SetCastShadow(false);
     Sibling->SetCollisionEnabled(ECollisionEnabled::NoCollision);
@@ -602,9 +598,8 @@ UStaticMeshComponent* UMjDebugVisualizer::SpawnSegSibling(
     Sibling->bVisibleInRayTracing               = false;
     Sibling->bReceivesDecals                    = false;
 
-    // Unlit tint material — parented on the same material the viewport overlay uses.
-    // Seg cameras set CaptureSource = SCS_BaseColor, which bypasses lighting so the
-    // tint value lands in the RT unmodified.
+    // 未点亮的色调材质 —— 归属于视口叠加使用的同一个材质。
+    // 分割摄像机将 CaptureSource 设置为 SCS_BaseColor，这样可以绕过光照，让色调值未经过修改就直接进入渲染目标。
     UMaterialInstanceDynamic* MID = UMaterialInstanceDynamic::Create(OverlayParentMaterial, Sibling);
     const FLinearColor Tint = (Mode == EMjCameraMode::SemanticSegmentation)
         ? MjColor::SemanticSegmentationColor(GroupHash, /*bAwake=*/true, /*SleepValueScale=*/1.0f, /*SleepSatScale=*/1.0f)
@@ -625,6 +620,9 @@ UStaticMeshComponent* UMjDebugVisualizer::SpawnSegSibling(
     return Sibling;
 }
 
+
+// 为指定的分割相机模式（实例或语义分割）构建一组“兄弟”静态网格组件池（seg pool）。
+// 这些兄弟组件是原始可视网格的轻量替代，仅用于分割相机渲染（单色编码），避免每帧单独同步变换。
 void UMjDebugVisualizer::BuildSegPool(EMjCameraMode Mode)
 {
 	TArray<UObject*>* Pool = GetSegPoolArray(Mode);
@@ -643,7 +641,7 @@ void UMjDebugVisualizer::BuildSegPool(EMjCameraMode Mode)
         }
     };
 
-    // Articulation visual meshes — walk geoms and their static-mesh children.
+    // 铰链可视网格——行走几何体及其静态网格子级。
     for (AMjArticulation* Art : Manager->GetAllArticulations())
     {
         if (!Art) continue;
@@ -670,7 +668,7 @@ void UMjDebugVisualizer::BuildSegPool(EMjCameraMode Mode)
         }
     }
 
-    // Quick-Convert primitives — group hash keyed off the first static mesh.
+    // 快速转换原语——基于第一个静态网格的分组哈希。
     for (UMjQuickConvertComponent* QC : Manager->GetAllQuickComponents())
     {
         if (!QC) continue;
@@ -746,7 +744,7 @@ void UMjDebugVisualizer::ReleaseSegPool(EMjCameraMode Mode, UMjCamera* Camera)
     if (!Subs) return;
 
     Subs->Remove(Camera);
-    // Also drop any stale weak pointers so refcount reflects reality.
+    // 同时丢掉任何过时的弱指针，这样引用计数才反映现实。
     for (auto It = Subs->CreateIterator(); It; ++It)
     {
         if (!It->IsValid()) It.RemoveCurrent();
@@ -778,7 +776,7 @@ void UMjDebugVisualizer::GetSegPoolSiblings(EMjCameraMode Mode,
 }
 
 // ---------------------------------------------------------------------------
-// Tendon rendering
+// 肌腱渲染
 // ---------------------------------------------------------------------------
 
 void UMjDebugVisualizer::HideTendonTubes()
@@ -801,10 +799,9 @@ void UMjDebugVisualizer::ClearTendonTubes()
 
 namespace
 {
-    // `/Engine/BasicShapes/Cylinder.Cylinder` ships as a 100cm-tall unit cylinder
-    // with 50cm base radius. USplineMeshComponent::SetStartScale multiplies the
-    // cross-section (X/Y) by its arg, so to get a visible radius in cm we divide
-    // by this constant. Kept local since we're the only caller.
+    // `/Engine/BasicShapes/Cylinder.Cylinder` 出厂时是一个高 100 厘米、底面半径 50 厘米的单位圆柱。
+    // USplineMeshComponent::SetStartScale 会将横截面（X/Y）乘以它的参数，所以要得到以厘米为单位的可见半径，我们需要除以这个常数。
+    // 保留为本地变量，因为只有我们一个调用者。
     constexpr float kBasicCylinderBaseRadiusCm = 50.0f;
 
     FVector ComputeJoinTangent(const FVector& PrevDir, float PrevLen,
@@ -815,9 +812,7 @@ namespace
         return Avg * Scale;
     }
 
-    // Spherical lerp about a shared origin — exact for sphere wraps, good enough
-    // for cylinder wraps where both wrap points share the same perpendicular
-    // distance from the cylinder axis.
+    // 围绕共同原点的球面插值——对于球面包裹是精确的，对于圆柱包裹也足够好，只要两个包裹点与圆柱轴的垂直距离相同。
     FVector SlerpAboutCentre(const FVector& Centre, const FVector& VA, const FVector& VB, float T)
     {
         // const float LenA = VA.Length();
@@ -844,6 +839,9 @@ namespace
     }
 }
 
+
+// 根据 CaptureDebugData() 从 MuJoCo 快照得到的包裹点、激活和长度数据，
+// 构建/更新一组 USplineMeshComponent，以在 Unreal 中以带颜色与可变半径的“管状”方式可视化肌腱（tendon）路径。
 void UMjDebugVisualizer::UpdateTendonTubes()
 {
     AActor* Owner = GetOwner();
@@ -879,7 +877,7 @@ void UMjDebugVisualizer::UpdateTendonTubes()
         FVector StartTangent;
         FVector EndTangent;
         FLinearColor Colour;
-        float Radius;     // visible radius in cm
+        float Radius;     // 可见半径（厘米）
     };
     TArray<FTubeSeg> Segs;
     Segs.Reserve(LocalPoints.Num() * 2);
@@ -887,7 +885,7 @@ void UMjDebugVisualizer::UpdateTendonTubes()
     const int32 NumTendons = LocalAdr.Num();
     for (int32 t = 0; t < NumTendons; ++t)
     {
-        // Intensity: activation for muscles, length-vs-range stretch for limited tendons, else neutral.
+        // 强度：肌肉激活，有限肌腱时做 长度-范围 拉伸，其它保持中性。
         float Intensity = 0.5f;
         const float Act = LocalActivation.IsValidIndex(t) ? LocalActivation[t] : -1.0f;
         if (Act >= 0.0f)
@@ -905,10 +903,10 @@ void UMjDebugVisualizer::UpdateTendonTubes()
         }
         const FLinearColor Colour = FLinearColor::LerpUsingHSV(
             FLinearColor(0.05f, 0.05f, 0.6f), FLinearColor(1.0f, 0.15f, 0.05f), Intensity);
-        // Swell more dramatically — 0.5× relaxed, 2× fully contracted (4× range).
+        // 膨胀得更明显——放松时为 0.5×，完全收缩时为 2×（范围 4×）。
         const float Radius = TendonTubeRadius * (0.5f + 1.5f * Intensity);
 
-        // Build ordered path with optional arc subdivision across geom wraps.
+        // 在几何包裹中构建有序路径，并可选择弧分割。
         TArray<FVector> Path;
         Path.Reserve(LocalNum[t] * (TendonArcSubdivisions + 2));
         const int32 Adr = LocalAdr[t];
@@ -987,13 +985,13 @@ void UMjDebugVisualizer::UpdateTendonTubes()
         New->SetCastShadow(false);
         New->bSelectable = false;
         New->bUseAttachParentBound = true;
-        New->SetForwardAxis(ESplineMeshAxis::Z);   // /Engine/BasicShapes/Cylinder extends along Z
+        New->SetForwardAxis(ESplineMeshAxis::Z);   // /Engine/BasicShapes/Cylinder 沿 Z 轴延伸
         New->RegisterComponent();
         New->AttachToComponent(Owner->GetRootComponent(), FAttachmentTransformRules::KeepWorldTransform);
 
-        // Standard idiom: let the component create + own the MID so it's wired
-        // correctly through the render proxy. Creating via UMaterialInstanceDynamic::Create
-        // with the visualizer as outer resulted in the MID not routing to the mesh.
+        // 标准习语：让组件自己创建“动态材质实例”（Material Instance Dynamic, MID），这样它才会通过渲染代理正确连接。
+        // 通过 UMaterialInstanceDynamic::Create 用可视化器作为外部创建，会导致 MID 没有正确路由到网格上。
+        // 补充：MID是基于某个父材质（UMaterial 或 UMaterialInstance）在运行时创建的材质实例，允许通过代码实时修改材质参数（颜色、标量、贴图等）
         UMaterialInstanceDynamic* MID = New->CreateDynamicMaterialInstance(0, OverlayParentMaterial);
 
         TendonSegmentPool.Add(New);
@@ -1007,8 +1005,7 @@ void UMjDebugVisualizer::UpdateTendonTubes()
         if (i < Segs.Num())
         {
             const FTubeSeg& S = Segs[i];
-            // Convert desired visible radius in cm to the scale factor applied
-            // to the base cylinder mesh (50cm radius → divide by 50).
+            // 将想要的可见半径（厘米）转换为应用于基础圆柱网格的缩放因子（50厘米半径 → 除以50）。
             const float Scale = S.Radius / kBasicCylinderBaseRadiusCm;
             Seg->SetStartScale(FVector2D(Scale, Scale), false);
             Seg->SetEndScale(FVector2D(Scale, Scale), false);
@@ -1026,6 +1023,9 @@ void UMjDebugVisualizer::UpdateTendonTubes()
     }
 }
 
+
+// 初始化用于调试覆盖（overlay）和分割渲染的父材质与颜色参数名。
+// 它确保后续创建的动态材质实例（MID）有一个已知的父材质和可写的向量参数（用于设置颜色）。
 void UMjDebugVisualizer::InitializeOverlayMaterial()
 {
     if (OverlayParentMaterial) return;
@@ -1051,7 +1051,7 @@ void UMjDebugVisualizer::InitializeOverlayMaterial()
         return;
     }
 
-    // Prefer well-known colour-param names so we don't accidentally drive an emissive tint etc.
+    // 尽量使用知名的颜色参数名字，这样我们就不会意外地弄出自发光色调之类的东西。
     static const FName PreferredNames[] = {
         TEXT("Color"), TEXT("BaseColor"), TEXT("Tint"), TEXT("TintColor"), TEXT("DiffuseColor")
     };

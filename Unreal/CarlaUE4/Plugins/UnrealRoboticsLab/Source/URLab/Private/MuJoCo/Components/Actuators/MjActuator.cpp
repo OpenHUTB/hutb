@@ -135,6 +135,9 @@ void UMjActuator::ApplyRawOverrides(mjsActuator* Actuator, mjsDefault* Default)
     }
 }
 
+
+// 解析单个 MJCF/自定义 XML 节点，将节点中的属性映射到 UMjActuator 的成员变量和对应的 bOverride_* 标志，
+// 使该组件在后续 RegisterToSpec/ExportTo 时能按 XML 指定导出到 MuJoCo 规范。
 void UMjActuator::ImportFromXml(const FXmlNode* Node)
 {
     if (!Node) return;
@@ -158,7 +161,7 @@ void UMjActuator::ImportFromXml(const FXmlNode* Node)
     MjXmlUtils::ReadAttrFloatArray(Node, TEXT("biasprm"), BiasPrm, bOverride_BiasPrm);
     MjXmlUtils::ReadAttrFloatArray(Node, TEXT("dynprm"), DynPrm, bOverride_DynPrm);
 
-    // Transmission detection
+    // 传输检测
     FString TrnTarget;
     if (MjXmlUtils::ReadAttrString(Node, TEXT("joint"), TrnTarget))
     {
@@ -191,7 +194,7 @@ void UMjActuator::ImportFromXml(const FXmlNode* Node)
         TargetName = TrnTarget;
     }
 
-    // Call subclass-specific parsing
+    // 调用子类特定解析
     ParseSpecifics(Node);
 }
 
@@ -211,7 +214,7 @@ void UMjActuator::Bind(mjModel* Model, mjData* Data, const FString& Prefix)
 }
 
 // ----------------------------------------------------------------------------------
-// Blueprint Runtime API — Setup & Control
+// 蓝图运行时 API — 设置与控制
 // ----------------------------------------------------------------------------------
 
 void UMjActuator::SetControl(float Value)
@@ -252,7 +255,7 @@ float UMjActuator::GetMjControl() const
 
 float UMjActuator::ResolveDesiredControl(uint8 Source) const
 {
-    // Source: 0 = ZMQ, 1 = UI (matching EControlSource)
+    // 来源：0 = ZMQ，1 = UI（对应 EControlSource）
     if (Source == 0) 
     {
         return NetworkValue.load();
@@ -327,7 +330,7 @@ FString UMjActuator::GetMjName() const
 }
 
 // ----------------------------------------------------------------------------------
-// Base Export (Common Properties & Virtual Dispatch)
+// 基类导出（常见属性 & 虚函数调用）
 // ----------------------------------------------------------------------------------
 
 void UMjActuator::RegisterToSpec(FMujocoSpecWrapper& Wrapper, mjsBody* ParentBody)
