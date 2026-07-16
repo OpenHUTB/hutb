@@ -446,13 +446,17 @@ UTexture2D* UMujocoGenerationAction::ImportSingleTexture(const FString& SourcePa
     return NewTexture;
 }
 
+
+// 基于项目内的母材质（/UnrealRoboticsLab/Materials/M_MuJoCo_Master）为导入的网格创建或复用一个 UMaterialInstanceConstant，
+// 并把从 MuJoCo 材质数据解析出的颜色/纹理参数写入该实例，返回已创建或复用的实例指针。
 UMaterialInstanceConstant* UMujocoGenerationAction::CreateMaterialInstance(
     const FString& MeshName,
     const FMuJoCoMaterialData& MaterialData,
     const TMap<FString, UTexture2D*>& TextureAssets,
     const FString& DestinationPath)
 {
-    // Load master material
+    // 加载 MuJoCo 相关资产的通用母材质模板：集中定义外观参数，包括基础色、金属度、粗糙度、法线等。
+    // 应该位于 hutb\Unreal\CarlaUE4\Plugins\UnrealRoboticsLab\Content\Materials，而不是 hutb\Unreal\CarlaUE4\Content\Matrials
     UMaterial* MasterMaterial = LoadObject<UMaterial>(nullptr, TEXT("/UnrealRoboticsLab/Materials/M_MuJoCo_Master.M_MuJoCo_Master"));
     if (!MasterMaterial)
     {
@@ -460,13 +464,13 @@ UMaterialInstanceConstant* UMujocoGenerationAction::CreateMaterialInstance(
         return nullptr;
     }
 
-    // Create material instance package
+    // 创建材质实例包
     FString InstanceName = FString::Printf(TEXT("MI_%s"), *MeshName);
     FString PackageName = FPaths::Combine(DestinationPath, InstanceName);
     PackageName = UPackageTools::SanitizePackageName(PackageName);
 
-    // Check if material instance already exists — reuse during the same import session
-    // (multiple geoms referencing the same material), but don't skip parameter setup
+    // 检查材质实例是否已存在——在同一导入会话期间重复使用（多个几何体引用同一材质），
+    // 但不要跳过参数设置。
     UMaterialInstanceConstant* ExistingInstance = LoadObject<UMaterialInstanceConstant>(nullptr, *PackageName);
     if (ExistingInstance)
     {
@@ -476,11 +480,11 @@ UMaterialInstanceConstant* UMujocoGenerationAction::CreateMaterialInstance(
 
     UE_LOG(LogURLabEditor, Log, TEXT("Creating material instance: %s"), *InstanceName);
 
-    // Create package
+    // 创建包
     UPackage* Package = CreatePackage(*PackageName);
     Package->FullyLoad();
 
-    // Create material instance
+    // 创建材质实例
     UMaterialInstanceConstant* MaterialInstance = NewObject<UMaterialInstanceConstant>(
         Package,
         FName(*InstanceName),
@@ -489,41 +493,41 @@ UMaterialInstanceConstant* UMujocoGenerationAction::CreateMaterialInstance(
 
     MaterialInstance->SetParentEditorOnly(MasterMaterial);
 
-    // Helper lambda to set a scalar parameter with override enabled
+    // 用于设置标量参数并启用覆盖的辅助 lambda 函数
     auto SetScalar = [&](const TCHAR* Name, float Value)
     {
         FMaterialParameterInfo Info(Name);
         MaterialInstance->SetScalarParameterValueEditorOnly(Info, Value);
     };
 
-    // Helper lambda to set a vector parameter with override enabled
+    // 用于设置向量参数并启用覆盖的辅助 lambda 函数
     auto SetVector = [&](const TCHAR* Name, const FLinearColor& Value)
     {
         FMaterialParameterInfo Info(Name);
         MaterialInstance->SetVectorParameterValueEditorOnly(Info, Value);
     };
 
-    // Helper lambda to set a texture parameter with override enabled
+    // 用于设置纹理参数的辅助 lambda 函数，并启用覆盖功能。
     auto SetTexture = [&](const TCHAR* Name, UTexture* Tex)
     {
         FMaterialParameterInfo Info(Name);
         MaterialInstance->SetTextureParameterValueEditorOnly(Info, Tex);
 
-        // Also directly add to TextureParameterValues to ensure override is enabled
+        // 同时直接添加到 TextureParameterValues 中，以确保启用覆盖功能。
         FTextureParameterValue TexParam;
         TexParam.ParameterInfo = Info;
         TexParam.ParameterValue = Tex;
-        TexParam.ExpressionGUID = FGuid(); // Will be resolved by UE
+        TexParam.ExpressionGUID = FGuid(); // 将由 UE 解决
         MaterialInstance->TextureParameterValues.Add(TexParam);
 
         UE_LOG(LogURLabEditor, Log, TEXT("  [SetTexture] Set '%s' = '%s' (TextureParameterValues count: %d)"),
             Name, *Tex->GetName(), MaterialInstance->TextureParameterValues.Num());
     };
 
-    // Set base color
+    // 设置基础颜色（底色）
     SetVector(TEXT("BaseColor"), MaterialData.Rgba);
 
-    // Set texture parameters
+    // 设置纹理参数
     bool bHasBaseColorTexture = false;
     if (!MaterialData.BaseColorTextureName.IsEmpty())
     {
@@ -545,9 +549,7 @@ UMaterialInstanceConstant* UMujocoGenerationAction::CreateMaterialInstance(
         }
     }
 
-    // Set bUseTexture as a static switch parameter — the master material uses
-    // a StaticSwitchParameter to completely eliminate the texture sample branch
-    // when false, preventing null texture crashes (UE-23902).
+    // 将 bUseTexture 设置为静态开关参数——主材质使用 StaticSwitchParameter 在 false 时完全消除纹理采样分支，防止空纹理崩溃 (UE-23902)。
     {
         FStaticParameterSet StaticParams;
         MaterialInstance->GetStaticParameterValues(StaticParams);
@@ -564,7 +566,7 @@ UMaterialInstanceConstant* UMujocoGenerationAction::CreateMaterialInstance(
         MaterialInstance->UpdateStaticPermutation(StaticParams);
     }
 
-    // Set normal texture if available
+    // 如果可用，请设置正则纹理
     if (!MaterialData.NormalTextureName.IsEmpty() && TextureAssets.Contains(MaterialData.NormalTextureName))
     {
         UTexture2D* NormalTex = TextureAssets[MaterialData.NormalTextureName];
@@ -575,7 +577,10 @@ UMaterialInstanceConstant* UMujocoGenerationAction::CreateMaterialInstance(
         }
     }
 
-    // Set ORM texture if available
+    // 如果可用，请设置 ORM 纹理
+    // ORM 纹理（也称 ORM 贴图）是一种在 3D 渲染和游戏开发中常用的技术。
+    // 它将环境光遮蔽（Occlusion）、粗糙度（Roughness）和金属度（Metallic）这三个 PBR 材质参数合并到一张图像的红、绿、蓝（RGB）通道中，
+    // 以减少文件数量并提高渲染效率
     if (!MaterialData.ORMTextureName.IsEmpty() && TextureAssets.Contains(MaterialData.ORMTextureName))
     {
         UTexture2D* ORMTex = TextureAssets[MaterialData.ORMTextureName];
@@ -585,28 +590,28 @@ UMaterialInstanceConstant* UMujocoGenerationAction::CreateMaterialInstance(
             MaterialInstance->SetTextureParameterValueEditorOnly(ORMParamInfo, ORMTex);
         }
     }
-    // Otherwise set individual roughness/metallic textures
+    // 否则，请设置单独的粗糙度/金属纹理。
     else
     {
         if (!MaterialData.RoughnessTextureName.IsEmpty() && TextureAssets.Contains(MaterialData.RoughnessTextureName))
         {
-            // Note: If master material doesn't have separate roughness texture parameter, this will be ignored
-            // For now, we'll just log it
+            // 注意：如果主材质没有单独的粗糙度纹理参数，则会忽略此参数。
+            // 目前，我们仅将其记录下来。
             UE_LOG(LogURLabEditor, Log, TEXT("Roughness texture found but master material uses ORM workflow"));
         }
 
         if (!MaterialData.MetallicTextureName.IsEmpty() && TextureAssets.Contains(MaterialData.MetallicTextureName))
         {
-            // Note: If master material doesn't have separate metallic texture parameter, this will be ignored
+            // 注意：如果主材质没有单独的金属纹理参数，则此参数将被忽略。
             UE_LOG(LogURLabEditor, Log, TEXT("Metallic texture found but master material uses ORM workflow"));
         }
     }
 
-    // Force update and save
+    // 强制更新并保存
     MaterialInstance->UpdateStaticPermutation();
     MaterialInstance->PostEditChange();
 
-    // Save package
+    // 保存包
     Package->MarkPackageDirty();
     FAssetRegistryModule::AssetCreated(MaterialInstance);
 
