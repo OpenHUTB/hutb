@@ -457,6 +457,8 @@ UMaterialInstanceConstant* UMujocoGenerationAction::CreateMaterialInstance(
 {
     // 加载 MuJoCo 相关资产的通用母材质模板：集中定义外观参数，包括基础色、金属度、粗糙度、法线等。
     // 应该位于 hutb\Unreal\CarlaUE4\Plugins\UnrealRoboticsLab\Content\Materials，而不是 hutb\Unreal\CarlaUE4\Content\Matrials
+    // 直接复制到 hutb\Unreal\CarlaUE4\Content\Matrials 会出现资产版本不符的问题：
+    // LogAssetRegistry: Error: Package ../../../../../Unreal/CarlaUE4/Plugins/UnrealRoboticsLab/Content/Materials/M_MuJoCo_Master.uasset is too old
     UMaterial* MasterMaterial = LoadObject<UMaterial>(nullptr, TEXT("/UnrealRoboticsLab/Materials/M_MuJoCo_Master.M_MuJoCo_Master"));
     if (!MasterMaterial)
     {

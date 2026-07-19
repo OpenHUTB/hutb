@@ -180,6 +180,13 @@ if exist "%cd%\Build\dependencies\" (
     ) else (
         echo CesiumForUnreal Plugin already exists.
     )
+    rem Unzip glTFForUE4 Plugin (For Mujoco .glb file input)
+    if not exist "%cd%\Unreal\CarlaUE4\Plugins\glTFForUE4" (
+        echo Unzipping glTFForUE4 Plugin ...
+        "prerequisites\7zip\7z.exe" x "Plugins\glTFForUE4.zip" -o"%cd%\Unreal\CarlaUE4\Plugins\" -y >nul
+    ) else (
+        echo glTFForUE4 Plugin already exists.
+    )
 
         
     rem ============================================================================
