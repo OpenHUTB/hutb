@@ -21,6 +21,8 @@ public class Carla : ModuleRules
 
     bool HasCustomGBufferView = File.Exists(Path.Combine(EngineDirectory, "Source", "Runtime", "Renderer", "Public", "GBufferView.h"));
 
+    // 关键：强制开启 C++ 异常支持，以兼容 Boost 和 DReyeVR
+    bEnableExceptions = true;
     if (IsWindows(Target))
     {
       bEnableExceptions = true;

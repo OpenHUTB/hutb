@@ -1,6 +1,6 @@
 {
 	"FileVersion": 3,
-	"EngineAssociation": "{E0A51DA7-4769-9458-687B-4680AAEBFD72}",
+	"EngineAssociation": "{FF5B26C3-46CF-C440-D9FB-F48D5F122826}",
 	"Category": "",
 	"Description": "",
 	"Modules": [
@@ -95,7 +95,7 @@
 		},
 		{
 			"Name": "SteamVR",
-			"Enabled": true,
+			"Enabled": false,
 			"WhitelistPlatforms": [
 				"Win32",
 				"Win64",
@@ -154,15 +154,15 @@
 		},
 		{
 			"Name": "UnrealRoboticsLab",
-			"Enabled": true
+			"Enabled": false
 		},
 		{
 			"Name": "GLTFImporter",
-			"Enabled": true
+			"Enabled": false
 		},
 		{
 			"Name": "FunctionalTestingEditor",
-			"Enabled": true
+			"Enabled": false
 		},
 		{
 			"Name": "RuntimeTests",
@@ -183,6 +183,10 @@
 				"Android",
 				"IOS"
 			]
+		},
+		{
+			"Name": "RoadRunnerCarlaContent",
+			"Enabled": true
 		},
 		{
 			"Name": "RoadRunnerCarlaIntegration",

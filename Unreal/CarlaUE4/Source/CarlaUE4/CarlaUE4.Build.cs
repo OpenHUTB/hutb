@@ -15,6 +15,8 @@ public class CarlaUE4 : ModuleRules
         PrivatePCHHeaderFile = "CarlaUE4.h";
         ShadowVariableWarningLevel = WarningLevel.Off; // -Wno-shadow
 
+        // 关键：强制开启 C++ 异常支持，以兼容 Boost 和 DReyeVR
+        bEnableExceptions = true;
         // include LibCarla so we can #include <carla/x/y/z> headers
         string LibCarlaIncludePath =
             Path.GetFullPath(Path.Combine(ModuleDirectory, "..", "..", "..", "..", "LibCarla", "source"));

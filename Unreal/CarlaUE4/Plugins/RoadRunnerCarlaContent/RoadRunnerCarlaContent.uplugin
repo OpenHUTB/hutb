@@ -1,0 +1,13 @@
+{
+    "FileVersion": 3,
+    "Version": 1,
+    "VersionName": "1.0",
+    "FriendlyName": "RoadRunnerCarlaContent",
+    "Description": "Content-only plugin providing RoadRunner Carla content mount point for compatibility with assets that reference /RoadRunnerCarlaContent/ paths.",
+    "Category": "Other",
+    "CreatedBy": "HUTB Team",
+    "CanContainContent": true,
+    "IsBetaVersion": false,
+    "Installed": true,
+    "Modules": []
+}

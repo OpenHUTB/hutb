@@ -482,9 +482,47 @@ if __name__ == "__main__":
                 )
         if os.path.exists(os.path.join(rep_path, "*.dat")) is False:
             split_file(
-                os.path.join(local_path, "hutb.zip"), rep_path, 256 * 1024 * 1024
-            )  # 每个小文件最大为 256MB
-        repo.commit_push_force(message=latest_file_name)
+                os.path.join(local_path, "hutb.zip"), rep_path, 5120 * 1024 * 1024
+            )  # 每个小文件最大为 128MB
+        # repo.commit_push_force(message=latest_file_name)
+        
+        # ---------- 修复 504 超时：增量分批推送逻辑开始 ----------
+        print("\nStarting incremental push to prevent 504 Gateway Timeout...")
+        
+        # 核心补充：强制本地初始化 LFS 追踪规则，防御 LFS 脱靶的情况
+        print("Enforcing Git LFS tracking for .dat files...")
+        subprocess.run([git_exe, "-C", rep_path, "lfs", "track", "*.dat"])
+        repo.repo.git.add(".gitattributes") # 必须把生成的规则文件先加进暂存区
+
+        # 获取所有切割好的 .dat 文件并严格按序号排序
+        dat_files = sorted([f for f in os.listdir(rep_path) if f.endswith(".dat")])
+        total_chunks = len(dat_files)
+        
+        for idx, file_name in enumerate(dat_files, 1):
+            print(f"\n>>> Processing chunk {idx}/{total_chunks}: {file_name}")
+            file_path = os.path.join(rep_path, file_name)
+            
+            # 1. 仅将当前单个分块加入暂存区，而不是全部加入
+            repo.repo.git.add(file_path)
+            
+            # 2. 检查是否有实质性更改，防御空提交引发的系统崩溃（自动化测试核心原则）
+            if repo.repo.is_dirty(untracked_files=True) or repo.repo.index.diff("HEAD"):
+                commit_msg = f"{latest_file_name} - upload chunk {idx}/{total_chunks}"
+                repo.repo.git.commit("-m", commit_msg)
+                
+                # 3. 执行推送。结合上文可能有 reset_hard，首个包强制覆盖，后续包常规追加
+                try:
+                    if idx == 1:
+                        repo.repo.git.push(force=True)
+                    else:
+                        repo.repo.git.push()
+                    print(f"Chunk {idx} successfully pushed.")
+                except Exception as e:
+                    print(f"Failed to push chunk {idx}. Error: {e}")
+                    # 遇到网络彻底断开等致命异常时，优雅地中止程序
+                    sys.exit(1)
+        # ---------- 增量分批推送逻辑结束 ----------
+
         print("Upload finished.")
         sys.exit(0)
 

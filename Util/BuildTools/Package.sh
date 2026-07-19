@@ -120,6 +120,8 @@ function copy_dir_fast {
 }
 
 function cook_tagged_materials {
+    # return 0
+
   # Measure duration of this function call
   T_START_COOK_TAGGED_MATS=$(date +%s)
 
@@ -250,6 +252,20 @@ if ${DO_CARLA_RELEASE} ; then
   fi
 
   log "Cooking CARLA project."
+
+  # 修复 Content 中 .uasset 的非法材质路径（缺少 /Game/ 根前缀导致 Cook 崩溃）
+  log "Fixing invalid RoadRunner material paths in .uasset files..."
+  for BAD_PATH in \
+    "/RoadRunnerMaterials/BaseMaterial:/Game/RoadRunnerMaterials/BaseMat" \
+    "/RoadRunnerMaterials/BaseCutoutMaterial:/Game/RoadRunnerMaterials/BaseCutoutMat" \
+    "/RoadRunnerCarlaContent/:/Game/RoadRunnerCarlaContent/" \
+    ; do
+    FROM="${BAD_PATH%%:*}"
+    TO="${BAD_PATH##*:}"
+    find "${CARLAUE4_ROOT_FOLDER}/Content" -name "*.uasset" \
+      -exec grep -l "$FROM" {} \; \
+      -exec sed -i "s|$FROM|$TO|g" {} \; 2>/dev/null || true
+  done
 
   rm -Rf ${RELEASE_BUILD_FOLDER}
   mkdir -p ${RELEASE_BUILD_FOLDER}
