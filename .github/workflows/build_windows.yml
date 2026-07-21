@@ -2,6 +2,7 @@ name: hutb Windows CI/CD
 
 on: 
   pull_request:
+  workflow_dispatch:
 
 
 jobs:
