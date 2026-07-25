@@ -7,6 +7,7 @@
 #include "Util/NonCopyable.h"
 
 DECLARE_LOG_CATEGORY_EXTERN(LogDReyeVR, Log, All);
+// 定义了一个名为 LogHolodeck 类别的自定义日志分类，日志级别为 Log
 DECLARE_LOG_CATEGORY_EXTERN(LogHolodeck, Log, All);
 
 constexpr inline const char *file_name_only(const char *path)

@@ -14,4 +14,5 @@ namespace std {
 }
 #endif
 DEFINE_LOG_CATEGORY(LogDReyeVR);
+// 定义自定义日志标签的使用，声明结构体对象 
 DEFINE_LOG_CATEGORY(LogHolodeck);
