@@ -1,7 +1,7 @@
 // MIT License (c) 2021 BYU FRoStLab see LICENSE file
 #pragma once
 
-#include "Holodeck.h"
+#include "CarlaUE4.h"
 #include "HolodeckSensor.h"
 
 #include <limits>

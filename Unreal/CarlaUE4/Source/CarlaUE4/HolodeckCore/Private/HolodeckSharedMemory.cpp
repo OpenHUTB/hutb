@@ -2,7 +2,7 @@
 // Created by joshgreaves on 5/9/17.
 //
 
-#include "Holodeck.h"
+#include "CarlaUE4.h"
 #include "HolodeckSharedMemory.h"
 
 const char HOLODECK_BASE_PATH[] = "/HOLODECK_MEM";

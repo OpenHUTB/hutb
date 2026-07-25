@@ -1,6 +1,6 @@
 // MIT License (c) 2019 BYU PCCL see LICENSE file
 
-#include "Holodeck.h"
+#include "CarlaUE4.h"
 #include "HandAgentController.h"
 
 AHandAgentController::AHandAgentController(const FObjectInitializer& ObjectInitializer) : AHolodeckPawnController(ObjectInitializer) {

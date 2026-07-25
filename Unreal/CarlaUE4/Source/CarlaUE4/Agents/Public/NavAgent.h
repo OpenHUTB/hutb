@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "HolodeckCore/Public/HolodeckAgent.h"
-#include "Holodeck.h"
+#include "CarlaUE4.h"
 #include "HolodeckAgent.h"
 
 #include "NavAgent.generated.h"
