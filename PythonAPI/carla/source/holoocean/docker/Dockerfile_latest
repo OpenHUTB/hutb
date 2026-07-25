@@ -1,0 +1,5 @@
+FROM frostlab/holoocean:base
+
+RUN python3 -c 'import holoocean; holoocean.install("Ocean"); holoocean.install("TestWorlds")'
+
+CMD ["/bin/bash"]
