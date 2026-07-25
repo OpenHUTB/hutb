@@ -9,8 +9,8 @@ float UHolodeckSonar::ATan2Approx(float y, float x){
     //http://pubs.opengroup.org/onlinepubs/009695399/functions/atan2.html
     //Volkan SALMA
 
-    const float ONEQTR_PI = Pi / 4.0;
-	const float THRQTR_PI = 3.0 * Pi / 4.0;
+    const float ONEQTR_PI = Pi_M / 4.0;
+	const float THRQTR_PI = 3.0 * Pi_M / 4.0;
 	float r, angle;
 	float abs_y = fabs(y) + 1e-10f;      // kludge to prevent 0/0 condition
 	if ( x < 0.0f )
@@ -24,7 +24,7 @@ float UHolodeckSonar::ATan2Approx(float y, float x){
 		angle = ONEQTR_PI;
 	}
 	angle += (0.1963f * r * r - 0.9817f) * r;
-	angle *= 180/Pi;
+	angle *= 180/Pi_M;
 	if ( y < 0.0f )
 		return( -angle );     // negate if in quad III or IV
 	else

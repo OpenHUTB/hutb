@@ -6,7 +6,7 @@
 #include "Uav.h"
 #include "HolodeckControlScheme.h"
 #include "SimplePID.h"
-#include <math.h>
+// #include <math.h>
 
 #include "UavControlSchemeTargetRollPitch.generated.h"
 

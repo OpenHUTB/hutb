@@ -95,7 +95,7 @@ void USidescanSonar::ParseSensorParms(FString ParmsJson) {
 	}
 	else{
 		// Calculate how large the azimuth bins should be
-		AzimuthRes = (180 * Octree::OctreeMin) / (Pi * (RangeMin + 0.1 * (RangeMax - RangeMin)));
+		AzimuthRes = (180 * Octree::OctreeMin) / (Pi_M * (RangeMin + 0.1 * (RangeMax - RangeMin)));
 		AzimuthBins = Azimuth / AzimuthRes;
 	}
 
@@ -108,7 +108,7 @@ void USidescanSonar::ParseSensorParms(FString ParmsJson) {
 	}
 	else{
 		// Calculate how large our shadowing bins should be
-		ElevationBins = (RangeMin*Elevation*Pi/180) / Octree::OctreeMin;
+		ElevationBins = (RangeMin*Elevation*Pi_M/180) / Octree::OctreeMin;
 		if(ElevationBins < 1) ElevationBins = 1;
 		ElevationRes = Elevation / ElevationBins;
 	}
@@ -207,10 +207,10 @@ void USidescanSonar::TickSensorComponent(float DeltaTime, ELevelTick TickType, F
 		}
 	}
 
-	if (runtickCounter == 20 && (RangeMin*Elevation*Pi/180) / Octree::OctreeMin < 1)
+	if (runtickCounter == 20 && (RangeMin*Elevation*Pi_M/180) / Octree::OctreeMin < 1)
 	{
-		float recommendedElevation = Octree::OctreeMin * 180 / (RangeMin * Pi);
-		float recommendedOctreeMin = RangeMin * Elevation * Pi / 180 / 100;
+		float recommendedElevation = Octree::OctreeMin * 180 / (RangeMin * Pi_M);
+		float recommendedOctreeMin = RangeMin * Elevation * Pi_M / 180 / 100;
 		GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Red, FString::Printf(TEXT("WARNING: Elevation angle potentially too small with current OctreeMin configuration\n Recommended changes (pick one):\n Elevation = %f\n OctreeMin = %f\n"), recommendedElevation, recommendedOctreeMin));
 	}
 

@@ -103,7 +103,7 @@ void USinglebeamSonar::ParseSensorParms(FString ParmsJson) {
 	else{
 		// Calculate how large our shadowing bins should be
 		float dist = RangeMin;
-		OpeningAngleBins = (dist*OpeningAngle*Pi/180) / Octree::OctreeMin;
+		OpeningAngleBins = (dist*OpeningAngle*Pi_M/180) / Octree::OctreeMin;
 		if(OpeningAngleBins < 1) OpeningAngleBins = 1;
 		OpeningAngleRes = OpeningAngle / OpeningAngleBins;
 	}
@@ -118,7 +118,7 @@ void USinglebeamSonar::ParseSensorParms(FString ParmsJson) {
 	else{
 		// Calculate how large our shadowing bins should be
 		float dist = RangeMin;
-		CentralAngleBins = (dist*CentralAngle*Pi/180) / Octree::OctreeMin;
+		CentralAngleBins = (dist*CentralAngle*Pi_M/180) / Octree::OctreeMin;
 		if(CentralAngleBins < 6) CentralAngleBins = 6;
 		CentralAngleRes = CentralAngle / CentralAngleBins;
 	}
@@ -187,7 +187,7 @@ void USinglebeamSonar::showRegion(float DeltaTime){
 		float DebugNumSides = 6; //change later?
 		float length = (RangeMax - RangeMin); //length of cone in cm
 
-		DrawDebugCone(GetWorld(), GetComponentLocation(), GetForwardVector(), length, (OpeningAngle/2)*Pi/180, (OpeningAngle/2)*Pi/180, DebugNumSides, FColor::Green, false, .00, ECC_WorldStatic, debugThickness);
+		DrawDebugCone(GetWorld(), GetComponentLocation(), GetForwardVector(), length, (OpeningAngle/2)*Pi_M/180, (OpeningAngle/2)*Pi_M/180, DebugNumSides, FColor::Green, false, .00, ECC_WorldStatic, debugThickness);
 	}		
 }
 

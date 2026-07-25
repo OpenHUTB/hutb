@@ -17,7 +17,7 @@
 
 #include "ImagingSonar.generated.h"
 
-#define Pi 3.1415926535897932384626433832795
+#define Pi_M 3.1415926535897932384626433832795
 /**
  * UImagingSonar
  */

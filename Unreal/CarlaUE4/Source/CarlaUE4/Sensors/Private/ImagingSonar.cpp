@@ -113,7 +113,7 @@ void UImagingSonar::ParseSensorParms(FString ParmsJson) {
 	else{
 		// Calculate how large our shadowing bins should be
 		float dist = (RangeMax - RangeMin) / 8 + RangeMin;
-		ElevationBins = (dist*Elevation*Pi/180) / Octree::OctreeMin;
+		ElevationBins = (dist*Elevation*Pi_M/180) / Octree::OctreeMin;
 		if(ElevationBins < 1) ElevationBins = 1;
 		ElevationRes = Elevation / ElevationBins;
 	}
@@ -125,7 +125,7 @@ void UImagingSonar::InitializeSensor() {
 	// Check if we should shadow with less Azimuth bins 
 	float dist = (RangeMax - RangeMin) / 8 + RangeMin;
 	AzimuthBinScale = 1;
-	while(Octree::OctreeMin >= (dist*AzimuthRes*Pi/180)*AzimuthBinScale){
+	while(Octree::OctreeMin >= (dist*AzimuthRes*Pi_M/180)*AzimuthBinScale){
 		AzimuthBinScale *= 2;
 	}
 	if(AzimuthBinScale > AzimuthBins) AzimuthBinScale = AzimuthBins;
