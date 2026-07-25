@@ -22,7 +22,7 @@ public class CarlaUE4 : ModuleRules
             Path.GetFullPath(Path.Combine(ModuleDirectory, "..", "..", "..", "..", "LibCarla", "source"));
         PublicIncludePaths.Add(LibCarlaIncludePath);
         PrivateIncludePaths.Add(LibCarlaIncludePath);
-                PrivateIncludePaths.AddRange(new [] {
+            PrivateIncludePaths.AddRange(new [] {
              "CarlaUE4/Agents/Public",
              "CarlaUE4/General/Public",
              "CarlaUE4/Sensors/Public",
