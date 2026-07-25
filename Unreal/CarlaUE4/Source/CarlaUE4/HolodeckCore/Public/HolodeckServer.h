@@ -43,7 +43,7 @@ class AHolodeckAgent;
   * HolodeckGameInstance. HolodeckGameMode calls HolodeckGameInstance::StartServer()
   */
 UCLASS()
-class HOLODECK_API UHolodeckServer : public UObject {
+class CARLAUE4_API UHolodeckServer : public UObject {
 	GENERATED_BODY()
 
 public:

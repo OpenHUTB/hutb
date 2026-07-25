@@ -25,7 +25,7 @@ void UAddSensorCommand::Execute() {
 		return;
 	}
 
-	static USensorMapType SensorMap = { { "CollisionSensor", UCollisionSensor::StaticClass() },
+	static USensorMapType SensorMap = { { "HolodeckCollisionSensor", UHolodeckCollisionSensor::StaticClass() },
 										{ "IMUSensor", UIMUSensor::StaticClass() },
 										{ "JointRotationSensor", UJointRotationSensor::StaticClass() },
 										{ "LocationSensor", ULocationSensor::StaticClass() },

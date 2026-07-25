@@ -7,7 +7,7 @@
 /**
  * 
  */
-class HOLODECK_API Benchmarker
+class CARLAUE4_API Benchmarker
 {
 public:
 	// If manual start is false, CalcMs will automatically end your iteration and start the next one.

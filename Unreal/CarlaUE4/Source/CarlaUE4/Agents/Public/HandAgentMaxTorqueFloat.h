@@ -14,7 +14,7 @@
  * command array control the Hand agent's movement in the x, y, and z planes so it can float around.
  */
 UCLASS()
-class HOLODECK_API UHandAgentMaxTorqueFloat : public UHolodeckControlScheme
+class CARLAUE4_API UHandAgentMaxTorqueFloat : public UHolodeckControlScheme
 {
 	GENERATED_BODY()
 

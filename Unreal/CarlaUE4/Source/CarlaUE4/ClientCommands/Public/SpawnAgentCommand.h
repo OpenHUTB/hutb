@@ -18,7 +18,7 @@
   * 3. Add the agent's name and bp reference to the map
   */
 UCLASS(ClassGroup = (Custom))
-class HOLODECK_API USpawnAgentCommand : public UCommand {
+class CARLAUE4_API USpawnAgentCommand : public UCommand {
 	GENERATED_BODY()
 public:
 	//See UCommand for the documentation of this overridden function. 

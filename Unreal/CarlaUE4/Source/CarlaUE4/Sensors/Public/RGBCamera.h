@@ -6,7 +6,7 @@
 #include "RGBCamera.generated.h"
 
 UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
-class HOLODECK_API URGBCamera : public UHolodeckCamera {
+class CARLAUE4_API URGBCamera : public UHolodeckCamera {
 	GENERATED_BODY()
 
 public:

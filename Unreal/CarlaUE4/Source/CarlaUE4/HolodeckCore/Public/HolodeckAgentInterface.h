@@ -17,7 +17,7 @@
 * a HolodeckControlScheme.
 */
 UCLASS()
-class HOLODECK_API AHolodeckAgentInterface : public APawn {
+class CARLAUE4_API AHolodeckAgentInterface : public APawn {
 	GENERATED_BODY()
 
 public:

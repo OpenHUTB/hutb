@@ -9,7 +9,7 @@
 
 
 UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
-class HOLODECK_API UOpticalModemSensor : public UHolodeckSensor {
+class CARLAUE4_API UOpticalModemSensor : public UHolodeckSensor {
     GENERATED_BODY()
 
 public:

@@ -23,7 +23,7 @@
   *		TickComponent
   */
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent), abstract )
-class HOLODECK_API UHolodeckSensor : public USceneComponent
+class CARLAUE4_API UHolodeckSensor : public USceneComponent
 {
 	GENERATED_BODY()
 

@@ -12,7 +12,7 @@ static float MAX_ROTATION_SPEED = 20;
 static float MAX_FORWARD_SPEED = 20;
 
 UCLASS()
-class HOLODECK_API ASphereRobot : public AHolodeckAgent
+class CARLAUE4_API ASphereRobot : public AHolodeckAgent
 {
 	GENERATED_BODY()
 

@@ -16,7 +16,7 @@
 * Reports the XYZ coordinate of the parent agent. 
 */
 UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
-class HOLODECK_API ULocationSensor : public UHolodeckSensor {
+class CARLAUE4_API ULocationSensor : public UHolodeckSensor {
 	GENERATED_BODY()
 
 public:

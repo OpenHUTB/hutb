@@ -14,7 +14,7 @@
 *
 */
 UCLASS(ClassGroup = (Custom))
-class HOLODECK_API UAdjustRenderQualityCommand : public UCommand
+class CARLAUE4_API UAdjustRenderQualityCommand : public UCommand
 {
 	GENERATED_BODY()
 

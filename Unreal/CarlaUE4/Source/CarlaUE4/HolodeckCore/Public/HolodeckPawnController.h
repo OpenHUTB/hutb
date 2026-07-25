@@ -26,7 +26,7 @@
   * the commands to the pawns/agents. 
   */
 UCLASS()
-class HOLODECK_API AHolodeckPawnController : public AHolodeckPawnControllerInterface
+class CARLAUE4_API AHolodeckPawnController : public AHolodeckPawnControllerInterface
 {
 	GENERATED_BODY()
 

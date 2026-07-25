@@ -35,7 +35,7 @@ const float UAV_ALT_D = 600.0;
 * UUavControlSchemeTargetRollPitch
 */
 UCLASS()
-class HOLODECK_API UUavControlSchemeTargetRollPitch : public UHolodeckControlScheme {
+class CARLAUE4_API UUavControlSchemeTargetRollPitch : public UHolodeckControlScheme {
 public:
 	GENERATED_BODY()
 

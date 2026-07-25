@@ -12,7 +12,7 @@
 #include "RelativeSkeletalPositionSensor.generated.h"
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
-class HOLODECK_API URelativeSkeletalPositionSensor : public UHolodeckSensor {
+class CARLAUE4_API URelativeSkeletalPositionSensor : public UHolodeckSensor {
 	GENERATED_BODY()
 
 public:	

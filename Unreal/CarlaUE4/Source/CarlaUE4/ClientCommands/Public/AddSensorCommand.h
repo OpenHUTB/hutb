@@ -3,7 +3,7 @@
 #include "Holodeck.h"
 
 #include <map>
-#include "CollisionSensor.h"
+#include "HolodeckCollisionSensor.h"
 #include "IMUSensor.h"
 #include "JointRotationSensor.h"
 #include "LocationSensor.h"
@@ -46,7 +46,7 @@
 * NumberParameters expects six arguments: locations x, y, and z and rotations pitch, yaw, and roll.
 */
 UCLASS()
-class HOLODECK_API UAddSensorCommand : public UCommand
+class CARLAUE4_API UAddSensorCommand : public UCommand
 {
 	GENERATED_BODY()
 

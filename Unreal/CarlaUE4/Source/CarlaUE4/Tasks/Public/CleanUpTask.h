@@ -16,7 +16,7 @@
 * is given.
 */
 UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
-class HOLODECK_API UCleanUpTask : public UTaskSensor
+class CARLAUE4_API UCleanUpTask : public UTaskSensor
 {
 	GENERATED_BODY()
 

@@ -33,7 +33,7 @@ class AHolodeckGameMode;
   * When you make a new command, make sure to add it to the CommandMap in the MakeCommand function in the cpp file
   */
 UCLASS(ClassGroup = (Custom), abstract)
-class HOLODECK_API UCommandFactory : public UObject {
+class CARLAUE4_API UCommandFactory : public UObject {
 	GENERATED_BODY()
 
 	typedef std::map<std::string, UCommand*(*)()> UCommandMapType;

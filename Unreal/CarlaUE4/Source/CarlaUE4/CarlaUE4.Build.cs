@@ -22,8 +22,22 @@ public class CarlaUE4 : ModuleRules
             Path.GetFullPath(Path.Combine(ModuleDirectory, "..", "..", "..", "..", "LibCarla", "source"));
         PublicIncludePaths.Add(LibCarlaIncludePath);
         PrivateIncludePaths.Add(LibCarlaIncludePath);
+                PrivateIncludePaths.AddRange(new [] {
+             "CarlaUE4/Agents/Public",
+             "CarlaUE4/General/Public",
+             "CarlaUE4/Sensors/Public",
+             "CarlaUE4/Utils/Public",
+             "CarlaUE4/HolodeckCore/Public",
+             "CarlaUE4/ClientCommands/Public",
+             "CarlaUE4/Tasks/Public"
+         });
 
-        PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "UMG" });
+        PublicDependencyModuleNames.AddRange(new string[] {"ApplicationCore", "Core", "CoreUObject", "Engine", "InputCore", "UMG", "AIModule", "SlateCore", "Slate", "PhysX", "APEX", "Json", "JsonUtilities", "RenderCore", "RHI", "Landscape" });
+
+#if PLATFORM_LINUX
+        PublicDependencyModuleNames.AddRange(new [] { "rt", "pthread" };
+        //TARGET_LINK_LIBRARIES(UHolodeckServer rt pthread)
+#endif
 
         if (Target.Type == TargetType.Editor)
         {

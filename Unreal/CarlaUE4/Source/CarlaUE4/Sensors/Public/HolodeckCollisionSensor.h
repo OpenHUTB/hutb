@@ -6,23 +6,23 @@
 #include "Components/SceneComponent.h"
 #include "HolodeckSensor.h"
 
-#include "CollisionSensor.generated.h"
+#include "HolodeckCollisionSensor.generated.h"
 
 /**
-* UCollisionSensor
+* UHolodeckCollisionSensor
 * Inherits from the HolodeckSensor class
 * Check out the parent class for documentation on all of the overridden funcions.
 * Reports whether the parent agent is currenty colliding with any other object. 
 */
 UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
-class HOLODECK_API UCollisionSensor : public UHolodeckSensor {
+class CARLAUE4_API UHolodeckCollisionSensor : public UHolodeckSensor {
 	GENERATED_BODY()
 
 public:
 	/**
 	* Default Constructor
 	*/
-	UCollisionSensor();
+	UHolodeckCollisionSensor();
 	
 	/**
 	* InitializeComponent

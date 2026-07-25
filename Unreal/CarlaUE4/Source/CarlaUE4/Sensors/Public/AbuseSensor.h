@@ -13,7 +13,7 @@
  * Returns true if the agent has been abused. 
  */
 UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
-class HOLODECK_API UAbuseSensor : public UHolodeckSensor {
+class CARLAUE4_API UAbuseSensor : public UHolodeckSensor {
 	GENERATED_BODY()
 
 public:

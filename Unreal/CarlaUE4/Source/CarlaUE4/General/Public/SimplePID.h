@@ -5,7 +5,7 @@
 /**
   * A simple PID controller.
   */
-class HOLODECK_API SimplePID {
+class CARLAUE4_API SimplePID {
 public:
 	/**
 	  * Default Constructor.

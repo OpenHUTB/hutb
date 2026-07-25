@@ -20,7 +20,7 @@
  * USidescanSonar
  */
 UCLASS()
-class HOLODECK_API USidescanSonar : public UHolodeckSonar
+class CARLAUE4_API USidescanSonar : public UHolodeckSonar
 {
     GENERATED_BODY()
 

@@ -17,7 +17,7 @@
  * UHolodeckSonar
  */
 UCLASS()
-class HOLODECK_API UHolodeckSonar : public UHolodeckSensor
+class CARLAUE4_API UHolodeckSonar : public UHolodeckSensor
 {
 	GENERATED_BODY()
 	

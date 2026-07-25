@@ -14,7 +14,7 @@
 * Two examples include a depth sensor and a standard camera.
 */
 UCLASS(Blueprintable, ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
-class HOLODECK_API UHolodeckCamera : public UHolodeckSensor
+class CARLAUE4_API UHolodeckCamera : public UHolodeckSensor
 {
 	GENERATED_BODY()
 

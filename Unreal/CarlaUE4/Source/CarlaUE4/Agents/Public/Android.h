@@ -10,7 +10,7 @@
 #include "Android.generated.h"
 
 UCLASS()
-class HOLODECK_API AAndroid : public AHolodeckAgent
+class CARLAUE4_API AAndroid : public AHolodeckAgent
 {
 	GENERATED_BODY()
 

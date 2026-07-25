@@ -11,7 +11,7 @@
 #include "JointRotationSensor.generated.h"
 
 UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
-class HOLODECK_API UJointRotationSensor : public UHolodeckSensor {
+class CARLAUE4_API UJointRotationSensor : public UHolodeckSensor {
 	GENERATED_BODY()
 
 public:

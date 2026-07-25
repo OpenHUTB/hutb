@@ -14,7 +14,7 @@
 * NumberParameters expect three arguments, representing the rotation
 */
 UCLASS()
-class HOLODECK_API URotateSensorCommand : public UCommand
+class CARLAUE4_API URotateSensorCommand : public UCommand
 {
 	GENERATED_BODY()
 	

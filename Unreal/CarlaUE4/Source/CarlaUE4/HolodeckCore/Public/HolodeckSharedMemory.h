@@ -23,7 +23,7 @@
   * A simple abstraction of memory mapped files for Windows
   * and Linux.
   */
-class HOLODECK_API HolodeckSharedMemory {
+class CARLAUE4_API HolodeckSharedMemory {
 public:
 	/**
 	  * Constructor

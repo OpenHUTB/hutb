@@ -15,7 +15,7 @@
 * Terminal is set to true when the agent is within its GoalDistance.
 */
 UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
-class HOLODECK_API UDistanceTask : public UTaskSensor
+class CARLAUE4_API UDistanceTask : public UTaskSensor
 {
 	GENERATED_BODY()
 

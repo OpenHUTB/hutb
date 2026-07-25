@@ -8,7 +8,7 @@
   * UHolodeckControlScheme
   */
 UCLASS()
-class HOLODECK_API UHolodeckControlScheme : public UObject {
+class CARLAUE4_API UHolodeckControlScheme : public UObject {
 	GENERATED_BODY()
 
 public:

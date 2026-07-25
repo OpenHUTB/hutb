@@ -3,6 +3,7 @@
 #include "CarlaUE4.h"
 
 IMPLEMENT_PRIMARY_GAME_MODULE( FDefaultGameModuleImpl, CarlaUE4, "CarlaUE4" );
+
 #ifdef __linux__
 #include <stdexcept>
 namespace std {
@@ -13,3 +14,4 @@ namespace std {
 }
 #endif
 DEFINE_LOG_CATEGORY(LogDReyeVR);
+DEFINE_LOG_CATEGORY(LogHolodeck);

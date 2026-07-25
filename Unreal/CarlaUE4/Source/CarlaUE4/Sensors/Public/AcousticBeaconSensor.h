@@ -16,7 +16,7 @@
   * Gets the true velocity of the component that the sensor is attached to. 
   */
 UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
-class HOLODECK_API UAcousticBeaconSensor : public UHolodeckSensor {
+class CARLAUE4_API UAcousticBeaconSensor : public UHolodeckSensor {
 	GENERATED_BODY()
 
 public:

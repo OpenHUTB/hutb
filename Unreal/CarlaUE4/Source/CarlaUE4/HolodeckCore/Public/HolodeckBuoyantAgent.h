@@ -13,7 +13,7 @@
  * 
  */
 UCLASS()
-class HOLODECK_API AHolodeckBuoyantAgent : public AHolodeckAgent{
+class CARLAUE4_API AHolodeckBuoyantAgent : public AHolodeckAgent{
 	GENERATED_BODY()
 	
 public:

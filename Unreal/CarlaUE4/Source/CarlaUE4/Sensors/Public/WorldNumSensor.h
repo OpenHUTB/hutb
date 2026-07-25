@@ -13,7 +13,7 @@
 * Reports a specific number value (int or float) corresponding to a string key.
 */
 UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
-class HOLODECK_API UWorldNumSensor : public UHolodeckSensor {
+class CARLAUE4_API UWorldNumSensor : public UHolodeckSensor {
 	GENERATED_BODY()
 
 public:

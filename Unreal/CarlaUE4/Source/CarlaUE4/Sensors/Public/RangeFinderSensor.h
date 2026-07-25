@@ -16,7 +16,7 @@
  * plane into a cone. The default MaxDistance is 1000 cm.
  */
 UCLASS()
-class HOLODECK_API URangeFinderSensor : public UHolodeckSensor
+class CARLAUE4_API URangeFinderSensor : public UHolodeckSensor
 {
 	GENERATED_BODY()
 	

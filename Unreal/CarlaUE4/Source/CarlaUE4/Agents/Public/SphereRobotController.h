@@ -13,7 +13,7 @@
  * A Holodeck Sphere Robot Controller
  */
 UCLASS()
-class HOLODECK_API ASphereRobotController : public AHolodeckPawnController
+class CARLAUE4_API ASphereRobotController : public AHolodeckPawnController
 {
 	GENERATED_BODY()
 	

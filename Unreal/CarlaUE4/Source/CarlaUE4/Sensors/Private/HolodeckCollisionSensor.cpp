@@ -1,13 +1,13 @@
-#include "Holodeck.h"
-#include "CollisionSensor.h"
+#include "CarlaUE4.h"
+#include "HolodeckCollisionSensor.h"
 
-UCollisionSensor::UCollisionSensor() {
+UHolodeckCollisionSensor::UHolodeckCollisionSensor() {
 	PrimaryComponentTick.bCanEverTick = true;
 	bWantsInitializeComponent = true;
-	SensorName = "CollisionSensor";
+	SensorName = "HolodeckCollisionSensor";
 }
 
-void UCollisionSensor::InitializeComponent() {
+void UHolodeckCollisionSensor::InitializeComponent() {
 	Super::InitializeComponent();
 
 	Parent = this->GetOwner();
@@ -18,11 +18,11 @@ void UCollisionSensor::InitializeComponent() {
 		Parent->OnActorHit.AddUnique(HitDelegate);
 	}
 	else {
-		UE_LOG(LogHolodeck, Fatal, TEXT("UCollisionSensor::Parent was never initialized. Cannot add HitDelegate"));
+		UE_LOG(LogHolodeck, Fatal, TEXT("UHolodeckCollisionSensor::Parent was never initialized. Cannot add HitDelegate"));
 	}
 }
 
-void UCollisionSensor::TickSensorComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) {
+void UHolodeckCollisionSensor::TickSensorComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) {
 	//Update the buffer to current collision status, then set the colliding bool to false. 
 	if (Parent != nullptr && bOn) {
 		bool* BoolBuffer = static_cast<bool*>(Buffer);
@@ -31,6 +31,6 @@ void UCollisionSensor::TickSensorComponent(float DeltaTime, ELevelTick TickType,
 	bIsColliding = false;
 }
 
-void UCollisionSensor::OnHit(AActor* SelfActor, AActor* OtherActor, FVector NormalImpulse, const FHitResult& Hit) {
+void UHolodeckCollisionSensor::OnHit(AActor* SelfActor, AActor* OtherActor, FVector NormalImpulse, const FHitResult& Hit) {
 	bIsColliding = true;
 }

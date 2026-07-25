@@ -13,7 +13,7 @@
 * A Holodeck Turtle Agent Controller
 */
 UCLASS()
-class HOLODECK_API ATorpedoAUVController : public AHolodeckPawnController
+class CARLAUE4_API ATorpedoAUVController : public AHolodeckPawnController
 {
 	GENERATED_BODY()
 

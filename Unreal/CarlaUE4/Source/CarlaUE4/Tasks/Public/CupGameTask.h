@@ -15,7 +15,7 @@
 * A reward of -1 and terminal is given when an incorrect cup is touched.
 */
 UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
-class HOLODECK_API UCupGameTask : public UTaskSensor
+class CARLAUE4_API UCupGameTask : public UTaskSensor
 {
 	GENERATED_BODY()
 

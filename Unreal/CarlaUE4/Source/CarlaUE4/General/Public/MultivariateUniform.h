@@ -12,7 +12,7 @@
  * TODO: This library has NOT been fully tested. Beware before using!
  */
 template<int N>
-class HOLODECK_API MultivariateUniform
+class CARLAUE4_API MultivariateUniform
 {
 static_assert(N > 0, "UNIFORM: N must be > 0");
 

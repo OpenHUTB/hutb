@@ -19,7 +19,7 @@
   * variables in the shared memory.
   */
 UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
-class HOLODECK_API UTaskSensor : public UHolodeckSensor {
+class CARLAUE4_API UTaskSensor : public UHolodeckSensor {
 	GENERATED_BODY()
 
 public:

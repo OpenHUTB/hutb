@@ -13,7 +13,7 @@
 * StringParameters expect two arguments, the agent name, and sensor name.
 */
 UCLASS()
-class HOLODECK_API URemoveSensorCommand : public UCommand
+class CARLAUE4_API URemoveSensorCommand : public UCommand
 {
 	GENERATED_BODY()
 

@@ -19,7 +19,7 @@
 * Terminal is always false.
 */
 UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
-class HOLODECK_API UAvoidTask : public UTaskSensor
+class CARLAUE4_API UAvoidTask : public UTaskSensor
 {
 	GENERATED_BODY()
 

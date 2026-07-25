@@ -13,7 +13,7 @@
 #include "HandAgentController.generated.h"
 
 UCLASS()
-class HOLODECK_API AHandAgentController : public AHolodeckPawnController
+class CARLAUE4_API AHandAgentController : public AHolodeckPawnController
 {
 	GENERATED_BODY()
 

@@ -12,7 +12,7 @@
  * UAndroidControlSchemeMaxTorque
  */
 UCLASS()
-class HOLODECK_API UJointMaxTorqueControlScheme : public UHolodeckControlScheme
+class CARLAUE4_API UJointMaxTorqueControlScheme : public UHolodeckControlScheme
 {
 public:
 	GENERATED_BODY()

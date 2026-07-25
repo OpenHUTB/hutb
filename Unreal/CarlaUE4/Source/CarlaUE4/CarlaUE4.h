@@ -7,6 +7,7 @@
 #include "Util/NonCopyable.h"
 
 DECLARE_LOG_CATEGORY_EXTERN(LogDReyeVR, Log, All);
+DECLARE_LOG_CATEGORY_EXTERN(LogHolodeck, Log, All);
 
 constexpr inline const char *file_name_only(const char *path)
 {

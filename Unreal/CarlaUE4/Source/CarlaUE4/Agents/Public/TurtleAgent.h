@@ -16,7 +16,7 @@ UCLASS()
 * On any tick this object will apply the given forces.
 * Desired values must be set by a controller.
 */
-class HOLODECK_API ATurtleAgent : public AHolodeckAgent
+class CARLAUE4_API ATurtleAgent : public AHolodeckAgent
 {
 	GENERATED_BODY()
 

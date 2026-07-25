@@ -14,7 +14,7 @@
 * 
 */
 UCLASS(ClassGroup = (Custom))
-class HOLODECK_API URenderViewportCommand : public UCommand
+class CARLAUE4_API URenderViewportCommand : public UCommand
 {
 	GENERATED_BODY()
 

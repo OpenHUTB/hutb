@@ -5,7 +5,7 @@
 /**
  * 
  */
-class HOLODECK_API EasyFileManager
+class CARLAUE4_API EasyFileManager
 {
 public:
 	EasyFileManager();

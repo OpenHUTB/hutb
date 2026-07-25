@@ -14,7 +14,7 @@
 * NumberParameters is expected to be length 12 and of the format [func_type, vector1[3], vector2[3], color[3], thickness/size, lifetime]
 */
 UCLASS(ClassGroup = (Custom))
-class HOLODECK_API UDebugDrawCommand : public UCommand
+class CARLAUE4_API UDebugDrawCommand : public UCommand
 {
 	GENERATED_BODY()
 

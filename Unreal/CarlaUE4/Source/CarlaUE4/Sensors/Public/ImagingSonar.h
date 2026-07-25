@@ -22,7 +22,7 @@
  * UImagingSonar
  */
 UCLASS()
-class HOLODECK_API UImagingSonar : public UHolodeckSonar
+class CARLAUE4_API UImagingSonar : public UHolodeckSonar
 {
 	GENERATED_BODY()
 	

@@ -11,7 +11,7 @@
 * URawControlScheme
 */
 UCLASS()
-class HOLODECK_API URawControlScheme : public UHolodeckControlScheme {
+class CARLAUE4_API URawControlScheme : public UHolodeckControlScheme {
 	GENERATED_BODY()
 
 public:

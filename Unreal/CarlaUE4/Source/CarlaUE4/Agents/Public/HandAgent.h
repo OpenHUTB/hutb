@@ -10,7 +10,7 @@
 #include "HandAgent.generated.h"
 
 UCLASS(Blueprintable)
-class HOLODECK_API AHandAgent : public AHolodeckAgent
+class CARLAUE4_API AHandAgent : public AHolodeckAgent
 {
 	GENERATED_BODY()
 

@@ -17,7 +17,7 @@
   * - Add the inhereted class and its name string to the CommandFactory.h file. 
   */
 UCLASS(ClassGroup = (Custom), abstract)
-class HOLODECK_API UCommand : public UObject {
+class CARLAUE4_API UCommand : public UObject {
 	GENERATED_BODY()
 
 public:

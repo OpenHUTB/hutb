@@ -14,7 +14,7 @@ UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 /**
 * UPressureSensor
 */
-class HOLODECK_API UPressureSensor : public UHolodeckSensor
+class CARLAUE4_API UPressureSensor : public UHolodeckSensor
 {
 	GENERATED_BODY()
 

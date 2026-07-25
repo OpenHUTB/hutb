@@ -10,7 +10,7 @@
 #include "AndroidController.generated.h"
 
 UCLASS()
-class HOLODECK_API AAndroidController : public AHolodeckPawnController
+class CARLAUE4_API AAndroidController : public AHolodeckPawnController
 {
 	GENERATED_BODY()
 

@@ -15,7 +15,7 @@
 * NumberParameters of any size.
 */
 UCLASS()
-class HOLODECK_API UCustomCommand : public UCommand
+class CARLAUE4_API UCustomCommand : public UCommand
 {
 	GENERATED_BODY()
 

@@ -25,7 +25,7 @@ class UHolodeckSensor;
 * a HolodeckControlScheme.
 */
 UCLASS()
-class HOLODECK_API AHolodeckAgent : public AHolodeckAgentInterface {
+class CARLAUE4_API AHolodeckAgent : public AHolodeckAgentInterface {
 	GENERATED_BODY()
 
 public:

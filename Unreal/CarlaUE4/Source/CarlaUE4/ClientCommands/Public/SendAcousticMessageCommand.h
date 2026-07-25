@@ -11,7 +11,7 @@
 * 
 */
 UCLASS(ClassGroup = (Custom))
-class HOLODECK_API USendAcousticMessageCommand : public UCommand {
+class CARLAUE4_API USendAcousticMessageCommand : public UCommand {
 	GENERATED_BODY()
 public:
 	//See UCommand for the documentation of this overridden function. 

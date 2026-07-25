@@ -20,7 +20,7 @@ UCLASS()
 * On any tick this object will apply the given forces.
 * Desired values must be set by a controller.
 */
-class HOLODECK_API ATorpedoAUV : public AHolodeckBuoyantAgent
+class CARLAUE4_API ATorpedoAUV : public AHolodeckBuoyantAgent
 {
 	GENERATED_BODY()
 

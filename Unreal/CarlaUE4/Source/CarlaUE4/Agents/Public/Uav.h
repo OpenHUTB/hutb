@@ -22,7 +22,7 @@ UCLASS()
 *     Apply the given forces. 
 * Desired values must be set by a controller. 
 */
-class HOLODECK_API AUav : public AHolodeckAgent
+class CARLAUE4_API AUav : public AHolodeckAgent
 {
 	GENERATED_BODY()
 public:

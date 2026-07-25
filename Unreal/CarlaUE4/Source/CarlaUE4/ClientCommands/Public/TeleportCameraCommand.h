@@ -15,7 +15,7 @@
 *
 */
 UCLASS()
-class HOLODECK_API UTeleportCameraCommand : public UCommand
+class CARLAUE4_API UTeleportCameraCommand : public UCommand
 {
 	GENERATED_BODY()
 

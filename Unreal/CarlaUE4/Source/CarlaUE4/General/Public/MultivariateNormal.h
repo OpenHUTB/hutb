@@ -9,7 +9,7 @@
  * with covariance as specified in the constructor
  */
 template<int N>
-class HOLODECK_API MultivariateNormal
+class CARLAUE4_API MultivariateNormal
 {
 static_assert(N > 0, "MVN: N must be > 0");
 

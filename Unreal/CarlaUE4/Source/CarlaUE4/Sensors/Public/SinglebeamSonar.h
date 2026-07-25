@@ -21,7 +21,7 @@
  * USinglebeamSonar
  */
 UCLASS()
-class HOLODECK_API USinglebeamSonar : public UHolodeckSonar
+class CARLAUE4_API USinglebeamSonar : public UHolodeckSonar
 {
 	GENERATED_BODY()
 	

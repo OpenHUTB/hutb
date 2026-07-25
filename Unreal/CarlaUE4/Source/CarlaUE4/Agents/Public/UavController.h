@@ -16,7 +16,7 @@
   * Sets the desired commands on the UAV. 
   */
 UCLASS()
-class HOLODECK_API AUavController : public AHolodeckPawnController {
+class CARLAUE4_API AUavController : public AHolodeckPawnController {
 	GENERATED_BODY()
 
 public:

@@ -14,7 +14,7 @@
   * `[acceleration_x, acceleration_y, acceleration_z, velocity_roll, velocity_pitch, velocity_yaw]`
   */
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
-class HOLODECK_API UIMUSensor : public UHolodeckSensor {
+class CARLAUE4_API UIMUSensor : public UHolodeckSensor {
 	GENERATED_BODY()
 
 public:

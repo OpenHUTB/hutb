@@ -10,7 +10,7 @@
 #include "NavAgent.generated.h"
 
 UCLASS()
-class HOLODECK_API ANavAgent : public AHolodeckAgent
+class CARLAUE4_API ANavAgent : public AHolodeckAgent
 {
 	GENERATED_BODY()
 

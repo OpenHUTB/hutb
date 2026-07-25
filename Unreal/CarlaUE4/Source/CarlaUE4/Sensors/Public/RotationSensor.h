@@ -14,7 +14,7 @@
 * Gets the true rotation of the component that the sensor is attached to.
 */
 UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
-class HOLODECK_API URotationSensor : public UHolodeckSensor {
+class CARLAUE4_API URotationSensor : public UHolodeckSensor {
 	GENERATED_BODY()
 
 public:

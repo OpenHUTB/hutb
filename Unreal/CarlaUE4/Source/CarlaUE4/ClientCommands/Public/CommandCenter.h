@@ -21,7 +21,7 @@ class AHolodeckGameMode; //forward declare to avoid circular dependency.
    * It requires a valid pointer to the server to be initialized, and the currrent gamemode object to continue running correctly. 
    */
 UCLASS(ClassGroup = (Custom))
-class HOLODECK_API UCommandCenter : public UObject {
+class CARLAUE4_API UCommandCenter : public UObject {
 	GENERATED_BODY()
 
 public:

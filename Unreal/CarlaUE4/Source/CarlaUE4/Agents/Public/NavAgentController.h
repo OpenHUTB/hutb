@@ -13,7 +13,7 @@
 * A Holodeck Nav Agent Controller
 */
 UCLASS()
-class HOLODECK_API ANavAgentController : public AHolodeckPawnController
+class CARLAUE4_API ANavAgentController : public AHolodeckPawnController
 {
 	GENERATED_BODY()
 
