@@ -196,10 +196,10 @@ class CleanADStubFiles(install_lib):
 # also increase version number API_VERSION in Uitl/BuildTools/Windows.mk
 setup(
     name='hutb',
-    version='2.10.0',
+    version='2.10.1',
     author='OpenHUTB',
     package_dir={'': 'source'},
-    packages=['carla', 'airsim', 'carla.ad', 'carla.ad.rss', 'carla.ad.map'] if is_rss_variant_enabled() else ['carla', 'airsim'],
+    packages=['carla', 'airsim', 'holoocean', 'carla.ad', 'carla.ad.rss', 'carla.ad.map'] if is_rss_variant_enabled() else ['carla', 'airsim', 'holoocean'],
     # For non-rss build do a fine grained include/exclude on the package data.
     package_data={'carla' : [""]},
     exclude_package_data={} if is_rss_variant_enabled() else {'carla':[CleanADStubFiles.CARLA_RSS_STUB_FILE]},
@@ -216,3 +216,4 @@ setup(
           'msgpack-rpc-python', 'numpy', 'opencv-contrib-python'
     ]
 )
+# pip uninstall pywin32

@@ -9,4 +9,4 @@ backports.weakref
 backports.ssl_match_hostname
 GitPython
 pyinstaller
-./carla/dist/hutb-2.10.0-cp310-cp310-win_amd64.whl
+./carla/dist/hutb-2.10.1-cp310-cp310-win_amd64.whl
