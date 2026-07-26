@@ -1,0 +1,104 @@
+package lcm;
+
+struct DVLSensor
+{
+    int64_t timestamp;
+    float velocity[3];
+    float range[4];
+}
+
+struct IMUSensor
+{
+    int64_t timestamp;
+    float acceleration[3];
+    float angular_velocity[3];
+    float acceleration_bias[3];
+    float angular_velocity_bias[3];
+}
+
+struct GPSSensor
+{
+    int64_t timestamp;
+    float position[3];
+}
+
+struct AcousticBeaconSensor
+{
+    int64_t timestamp;
+
+    string msg_type;
+    int32_t from_beacon;
+    float azimuth;
+    float elevation;
+    float range;
+    float z;
+}
+
+// TODO: Optical Modem once we solidifed data types for it
+
+struct ImagingSonar
+{
+    int64_t timestamp;
+
+    int32_t bins_azimuth;
+    int32_t bins_range;
+
+    float image[bins_range][bins_azimuth];
+}
+
+struct DepthSensor
+{
+    int64_t timestamp;
+    float depth;
+}
+
+struct RGBCamera
+{
+    int64_t timestamp;
+
+    int32_t width;
+    int32_t height;
+    int32_t channels;
+
+    int16_t image[height][width][channels];
+}
+
+struct PoseSensor
+{
+    int64_t timestamp;
+    float matrix[4][4];
+}
+
+struct LocationSensor
+{
+    int64_t timestamp;
+    float position[3];
+}
+
+struct RangeFinderSensor
+{
+    int64_t timestamp;
+    int32_t count;
+    float distances[count];
+    float angles[count];
+}
+
+struct RotationSensor
+{
+    int64_t timestamp;
+    float roll;
+    float pitch;
+    float yaw;
+}
+
+struct OrientationSensor
+{
+    int64_t timestamp;
+    float matrix[3][3];
+}
+
+struct VelocitySensor
+{
+    int64_t timestamp;
+    float velocity[3];
+}
