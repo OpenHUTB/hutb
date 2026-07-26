@@ -1,0 +1,24 @@
+{
+	"FileVersion": 1,
+	"Version": 1,
+	"VersionName": "0.1-alpha",
+	"FriendlyName": "HoloOcean",
+	"Description": "HoloOcean",
+	"Category": "Simulation",
+	"CreatedBy": "OpoenHUTB",
+	"CreatedByURL": "https://github.com/OpenHUTB",
+	"DocsURL": "https://openhutb.github.io/mujoco_plugin/underwater/",
+	"MarketplaceURL": "",
+	"SupportURL": "https://github.com/OpenHUTB/hutb/issues",
+	"CanContainContent": true,
+	"IsBetaVersion": false,
+	"IsExperimentalVersion": true,
+	"Installed": true,
+	"Modules": [
+		{
+			"Name": "Holodeck",
+			"Type": "Editor",
+			"LoadingPhase": "Default"
+		}
+	]
+}
