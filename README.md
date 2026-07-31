@@ -1,10 +1,11 @@
 <h1 align="center">开源孪创</h1>
 
-```text
+<div align="center">
 凡我不能创造，我就不能理解。
 
 ——— 理查德·费曼，1988
-```
+</div>
+
 
 该项目是一个用于研究 **人** 和 **载具**（[具身人](https://openhutb.github.io/doc/#_5)、[无人车](https://openhutb.github.io/doc/#_4)、[无人机](https://openhutb.github.io/air_doc/)、[潜水器](https://openhutb.github.io/mujoco_plugin/underwater/)）的 **影视级物理模拟器**，旨在支持机器人算法的开发、训练和验证。
 除了开源代码外，还提供了为此目的创建的可自由使用的开放数字资产（[城镇布局](https://openhutb.github.io/doc/core_map/#non-layered-maps) 、[建筑](https://openhutb.github.io/doc/catalogue/) 、[载具](https://openhutb.github.io/doc/catalogue_vehicles/) 、[行人](https://openhutb.github.io/doc/catalogue_pedestrians/) 、[道具](https://openhutb.github.io/doc/catalogue_props/) 等）。

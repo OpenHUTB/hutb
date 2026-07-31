@@ -1,10 +1,10 @@
 <h1 align="center">OpenHUTB</h1>
 
-```
+<div align="center">
 What I cannot create，I don't understand.
 
 -- Richard Phillips Feynman, 1988
-```
+</div>
 
 The OpenHUTB (Open source Human-vehicle Twin Build) is a photorealistic-quality physics simulator for studying human and vehicles ([humanoid](https://openhutb.github.io/doc/#_5), [autonomous vehicles](https://openhutb.github.io/doc/#_4), [drones](https://openhutb.github.io/air_doc/), and [submersibles](https://openhutb.github.io/mujoco_plugin/underwater/)), designed to support the development, training, and validation of robotic algorithms. In addition to open-source code, it provides freely usable open digital assets ([town layouts](https://openhutb.github.io/doc/core_map/#non-layered-maps), [buildings](https://openhutb.github.io/doc/catalogue/), [vehicles](https://openhutb.github.io/doc/catalogue_vehicles/), [pedestrians](https://openhutb.github.io/doc/catalogue_pedestrians/), [props](https://openhutb.github.io/doc/catalogue_props/), etc.) created for this purpose. The simulation platform supports standard specifications for [VR cockpit](https://openhutb.github.io/doc/interbehavior/), [unified air-ground](https://openhutb.github.io/air_doc/dev/Carla_Air/), [submersibles](https://openhutb.github.io/mujoco_plugin/underwater/), [sensors](https://openhutb.github.io/doc/ref_sensors/), [data synthesis](https://openhutb.github.io/doc/tuto_G_retrieve_data/), [traffic management](https://openhutb.github.io/doc/adv_traffic_manager/), [multiphysics simulation](https://openhutb.github.io/doc/tuto_G_chrono/), [pedestrian navigation](https://openhutb.github.io/doc/tuto_G_pedestrian_navigation/), and [Python interfaces](https://openhutb.github.io/doc/python_api/). For detailed information, please refer to the [documentation](https://openhutb.github.io).
 
