@@ -1,7 +1,15 @@
-# 开源孪创
+<div align="center">
+	<font size=6>
+		<b>
+			开源孪创
+		</b>
+	</font>
+</div>
 
 ```text
-凡我不能创造，我就不能理解。    ——— 理查德·费曼，1988
+凡我不能创造，我就不能理解。
+
+——— 理查德·费曼，1988
 ```
 
 该项目是一个用于研究 **人** 和 **载具**（[具身人](https://openhutb.github.io/doc/#_5)、[无人车](https://openhutb.github.io/doc/#_4)、[无人机](https://openhutb.github.io/air_doc/)、[潜水器](https://openhutb.github.io/mujoco_plugin/underwater/)）的 **影视级物理模拟器**，旨在支持机器人算法的开发、训练和验证。
