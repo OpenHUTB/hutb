@@ -1,10 +1,4 @@
-<div align="center">
-	<font size=6>
-		<b>
-			开源孪创
-		</b>
-	</font>
-</div>
+# <center> 开源孪创
 
 ```text
 凡我不能创造，我就不能理解。
