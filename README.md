@@ -1,9 +1,13 @@
-# 人车模拟器
+# 开源孪创
 
-该项目是一个用于研究[具身人](https://openhutb.github.io/doc/#_5)、[无人车](https://openhutb.github.io/doc/#_4)、[无人机](https://openhutb.github.io/air_doc/)的影视级物理模拟器，旨在支持人和载具算法的开发、训练和验证。
+```text
+凡我不能创造，我就不能理解。    ——— 理查德·费曼，1988
+```
+
+该项目是一个用于研究 **人** 和 **载具**（[具身人](https://openhutb.github.io/doc/#_5)、[无人车](https://openhutb.github.io/doc/#_4)、[无人机](https://openhutb.github.io/air_doc/)、[潜水器](https://openhutb.github.io/mujoco_plugin/underwater/)）的 **影视级物理模拟器**，旨在支持机器人算法的开发、训练和验证。
 除了开源代码外，还提供了为此目的创建的可自由使用的开放数字资产（[城镇布局](https://openhutb.github.io/doc/core_map/#non-layered-maps) 、[建筑](https://openhutb.github.io/doc/catalogue/) 、[载具](https://openhutb.github.io/doc/catalogue_vehicles/) 、[行人](https://openhutb.github.io/doc/catalogue_pedestrians/) 、[道具](https://openhutb.github.io/doc/catalogue_props/) 等）。
-该模拟平台支持 [VR 驾驶舱](https://openhutb.github.io/doc/interbehavior/)、[空地一体](https://openhutb.github.io/air_doc/dev/Carla_Air/)、[传感器](https://openhutb.github.io/doc/ref_sensors/) 、[数据合成](https://openhutb.github.io/doc/tuto_G_retrieve_data/) 、[交通管理器](https://openhutb.github.io/doc/adv_traffic_manager/) 、[多物理场仿真](https://openhutb.github.io/doc/tuto_G_chrono/) 、[行人导航](https://openhutb.github.io/doc/tuto_G_pedestrian_navigation/) 、[Python接口](https://openhutb.github.io/doc/python_api/) 等标准规范。
-详细介绍请参考 [文档](https://openhutb.github.io) 。
+该模拟平台支持 [VR 驾驶舱](https://openhutb.github.io/doc/interbehavior/)、[空地一体](https://openhutb.github.io/air_doc/dev/Carla_Air/)、[水下机器人](https://openhutb.github.io/mujoco_plugin/underwater/)、[传感器](https://openhutb.github.io/doc/ref_sensors/) 、[数据合成](https://openhutb.github.io/doc/tuto_G_retrieve_data/) 、[交通管理器](https://openhutb.github.io/doc/adv_traffic_manager/) 、[多物理场仿真](https://openhutb.github.io/doc/tuto_G_chrono/) 、[行人导航](https://openhutb.github.io/doc/tuto_G_pedestrian_navigation/) 、[Python接口](https://openhutb.github.io/doc/python_api/) 等标准规范，
+详细介绍请参考[文档](https://openhutb.github.io) 。
 
 <!-- https://github.com/inttter/md-badges -->
 <div align="center">
@@ -117,29 +121,8 @@ setup.bat -p
 
 ## 参考和许可证
 
-```
-@inproceedings{Dosovitskiy17,
-  title = {{CARLA}: {An} Open Urban Driving Simulator},
-  author = {Alexey Dosovitskiy and German Ros and Felipe Codevilla and Antonio Lopez and Vladlen Koltun},
-  booktitle = {Proceedings of the 1st Annual Conference on Robot Learning},
-  pages = {1--16},
-  year = {2017}
-}
-```
-
-
-```
-@article{jdan,
-	author={Haidong Wang and Xuan He and Zhiyong Li and Jin Yuan and Shutao Li},
-	title={JDAN: Joint Detection and Association Network for Real-Time Online Multi-Object Tracking.},
-	journal={ACM Transactions on Multimedia Computing, Communications, and Applications},
-	volume=19,
-	year=2023,
-}
-```
-
 该项目站在巨人的肩膀上，诚挚感谢以下开源项目的开发者：
-[Carla](https://github.com/carla-simulator/carla) (MIT 许可证)、[AirSim](https://github.com/microsoft/AirSim) (MIT 许可证)、[DReyeVR](https://openhutb.github.io/doc/interbehavior/) (MIT 许可证)、[CarlaAir](https://github.com/louiszengCN/CarlaAir)(MIT 许可证)、[OpenSim](https://openhutb.github.io/doc/pedestrian/tuto_content_chrono_opensim/) (Apache 许可证)。
+[Carla](https://github.com/carla-simulator/carla) (MIT 许可证)、[AirSim](https://github.com/microsoft/AirSim) (MIT 许可证)、[DReyeVR](https://openhutb.github.io/doc/interbehavior/) (MIT 许可证)、[CarlaAir](https://github.com/louiszengCN/CarlaAir)(MIT 许可证)、[HoloOcean](https://bitbucket.org/frostlab/holoocean-engine/src/master/) (MIT 许可证)、[OpenSim](https://openhutb.github.io/doc/pedestrian/tuto_content_chrono_opensim/) (Apache 许可证)。
 
-Carla 相关的资产遵循 CC-BY 许可证。
-其他相关资产（包括[湖南工商大学大学](https://www.hutb.edu.cn/)、[长沙中电软件园](https://map.baidu.com/poi/%E9%95%BF%E6%B2%99%E4%B8%AD%E7%94%B5%E8%BD%AF%E4%BB%B6%E5%9B%AD/@12566933.66,3258249.376047685,17.83z?uid=694ec5236c53273882a00c5a&ugc_type=3&ugc_ver=1&device_ratio=1&compat=1&en_uid=694ec5236c53273882a00c5a&pcevaname=pc4.1&querytype=detailConInfo&da_src=shareurl)等地图场景）和代码基于 [MIT 许可证](./LICENSE) 开源。
+相关的资产（包括[湖南工商大学大学](https://www.hutb.edu.cn/)、[长沙中电软件园](https://map.baidu.com/poi/%E9%95%BF%E6%B2%99%E4%B8%AD%E7%94%B5%E8%BD%AF%E4%BB%B6%E5%9B%AD/@12566933.66,3258249.376047685,17.83z?uid=694ec5236c53273882a00c5a&ugc_type=3&ugc_ver=1&device_ratio=1&compat=1&en_uid=694ec5236c53273882a00c5a&pcevaname=pc4.1&querytype=detailConInfo&da_src=shareurl)、[国产载具](https://openhutb.github.io/doc/catalogue_vehicles/)等资产）遵循 CC-BY 许可证。
+其他相关资产和代码基于 [MIT 许可证](./LICENSE) 开源。

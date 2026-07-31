@@ -1,6 +1,12 @@
-# Human-vehicle Simulator
+# Open source Human-vehicle Twin Build
 
-This project is a cinematic-quality physics simulator for researching [humanoid](https://openhutb.github.io/doc/#_5), [autonomous vehicles](https://openhutb.github.io/doc/#_4), and [drones](https://openhutb.github.io/air_doc/), designed to support the development, training, and validation of algorithms for humans and vehicles. In addition to open-source code, it provides freely usable open digital assets ([town layouts](https://openhutb.github.io/doc/core_map/#non-layered-maps), [buildings](https://openhutb.github.io/doc/catalogue/), [vehicles](https://openhutb.github.io/doc/catalogue_vehicles/), [pedestrians](https://openhutb.github.io/doc/catalogue_pedestrians/), [props](https://openhutb.github.io/doc/catalogue_props/), etc.) created for this purpose. The simulation platform supports standard specifications for [VR cockpit](https://openhutb.github.io/doc/interbehavior/), [unified air-ground](https://openhutb.github.io/air_doc/dev/Carla_Air/), [sensors](https://openhutb.github.io/doc/ref_sensors/), [data synthesis](https://openhutb.github.io/doc/tuto_G_retrieve_data/), [traffic management](https://openhutb.github.io/doc/adv_traffic_manager/), [multiphysics simulation](https://openhutb.github.io/doc/tuto_G_chrono/), [pedestrian navigation](https://openhutb.github.io/doc/tuto_G_pedestrian_navigation/), and [Python interfaces](https://openhutb.github.io/doc/python_api/). For detailed information, please refer to the [documentation](https://openhutb.github.io).
+```
+What I cannot create，I don't understand.
+
+-- Richard Phillips Feynman, 1988
+```
+
+This project is a photorealistic-quality physics simulator for studying people and vehicles ([humanoid](https://openhutb.github.io/doc/#_5), [autonomous vehicles](https://openhutb.github.io/doc/#_4), [drones](https://openhutb.github.io/air_doc/), and [submersibles](https://openhutb.github.io/mujoco_plugin/underwater/)), designed to support the development, training, and validation of robotic algorithms. In addition to open-source code, it provides freely usable open digital assets ([town layouts](https://openhutb.github.io/doc/core_map/#non-layered-maps), [buildings](https://openhutb.github.io/doc/catalogue/), [vehicles](https://openhutb.github.io/doc/catalogue_vehicles/), [pedestrians](https://openhutb.github.io/doc/catalogue_pedestrians/), [props](https://openhutb.github.io/doc/catalogue_props/), etc.) created for this purpose. The simulation platform supports standard specifications for [VR cockpit](https://openhutb.github.io/doc/interbehavior/), [unified air-ground](https://openhutb.github.io/air_doc/dev/Carla_Air/), [submersibles](https://openhutb.github.io/mujoco_plugin/underwater/), [sensors](https://openhutb.github.io/doc/ref_sensors/), [data synthesis](https://openhutb.github.io/doc/tuto_G_retrieve_data/), [traffic management](https://openhutb.github.io/doc/adv_traffic_manager/), [multiphysics simulation](https://openhutb.github.io/doc/tuto_G_chrono/), [pedestrian navigation](https://openhutb.github.io/doc/tuto_G_pedestrian_navigation/), and [Python interfaces](https://openhutb.github.io/doc/python_api/). For detailed information, please refer to the [documentation](https://openhutb.github.io).
 
 
 <!-- https://github.com/inttter/md-badges -->
@@ -114,29 +120,8 @@ In addition to the documentation, supplementary content has been created for use
 
 ## References and Licenses
 
-```
-@inproceedings{Dosovitskiy17,
-  title = {{CARLA}: {An} Open Urban Driving Simulator},
-  author = {Alexey Dosovitskiy and German Ros and Felipe Codevilla and Antonio Lopez and Vladlen Koltun},
-  booktitle = {Proceedings of the 1st Annual Conference on Robot Learning},
-  pages = {1--16},
-  year = {2017}
-}
-```
+This project stands on the shoulders of giants, and we sincerely thank the developers of the following open-source projects: [Carla](https://github.com/carla-simulator/carla) (MIT License), [AirSim](https://github.com/microsoft/AirSim) (MIT License), [DReyeVR](https://openhutb.github.io/doc/interbehavior/) (MIT License), [CarlaAir](https://github.com/louiszengCN/CarlaAir) (MIT License), (MIT License), and [OpenSim](https://openhutb.github.io/doc/pedestrian/tuto_content_chrono_opensim/) (Apache License).
 
-
-```
-@article{jdan,
-	author={Haidong Wang and Xuan He and Zhiyong Li and Jin Yuan and Shutao Li},
-	title={JDAN: Joint Detection and Association Network for Real-Time Online Multi-Object Tracking.},
-	journal={ACM Transactions on Multimedia Computing, Communications, and Applications},
-	volume=19,
-	year=2023,
-}
-```
-
-This project stands on the shoulders of giants, and we sincerely thank the developers of the following open-source projects: [Carla](https://github.com/carla-simulator/carla) (MIT License), [AirSim](https://github.com/microsoft/AirSim) (MIT License), [DReyeVR](https://openhutb.github.io/doc/interbehavior/) (MIT License), [CarlaAir](https://github.com/louiszengCN/CarlaAir) (MIT License), and [OpenSim](https://openhutb.github.io/doc/pedestrian/tuto_content_chrono_opensim/) (Apache License).
-
-Carla-related assets are licensed under the CC-BY license. Other related assets (including map scenes of [Hunan University of Technology and Business](https://www.hutb.edu.cn/),  [Changsha CEC Software Park](https://map.baidu.com/poi/%E9%95%BF%E6%B2%99%E4%B8%AD%E7%94%B5%E8%BD%AF%E4%BB%B6%E5%9B%AD/@12566933.66,3258249.376047685,17.83z?uid=694ec5236c53273882a00c5a&ugc_type=3&ugc_ver=1&device_ratio=1&compat=1&en_uid=694ec5236c53273882a00c5a&pcevaname=pc4.1&querytype=detailConInfo&da_src=shareurl), etc.) and code are open source under the MIT license.
+Related assets are licensed under the CC-BY license. Other related assets (including map scenes of [Hunan University of Technology and Business](https://www.hutb.edu.cn/),  [Changsha CEC Software Park](https://map.baidu.com/poi/%E9%95%BF%E6%B2%99%E4%B8%AD%E7%94%B5%E8%BD%AF%E4%BB%B6%E5%9B%AD/@12566933.66,3258249.376047685,17.83z?uid=694ec5236c53273882a00c5a&ugc_type=3&ugc_ver=1&device_ratio=1&compat=1&en_uid=694ec5236c53273882a00c5a&pcevaname=pc4.1&querytype=detailConInfo&da_src=shareurl), [Chinese Vehicles](https://openhutb.github.io/doc/catalogue_vehicles/), etc.) and code are open source under the MIT license.
 
 
