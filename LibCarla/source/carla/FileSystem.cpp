@@ -9,8 +9,8 @@
 #include "carla/Exception.h"
 #include "carla/StringUtil.h"
 
-#include <boost/filesystem/directory.hpp>
 #include <boost/filesystem/operations.hpp>
+#include <boost/filesystem/directory.hpp>
 
 namespace carla {
 

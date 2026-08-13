@@ -5,11 +5,16 @@
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
 
-#include <compiler/disable-ue4-macros.h>
 THIRD_PARTY_INCLUDES_START
+#ifdef _WIN32
+#pragma warning(push)
+#pragma warning(disable : 4459)
+#endif
 #include <boost/asio.hpp>
+#ifdef _WIN32
+#pragma warning(pop)
+#endif
 THIRD_PARTY_INCLUDES_END
-#include <compiler/enable-ue4-macros.h>
 #include <memory>
 
 #include "MapPreviewUserWidget.generated.h"
@@ -24,7 +29,7 @@ class CARLATOOLS_API UMapPreviewUserWidget : public UUserWidget
 
 private:
 	// Boost socket
-  boost::asio::io_service io_service;
+  boost::asio::io_context io_service;
   std::unique_ptr<boost::asio::ip::tcp::socket> SocketPtr;
 
 
