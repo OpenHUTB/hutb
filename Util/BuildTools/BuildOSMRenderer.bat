@@ -98,11 +98,11 @@ cd "%OSM_RENDERER_VSPROJECT_PATH%"
 
 if exist "%programfiles%\Microsoft Visual Studio\2022\Community\VC\Auxiliary\Build\vcvars64.bat" (
     cmake -G "Visual Studio 17 2022" -A x64^
-        -DCMAKE_CXX_FLAGS_RELEASE="/std:c++17 /wd4251 /I%INSTALLATION_DIR:/=\%boost-1.84.0-install\include"^
+        -DCMAKE_CXX_FLAGS_RELEASE="/std:c++17 /wd4251 /I%INSTALLATION_DIR:/=\%boost-1.90.0-install\include"^
         "%OSM_RENDERER_SOURCE%"
 ) else (
     cmake -G "Visual Studio 16 2019" -A x64^
-        -DCMAKE_CXX_FLAGS_RELEASE="/std:c++17 /wd4251 /I%INSTALLATION_DIR:/=\%boost-1.84.0-install\include"^
+        -DCMAKE_CXX_FLAGS_RELEASE="/std:c++17 /wd4251 /I%INSTALLATION_DIR:/=\%boost-1.90.0-install\include"^
         "%OSM_RENDERER_SOURCE%"
 )
 
