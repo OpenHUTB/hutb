@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <link rel="shortcut icon" href="../../img/favicon.ico" />
+    <title>Adding a new ROS 2 message type to CARLA - CARLA Simulator</title>
+    <link rel="stylesheet" href="../../css/theme.css" />
+    <link rel="stylesheet" href="../../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+        <link href="../../extra.css" rel="stylesheet" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "Adding a new ROS 2 message type to CARLA";
+        var mkdocs_page_input_path = "ros2/adding_message_types.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href="../.." class="icon icon-home"> CARLA Simulator
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+      <input type="text" name="q" placeholder="搜索文档" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../..">Home</a>
+                </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Getting started</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../start_introduction/">Introduction</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../start_quickstart/">Quick start package installation</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../tuto_first_steps/">First steps</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../build_carla/">Building CARLA</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Next steps</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../tuto_content_authoring_maps/">Content authoring - maps</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../tuto_content_authoring_vehicles/">Content authoring - vehicles</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../content_authoring_props/">Content authoring - props</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">CARLA topics</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../coordinates/">Coordinates and transformations</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../foundations/">Foundations</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../core_actors/">Actors</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../core_map/">Maps</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../core_sensors/">Sensors and data</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../ts_traffic_simulation_overview/">Traffic</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../ai_rendering/">AI rendering</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../development_tutorials/">Development</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../custom_assets_tutorials/">Custom assets</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Resources</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../python_api/">Python API</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../catalogue/">Catalogue</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../ref_cpp/">C++ reference</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../bp_library/">Blueprint library</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../tutorials/">Tutorials</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../ext_docs/">Extended documentation</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../download/">Downloads</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">CARLA Ecosystem</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../ecosys_ansys/">ANSYS</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../tuto_G_rllib_integration/">AWS</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../tuto_G_carsim_integration/">CarSIM</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../tuto_G_chrono/">Chrono</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../large_map_roadrunner/">MathWorks</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../inverted_ai/">Inverted AI</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../nvidia/">NVIDIA</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../adv_opendrive/">ASAM OpenDRIVE</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../adv_ptv/">PTV Vissim</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../adv_rss/">RSS</a>
+                  </li>
+                  <li class="toctree-l1"><a class="" href="https://carla.readthedocs.io/projects/ros-bridge/en/latest/">ROS</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../tuto_G_scenic/">Scenic</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../adv_sumo/">SUMO</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../ecosys_synkrotron/">SYNKROTRON</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Contributing</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../cont_contribution_guidelines/">Guidelines</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../cont_coding_standard/">Coding standards</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../cont_doc_standard/">Documentation standard</a>
+                  </li>
+                  <li class="toctree-l1"><a class="" href="../.."></a>
+                  </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../..">CARLA Simulator</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../.." class="icon icon-home" aria-label="Docs"></a></li>
+      <li class="breadcrumb-item active">Adding a new ROS 2 message type to CARLA</li>
+    <li class="wy-breadcrumbs-aside">
+          <a href="https://github.com/carla-simulator/carla/edit/master/Docs/ros2/adding_message_types.md"> 编辑页面</a>
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="adding-a-new-ros-2-message-type-to-carla">Adding a new ROS 2 message type to CARLA</h1>
+<p>CARLA publishes ROS 2 data by serializing hand-written C++ POD structs directly
+into CDR byte buffers using Fast-CDR. There is no IDL compiler or code-generation
+step at build time. As a result, supporting a new message type is a manual
+7-step process. This guide walks through each step.</p>
+<h2 id="prerequisites">Prerequisites</h2>
+<ul>
+<li>Docker installed and running (needed only for Step 4).</li>
+<li>The <code>.msg</code> file for the type you want to add. Standard ROS 2 types (e.g.
+  <code>sensor_msgs/msg/NavSatFix</code>) already have one in any ROS 2 installation.
+  If you are defining a new <code>carla_msgs</code> type, write it first (see Step 1).</li>
+</ul>
+<hr />
+<h2 id="step-1-write-the-msg-file-skip-for-standard-ros-2-types">Step 1 - Write the <code>.msg</code> file (skip for standard ROS 2 types)</h2>
+<p>If the type already exists in a standard ROS 2 package, skip this step and
+use the existing <code>.msg</code> file in Step 4.</p>
+<p>For a new <code>carla_msgs</code> type, create a <code>.msg</code> file following the
+<a href="https://design.ros2.org/articles/legacy_interface_definition.html">ROS 2 interface definition format</a>.
+Each line is either a field declaration or a comment (<code># ...</code>):</p>
+<pre><code># carla_msgs/msg/CarlaSpeedometer.msg
+std_msgs/Header header
+float32 speed   # m/s
+</code></pre>
+<p>Field type names for nested types use <code>pkg_name/TypeName</code> (no <code>msg/</code> in the
+field line itself). Supported primitives: <code>bool</code>, <code>int8</code>, <code>uint8</code>, <code>int16</code>,
+<code>uint16</code>, <code>int32</code>, <code>uint32</code>, <code>int64</code>, <code>uint64</code>, <code>float32</code>, <code>float64</code>, <code>string</code>.
+Fixed arrays use <code>type[N]</code>; unbounded sequences use <code>type[]</code>.</p>
+<hr />
+<h2 id="step-2-create-the-c-pod-struct">Step 2 - Create the C++ POD struct</h2>
+<p>Create <code>LibCarla/source/carla/ros2/types/msg/MyType.h</code>. Rules:</p>
+<ul>
+<li>The struct lives in <code>namespace carla::ros2::msg</code>.</li>
+<li>Include only <code>&lt;array&gt;</code>, <code>&lt;vector&gt;</code>, <code>&lt;string&gt;</code>, <code>&lt;cstdint&gt;</code>, and sibling
+  <code>msg/*.h</code> headers - no DDS or Fast-CDR includes.</li>
+<li>Initialize primitive fields to zero with <code>= 0</code> or <code>= 0.0</code>.</li>
+<li>Use <code>std::array&lt;T, N&gt;</code> for fixed-length arrays, <code>std::vector&lt;T&gt;</code> for
+  unbounded sequences.</li>
+<li>Nest other message types by value.</li>
+</ul>
+<p><strong>Leaf type</strong> (all fields are primitives):</p>
+<pre><code class="language-cpp">// LibCarla/source/carla/ros2/types/msg/MyLeaf.h
+#pragma once
+#include &lt;cstdint&gt;
+
+namespace carla { namespace ros2 { namespace msg {
+
+struct MyLeaf {
+  float speed = 0.0f;
+  uint32_t count = 0u;
+};
+
+}}} // namespace carla::ros2::msg
+</code></pre>
+<p><strong>Composite type</strong> (nested message, fixed array, string):</p>
+<pre><code class="language-cpp">// LibCarla/source/carla/ros2/types/msg/MyComposite.h
+#pragma once
+#include &lt;array&gt;
+#include &lt;string&gt;
+#include &quot;carla/ros2/types/msg/Header.h&quot;
+#include &quot;carla/ros2/types/msg/Vector3.h&quot;
+
+namespace carla { namespace ros2 { namespace msg {
+
+struct MyComposite {
+  Header header;
+  std::string frame_id;
+  Vector3 velocity;
+  std::array&lt;double, 9&gt; covariance = {};   // fixed 3x3 matrix
+};
+
+}}} // namespace carla::ros2::msg
+</code></pre>
+<p><strong>Type with a sequence</strong> (variable-length vector):</p>
+<pre><code class="language-cpp">// LibCarla/source/carla/ros2/types/msg/MyList.h
+#pragma once
+#include &lt;vector&gt;
+#include &quot;carla/ros2/types/msg/SomeElement.h&quot;
+
+namespace carla { namespace ros2 { namespace msg {
+
+struct MyList {
+  std::vector&lt;SomeElement&gt; items;
+};
+
+}}} // namespace carla::ros2::msg
+</code></pre>
+<h3 id="side-by-side-example-msg-to-pod">Side-by-side example: <code>.msg</code> to POD</h3>
+<p>Full translation of <code>sensor_msgs/msg/Imu.msg</code> into its equivalent POD struct.
+Every <code>.msg</code> line maps to exactly one C++ field in the same order; nested types
+are resolved to the corresponding <code>msg::*</code> struct and included by header.</p>
+<p><code>sensor_msgs/msg/Imu.msg</code>:</p>
+<pre><code># sensor_msgs/msg/Imu.msg
+std_msgs/Header header
+geometry_msgs/Quaternion orientation
+float64[9] orientation_covariance
+geometry_msgs/Vector3 angular_velocity
+float64[9] angular_velocity_covariance
+geometry_msgs/Vector3 linear_acceleration
+float64[9] linear_acceleration_covariance
+</code></pre>
+<p><code>LibCarla/source/carla/ros2/types/msg/Imu.h</code>:</p>
+<pre><code class="language-cpp">// LibCarla/source/carla/ros2/types/msg/Imu.h
+#pragma once
+#include &lt;array&gt;
+#include &quot;carla/ros2/types/msg/Header.h&quot;
+#include &quot;carla/ros2/types/msg/Quaternion.h&quot;
+#include &quot;carla/ros2/types/msg/Vector3.h&quot;
+
+namespace carla { namespace ros2 { namespace msg {
+
+struct Imu {
+  Header header;
+  Quaternion orientation;
+  std::array&lt;double, 9&gt; orientation_covariance = {};
+  Vector3 angular_velocity;
+  std::array&lt;double, 9&gt; angular_velocity_covariance = {};
+  Vector3 linear_acceleration;
+  std::array&lt;double, 9&gt; linear_acceleration_covariance = {};
+};
+
+}}} // namespace carla::ros2::msg
+</code></pre>
+<p>Mapping rules used above:</p>
+<table>
+<thead>
+<tr>
+<th><code>.msg</code> token</th>
+<th>C++ field</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>std_msgs/Header header</code></td>
+<td><code>Header header;</code> (nested by value)</td>
+</tr>
+<tr>
+<td><code>geometry_msgs/Quaternion q</code></td>
+<td><code>Quaternion q;</code> (nested by value)</td>
+</tr>
+<tr>
+<td><code>float64[9] covariance</code></td>
+<td><code>std::array&lt;double, 9&gt; covariance = {};</code></td>
+</tr>
+<tr>
+<td><code>float64 x</code></td>
+<td><code>double x = 0.0;</code></td>
+</tr>
+<tr>
+<td><code>string frame_id</code></td>
+<td><code>std::string frame_id;</code></td>
+</tr>
+<tr>
+<td><code>type[] items</code></td>
+<td><code>std::vector&lt;type&gt; items;</code></td>
+</tr>
+</tbody>
+</table>
+<p>Note: the <code>dds_::Imu_</code> mangling in <code>type_name()</code> (Step 5) and the DDS wire
+format are derived automatically from this POD layout via Fast-CDR; there is
+no separate IDL definition to maintain.</p>
+<hr />
+<h2 id="step-3-register-cdr-serialization">Step 3 - Register CDR serialization</h2>
+<p>Open <code>LibCarla/source/carla/ros2/types/CdrSerialization.h</code> and add:</p>
+<ol>
+<li>An <code>#include</code> for your new header alongside the others at the top.</li>
+<li>A <code>serialize_cdr</code> / <code>deserialize_cdr</code> overload pair.</li>
+</ol>
+<p><strong>Placement:</strong> add the overloads after the overloads of any types your struct
+depends on (the file is ordered least-to-most dependent to avoid forward
+declarations).</p>
+<p><strong>Leaf type example</strong> (primitives only - use <code>cdr &lt;&lt;</code> / <code>cdr &gt;&gt;</code>):</p>
+<pre><code class="language-cpp">inline void serialize_cdr(
+    eprosima::fastcdr::Cdr&amp; cdr, const msg::MyLeaf&amp; m) {
+  cdr &lt;&lt; m.speed;
+  cdr &lt;&lt; m.count;
+}
+
+inline void deserialize_cdr(
+    eprosima::fastcdr::Cdr&amp; cdr, msg::MyLeaf&amp; m) {
+  cdr &gt;&gt; m.speed;
+  cdr &gt;&gt; m.count;
+}
+</code></pre>
+<p><strong>Composite type example</strong> (nested types call their own overload; strings and
+<code>std::array</code> serialize directly via <code>cdr &lt;&lt;</code>):</p>
+<pre><code class="language-cpp">inline void serialize_cdr(
+    eprosima::fastcdr::Cdr&amp; cdr, const msg::MyComposite&amp; m) {
+  serialize_cdr(cdr, m.header);   // nested msg:: type
+  cdr &lt;&lt; m.frame_id;              // std::string
+  serialize_cdr(cdr, m.velocity); // nested msg:: type
+  cdr &lt;&lt; m.covariance;            // std::array&lt;double, 9&gt;
+}
+
+inline void deserialize_cdr(
+    eprosima::fastcdr::Cdr&amp; cdr, msg::MyComposite&amp; m) {
+  deserialize_cdr(cdr, m.header);
+  cdr &gt;&gt; m.frame_id;
+  deserialize_cdr(cdr, m.velocity);
+  cdr &gt;&gt; m.covariance;
+}
+</code></pre>
+<p><strong>Sequence example</strong> (<code>std::vector</code> of structs - write length manually):</p>
+<pre><code class="language-cpp">inline void serialize_cdr(
+    eprosima::fastcdr::Cdr&amp; cdr, const msg::MyList&amp; m) {
+  // CDR sequence length is uint32_t per DDS-XTypes 1.3 clause 7.4.1.1.
+  cdr &lt;&lt; static_cast&lt;uint32_t&gt;(m.items.size());
+  for (const auto&amp; item : m.items) {
+    serialize_cdr(cdr, item);
+  }
+}
+
+inline void deserialize_cdr(
+    eprosima::fastcdr::Cdr&amp; cdr, msg::MyList&amp; m) {
+  uint32_t n{0u};
+  cdr &gt;&gt; n;
+  if (n &gt; kMaxCdrSequenceElements) {
+    throw eprosima::fastcdr::exception::BadParamException(
+        &quot;MyList::items length exceeds sane CDR sequence cap&quot;);
+  }
+  m.items.resize(static_cast&lt;size_t&gt;(n));
+  for (auto&amp; item : m.items) {
+    deserialize_cdr(cdr, item);
+  }
+}
+</code></pre>
+<p>For <code>std::vector&lt;uint8_t&gt;</code> (byte arrays, e.g. <code>Image::data</code>) FastCDR handles
+the length prefix automatically via <code>cdr &lt;&lt; m.data</code> - no manual loop needed.</p>
+<hr />
+<h2 id="step-4-compute-the-rihs01-type-hash">Step 4 - Compute the RIHS01 type hash</h2>
+<p>ROS 2 Iron and later check a type hash in the DDS <code>USER_DATA</code> QoS field when
+two nodes discover each other. If the hash is absent, each endpoint logs:</p>
+<pre><code>[WARN] [rmw_cyclonedds_cpp]: Failed to parse type hash for topic 'rt/...'
+</code></pre>
+<p>CARLA embeds a hardcoded RIHS01 hash in <code>CdrTopicInfo&lt;T&gt;::type_hash()</code> for
+every message type. Use <code>Util/ros2/compute_type_hash.sh</code> to get the correct
+hash for a type. Docker is the only requirement - no local ROS 2 installation.</p>
+<p><strong>Standard ROS 2 type</strong> (the <code>.msg</code> is already installed inside the container):</p>
+<pre><code class="language-sh"># Extract Imu.msg from the container first, then compute:
+docker run --rm osrf/ros:jazzy-desktop \
+    cat /opt/ros/jazzy/share/sensor_msgs/msg/Imu.msg &gt; /tmp/Imu.msg
+
+Util/ros2/compute_type_hash.sh sensor_msgs/msg/Imu /tmp/Imu.msg
+# Output: RIHS01_7d9a00ff...
+</code></pre>
+<p><strong>New <code>carla_msgs</code> type</strong> (provide your own <code>.msg</code> file):</p>
+<pre><code class="language-sh">Util/ros2/compute_type_hash.sh \
+    carla_msgs/msg/CarlaSpeedometer \
+    /path/to/carla_msgs/msg/CarlaSpeedometer.msg
+# Output: RIHS01_&lt;64 hex chars&gt;
+</code></pre>
+<p>The script prints a single line to stdout:</p>
+<pre><code>RIHS01_&lt;64 lowercase hex digits&gt;
+</code></pre>
+<p>Paste this value into <code>CdrTopicInfo.h</code> in Step 5.</p>
+<p><strong>Troubleshooting:</strong> if <code>colcon build</code> fails inside Docker, the most common
+cause is a <code>.msg</code> dependency that is not in the standard <code>jazzy</code> install. Add
+the missing package to the <code>rosidl_generate_interfaces</code> workspace or, for
+bleeding-edge packages, switch to a newer <code>osrf/ros</code> tag.</p>
+<hr />
+<h2 id="step-5-register-in-cdrtopicinfoh">Step 5 - Register in <code>CdrTopicInfo.h</code></h2>
+<p>Add a specialization to
+<code>LibCarla/source/carla/ros2/types/CdrTopicInfo.h</code>:</p>
+<pre><code class="language-cpp">template&lt;&gt; struct CdrTopicInfo&lt;msg::MyComposite&gt; {
+  static const char* type_name() {
+    // DDS mangled name: &lt;package&gt;::msg::dds_::&lt;TypeName&gt;_
+    return &quot;my_pkg::msg::dds_::MyComposite_&quot;;
+  }
+  static const char* type_hash() {
+    return &quot;RIHS01_&lt;hash from Step 4&gt;&quot;;
+  }
+  static size_t max_serialized_size() { return &lt;byte count&gt;u; }
+};
+</code></pre>
+<p>Also add an <code>#include</code> for the new header at the top of <code>CdrTopicInfo.h</code>.</p>
+<p><strong><code>type_name()</code>:</strong> follows the DDS mangled name convention used by ROS 2 RMWs:
+<code>&lt;package&gt;::msg::dds_::&lt;TypeName&gt;_</code> (note the trailing underscore).</p>
+<p><strong><code>type_hash()</code>:</strong> the REP-2011 type hash, published by every writer and
+reader in the <code>USER_DATA</code> QoS field (REP-2016 payload
+<code>typehash=RIHS01_&lt;hex&gt;;</code>). Peer ROS 2 RMWs read this during discovery to
+perform type-hash-based endpoint matching and, on Jazzy and newer, to
+suppress the <code>Failed to parse type hash for topic ...</code> warning.</p>
+<p>Paste the <code>RIHS01_...</code> string from Step 4. The hash is pinned per message
+definition; update it if the <code>.msg</code> definition ever changes.</p>
+<pre><code class="language-cpp">// Typical case: pin the hash computed from the .msg definition.
+static const char* type_hash() {
+  return &quot;RIHS01_7d9a00ff...&quot;;  // 64 hex chars after &quot;RIHS01_&quot;
+}
+</code></pre>
+<p>Return <code>nullptr</code> only when no canonical hash can be computed for the type
+(for example, a custom payload with no <code>.msg</code> counterpart). The middleware
+then emits an empty <code>USER_DATA</code> payload for that endpoint; peers will log
+the missing-type-hash warning on Jazzy but the connection still forms.</p>
+<pre><code class="language-cpp">// Fallback: no canonical .msg exists for this type.
+static const char* type_hash() {
+  return nullptr;
+}
+</code></pre>
+<p><strong><code>max_serialized_size()</code>:</strong> a preallocation hint in bytes, excluding the
+4-byte DDS encapsulation header. For fixed types, sum the byte sizes of all
+fields. For variable-length types, choose a reasonable upper bound. This is
+only a hint; the actual payload is sized dynamically.</p>
+<p>Quick sizing guide:
+- <code>bool</code>, <code>uint8</code>, <code>int8</code>: 1 byte
+- <code>uint16</code>, <code>int16</code>: 2 bytes
+- <code>uint32</code>, <code>int32</code>, <code>float32</code>: 4 bytes
+- <code>uint64</code>, <code>int64</code>, <code>float64</code>, <code>double</code>: 8 bytes
+- <code>std::string</code>: 4 (length) + capacity estimate in bytes
+- <code>std::array&lt;double, 9&gt;</code>: 72 bytes
+- Nested struct: sum its fields recursively</p>
+<hr />
+<h2 id="step-6-add-a-test">Step 6 - Add a test</h2>
+<p>Open <code>LibCarla/source/test/server/test_type_hash.cpp</code> and add:</p>
+<ol>
+<li>One <code>CHECK_HASH(MyComposite)</code> call inside <code>TEST(TypeHash, FormatAllTypes)</code>.</li>
+<li>One <code>CdrTopicInfo&lt;msg::MyComposite&gt;::type_hash()</code> entry in the <code>hashes</code>
+   vector inside <code>TEST(TypeHash, UniqueAcrossAllTypes)</code>.</li>
+</ol>
+<p>These two tests verify that the hash string matches the <code>RIHS01_&lt;64 hex&gt;</code>
+format and is unique across all registered types.</p>
+<hr />
+<h2 id="step-7-build-and-verify">Step 7 - Build and verify</h2>
+<pre><code class="language-sh">docker exec carla-development-ue4-20.04 make LibCarla ARGS=&quot;--ros2&quot;
+docker exec carla-development-ue4-20.04 make check.LibCarla
+</code></pre>
+<p>All tests must pass. The new <code>CHECK_HASH</code> entry will fail if the hash is
+malformed or duplicated.</p>
+<hr />
+<h2 id="faq">FAQ</h2>
+<p><strong>Why are hashes hardcoded?</strong>
+CARLA has no IDL compiler (<code>rosidl</code>, <code>idlc</code>) running at build time. Computing
+RIHS01 hashes correctly requires <code>rosidl_generator_type_description</code>, which
+only runs inside a ROS 2 build environment. Hardcoding the values from a
+one-time Docker build is zero-dependency and correct because standard message
+definitions are stable per distro.</p>
+<p><strong>Are hashes the same on Humble and Jazzy?</strong>
+Yes, for any message whose definition has not changed between the two distros
+(all messages in <code>std_msgs</code>, <code>geometry_msgs</code>, <code>sensor_msgs</code>, <code>nav_msgs</code>,
+<code>builtin_interfaces</code>, <code>tf2_msgs</code>, <code>rosgraph_msgs</code>, <code>ackermann_msgs</code>). Compute
+the hash against Jazzy - it will match on Humble too.</p>
+<p><strong>What is the wire format?</strong>
+Classic CDR, encoding version 1, little-endian (CDR_LE). Defined in:
+- OMG DDSI-RTPS v2.5 Section 10 (encapsulation header)
+- DDS-XTypes 1.3 clause 7.4.1.1 (sequence/string encoding)
+- <a href="https://ros.org/reps/rep-2011.html">REP-2011</a> (RIHS01 hash algorithm)
+- <a href="https://ros.org/reps/rep-2016.html">REP-2016</a> (USER_DATA KV format)</p>
+<hr />
+<h2 id="references">References</h2>
+<ul>
+<li><a href="https://www.omg.org/spec/DDSI-RTPS/2.5/PDF">OMG DDSI-RTPS v2.5 specification (PDF)</a></li>
+</ul>
+              
+            </div>
+          </div><footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+        <span>
+          <a href="https://github.com/carla-simulator/carla" style="color: #fcfcfc">OpenHUTB</a>
+        </span>
+    
+    
+    
+  </span>
+</div>
+    <script src="../../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "../..";</script>
+    <script src="../../js/theme_extra.js"></script>
+    <script src="../../js/theme.js"></script>
+      <script src="../../extra.js"></script>
+      <script src="../../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>
