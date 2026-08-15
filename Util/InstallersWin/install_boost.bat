@@ -108,10 +108,9 @@ set _checksum=""
 
 if not exist "%BOOST_SRC_DIR%" (
     if exist "%INSTALLATION_DIR:/=\%dependencies\src\%BOOST_TEMP_FILE%" (
-        if not exist "%BOOST_TEMP_FILE_DIR%" (
-            echo %FILE_N% Extracting boost from "%INSTALLATION_DIR:/=\%dependencies\src\%BOOST_TEMP_FILE%" to "%INSTALLATION_DIR%"...
-            "%INSTALLATION_DIR:/=\%dependencies\prerequisites\7zip\7z.exe" x "%INSTALLATION_DIR:/=\%dependencies\src\%BOOST_TEMP_FILE%" -o"%INSTALLATION_DIR%" -y >nul
-        )
+        echo %FILE_N% Boost source zip file found in "%INSTALLATION_DIR:/=\%dependencies\src\%BOOST_TEMP_FILE%".
+        echo %FILE_N% Extracting boost from "%INSTALLATION_DIR:/=\%dependencies\src\%BOOST_TEMP_FILE%" to "%INSTALLATION_DIR%"...
+        "%INSTALLATION_DIR:/=\%dependencies\prerequisites\7zip\7z.exe" x "%INSTALLATION_DIR:/=\%dependencies\src\%BOOST_TEMP_FILE%" -o"%INSTALLATION_DIR%" -y >nul
     )
 
     if not exist "%BOOST_TEMP_FILE_DIR%" (
@@ -143,6 +142,7 @@ if not exist "%BOOST_SRC_DIR%" (
 )
 
 cd "%BOOST_SRC_DIR%"
+echo cd "%BOOST_SRC_DIR%"
 if not exist "b2.exe" (
     echo %FILE_N% Generating build...
     if exist "%ProgramW6432%\Microsoft Visual Studio\2022\Community\VC\Auxiliary\Build\vcvars64.bat" (
