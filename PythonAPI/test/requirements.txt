@@ -1,5 +1,5 @@
 nose2
-numpy
+numpy>=1.18.4
 msgpack-rpc-python
 nose2
 # pygame

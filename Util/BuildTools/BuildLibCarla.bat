@@ -154,11 +154,11 @@ if %BUILD_SERVER% == true (
 
         if %errorlevel% neq 0 goto error_cmake
 
-        cmake --build . --config Debug --target install | findstr /V "Up-to-date:" >nul
+        cmake --build . --config Debug --target install | findstr /V "Up-to-date:"
         if %errorlevel% neq 0 goto error_install
         echo %FILE_N% Building libcarla server in debug mode... done.
     ) else (
-        echo %FILE_N% Building libcarla server in release mode...
+        echo %FILE_N% Building libcarla server in release mode: cmake -G %GENERATOR% %PLATFORM% -DCMAKE_BUILD_TYPE=Server -DCMAKE_CXX_FLAGS_RELEASE="/MD /MP" -DCMAKE_INSTALL_PREFIX="%LIBCARLA_SERVER_INSTALL_PATH:\=/%" "%ROOT_PATH%"
         cmake -G %GENERATOR% %PLATFORM%^
         -DCMAKE_BUILD_TYPE=Server^
         -DCMAKE_CXX_FLAGS_RELEASE="/MD /MP"^
@@ -167,9 +167,9 @@ if %BUILD_SERVER% == true (
 
         if %errorlevel% neq 0 goto error_cmake
 
-        cmake --build . --config Release --target install | findstr /V "Up-to-date:" >nul
+        cmake --build . --config Release --target install | findstr /V "Up-to-date:"
         if %errorlevel% neq 0 goto error_install
-        echo %FILE_N% Building libcarla server in release mode... done.
+        echo %FILE_N% Build libcarla server in release mode... done.
     )
 
 )

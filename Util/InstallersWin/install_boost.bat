@@ -80,9 +80,9 @@ rem -- Local Variables ---------------------------------------------------------
 rem ============================================================================
 
 set BOOST_BASENAME=boost-%BOOST_VERSION%
-set BOOST_SHA256SUM="cc77eb8ed25da4d596b25e77e4dbb6c5afaac9cddd00dc9ca947b6b268cc76a4"
+set BOOST_SHA256SUM="bdc79f179d1a4a60c10fe764172946d0eeafad65e576a8703c4d89d49949973c"
 
-set BOOST_TEMP_FOLDER=boost-%BOOST_VERSION:.=_%
+set BOOST_TEMP_FOLDER=boost_%BOOST_VERSION:.=_%
 set BOOST_TEMP_FILE=%BOOST_TEMP_FOLDER%.zip
 set BOOST_TEMP_FILE_DIR=%BUILD_DIR%%BOOST_TEMP_FILE%
 
@@ -108,10 +108,9 @@ set _checksum=""
 
 if not exist "%BOOST_SRC_DIR%" (
     if exist "%INSTALLATION_DIR:/=\%dependencies\src\%BOOST_TEMP_FILE%" (
-        if not exist "%BOOST_TEMP_FILE_DIR%" (
-            echo %FILE_N% Extracting boost from "%INSTALLATION_DIR:/=\%dependencies\src\%BOOST_TEMP_FILE%" to "%INSTALLATION_DIR%", this can take a while...
-            "%INSTALLATION_DIR:/=\%dependencies\prerequisites\7zip\7z.exe" x "%INSTALLATION_DIR:/=\%dependencies\src\%BOOST_TEMP_FILE%" -o"%INSTALLATION_DIR%" -y >nul
-        )
+        echo %FILE_N% Boost source zip file found in "%INSTALLATION_DIR:/=\%dependencies\src\%BOOST_TEMP_FILE%".
+        echo %FILE_N% Extracting boost from "%INSTALLATION_DIR:/=\%dependencies\src\%BOOST_TEMP_FILE%" to "%INSTALLATION_DIR%"...
+        "%INSTALLATION_DIR:/=\%dependencies\prerequisites\7zip\7z.exe" x "%INSTALLATION_DIR:/=\%dependencies\src\%BOOST_TEMP_FILE%" -o"%INSTALLATION_DIR%" -y >nul
     )
 
     if not exist "%BOOST_TEMP_FILE_DIR%" (
@@ -123,7 +122,7 @@ if not exist "%BOOST_SRC_DIR%" (
             call :CheckSumEvaluate %BOOST_TEMP_FILE_DIR%,%BOOST_SHA256SUM%,_checksum
             echo %FILE_N% Extracting boost from "%BOOST_TEMP_FILE%", this can take a while...
             if exist "%INSTALLATION_DIR:/=\%dependencies\prerequisites\7zip\7z.exe" (
-                "%INSTALLATION_DIR:/=\%dependencies\prerequisites\7zip\7z.exe" x "%BOOST_TEMP_FILE_DIR%" -o"%BUILD_DIR%" -y
+                "%INSTALLATION_DIR:/=\%dependencies\prerequisites\7zip\7z.exe" x "%BOOST_TEMP_FILE_DIR%" -o"%BUILD_DIR%" -y >nul
             ) else (
                 powershell -Command "Expand-Archive '%BOOST_TEMP_FILE_DIR%' -DestinationPath '%BUILD_DIR%' -Force"
             )
@@ -143,6 +142,7 @@ if not exist "%BOOST_SRC_DIR%" (
 )
 
 cd "%BOOST_SRC_DIR%"
+echo cd "%BOOST_SRC_DIR%"
 if not exist "b2.exe" (
     echo %FILE_N% Generating build...
     if exist "%ProgramW6432%\Microsoft Visual Studio\2022\Community\VC\Auxiliary\Build\vcvars64.bat" (
