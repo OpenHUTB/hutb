@@ -282,13 +282,11 @@ if exist "%cd%\Build\dependencies\" (
 
 
     rem Extract src zip files
-    if not exist "%cd%\Build\boost-1.86.0-source" (
-        if not exist "%cd%\Build\dependencies\src\boost-1_86_0" (
-            echo Unzipping Build\dependencies\src\boost-1_86_0.zip ...
-            "prerequisites\7zip\7z.exe" x "src\boost-1_86_0.zip" -o"%cd%\Build\" -y >nul
-        )
+    if not exist "%cd%\Build\boost-1.90.0-source" (
+        echo Unzipping Build\dependencies\src\boost-1_90_0.zip ...
+        "prerequisites\7zip\7z.exe" x "src\boost-1_90_0.zip" -o"%cd%\Build\" -y >nul
     ) else (
-        echo Build\boost-1.86.0-source folder already exists.
+        echo Build\boost-1.90.0-source folder already exists.
     )
     if not exist "%cd%\Build\chrono-src" (
         echo Unzipping chrono-src.zip ...

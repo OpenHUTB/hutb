@@ -5,16 +5,18 @@
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
 
-THIRD_PARTY_INCLUDES_START
 #ifdef _WIN32
 #pragma warning(push)
 #pragma warning(disable : 4459)
 #endif
+#include <compiler/disable-ue4-macros.h>
+THIRD_PARTY_INCLUDES_START
 #include <boost/asio.hpp>
+THIRD_PARTY_INCLUDES_END
+#include <compiler/enable-ue4-macros.h>
 #ifdef _WIN32
 #pragma warning(pop)
 #endif
-THIRD_PARTY_INCLUDES_END
 #include <memory>
 
 #include "MapPreviewUserWidget.generated.h"

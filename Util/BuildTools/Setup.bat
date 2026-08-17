@@ -300,13 +300,14 @@ if %IS_DEBUG% == true (
     -j %NUMBER_OF_ASYNC_JOBS% 
 )
 
-
 if %errorlevel% neq 0 goto failed
 
 if not defined install_boost (
     echo %FILE_N% Failed while installing Boost.
     goto failed
 )
+xcopy /Y /S /I "%INSTALLATION_DIR%boost-1.90.0-install\include\*" "%CARLA_DEPENDENCIES_FOLDER%include\*" > NUL
+xcopy /Y /I %INSTALLATION_DIR%\boost-1.90.0-install\lib\* %CARLA_DEPENDENCIES_FOLDER%\lib\
 
 rem ============================================================================
 rem -- Download and install Xercesc --------------------------------------------
