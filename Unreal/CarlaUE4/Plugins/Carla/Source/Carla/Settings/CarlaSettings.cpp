@@ -159,8 +159,8 @@ void UCarlaSettings::LoadSettings()
     {
       ROS2 = true;
     }
-    FString DDSMiddlewareValue;
-    if (FParse::Value(FCommandLine::Get(), TEXT("-dds-middleware="), DDSMiddlewareValue))
+    FString RmwValue;
+    if (FParse::Value(FCommandLine::Get(), TEXT("-dds-middleware="), RmwValue))
     {
       ROS2MiddlewareName = RmwValue.ToLower();
     }
