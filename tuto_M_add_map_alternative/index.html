@@ -334,6 +334,12 @@
 </ul>
 <p>Once you have finished with the customization, you can <a href="../tuto_M_generate_pedestrian_navigation/">generate the pedestrian navigation information</a>.</p>
 <hr />
+<h2 id="include-map-in-packaged-carla-version">Include Map in packaged Carla Version</h2>
+<p>If you want to use the created map in a packaged version of carla created with <code>make package</code> you need to modify the project settings:</p>
+<p>Go go <code>settings</code> --&gt; <code>Project Settings...</code> --&gt; <code>Project/Packaging</code> --&gt; <code>List of maps to include in a packaged build</code> \
+and add the path of the created map to the displayed array.\
+This option modifies the DefaultGame.ini file and adds the created map to the maps to be cooked.</p>
+<hr />
 <p>It is recommended to use the automated processes for importing maps detailed in the guides for <a href="../tuto_M_add_map_package/">CARLA packages</a> and <a href="../tuto_M_add_map_source/">CARLA source build</a>, however the methods listed in this section can be used if required. If you encounter any issues with the alternative methods, feel free to post in the <a href="https://github.com/carla-simulator/carla/discussions">forum</a>.</p>
               
             </div>
