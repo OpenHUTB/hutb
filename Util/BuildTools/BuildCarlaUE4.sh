@@ -105,6 +105,7 @@ done
 # the editor also needs it as a runtime flag for CarlaSettings.
 if ${USE_ROS2} ; then
   EDITOR_FLAGS="${EDITOR_FLAGS} --ros2"
+fi
 if [ -n "${RMW}" ] ; then
   EDITOR_FLAGS="${EDITOR_FLAGS} --rmw=${RMW}"
 fi
