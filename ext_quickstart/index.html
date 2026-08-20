@@ -183,6 +183,7 @@
 <ul>
 <li><code>--ros2</code> - Launch CARLA with the native ROS2 connector enabled</li>
 <li><code>--rmw=&lt;middleware&gt;</code> - Select the ROS2 middleware (RMW) used by the native connector. Accepted values: <code>fastdds</code>, <code>cyclonedds</code>, <code>zenoh</code>. Default: <code>fastdds</code>. Only valid together with <code>--ros2</code>. CycloneDDS and Zenoh are Linux only; on Windows only <code>fastdds</code> is supported.</li>
+<li><code>--ros-domain-id=&lt;N&gt;</code> - Set the ROS2 domain id (<code>N</code> must be an integer in the range 0-232) used by the native connector. Only valid together with <code>--ros2</code>. When omitted, the server falls back to the <code>ROS_DOMAIN_ID</code> environment variable if it is defined, and otherwise uses the default domain 0. The resolution order is <code>--ros-domain-id</code>, then <code>ROS_DOMAIN_ID</code>, then 0. Out-of-range values (on either the option or the environment variable) are ignored and the next source is used.</li>
 <li><code>-carla-rpc-port=N</code> - Listen for client connections at port <code>N</code>. Streaming port is set to <code>N+1</code> by default.  </li>
 <li><code>-carla-streaming-port=N</code> - Specify the port for sensor data streaming. Use 0 to get a random unused port. The second port will be automatically set to <code>N+1</code>.  </li>
 <li><code>-quality-level={Low,Epic}</code> - Change graphics quality level. Find out more in <a href="../adv_rendering_options/">rendering options</a>.  </li>
