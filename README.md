@@ -7,7 +7,7 @@
 </div>
 
 
-该项目是一个用于研究 **人** 和 **载具**（[具身人](https://openhutb.github.io/doc/#_5)、[无人车](https://openhutb.github.io/doc/#_4)、[无人机](https://openhutb.github.io/air_doc/)、[潜水器](https://openhutb.github.io/mujoco_plugin/underwater/)）的 **影视级物理模拟器**，旨在支持机器人算法的开发、训练和验证。
+该项目是一个用于研究 **人** 和 **载具**（[具身人](https://openhutb.github.io/doc/#_5)、[地面载具](https://openhutb.github.io/doc/#_4)、[空域载具](https://openhutb.github.io/air_doc/)、[水域载具](https://openhutb.github.io/mujoco_plugin/underwater/)）的 **影视级物理模拟器**，旨在加速人和机器人的算法开发、训练和验证。
 除了开源代码外，还提供了为此目的创建的可自由使用的开放数字资产（[城镇布局](https://openhutb.github.io/doc/core_map/#non-layered-maps) 、[建筑](https://openhutb.github.io/doc/catalogue/) 、[载具](https://openhutb.github.io/doc/catalogue_vehicles/) 、[行人](https://openhutb.github.io/doc/catalogue_pedestrians/) 、[道具](https://openhutb.github.io/doc/catalogue_props/) 等）。
 该模拟平台支持 [VR 驾驶舱](https://openhutb.github.io/doc/interbehavior/)、[空地一体](https://openhutb.github.io/air_doc/dev/Carla_Air/)、[水下机器人](https://openhutb.github.io/mujoco_plugin/underwater/)、[传感器](https://openhutb.github.io/doc/ref_sensors/) 、[数据合成](https://openhutb.github.io/doc/tuto_G_retrieve_data/) 、[交通管理器](https://openhutb.github.io/doc/adv_traffic_manager/) 、[多物理场仿真](https://openhutb.github.io/doc/tuto_G_chrono/) 、[行人导航](https://openhutb.github.io/doc/tuto_G_pedestrian_navigation/) 、[Python接口](https://openhutb.github.io/doc/python_api/) 等标准规范，
 详细介绍请参考[文档](https://openhutb.github.io) 。
