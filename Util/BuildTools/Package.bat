@@ -313,7 +313,7 @@ if %DO_COPY_FILES%==true (
     rem Temporary solution to the problem of background processes not exiting
     set STOP_GAME_FILE="!XCOPY_FROM!StopOpenHUTB.bat"
     if exist "!STOP_GAME_FILE!" (
-        echo d | xcopy /y /s "!XCOPY_FROM!StopOpenHUTB.bat"      "!XCOPY_TO!"
+        echo d | xcopy /y /s "!XCOPY_FROM!StopOpenHUTB.bat"      "!XCOPY_TO!StopOpenHUTB.bat"
     )
     :: copy launch CarlaUE4.exe script including VC143_CRT Runtime installer
     set LAUNCH_GAME_FILE="!XCOPY_FROM!Util\package\StartOpenHUTB.bat"
