@@ -314,6 +314,7 @@ if %DO_COPY_FILES%==true (
     set STOP_GAME_FILE="!XCOPY_FROM!StopOpenHUTB.bat"
     if exist "!STOP_GAME_FILE!" (
         echo f | xcopy /y "!XCOPY_FROM!StopOpenHUTB.bat"      "!XCOPY_TO!StopOpenHUTB.bat"
+        echo f | xcopy /y "!XCOPY_FROM!CarlaAir.ps1"      "!XCOPY_TO!CarlaAir.ps1"
     )
     :: copy launch CarlaUE4.exe script including VC143_CRT Runtime installer
     set LAUNCH_GAME_FILE="!XCOPY_FROM!Util\package\StartOpenHUTB.bat"
