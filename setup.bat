@@ -9,6 +9,8 @@ set skip_prerequisites=false
 set launch=false
 rem launch editor directly, used for quick test after build/package
 set direct_launch=false
+rem to solve the issue of "Missing D:/hutb/Build/engine/Engine/Binaries/DotNET/UnrealBuildTool/UnrealBuildTool.exe after build" when generate CarlaUE4.sln according to CarlaUE4.uproject
+set generate_project_files=false
 set package=false
 set interactive=false
 set python_path=python
@@ -63,6 +65,8 @@ rem -- PARSE COMMAND LINE ARGUMENTS --
         set package=true
     ) else if "%1"=="--launch" (
         set launch=true
+    ) else if "%1"=="-g" (
+        set generate_project_files=true
     ) else if "%1"=="-l" (
         set launch=true
     ) else if "%1"=="-d" (
@@ -92,6 +96,11 @@ rem -- MAIN --
 
 :main
 
+if %generate_project_files% == true (
+    echo Generating project files...
+    rem --engine is rquired to display the Plugin in the Unreal Editor, otherwise the plugin will be hidden in the editor
+    call "%UE4_ROOT%\Engine\Build\BatchFiles\GenerateProjectFiles.bat" -project="%scriptDir%\Unreal\CarlaUE4\CarlaUE4.uproject" -game -engine -progress || exit /b
+)
 
 rem if direct_launch is true, skip all the setup and launch game directly, used for quick test after build/package
 if %direct_launch% == true (
