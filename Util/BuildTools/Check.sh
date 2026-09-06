@@ -29,7 +29,7 @@ END
 
 GDB=
 XML_OUTPUT=false
-GTEST_ARGS=`sed -e 's/#.*$//g' ${CARLA_ROOT_FOLDER}/.gtest | sed -e '/^[[:space:]]*$/!s/^/--/g' | sed -e ':a;N;$!ba;s/\n/ /g'`
+GTEST_ARGS=
 LIBCARLA_RELEASE=false
 LIBCARLA_DEBUG=false
 SMOKE_TESTS=false
@@ -41,6 +41,10 @@ OPTS=`getopt -o h --long help,gdb,xml,gtest_args:,all,libcarla-release,libcarla-
 eval set -- "$OPTS"
 
 source $(dirname "$0")/Environment.sh
+
+if [ -f "${CARLA_ROOT_FOLDER}/.gtest" ]; then
+  GTEST_ARGS=`sed -e 's/#.*$//g' ${CARLA_ROOT_FOLDER}/.gtest | sed -e '/^[[:space:]]*$/!s/^/--/g' | sed -e ':a;N;$!ba;s/\n/ /g'`
+fi
 
 PY_VERSION_LIST=3
 
@@ -91,6 +95,9 @@ while [[ $# -gt 0 ]]; do
       shift ;;
   esac
 done
+
+# 优先使用环境中的Python系统，以便构建的wheel文件与Boost库所匹配的Python版本一致。
+export PATH=/usr/bin:/bin:$PATH
 
 if ! { ${LIBCARLA_RELEASE} || ${LIBCARLA_DEBUG} || ${PYTHON_API} || ${SMOKE_TESTS}; }; then
   fatal_error "Nothing selected to be done."
@@ -158,7 +165,7 @@ if ${LIBCARLA_RELEASE} ; then
   if ! { ${RUN_BENCHMARK} ; }; then
 
     log "Running LibCarla.client unit tests (release)."
-    echo "Running: ${GDB} libcarla_test_client_debug ${GTEST_ARGS} ${EXTRA_ARGS}"
+    echo "Running: ${GDB} libcarla_test_client_release ${GTEST_ARGS} ${EXTRA_ARGS}"
     ${GDB} ${LIBCARLA_INSTALL_CLIENT_FOLDER}/test/libcarla_test_client_release ${GTEST_ARGS} ${EXTRA_ARGS}
 
   fi

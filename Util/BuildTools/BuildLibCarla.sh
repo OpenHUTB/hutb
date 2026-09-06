@@ -190,6 +190,7 @@ function build_libcarla {
         -DLIBCARLA_BUILD_RELEASE=${M_RELEASE} \
         -DCMAKE_TOOLCHAIN_FILE=${M_TOOLCHAIN} \
         -DCMAKE_INSTALL_PREFIX=${M_INSTALL_FOLDER} \
+        -DLIBCARLA_BUILD_TEST=ON \
         -DCMAKE_EXPORT_COMPILE_COMMANDS=1 \
         ${CMAKE_EXTRA_OPTIONS} \
         ${CARLA_ROOT_FOLDER}
@@ -198,7 +199,8 @@ function build_libcarla {
 
   fi
 
-  ninja
+  # 限制并行任务数量，以避免资源激增.
+  ninja -j$(( $(nproc) / 3 ))
 
   ninja install | grep -v "Up-to-date:"
 

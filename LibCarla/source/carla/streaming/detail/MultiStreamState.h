@@ -34,7 +34,7 @@ namespace detail {
       // try write single stream
       auto session = _session.load();
       if (session != nullptr) {
-        auto message = Session::MakeMessage(buffers...);
+        auto message = Session::MakeMessage(std::move(buffers)...);
         session->WriteMessage(std::move(message));
         log_debug("sensor ", session->get_stream_id(), " data sent");
         // Return here, _session is only valid if we have a
@@ -45,7 +45,7 @@ namespace detail {
       // try write multiple stream
       std::lock_guard<std::mutex> lock(_mutex);
       if (_sessions.size() > 0) {
-        auto message = Session::MakeMessage(buffers...);
+        auto message = Session::MakeMessage(std::move(buffers)...);
         for (auto &s : _sessions) {
           if (s != nullptr) {
             s->WriteMessage(message);

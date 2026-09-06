@@ -55,6 +55,8 @@ while [[ $# -gt 0 ]]; do
   esac
 done
 
+# 优先使用环境中的Python系统，以便构建的wheel文件与Boost库所匹配的Python版本一致。
+export PATH=/usr/bin:/bin:$PATH
 
 export CC="$UE4_ROOT/Engine/Extras/ThirdPartyNotUE/SDKs/HostLinux/Linux_x64/v17_clang-10.0.1-centos7/x86_64-unknown-linux-gnu/bin/clang"
 export CXX="$UE4_ROOT/Engine/Extras/ThirdPartyNotUE/SDKs/HostLinux/Linux_x64/v17_clang-10.0.1-centos7/x86_64-unknown-linux-gnu/bin/clang++"

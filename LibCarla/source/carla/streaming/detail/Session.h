@@ -28,13 +28,21 @@ namespace detail {
     Session(stream_id_type stream_id = 0) :_stream_id(stream_id) {}
     virtual ~Session() = default;
 
+    static auto AsView(Buffer buffer) {
+      return BufferView::CreateFrom(std::move(buffer));
+    }
+
+    static SharedBufferView AsView(SharedBufferView buffer) {
+      return buffer;
+    }
+
     template <typename... Buffers>
     static auto MakeMessage(Buffers... buffers) {
       // static_assert(
       //     are_same<SharedBufferView, Buffers...>::value,
       //     "This function only accepts arguments of type BufferView.");
-      return std::make_shared<const Message>(buffers...);
-    
+      return std::make_shared<const Message>(AsView(std::move(buffers))...);
+
     }
 
     /// @warning This function should only be called after the session is
@@ -49,7 +57,7 @@ namespace detail {
     /// Writes some data to the socket.
     template <typename... Buffers>
     void Write(Buffers... buffers) {
-      WriteMessage(MakeMessage(buffers...));
+      WriteMessage(MakeMessage(std::move(buffers)...));
     }
 
     /// Post a job to close the session.

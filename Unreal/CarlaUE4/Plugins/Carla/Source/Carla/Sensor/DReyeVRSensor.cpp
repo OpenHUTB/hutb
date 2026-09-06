@@ -104,7 +104,7 @@ void ADReyeVRSensor::PostPhysTick(UWorld *W, ELevelTick TickType, float DeltaSec
 
     /// TODO: refactor this somehow
     /// to see where this is sent, see LibCarla/source/carla/sensor/s11n/DReyeVRSerializer.h
-    Stream.Send(*this,
+    Stream.SerializeAndSend(*this,
                 carla::sensor::s11n::DReyeVRSerializer::Data{
                     Data->GetTimestampCarla(),  // Timestamp of Carla (ms)
                     Data->GetTimestampDevice(), // Timestamp of SRanipal (ms)

@@ -116,13 +116,6 @@ jobs:
                        source ./setEnv64.sh 
                        make CarlaUE4Editor ARGS="--chrono -j$(( $(nproc) / 3 ))"
                     shell: bash
-                    
-                  # # 在执行 make package 之前，动态注入 return 0
-                  # - name: Patch Package.sh to skip bad materials
-                  #   run: |
-                  #      echo "=== 正在动态修改 Package.sh,跳过 cook_tagged_materials ==="
-                  #      sed -i 's/function cook_tagged_materials {/function cook_tagged_materials {\n    return 0/g' Util/BuildTools/Package.sh
-                  #   shell: bash
 
                   # 修复 Content 包中 .uasset 文件的非法材质路径（缺少 /Game/ 根前缀）
                   - name: Fix invalid material paths in RoadRunner assets
@@ -142,7 +135,7 @@ jobs:
                        echo "修复完成。"
                     shell: bash
 
-                  - name: package 
+                  - name: package
                     run: |
                        source /home/ubuntu/miniconda3/etc/profile.d/conda.sh
                        conda activate carla
@@ -153,5 +146,11 @@ jobs:
                        make package ARGS="--chrono"
                     shell: bash 
 
-
+                  # 运行 LibCarla 单元测试（server/client × debug/release）与 Python API 单元测试。
+                  # 依赖 LibCarla 与 PythonAPI 两个 make 目标，首次运行会自动构建（约 30-60 分钟）。
+                  - name: check
+                    run: |
+                       source ./setEnv64.sh
+                       make check ARGS="--chrono"
+                    shell: bash
 
