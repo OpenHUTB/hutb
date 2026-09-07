@@ -93,7 +93,7 @@ PLUGINS_DIR="$PROJECT_ROOT/Unreal/CarlaUE4/Plugins"
 #   |   |-- CoACD.zip
 #   |   `-- libzmq-linux.tar.gz
 #   |-- prerequisites/     # Pre-packaged toolchain
-#   |   `-- Miniconda3-latest-Linux-x86_64.sh
+#   |   `-- Miniconda3-py313_25.11.1-1-Linux-x86_64.sh
 #   |-- src/               # C++ source packages (cross-platform)
 #   |   |-- boost-1_86_0.zip
 #   |   |-- chrono-src.zip
@@ -247,6 +247,25 @@ else
         error "The dependencies_u repo may be incomplete or corrupted."
         exit 1
     fi
+fi
+
+# ==============================================================================
+# -- Step 3b: Miniconda3 --------------------------------------------------------
+# ==============================================================================
+
+MINICONDA_DIR="$DEPENDENCIES_DIR/prerequisites/miniconda3"
+
+if [ ! -d "$MINICONDA_DIR" ]; then
+    log "Unzipping miniconda..."
+    MINICONDA_INSTALLER="$DEPENDENCIES_DIR/prerequisites/Miniconda3-py313_25.11.1-1-Linux-x86_64.sh"
+    if [ -f "$MINICONDA_INSTALLER" ]; then
+        bash "$MINICONDA_INSTALLER" -b -p "$MINICONDA_DIR" >/dev/null 2>&1 || \
+            warn "  miniconda3 extraction failed."
+    else
+        warn "  miniconda3 archive not found: $MINICONDA_INSTALLER"
+    fi
+else
+    log "miniconda3 folder already exists."
 fi
 
 log ""
