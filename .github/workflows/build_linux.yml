@@ -151,6 +151,6 @@ jobs:
                   - name: check
                     run: |
                        source ./setEnv64.sh
-                       make check ARGS="--chrono"
+                       make check
                     shell: bash
 
