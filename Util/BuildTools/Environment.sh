@@ -55,3 +55,30 @@ function move_if_changed {
 }
 
 CARLA_BUILD_CONCURRENCY=`nproc --all`
+
+# ==============================================================================
+# -- Conda env python------------
+# ==============================================================================
+# 在 Linux 上，使用项目中 conda 环境的 Python 解释器
+
+MINICONDA_DIR="${CARLA_BUILD_FOLDER}/dependencies/prerequisites/miniconda3"
+
+function get_conda_env_python {
+  local PY_VERSION="$1"
+  local ENV_MINOR
+
+  if [[ "${PY_VERSION}" == "3" ]]; then
+    # 默认是3.8
+    ENV_MINOR="8"
+  else
+    ENV_MINOR="${PY_VERSION#3.}"
+  fi
+
+  local ENV_PY="${MINICONDA_DIR}/envs/hutb_3.${ENV_MINOR}/bin/python"
+  if [[ ! -x "${ENV_PY}" ]]; then
+    fatal_error "conda env 'hutb_3.${ENV_MINOR}' not found (${ENV_PY}).
+    Run ./setup.sh first, or create it manually with:
+    ${MINICONDA_DIR}/bin/conda create -n hutb_3.${ENV_MINOR} python=3.${ENV_MINOR} --yes"
+  fi
+  echo "${ENV_PY}"
+}
