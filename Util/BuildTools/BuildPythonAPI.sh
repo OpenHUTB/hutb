@@ -107,6 +107,32 @@ if ${BUILD_PYTHONAPI} ; then
     echo "TODO: Installing miniconda with silent mode"
   fi
 
+  # 构建 wheel 前为每个 Python 版本
+  # 准备 conda 环境 hutb_3.14 ~ hutb_3.7（先删旧环境、清理残留目录，
+  # 接受 anaconda 官方源 ToS，再重建）。
+  for PY_VERSION in ${PY_VERSION_LIST[@]} ; do
+    ENV_NAME="hutb_${PY_VERSION}"
+
+    echo "If conda virtual environment ${ENV_NAME} already exists, delete it"
+    "${MINICONDA_DIR}/bin/conda" remove -n "${ENV_NAME}" --all --yes 2>/dev/null || true
+
+    # 清理 conda remove 后可能残留的环境目录，避免重建时报 Permission denied
+    ENV_DIR="$("${MINICONDA_DIR}/bin/conda" env list 2>/dev/null | awk -v n="${ENV_NAME}" '$1==n {print $2}')"
+    if [[ -n "${ENV_DIR}" && -d "${ENV_DIR}" ]] ; then
+      echo "Removing existing conda environment: ${ENV_DIR}"
+      rm -rf "${ENV_DIR}"
+    fi
+
+    # fix: CondaToSNonInteractiveError: Terms of Service have not been accepted for the following channels.
+    # offline resource: https://repo.anaconda.com/pkgs/main/linux-64/
+    "${MINICONDA_DIR}/bin/conda" tos accept --override-channels --channel https://repo.anaconda.com/pkgs/main 2>/dev/null || true
+    "${MINICONDA_DIR}/bin/conda" tos accept --override-channels --channel https://repo.anaconda.com/pkgs/r 2>/dev/null || true
+
+    echo "Creating new conda environment ${ENV_NAME} ..."
+    "${MINICONDA_DIR}/bin/conda" create -n "${ENV_NAME}" python="${PY_VERSION}" --yes || \
+      fatal_error "Failed to create conda env '${ENV_NAME}' (python=${PY_VERSION})."
+  done
+
   # boost 编译产物位于 ${CARLA_BUILD_FOLDER} 下，路径与 Setup.sh 中的
   # BOOST_VERSION / CXX_TAG 保持一致。
   BOOST_VERSION=1.90.0
