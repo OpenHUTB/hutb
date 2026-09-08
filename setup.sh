@@ -322,57 +322,6 @@ fi
 log ""
 
 # ==============================================================================
-# -- Step 5: Python environment ------------------------------------------------
-# ==============================================================================
-# init.sh already installed miniconda3 to Build/dependencies/prerequisites/.
-# Here we create the conda environment and install Python requirements.
-
-log "=============================================="
-log "  Step 5 — Python Environment"
-log "=============================================="
-
-MINICONDA_DIR="$BUILD_DIR/dependencies/prerequisites/miniconda3"
-
-if [ -d "$MINICONDA_DIR" ] && [ -f "$MINICONDA_DIR/bin/conda" ]; then
-    log "Setting up conda environment 'hutb_3.8'..."
-
-    # Create environment if not already present
-    if ! "$MINICONDA_DIR/bin/conda" env list 2>/dev/null | grep -q hutb_3.8; then
-        "$MINICONDA_DIR/bin/conda" create -n hutb_3.8 python=3.8 -y 2>/dev/null || \
-            warn "  Conda env creation failed."
-    fi
-
-    # Install Python requirements
-    if [ -f "$PROJECT_ROOT/requirements.txt" ]; then
-        log "  Installing Python requirements (requirements.txt)..."
-        "$MINICONDA_DIR/envs/hutb_3.8/bin/pip" install -r "$PROJECT_ROOT/requirements.txt" 2>/dev/null || \
-            warn "  pip install failed (non-critical)."
-    fi
-
-    if [ -f "$PROJECT_ROOT/PythonAPI/carla/requirements.txt" ]; then
-        log "  Installing Python requirements (PythonAPI)..."
-        "$MINICONDA_DIR/envs/hutb_3.8/bin/pip" install -r "$PROJECT_ROOT/PythonAPI/carla/requirements.txt" 2>/dev/null || true
-    fi
-
-    success "conda env 'hutb_3.8' ready."
-else
-    # Fallback: system python3 venv
-    VENV_DIR="$BUILD_DIR/venv"
-    if [ ! -d "$VENV_DIR" ] && command -v python3 &>/dev/null; then
-        log "No conda found — creating Python venv as fallback..."
-        python3 -m venv "$VENV_DIR" 2>/dev/null || true
-        if [ -f "$VENV_DIR/bin/pip" ]; then
-            "$VENV_DIR/bin/pip" install --upgrade pip 2>/dev/null || true
-            [ -f "$PROJECT_ROOT/requirements.txt" ] && \
-                "$VENV_DIR/bin/pip" install -r "$PROJECT_ROOT/requirements.txt" 2>/dev/null || true
-        fi
-        success "Python venv created at $VENV_DIR"
-    fi
-fi
-
-log ""
-
-# ==============================================================================
 # -- Step 6: Build C++ dependencies --------------------------------------------
 # ==============================================================================
 
