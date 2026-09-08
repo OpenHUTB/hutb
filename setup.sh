@@ -252,6 +252,26 @@ fi
 log ""
 
 # ==============================================================================
+# -- Step 3b: Miniconda3 --------------------------------------------------------
+# ==============================================================================
+MINICONDA_DIR="$DEPENDENCIES_DIR/prerequisites/miniconda3"
+
+if [ ! -d "$MINICONDA_DIR" ]; then
+    log "Unzipping miniconda..."
+    MINICONDA_INSTALLER="$DEPENDENCIES_DIR/prerequisites/Miniconda3-py313_25.11.1-1-Linux-x86_64.sh"
+    if [ -f "$MINICONDA_INSTALLER" ]; then
+        bash "$MINICONDA_INSTALLER" -b -p "$MINICONDA_DIR" >/dev/null 2>&1 || \
+            warn "  miniconda3 extraction failed."
+    else
+        warn "  miniconda3 archive not found: $MINICONDA_INSTALLER"
+    fi
+else
+    log "miniconda3 folder already exists."
+fi
+
+log ""
+
+# ==============================================================================
 # -- Step 4: System packages via apt -------------------------------------------
 # ==============================================================================
 
