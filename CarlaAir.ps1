@@ -149,6 +149,25 @@ function Resolve-CarlaBinary {
         }
     }
 
+    $editorCandidates = @()
+    if ($env:UE4_ROOT) {
+        $p = Join-Path $env:UE4_ROOT "Engine\Binaries\Win64\UE4Editor.exe"
+        if (Test-Path $p) { $editorCandidates += $p }
+    }
+    $defaultEditor = "E:\Projects\hutb_editor\hutb_editor\unreal\Engine\Binaries\Win64\UE4Editor.exe"
+    if (Test-Path $defaultEditor) { $editorCandidates += $defaultEditor }
+
+    $uproject = Join-Path $RepoRoot "Unreal\CarlaUE4\CarlaUE4.uproject"
+    if (($editorCandidates.Count -gt 0) -and (Test-Path $uproject)) {
+        return @{
+            Binary = (Resolve-Path $editorCandidates[0]).Path
+            WorkingDirectory = Split-Path -Parent $uproject
+            NeedsProjectArg = $false
+            IsEditor = $true
+            ProjectFile = (Resolve-Path $uproject).Path
+        }
+    }
+
     throw "No Windows Carla binary found. Build the project first with .\BuildWindows.ps1."
 }
 
@@ -300,10 +319,16 @@ Copy-Item $airsimSettingsSource $airsimSettingsTarget -Force
 Stop-CarlaAirProcess -RepoRoot $repoRoot
 
 $launchArgs = New-Object System.Collections.Generic.List[string]
-if ($binaryInfo.NeedsProjectArg) {
+if ($binaryInfo.IsEditor) {
+    $launchArgs.Add("`"$($binaryInfo.ProjectFile)`"")
+    $launchArgs.Add($mapName)
+    $launchArgs.Add("-game")
+} elseif ($binaryInfo.NeedsProjectArg) {
     $launchArgs.Add("CarlaUE4")
+    $launchArgs.Add($mapName)
+} else {
+    $launchArgs.Add($mapName)
 }
-$launchArgs.Add($mapName)
 $launchArgs.Add("-windowed")
 $launchArgs.Add("-ResX=$resX")
 $launchArgs.Add("-ResY=$resY")
@@ -344,7 +369,8 @@ Set-Content -Path $pidFile -Value $process.Id
 
 Write-Host "Waiting for CARLA port..."
 $carlaReady = $false
-for ($attempt = 0; $attempt -lt 120; $attempt++) {
+$maxAttemptsCarla = if ($binaryInfo.IsEditor) { 900 } else { 120 }
+for ($attempt = 0; $attempt -lt $maxAttemptsCarla; $attempt++) {
     Start-Sleep -Seconds 2
     if ($process.HasExited) {
         throw "CarlaAir exited early. Check $logFile"
@@ -354,19 +380,26 @@ for ($attempt = 0; $attempt -lt 120; $attempt++) {
         $carlaReady = $true
         break
     }
+    if ($attempt % 10 -eq 0 -and $attempt -gt 0) {
+        Write-Host "  Still waiting for CARLA port ($($attempt * 2)s / $($maxAttemptsCarla * 2)s)..."
+    }
 }
 if (-not $carlaReady) {
-    throw "CARLA port $carlaPort did not become ready within 240 seconds. Check $logFile"
+    throw "CARLA port $carlaPort did not become ready within $($maxAttemptsCarla * 2) seconds. Check $logFile"
 }
 
 Write-Host "Waiting for AirSim port..."
 $airsimReady = $false
-for ($attempt = 0; $attempt -lt 60; $attempt++) {
+$maxAttemptsAirSim = if ($binaryInfo.IsEditor) { 300 } else { 60 }
+for ($attempt = 0; $attempt -lt $maxAttemptsAirSim; $attempt++) {
     Start-Sleep -Seconds 2
     if (Test-Port -Port $airsimPort) {
         Write-Host "  AirSim (port $airsimPort): Ready"
         $airsimReady = $true
         break
+    }
+    if ($attempt % 10 -eq 0 -and $attempt -gt 0) {
+        Write-Host "  Still waiting for AirSim port ($($attempt * 2)s / $($maxAttemptsAirSim * 2)s)..."
     }
 }
 if (-not $airsimReady) {
@@ -377,8 +410,12 @@ if ($autoTraffic) {
     if (($trafficVehicles -eq 0) -and ($trafficWalkers -eq 0)) {
         Write-Host "Traffic disabled by count (0 vehicles + 0 walkers)."
     } elseif ($trafficPython) {
+        $autoTrafficScript = Join-Path $repoRoot "PythonAPI\examples\air\auto_traffic.py"
+        if (-not (Test-Path $autoTrafficScript)) {
+            $autoTrafficScript = Join-Path $repoRoot "auto_traffic.py"
+        }
         $trafficArgs = @(
-            (Join-Path $repoRoot "auto_traffic.py"),
+            $autoTrafficScript,
             "--vehicles", [string]$trafficVehicles,
             "--walkers", [string]$trafficWalkers,
             "--port", [string]$carlaPort
@@ -394,3 +431,7 @@ if ($autoTraffic) {
 Write-Host ""
 Write-Host "CarlaAir is ready."
 Write-Host "Log: $logFile"
+
+if (-not $foreground) {
+    Wait-Process -Id $process.Id
+}

@@ -81,3 +81,8 @@ profiler.csv
 devcontainer.json
 CarlaUE4.xcworkspace
 OptionalModules.ini
+CesiumForUnreal*
+Unreal/CarlaUE4/Plugins/AirSim/Binaries/
+Unreal/CarlaUE4/Plugins/AirSim/Intermediate/
+Unreal/CarlaUE4/Plugins/AirSim/AirLib/lib/
+Unreal/CarlaUE4/Plugins/AirSim/Source/AirLib/lib/
