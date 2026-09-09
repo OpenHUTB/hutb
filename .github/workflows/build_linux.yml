@@ -76,6 +76,7 @@ jobs:
                        # Clean leftover source dirs from previous runs (avoid conflict with make setup)
                        rm -rf Build/*-source Build/*-src 2>/dev/null || true
 
+                       ./setup.sh
                        make setup ARGS="--chrono"
                     shell: bash
                  
