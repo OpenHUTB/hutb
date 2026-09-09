@@ -7,18 +7,30 @@
 #
 #     git@git.code.tencent.com:OpenHUTB/dependencies_u.git
 #
-# The repo contains Linux-compatible builds of every package AND an init.sh
-# script that handles extraction.  This setup.sh only orchestrates:
+# The repo contains Linux-compatible builds of every package (plugins,
+# installers and C++ source packages).  This setup.sh only orchestrates:
 #
 #   1. Ensure system tools (git, curl, 7z, gcc, etc.)
 #   2. Clone dependencies_u  →  Build/dependencies/
-#   3. Run init.sh            →  extract everything to the right places
-#   4. Install system packages via apt
-#   5. Set up Python environment (conda or venv)
+#   3. Extract UE4 plugins + UnrealRoboticsLab third-party deps
+#   4. Install miniconda3 from the dependencies_u installer
+#   5. Install system packages via apt
 #   6. Optionally invoke Util/BuildTools/Setup.sh for the full C++ build
 #
+# Note: the conda envs hutb_3.14 ~ hutb_3.7 are created on demand by
+# Util/BuildTools/BuildPythonAPI.sh before building the Python wheels.
+#
+# setup.bat 的 Windows 专属步骤有意不移植（Linux 替代方案见相应注释）：
+#   便携 git 下载 / DirectX / vcvars64 / CMake、dotnet、GnuWin32 压缩包
+#   → 由 apt 提供（Step 0 / Step 5）
+#   src/*.zip 源码包预解压到 Build/
+#   → Linux 的 Util/BuildTools/Setup.sh 自行下载源码并编译后清理，预解压会被删除
+#
 # Usage:
-#   ./setup.sh [--skip-prerequisites] [--download-only] [--help]
+#   ./setup.sh [-h] [-s|--skip-prerequisites] [-i|--interactive]
+#              [-g|--generate-project-files] [-l|--launch]
+#              [-d|--direct-launch] [-p|--package]
+#              [--python-root=PATH] [--download-only]
 # ==============================================================================
 
 set -e
@@ -30,19 +42,46 @@ set -e
 DOC_STRING="Download and install all dependencies and UE4 plugins for Ubuntu.
 All packages come from the dependencies_u repository (Linux builds)."
 
-USAGE_STRING="Usage: $0 [--skip-prerequisites] [--download-only] [--help]"
+USAGE_STRING="Usage: $0 [-h] [-s|--skip-prerequisites] [-i|--interactive]
+              [-g|--generate-project-files] [-l|--launch] [-d|--direct-launch]
+              [-p|--package] [--python-root=PATH] [--download-only]"
 
 SKIP_PREREQUISITES=false
 DOWNLOAD_ONLY=false
+LAUNCH=false
+DIRECT_LAUNCH=false
+GENERATE_PROJECT_FILES=false
+PACKAGE=false
+INTERACTIVE=false
+PYTHON_ROOT=
 
-OPTS=$(getopt -o h --long help,skip-prerequisites,download-only -n 'parse-options' -- "$@")
+OPTS=$(getopt -o hisgldp --long help,interactive,skip-prerequisites,generate-project-files,launch,direct-launch,package,python-root:,pyroot:,download-only -n 'parse-options' -- "$@")
 eval set -- "$OPTS"
 
 while [[ $# -gt 0 ]]; do
   case "$1" in
-    --skip-prerequisites )
+    -s | --skip-prerequisites )
       SKIP_PREREQUISITES=true
       shift ;;
+    -i | --interactive )
+      # setup.bat 中仅设置未消费，Linux 同样只接受不处理
+      INTERACTIVE=true
+      shift ;;
+    -g | --generate-project-files )
+      GENERATE_PROJECT_FILES=true
+      shift ;;
+    -l | --launch )
+      LAUNCH=true
+      shift ;;
+    -d | --direct-launch )
+      DIRECT_LAUNCH=true
+      shift ;;
+    -p | --package )
+      PACKAGE=true
+      shift ;;
+    --python-root | --pyroot )
+      PYTHON_ROOT="$2"
+      shift 2 ;;
     --download-only )
       DOWNLOAD_ONLY=true
       shift ;;
@@ -55,6 +94,9 @@ while [[ $# -gt 0 ]]; do
       shift ;;
   esac
 done
+
+# setup.bat 用 --python-root 给 install_prerequisites.bat 指定 Python 路径；
+# Linux 的系统依赖走 apt（Step 5），该参数仅保留以兼容命令行，不实际使用。
 
 # ==============================================================================
 # -- Color helpers --------------------------------------------------------------
@@ -89,9 +131,10 @@ PLUGINS_DIR="$PROJECT_ROOT/Unreal/CarlaUE4/Plugins"
 #   |-- Plugins/           # UE4 plugins + third-party runtime libs
 #   |   |-- RoadRunner_Plugins.zip
 #   |   |-- CesiumForUnreal-426-v1.18.0-ue4.zip
-#   |   |-- mujoco-3.3.5-linux-x86_64.tar.gz
+#   |   |-- mujoco-3.7.0-linux-x86_64.tar.gz
 #   |   |-- CoACD.zip
-#   |   `-- libzmq-linux.tar.gz
+#   |   |-- glTFForUE4.zip
+#   |   `-- libzmq-linux.zip
 #   |-- prerequisites/     # Pre-packaged toolchain
 #   |   `-- Miniconda3-py313_25.11.1-1-Linux-x86_64.sh
 #   |-- src/               # C++ source packages (cross-platform)
@@ -100,7 +143,6 @@ PLUGINS_DIR="$PROJECT_ROOT/Unreal/CarlaUE4/Plugins"
 #   |   |-- eigen-3.3.7.zip
 #   |   |-- ... (13 packages total)
 #   |   `-- zlib-source.zip
-#   |-- init.sh            # Extraction / initialization script
 #   |-- .gitattributes     # LFS tracking rules
 #   `-- README.md
 # ------------------------------------------------------------------------------
@@ -113,6 +155,51 @@ DEPENDENCIES_DIR="$BUILD_DIR/dependencies"
 
 URLAB_DIR="$PLUGINS_DIR/UnrealRoboticsLab"
 URLAB_THIRD_PARTY="$URLAB_DIR/third_party/install"
+
+# ------------------------------------------------------------------------------
+# Mirrors setup.bat: prepend prerequisite tool dirs to PATH.
+# Windows 的 CMake/dotnet/GnuWin32 在 Linux 上由 apt 提供（Step 0/Step 5），
+# 这里只前置 miniconda 相关目录（目录存在才加，避免 PATH 里出现死路径）。
+# ------------------------------------------------------------------------------
+for p in \
+    "Build/dependencies/prerequisites/miniconda3/bin" \
+    "Build/dependencies/prerequisites/miniconda3/envs/hutb_3.8/bin" ; do
+    if [ -d "$PROJECT_ROOT/$p" ]; then
+        export PATH="$PROJECT_ROOT/$p:$PATH"
+        log "Prepended to PATH: $PROJECT_ROOT/$p"
+    fi
+done
+
+# ==============================================================================
+# -- Mirrors setup.bat :main: -g 生成工程文件 / -d 直接启动编辑器 ----------------
+# ==============================================================================
+
+if [ "$GENERATE_PROJECT_FILES" = true ]; then
+    log "Generating project files..."
+    if [ -z "${UE4_ROOT:-}" ]; then
+        error "UE4_ROOT is not set — run 'source ./setEnv64.sh' first."
+    fi
+    # 
+    "$UE4_ROOT/GenerateProjectFiles.sh" \
+        -project="$PROJECT_ROOT/Unreal/CarlaUE4/CarlaUE4.uproject" -game -engine -progress || \
+        error "GenerateProjectFiles.sh failed."
+fi
+
+# 跳过所有安装步骤，直接启动编辑器
+if [ "$DIRECT_LAUNCH" = true ]; then
+    log "Directly launching Unreal Editor, log to launch.log..."
+    if [ -z "${UE4_ROOT:-}" ]; then
+        error "UE4_ROOT is not set — run 'source ./setEnv64.sh' first."
+    fi
+    UE4_EDITOR="$UE4_ROOT/Engine/Binaries/Linux/UE4Editor"
+    UPROJECT="$PROJECT_ROOT/Unreal/CarlaUE4/CarlaUE4.uproject"
+    if [ ! -f "$UE4_EDITOR" ]; then
+        error "UE4Editor not found at $UE4_EDITOR, please check if the build step is finished and the file exists."
+    fi
+    log "Found UE4Editor at $UE4_EDITOR, launching..."
+    nohup "$UE4_EDITOR" "$UPROJECT" >launch.log 2>&1 &
+    exit 0
+fi
 
 # ==============================================================================
 # -- Banner --------------------------------------------------------------------
@@ -147,14 +234,22 @@ done
 
 if [ ${#MISSING_TOOLS[@]} -gt 0 ]; then
     warn "Installing missing tools: ${MISSING_TOOLS[*]}"
-    sudo apt-get update -qq
-    sudo apt-get install -y -qq "${MISSING_TOOLS[@]}"
+    if sudo -n true 2>/dev/null; then
+        sudo apt-get update -qq
+        sudo apt-get install -y -qq "${MISSING_TOOLS[@]}"
+    else
+        warn "  sudo 不可用（需要密码）— 请手动执行: sudo apt-get install ${MISSING_TOOLS[*]}"
+    fi
 fi
 
 # 7z — used extensively in .bat for extracting archives
 if ! command -v 7z &>/dev/null; then
     log "Installing p7zip-full..."
-    sudo apt-get install -y -qq p7zip-full
+    if sudo -n true 2>/dev/null; then
+        sudo apt-get install -y -qq p7zip-full
+    else
+        warn "  sudo 不可用（需要密码）— 请手动执行: sudo apt-get install p7zip-full"
+    fi
 fi
 
 success "Essential tools ready."
@@ -190,6 +285,7 @@ export GIT_LFS_SKIP_SMUDGE=1
 
 if [ ! -d "$DEPENDENCIES_DIR" ]; then
     log "Cloning $DEPENDENCIES_REPO ..."
+    # 这里使用 pushd "$BUILD_DIR" 是为了让 dependencies_u 仓库直接克隆到 Build/dependencies/ 下，而不是 Build/ 下。
     pushd "$BUILD_DIR" >/dev/null
 
     git clone "$DEPENDENCIES_REPO" dependencies 2>/dev/null || {
@@ -222,38 +318,93 @@ fi
 log ""
 
 # ==============================================================================
-# -- Step 3: Run dependencies_u/init.sh ----------------------------------------
+# -- Step 3: Extract UE4 plugins + third-party deps -----------------------------
 # ==============================================================================
-# All extraction / initialization logic lives inside the dependencies_u repo.
-# setup.sh only orchestrates — init.sh does the actual work of unzipping
-# plugins, extracting source packages, installing miniconda3, etc.
+# Mirrors setup.bat 的 "Unzip Plugins" + "UnrealRoboticsLab dependencies" 段，
+# 提取逻辑与 CI 工作流保持一致（含符号链接修正与 CoACD 目录嵌套修正）。
+#
+#   - DirectX / DirectX_Runtime / 7zip / CMake / dotnet / git / GnuWin32 压缩包
+#     → Linux 由 apt 提供（Step 0 / Step 5）
+#   - src/*.zip 源码包解压到 Build/
+#     → Linux 的 Util/BuildTools/Setup.sh 会自行下载源码并在编译后清理，
+#       预解压反而会被 Setup.sh 内部的 rm -Rf *-source 删掉
 
-if [ ! -d "$DEPENDENCIES_DIR" ]; then
-    warn "dependencies_u not available — skipping extraction."
-else
+if [ -d "$DEPENDENCIES_DIR" ]; then
     log "=============================================="
-    log "  Step 3 — Run dependencies_u/init.sh"
+    log "  Step 3 — Extract UE4 plugins"
     log "=============================================="
 
-    INIT_SCRIPT="$DEPENDENCIES_DIR/init.sh"
-    if [ -f "$INIT_SCRIPT" ]; then
-        log "Delegating to $INIT_SCRIPT ..."
-        log ""
-        bash "$INIT_SCRIPT" "$PROJECT_ROOT"
-        success "dependencies_u initialization complete."
+    # --- RoadRunner / Cesium / glTFForUE4 插件（目标目录已存在则跳过）---
+    if [ ! -d "$PLUGINS_DIR/RoadRunnerRuntime" ]; then
+        log "Unzipping RoadRunner Plugins ..."
+        7z x "$DEPENDENCIES_DIR/Plugins/RoadRunner_Plugins.zip" -o"$PLUGINS_DIR/" -y >/dev/null || \
+            warn "  RoadRunner_Plugins.zip 解压失败"
     else
-        error "init.sh not found in dependencies_u!"
-        error "Expected at: $INIT_SCRIPT"
-        error "The dependencies_u repo may be incomplete or corrupted."
-        exit 1
+        log "RoadRunner Plugins already exists."
     fi
+
+    if [ ! -d "$PLUGINS_DIR/CesiumForUnreal" ]; then
+        log "Unzipping CesiumForUnreal Plugin ..."
+        7z x "$DEPENDENCIES_DIR/Plugins/CesiumForUnreal-426-v1.18.0-ue4.zip" -o"$PLUGINS_DIR/" -y >/dev/null || \
+            warn "  CesiumForUnreal 解压失败"
+    else
+        log "CesiumForUnreal Plugin already exists."
+    fi
+
+    if [ ! -d "$PLUGINS_DIR/glTFForUE4" ]; then
+        log "Unzipping glTFForUE4 Plugin ..."
+        7z x "$DEPENDENCIES_DIR/Plugins/glTFForUE4.zip" -o"$PLUGINS_DIR/" -y >/dev/null || \
+            warn "  glTFForUE4.zip 解压失败"
+    else
+        log "glTFForUE4 Plugin already exists."
+    fi
+
+    # --- UnrealRoboticsLab 第三方依赖 ---
+    log "Initial UnrealRoboticsLab dependencies..."
+    if [ ! -d "$URLAB_THIRD_PARTY" ]; then
+        mkdir -p "$URLAB_THIRD_PARTY/MuJoCo"
+        tar -xzf "$DEPENDENCIES_DIR/Plugins/mujoco-3.7.0-linux-x86_64.tar.gz" \
+            -C "$URLAB_THIRD_PARTY/MuJoCo" --strip-components=1 2>/dev/null || \
+            warn "  mujoco 解压失败"
+        unzip -qo "$DEPENDENCIES_DIR/Plugins/CoACD.zip" -d "$URLAB_THIRD_PARTY" 2>/dev/null || \
+            warn "  CoACD.zip 解压失败"
+        unzip -qo "$DEPENDENCIES_DIR/Plugins/libzmq-linux.zip" -d "$URLAB_THIRD_PARTY" 2>/dev/null || \
+            warn "  libzmq-linux.zip 解压失败"
+    else
+        log "Found UnrealRoboticsLab dependencies at $URLAB_THIRD_PARTY."
+    fi
+
+    # --- 幂等修正（与 CI 工作流一致）---
+    # mujoco 符号链接 → 真实文件（打包时要求真实 .so）
+    MUJOCO_LIB="$URLAB_THIRD_PARTY/MuJoCo/lib"
+    if [ -L "$MUJOCO_LIB/libmujoco.so" ]; then
+        REAL=$(readlink -f "$MUJOCO_LIB/libmujoco.so")
+        rm "$MUJOCO_LIB/libmujoco.so" && cp "$REAL" "$MUJOCO_LIB/libmujoco.so"
+    fi
+    # CoACD 目录嵌套修正: CoACD/CoACD/include -> CoACD/include
+    if [ -d "$URLAB_THIRD_PARTY/CoACD/CoACD/include" ] && [ ! -d "$URLAB_THIRD_PARTY/CoACD/include" ]; then
+        mv "$URLAB_THIRD_PARTY/CoACD/CoACD/include" "$URLAB_THIRD_PARTY/CoACD/include"
+    fi
+    # libzmq 符号链接 → 真实 .so
+    ZMQ_LIB="$URLAB_THIRD_PARTY/libzmq/lib"
+    if [ -L "$ZMQ_LIB/libzmq.so" ]; then
+        REAL=$(readlink -f "$ZMQ_LIB/libzmq.so")
+        rm "$ZMQ_LIB/libzmq.so" "$ZMQ_LIB/libzmq.so.5" 2>/dev/null || true
+        cp "$REAL" "$ZMQ_LIB/" && mv "$ZMQ_LIB/$(basename "$REAL")" "$ZMQ_LIB/libzmq.so"
+    fi
+
+    success "UE4 plugins extracted."
+else
+    warn "dependencies_u not available — skipping plugin extraction."
 fi
 
 log ""
 
 # ==============================================================================
-# -- Step 3b: Miniconda3 --------------------------------------------------------
+# -- Step 4: Miniconda3 ----------------------------------------------------------
 # ==============================================================================
+# dependencies_u 已不再提供 init.sh，插件解压由上面的 Step 3 完成。
+# 这里只负责安装 miniconda3 本体，供 BuildPythonAPI.sh 创建 hutb_3.X 环境。
 MINICONDA_DIR="$DEPENDENCIES_DIR/prerequisites/miniconda3"
 
 if [ ! -d "$MINICONDA_DIR" ]; then
@@ -272,49 +423,56 @@ fi
 log ""
 
 # ==============================================================================
-# -- Step 4: System packages via apt -------------------------------------------
+# -- Step 5: System packages via apt -------------------------------------------
 # ==============================================================================
 
 if [ "$SKIP_PREREQUISITES" = false ]; then
     log "=============================================="
-    log "  Step 4 — System Prerequisites (apt)"
+    log "  Step 5 — System Prerequisites (apt)"
     log "=============================================="
 
-    log "Installing build dependencies..."
-    sudo apt-get update -qq
+    # CI runner / 无终端环境下 sudo 可能需要密码：先探测免密 sudo，
+    # 不可用则跳过本步骤（warn 提示手动安装），不让整个 setup 失败。
+    if sudo -n true 2>/dev/null; then
+        log "Installing build dependencies..."
+        sudo apt-get update -qq
 
-    sudo apt-get install -y -qq \
-        build-essential \
-        clang-10 \
-        libc++-dev \
-        libc++abi-dev \
-        ninja-build \
-        python3 \
-        python3-dev \
-        python3-pip \
-        python3-venv \
-        libomp-dev \
-        libssl-dev \
-        libncurses5 \
-        libncurses5-dev \
-        libsdl2-dev \
-        libtiff5-dev \
-        libjpeg-dev \
-        libcurl4-openssl-dev \
-        libzmq3-dev \
-        doxygen \
-        patchelf \
-        libxml2-dev \
-        libicu-dev \
-        2>/dev/null || warn "Some apt packages may have failed to install."
+        sudo apt-get install -y -qq \
+            build-essential \
+            clang-10 \
+            libc++-dev \
+            libc++abi-dev \
+            ninja-build \
+            python3 \
+            python3-dev \
+            python3-pip \
+            python3-venv \
+            libomp-dev \
+            libssl-dev \
+            libncurses5 \
+            libncurses5-dev \
+            libsdl2-dev \
+            libtiff5-dev \
+            libjpeg-dev \
+            libcurl4-openssl-dev \
+            libzmq3-dev \
+            doxygen \
+            patchelf \
+            libxml2-dev \
+            libicu-dev \
+            2>/dev/null || warn "Some apt packages may have failed to install."
 
-    # clang-10 may not exist on newer Ubuntu (e.g. 24.04); fall back to clang
-    if ! command -v clang-10 &>/dev/null && ! command -v clang &>/dev/null; then
-        warn "clang not found — installing clang..."
-        sudo apt-get install -y -qq clang
+        # clang-10 may not exist on newer Ubuntu (e.g. 24.04); fall back to clang
+        if ! command -v clang-10 &>/dev/null && ! command -v clang &>/dev/null; then
+            warn "clang not found — installing clang..."
+            sudo apt-get install -y -qq clang
+        fi
+
+        success "System prerequisites installed."
+    else
+        warn "sudo 不可用（需要密码）— 跳过 apt 安装。"
+        warn "  请手动安装本步骤列出的依赖，或在交互终端中用 sudo 重跑本脚本。"
     fi
-
-    success "System prerequisites installed."
 else
     log "Skipping system prerequisites (--skip-prerequisites)."
 fi
@@ -346,6 +504,20 @@ else
 fi
 
 log ""
+
+# ==============================================================================
+# -- Mirrors setup.bat: optional post-actions ----------------------------------
+# ==============================================================================
+
+if [ "$LAUNCH" = true ]; then
+    log "Launching Unreal Editor, log to launch.log..."
+    make launch ARGS="--chrono" >launch.log 2>&1 || warn "make launch reported errors."
+fi
+
+if [ "$PACKAGE" = true ]; then
+    log "Packaging HUTB, log to package.log..."
+    make package ARGS="--chrono" >package.log 2>&1 || warn "make package reported errors."
+fi
 
 # ==============================================================================
 # -- Summary -------------------------------------------------------------------

@@ -31,52 +31,13 @@ jobs:
                        source ./setEnv64.sh
                        git update-index --skip-worktree Unreal/CarlaUE4/CarlaUE4.uproject
 
-                       # Clone dependencies_u (only for UE4 plugins, not source pkgs)
-                       echo "=== Cloning dependencies_u for plugins ==="
-                       GIT_LFS_SKIP_SMUDGE=1 git clone \
-                         "https://OpenHUTB:T8w6TYB_r71gGTP3A02B@git.code.tencent.com/OpenHUTB/dependencies_u.git" \
-                         Build/dependencies 2>/dev/null || true
-                       if [ -d Build/dependencies ]; then
-                         cd Build/dependencies && git lfs pull && cd ../..
-                         # Extract plugins
-                         7z x Build/dependencies/Plugins/RoadRunner_Plugins.zip -o"Unreal/CarlaUE4/Plugins/" -y
-                         7z x Build/dependencies/Plugins/CesiumForUnreal-426-v1.18.0-ue4.zip -o"Unreal/CarlaUE4/Plugins/" -y
-
-                         # UnrealRoboticsLab third-party deps
-                         mkdir -p Unreal/CarlaUE4/Plugins/UnrealRoboticsLab/third_party/install
-                         mkdir -p Unreal/CarlaUE4/Plugins/UnrealRoboticsLab/third_party/install/MuJoCo
-                         tar -xzf Build/dependencies/Plugins/mujoco-3.7.0-linux-x86_64.tar.gz -C Unreal/CarlaUE4/Plugins/UnrealRoboticsLab/third_party/install/MuJoCo --strip-components=1 2>/dev/null || true
-
-                        # Replace symlinks with real files for staging
-                        MUJOCO_LIB=Unreal/CarlaUE4/Plugins/UnrealRoboticsLab/third_party/install/MuJoCo/lib
-                        if [ -L "$MUJOCO_LIB/libmujoco.so" ]; then
-                          REAL=$(readlink -f "$MUJOCO_LIB/libmujoco.so")
-                          rm "$MUJOCO_LIB/libmujoco.so" && cp "$REAL" "$MUJOCO_LIB/libmujoco.so"
-                        fi
-                         mkdir -p Unreal/CarlaUE4/Plugins/UnrealRoboticsLab/third_party/install/CoACD
-                         unzip -qo Build/dependencies/Plugins/CoACD.zip -d Unreal/CarlaUE4/Plugins/UnrealRoboticsLab/third_party/install/CoACD 2>/dev/null || true
-
-                        # Fix CoACD directory nesting: move CoACD/CoACD/include -> CoACD/include
-                        if [ -d Unreal/CarlaUE4/Plugins/UnrealRoboticsLab/third_party/install/CoACD/CoACD/include ] && [ ! -d Unreal/CarlaUE4/Plugins/UnrealRoboticsLab/third_party/install/CoACD/include ]; then
-                          mv Unreal/CarlaUE4/Plugins/UnrealRoboticsLab/third_party/install/CoACD/CoACD/include Unreal/CarlaUE4/Plugins/UnrealRoboticsLab/third_party/install/CoACD/include
-                        fi
-                         mkdir -p Unreal/CarlaUE4/Plugins/UnrealRoboticsLab/third_party/install/libzmq
-                         unzip -qo Build/dependencies/Plugins/libzmq-linux.zip -d Unreal/CarlaUE4/Plugins/UnrealRoboticsLab/third_party/install/
-
-                        # Resolve symlinks for libzmq by copying the real .so in place
-                        ZMQ_LIB=Unreal/CarlaUE4/Plugins/UnrealRoboticsLab/third_party/install/libzmq/lib
-                        if [ -L "$ZMQ_LIB/libzmq.so" ]; then
-                          REAL=$(readlink -f "$ZMQ_LIB/libzmq.so")
-                          rm "$ZMQ_LIB/libzmq.so" "$ZMQ_LIB/libzmq.so.5" 2>/dev/null || true
-                          cp "$REAL" "$ZMQ_LIB/" && mv "$ZMQ_LIB/$(basename "$REAL")" "$ZMQ_LIB/libzmq.so"
-                        fi
-                         echo "=== Plugins extracted ==="
-                       fi
-
                        # Clean leftover source dirs from previous runs (avoid conflict with make setup)
                        rm -rf Build/*-source Build/*-src 2>/dev/null || true
 
+                       # setup.sh 负责 clone dependencies_u、解压 UE4 插件与
+                       #  UnrealRoboticsLab 三方依赖、安装 miniconda3、apt 依赖并编译 C++ 依赖
                        ./setup.sh
+
                        make setup ARGS="--chrono"
                     shell: bash
                  
@@ -138,9 +99,6 @@ jobs:
 
                   - name: package
                     run: |
-                       source /home/ubuntu/miniconda3/etc/profile.d/conda.sh
-                       conda activate carla
-
                        source ./setEnv64.sh
 
                        export MaxProcessorCount=$(( $(nproc) / 3 ))
