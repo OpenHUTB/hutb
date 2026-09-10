@@ -141,7 +141,8 @@ BOOST_LIBPATH=${PWD}/${BOOST_BASENAME}-install/lib
 
 for PY_VERSION in ${PY_VERSION_LIST[@]} ; do
   SHOULD_BUILD_BOOST=true
-  PYTHON_VERSION=$(/usr/bin/env python${PY_VERSION} -V 2>&1)
+  CONDA_PY=$(get_conda_env_python ${PY_VERSION})
+  export PATH="$(dirname ${CONDA_PY}):${PATH}"
   LIB_NAME=$(cut -d . -f 1,2 <<< "$PYTHON_VERSION" | tr -d .)
   LIB_NAME=${LIB_NAME:7}
   if [[ -d "${BOOST_BASENAME}-install" ]] ; then
@@ -190,7 +191,7 @@ for PY_VERSION in ${PY_VERSION_LIST[@]} ; do
     # BOOST_TOOLSET="gcc"
     BOOST_CFLAGS="-fPIC -std=c++14 -DBOOST_ERROR_CODE_HEADER_ONLY"
 
-    py3="/usr/bin/env python${PY_VERSION}"
+    py3="${CONDA_PY}"
     py3_root=`${py3} -c "import sysconfig; print(sysconfig.get_config_var('prefix'))"`
     py3_include=$(${py3} -c "from sysconfig import get_paths as gp; print(gp()['include'])")
     py3_lib=$(${py3} -c "from sysconfig import get_paths as gp; print(gp()['stdlib'])")
