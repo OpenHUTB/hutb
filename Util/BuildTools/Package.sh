@@ -324,12 +324,23 @@ if ${DO_CARLA_RELEASE} ; then
   copy_if_changed "./PythonAPI/examples/requirements.txt" "${DESTINATION}/PythonAPI/examples/"
   copy_if_changed "./PythonAPI/examples/nvidia/" "${DESTINATION}/PythonAPI/examples/nvidia"
   copy_if_changed "./PythonAPI/examples/ros2/" "${DESTINATION}/PythonAPI/examples/ros2"
+  if [ -d "./PythonAPI/examples/air" ] ; then
+    copy_if_changed "./PythonAPI/examples/air/" "${DESTINATION}/PythonAPI/examples/air"
+  fi
 
   copy_if_changed "./PythonAPI/util/*.py" "${DESTINATION}/PythonAPI/util/"
   copy_if_changed "./PythonAPI/util/opendrive/" "${DESTINATION}/PythonAPI/util/opendrive/"
   copy_if_changed "./PythonAPI/util/requirements.txt" "${DESTINATION}/PythonAPI/util/"
 
   copy_if_changed "./Co-Simulation/" "${DESTINATION}/Co-Simulation/"
+
+  if [ -d "./AirSimConfig" ] ; then
+    copy_if_changed "./AirSimConfig/" "${DESTINATION}/AirSimConfig"
+  fi
+
+  if [ -f "./CarlaAir.ps1" ] ; then
+    copy_if_changed "./CarlaAir.ps1" "${DESTINATION}/CarlaAir.ps1"
+  fi
 
   if [ -d "./Plugins/" ] ; then
     copy_if_changed "./Plugins/" "${DESTINATION}/Plugins/"
