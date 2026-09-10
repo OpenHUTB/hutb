@@ -1,10 +1,48 @@
+<#
+.SYNOPSIS
+    CarlaAir 联合仿真一键启动与自动化调试器 (Windows Launcher)
+
+.DESCRIPTION
+    本脚本是面向开发者在本地开发与算法调试阶段的一键启动工具，用于自动化拉起 CARLA 与 AirSim 联合仿真环境。
+
+    【与 StartOpenHUTB.bat / CarlaUE4.exe 的区别与工作流定位】：
+    - StartOpenHUTB.bat / CarlaUE4.exe：
+      面向最终发布/打包（Package）版本用户的标准启动方式。主要用于部署后直接运行打包好的二进制文件，并自动检查 VC++ 运行库。
+    - CarlaAir.ps1：
+      面向开发人员与算法测试人员的 PowerShell 自动化启动脚本。具备以下高级特性：
+      1. 自动定位本地 Carla 可执行文件（支持 Editor 模式、开发构建与 WindowsNoEditor 打包模式）；
+      2. 灵活指定仿真地图（默认 Town10HD）、窗口分辨率、画质等级；
+      3. 支持载具视角快速切换（通过 --vehicle 参数在空中无人机 drone 与水下机器人 rov 之间自动切换）；
+      4. 自动分发对应的 AirSim 配置文件到 ~/Documents/AirSim/settings.json；
+      5. 自动检测 CARLA (2000) 和 AirSim (41451) 端口连通性，并在就绪后自动拉起背景交通流进程 (auto_traffic.py)；
+      6. 支持实例健康监控、日志追踪 (--log) 与一键清理停止 (--kill)。
+
+.EXAMPLE
+    # 启动水下机器人 ROV 仿真（默认地图 Town10HD）
+    .\CarlaAir.ps1 --vehicle rov
+
+    # 启动空中多旋翼无人机仿真
+    .\CarlaAir.ps1 --vehicle drone
+
+    # 在 Town10HD 上启动 ROV，禁用背景交通流，并挂接控制台查看输出
+    .\CarlaAir.ps1 Town10HD --vehicle rov --no-traffic --fg
+
+    # 停止当前运行的 CarlaAir 实例
+    .\CarlaAir.ps1 --kill
+#>
+
 $ErrorActionPreference = "Stop"
 
 function Show-Usage {
     @"
 Usage: .\CarlaAir.ps1 [MAP] [OPTIONS]
 
+Workflow Note:
+  - For packaged end-user deployments: Use StartOpenHUTB.bat or CarlaUE4.exe.
+  - For development & automated co-simulation testing: Use .\CarlaAir.ps1.
+
 Options:
+  --vehicle TYPE           Vehicle type to spawn: 'rov' (default) or 'drone'
   --res WxH                Window resolution (default: 1280x720)
   --port PORT              CARLA RPC port (default: 2000)
   --quality LEVEL          Quality level: Low, Medium, High, Epic
@@ -240,6 +278,7 @@ function Stop-CarlaAirProcess {
 
 $repoRoot = Split-Path -Parent $MyInvocation.MyCommand.Path
 $mapName = "Town10HD"
+$vehicleType = "rov"
 $resX = 1280
 $resY = 720
 $carlaPort = 2000
@@ -258,6 +297,7 @@ for ($i = 0; $i -lt $args.Count; $i++) {
     $arg = [string]$args[$i]
     switch -Regex ($arg) {
         '^--help$|^-h$' { Show-Usage; exit 0 }
+        '^--vehicle$' { $i++; $vehicleType = ([string]$args[$i]).ToLower(); continue }
         '^--fg$' { $foreground = $true; continue }
         '^--kill$' { $killOnly = $true; continue }
         '^--log$' { $showLog = $true; continue }
@@ -306,15 +346,26 @@ if ($showLog) {
 $binaryInfo = Resolve-CarlaBinary -RepoRoot $repoRoot -ExplicitPackageRoot $explicitPackageRoot
 $trafficPython = if ($autoTraffic) { Resolve-TrafficPython -ExplicitPath $explicitPython } else { $null }
 
-$airsimSettingsSource = Join-Path $repoRoot "AirSimConfig\settings.json"
+$settingsFileName = if ($vehicleType -eq "drone" -or $vehicleType -eq "multirotor") {
+    "settings_drone.json"
+} else {
+    "settings_rov.json"
+}
+$airsimSettingsSource = Join-Path $repoRoot "AirSimConfig\$settingsFileName"
 if (-not (Test-Path $airsimSettingsSource)) {
-    throw "AirSim settings template not found: $airsimSettingsSource"
+    $fallback = Join-Path $repoRoot "AirSimConfig\settings.json"
+    if (Test-Path $fallback) {
+        $airsimSettingsSource = $fallback
+    } else {
+        throw "AirSim settings template not found: $airsimSettingsSource"
+    }
 }
 
 $airsimSettingsDir = Join-Path $env:USERPROFILE "Documents\AirSim"
 $airsimSettingsTarget = Join-Path $airsimSettingsDir "settings.json"
 New-Item -ItemType Directory -Force -Path $airsimSettingsDir | Out-Null
 Copy-Item $airsimSettingsSource $airsimSettingsTarget -Force
+Write-Host "AirSim Settings: Dispatched $settingsFileName -> $airsimSettingsTarget"
 
 Stop-CarlaAirProcess -RepoRoot $repoRoot
 
@@ -344,6 +395,7 @@ Write-Host "============================================"
 Write-Host "  CarlaAir - Windows Launcher"
 Write-Host "============================================"
 Write-Host "  Map:        $mapName"
+Write-Host "  Vehicle:    $vehicleType ($settingsFileName)"
 Write-Host "  Resolution: ${resX}x${resY}"
 Write-Host "  CARLA Port: $carlaPort"
 Write-Host "  AirSim Port: $airsimPort"

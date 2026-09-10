@@ -1,45 +1,4 @@
 {
-  "SeeDocsAt": "https://github.com/Microsoft/AirSim/blob/master/docs/settings.md",
   "SettingsVersion": 1.2,
-  "SimMode": "Rov",
-  "ClockSpeed": 1,
-  "PawnPaths": {
-    "DefaultQuadrotor": {"PawnBP": "Class'/AirSim/Blueprints/BP_FlyingPawn.BP_FlyingPawn_C'"},
-    "DefaultRov": {"PawnBP": "Class'/Script/AirSim.RovPawn'"},
-    "DefaultComputerVision": {"PawnBP": "Class'/AirSim/Blueprints/BP_ComputerVisionPawn.BP_ComputerVisionPawn_C'"}
-  },
-  "Vehicles": {
-    "RovSimple": {
-      "VehicleType": "RovSimple",
-      "DefaultVehicleState": "Armed",
-      "PawnPath": "DefaultRov",
-      "EnableCollisions": true,
-      "AllowAPIAlways": true,
-      "RC": {
-        "RemoteControlID": 0,
-        "AllowAPIWhenDisconnected": false
-      },
-        "Cameras": {
-          "front_right_custom": {
-            "CaptureSettings": [
-              {
-                "PublishToRos": 1,
-                "ImageType": 0,
-                "FOV_Degrees": 90,
-                "Width": 1280,
-                "Height": 720
-              }
-            ],
-            "X": 0.50, "Y": 0.06, "Z": 0.10,
-            "Pitch": 0.0, "Roll": 0.0, "Yaw": 0.0
-          }
-        }
-        
-        
-        
-        
-      }
-      }
-
+  "SimMode": "Multirotor"
 }
-

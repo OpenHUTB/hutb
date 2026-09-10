@@ -27,11 +27,14 @@ try:
 except ImportError:
     # Fallback to local air repository PythonClient
     script_dir = os.path.dirname(os.path.abspath(__file__))
-    candidates = [
-        os.path.abspath(os.path.join(script_dir, "..", "..", "..", "..", "OpenHUTB-air", "air", "PythonClient")),
-        os.path.abspath(os.path.join(script_dir, "..", "..", "..", "..", "air", "PythonClient")),
-        r"E:\Projects\OpenHUTB-air\air\PythonClient"
-    ]
+    candidates = []
+    if "AIRSIM_PATH" in os.environ:
+        candidates.append(os.path.normpath(os.path.join(os.environ["AIRSIM_PATH"], "PythonClient")))
+    candidates.extend([
+        os.path.normpath(os.path.join(script_dir, "..", "..", "..", "..", "OpenHUTB-air", "air", "PythonClient")),
+        os.path.normpath(os.path.join(script_dir, "..", "..", "..", "..", "air", "PythonClient")),
+        os.path.normpath(os.path.join(script_dir, "..", "..", "air", "PythonClient")),
+    ])
     loaded = False
     for candidate in candidates:
         if os.path.isdir(candidate):
