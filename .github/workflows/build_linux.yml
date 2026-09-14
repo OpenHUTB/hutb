@@ -79,24 +79,6 @@ jobs:
                        make CarlaUE4Editor ARGS="--chrono -j$(( $(nproc) / 3 ))"
                     shell: bash
 
-                  # 修复 Content 包中 .uasset 文件的非法材质路径（缺少 /Game/ 根前缀）
-                  - name: Fix invalid material paths in RoadRunner assets
-                    run: |
-                       echo "=== 正在修复 .uasset 中的非法 RoadRunner 材质路径 ==="
-                       for BAD_PATH in \
-                         "/RoadRunnerMaterials/BaseMaterial:/Game/RoadRunnerMaterials/BaseMat" \
-                         "/RoadRunnerMaterials/BaseCutoutMaterial:/Game/RoadRunnerMaterials/BaseCutoutMat" \
-                         "/RoadRunnerCarlaContent/:/Game/RoadRunnerCarlaContent/" \
-                         ; do
-                         FROM="${BAD_PATH%%:*}"
-                         TO="${BAD_PATH##*:}"
-                         find Unreal/CarlaUE4/Content -name "*.uasset" \
-                           -exec grep -l "$FROM" {} \; \
-                           -exec sed -i "s|$FROM|$TO|g" {} \; 2>/dev/null || true
-                       done
-                       echo "修复完成。"
-                    shell: bash
-
                   - name: package
                     run: |
                        source ./setEnv64.sh
