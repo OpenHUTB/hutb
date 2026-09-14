@@ -54,7 +54,8 @@ function move_if_changed {
   rm -f $1
 }
 
-CARLA_BUILD_CONCURRENCY=`nproc --all`
+# 限制并发数
+CARLA_BUILD_CONCURRENCY=$(( $(nproc --all) / 3 ))
 
 # ==============================================================================
 # -- Conda env python------------

@@ -274,7 +274,7 @@ else
       -DCMAKE_INSTALL_PREFIX="../${RPCLIB_BASENAME}-libcxx-install" \
       ../${RPCLIB_BASENAME}-source
 
-  ninja
+  ninja -j ${CARLA_BUILD_CONCURRENCY}
 
   ninja install
 
@@ -291,7 +291,7 @@ else
       -DCMAKE_INSTALL_PREFIX="../${RPCLIB_BASENAME}-libstdcxx-install" \
       ../${RPCLIB_BASENAME}-source
 
-  ninja
+  ninja -j ${CARLA_BUILD_CONCURRENCY}
 
   ninja install
 
@@ -343,7 +343,7 @@ else
       -DCMAKE_INSTALL_PREFIX="../${GTEST_BASENAME}-libcxx-install" \
       ../${GTEST_BASENAME}-source
 
-  ninja
+  ninja -j ${CARLA_BUILD_CONCURRENCY}
 
   ninja install
 
@@ -360,7 +360,7 @@ else
       -DCMAKE_INSTALL_PREFIX="../${GTEST_BASENAME}-libstdcxx-install" \
       ../${GTEST_BASENAME}-source
 
-  ninja
+  ninja -j ${CARLA_BUILD_CONCURRENCY}
 
   ninja install
 
@@ -416,7 +416,7 @@ else
       -DRECASTNAVIGATION_TEST=False \
       ../${RECAST_BASENAME}-source
 
-  ninja
+  ninja -j ${CARLA_BUILD_CONCURRENCY}
 
   ninja install
 
@@ -531,7 +531,7 @@ else
       -Dnetwork=OFF \
       ..
 
-  ninja
+  ninja -j ${CARLA_BUILD_CONCURRENCY}
   ninja install
   
   popd >/dev/null
@@ -550,7 +550,7 @@ else
       -Dnetwork=OFF \
       ..
 
-  ninja
+  ninja -j ${CARLA_BUILD_CONCURRENCY}
   ninja install
 
   popd >/dev/null
@@ -645,7 +645,7 @@ if ${USE_CHRONO} ; then
       -DBUILD_DEMOS=OFF \
       -DENABLE_MODULE_VEHICLE=ON \
       ..
-    ninja
+    ninja -j ${CARLA_BUILD_CONCURRENCY}
     ninja install
     popd >/dev/null
     if [[ -n "${CHRONO_PATH}" ]] ; then
@@ -764,7 +764,7 @@ else
       -DBUILD_CCT=OFF -DBUILD_CS2CS=OFF -DBUILD_GEOD=OFF -DBUILD_GIE=OFF \
       -DBUILD_PROJ=OFF -DBUILD_TESTING=OFF \
       -DCMAKE_INSTALL_PREFIX=${PROJ_INSTALL_DIR_FULL}
-  ninja
+  ninja -j ${CARLA_BUILD_CONCURRENCY}
   ninja install
 
   popd >/dev/null
@@ -782,7 +782,7 @@ else
       -DBUILD_CCT=OFF -DBUILD_CS2CS=OFF -DBUILD_GEOD=OFF -DBUILD_GIE=OFF \
       -DBUILD_PROJ=OFF -DBUILD_TESTING=OFF \
       -DCMAKE_INSTALL_PREFIX=${PROJ_INSTALL_SERVER_DIR_FULL}
-  ninja
+  ninja -j ${CARLA_BUILD_CONCURRENCY}
   ninja install
 
   popd >/dev/null
@@ -974,7 +974,7 @@ if ${USE_ROS2} ; then
       -DBUILD_SHARED_LIBS=OFF \
       -DFOONATHAN_MEMORY_FORCE_VENDORED_BUILD=ON \
       ..
-    ninja
+    ninja -j ${CARLA_BUILD_CONCURRENCY}
     ninja install
     popd >/dev/null
     rm -Rf ${FOONATHAN_MEMORY_VENDOR_SOURCE_DIR}
@@ -1025,7 +1025,7 @@ if ${USE_ROS2} ; then
       -DOPENSSL_CRYPTO_LIBRARY:FILEPATH=${FASTDDS_LIB}/libcrypto.a \
       -DTHIRDPARTY_BOOST_INCLUDE_DIR="${BOOST_INCLUDE};${FAST_DDS_LIB_SOURCE_DIR}/thirdparty/boost/include" \
       ..
-    ninja
+    ninja -j ${CARLA_BUILD_CONCURRENCY}
     ninja install
     popd >/dev/null
     rm -Rf ${FAST_DDS_LIB_SOURCE_DIR}
@@ -1066,7 +1066,7 @@ if ${USE_ROS2} ; then
         -DENABLE_SECURITY=OFF \
         -DENABLE_SHM=OFF \
         ..
-      ninja
+      ninja -j ${CARLA_BUILD_CONCURRENCY}
       ninja install
       popd >/dev/null
       rm -Rf ${CYCLONE_DDS_SOURCE_DIR}
