@@ -675,6 +675,8 @@ void ADReyeVRPawn::SetupEgoVehicleInputComponent(UInputComponent *PlayerInputCom
     PlayerInputComponent->BindAxis("Steer_DReyeVR", EV, &AEgoVehicle::AddSteering);
     PlayerInputComponent->BindAxis("Throttle_DReyeVR", EV, &AEgoVehicle::AddThrottle);
     PlayerInputComponent->BindAxis("Brake_DReyeVR", EV, &AEgoVehicle::AddBrake);
+    PlayerInputComponent->BindAxis("SeatMoveDepth_DReyeVR", EV, &AEgoVehicle::CameraMoveDepth);
+    PlayerInputComponent->BindAxis("SeatMoveHorizontal_DReyeVR", EV, &AEgoVehicle::CameraMoveHorizontal);
     // button actions (press & release)
     PlayerInputComponent->BindAction("ToggleReverse_DReyeVR", IE_Pressed, EV, &AEgoVehicle::PressReverse);
     PlayerInputComponent->BindAction("ToggleReverse_DReyeVR", IE_Released, EV, &AEgoVehicle::ReleaseReverse);

@@ -52,6 +52,28 @@ void AEgoVehicle::CameraDown()
     CameraPositionAdjust(FVector::DownVector);
 }
 
+void AEgoVehicle::CameraMoveDepth(const float Input)
+{
+    constexpr float InputDeadZone = 0.15f;
+    if (FMath::IsNearlyZero(Input, InputDeadZone) || GetWorld() == nullptr)
+        return;
+
+    const float Magnitude = FMath::Abs(Input);
+    const float AdjustedInput = FMath::Sign(Input) * (Magnitude - InputDeadZone) / (1.f - InputDeadZone);
+    CameraPositionAdjust(FVector::ForwardVector * AdjustedInput * SeatMoveSpeedCmPerSecond * GetWorld()->GetDeltaSeconds());
+}
+
+void AEgoVehicle::CameraMoveHorizontal(const float Input)
+{
+    constexpr float InputDeadZone = 0.15f;
+    if (FMath::IsNearlyZero(Input, InputDeadZone) || GetWorld() == nullptr)
+        return;
+
+    const float Magnitude = FMath::Abs(Input);
+    const float AdjustedInput = FMath::Sign(Input) * (Magnitude - InputDeadZone) / (1.f - InputDeadZone);
+    CameraPositionAdjust(FVector::RightVector * AdjustedInput * SeatMoveSpeedCmPerSecond * GetWorld()->GetDeltaSeconds());
+}
+
 void AEgoVehicle::CameraPositionAdjust(const FVector &Disp)
 {
     if (Disp.Equals(FVector::ZeroVector, 0.0001f))

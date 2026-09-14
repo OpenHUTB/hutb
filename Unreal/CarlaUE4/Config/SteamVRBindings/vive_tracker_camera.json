@@ -1,0 +1,19 @@
+{
+	"name": "Default bindings for Vive Tracker (Camera)",
+	"controller_type": "vive_tracker_camera",
+	"last_edited_by": "UnrealEngine",
+	"bindings":
+	{
+		"/actions/main":
+		{
+			"poses": [
+				{
+					"output": "/actions/main/in/tracker_camera",
+					"path": "/user/camera/pose/raw",
+					"requirement": "optional"
+				}
+			]
+		}
+	},
+	"description": ""
+}
