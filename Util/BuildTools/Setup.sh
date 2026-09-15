@@ -143,6 +143,12 @@ for PY_VERSION in ${PY_VERSION_LIST[@]} ; do
   SHOULD_BUILD_BOOST=true
   CONDA_PY=$(get_conda_env_python ${PY_VERSION})
   export PATH="$(dirname ${CONDA_PY}):${PATH}"
+  # <<< "$PYTHON_VERSION" 把变量的值直接作为标准输入喂给 cut，免去 echo | 的写法
+  # cut -d . -f 1,2 — 按 . 切分，取第 1、2 段（即主版本.次版本）
+  # tr -d . — 删掉剩余的点
+  # $(...) — 命令替换，把整个管道的输出赋给 LIB_NAME
+  # LIB_NAME=${LIB_NAME:7} 再截掉前 7 个字符
+  # "Python 3.12.8"  → cut → "Python 3.12"  → tr → "Python 312"  → :7 → "312"
   LIB_NAME=$(cut -d . -f 1,2 <<< "$PYTHON_VERSION" | tr -d .)
   LIB_NAME=${LIB_NAME:7}
   if [[ -d "${BOOST_BASENAME}-install" ]] ; then
@@ -155,16 +161,29 @@ for PY_VERSION in ${PY_VERSION_LIST[@]} ; do
   if { ${SHOULD_BUILD_BOOST} ; } ; then
     rm -Rf ${BOOST_BASENAME}-source
 
+    # ${BOOST_VERSION//./_} — 把 $BOOST_VERSION
+    # 中所有的 . 替换成 _（双斜杠 // 表示全局替换，替换单个的话是单个 /）
+    # 前面再拼上 boost_ 前缀
+    # 1.90.0  →  1_90_0  →  BOOST_PACKAGE_BASENAME = boost_1_90_0
     BOOST_PACKAGE_BASENAME=boost_${BOOST_VERSION//./_}
 
     log "Retrieving boost."
 
-    start=$(date +%s)
-    wget "https://archives.boost.io/release/${BOOST_VERSION}/source/${BOOST_PACKAGE_BASENAME}.tar.gz" -O ${BOOST_PACKAGE_BASENAME}.tar.gz || true
-    end=$(date +%s)
-    echo "Elapsed Time downloading from boost webpage: $(($end-$start)) seconds"
+    # 优先使用 dependencies_u(工蜂)仓库里的本地包,避免依赖外网下载
+    if [ -f "dependencies/src/${BOOST_PACKAGE_BASENAME}.tar.gz" ] ; then
+      log "Using boost from dependencies_u repository."
+      cp "dependencies/src/${BOOST_PACKAGE_BASENAME}.tar.gz" .
+    fi
 
-    # try to use the backup boost we have in Jenkins
+    # 本地包缺失或校验不通过时,从 boost 官网下载
+    if [ ! -f "${BOOST_PACKAGE_BASENAME}.tar.gz" ] || [[ $(sha256sum "${BOOST_PACKAGE_BASENAME}.tar.gz" | cut -d " " -f 1 ) != "${BOOST_SHA256SUM}" ]] ; then
+      start=$(date +%s)
+      wget "https://archives.boost.io/release/${BOOST_VERSION}/source/${BOOST_PACKAGE_BASENAME}.tar.gz" -O ${BOOST_PACKAGE_BASENAME}.tar.gz || true
+      end=$(date +%s)
+      echo "Elapsed Time downloading from boost webpage: $(($end-$start)) seconds"
+    fi
+
+    # 仍失败则用 Jenkins 上的备份
     if [ ! -f "${BOOST_PACKAGE_BASENAME}.tar.gz" ] || [[ $(sha256sum "${BOOST_PACKAGE_BASENAME}.tar.gz" | cut -d " " -f 1 ) != "${BOOST_SHA256SUM}" ]] ; then
       log "Using boost backup"
 
@@ -173,6 +192,12 @@ for PY_VERSION in ${PY_VERSION_LIST[@]} ; do
       end=$(date +%s)
       echo "Elapsed Time downloading from boost carla backup in backblaze: $(($end-$start)) seconds"
 
+    fi
+
+    # 最终校验,不通过直接报错退出,避免后面的 tar 报错
+    if [[ $(sha256sum "${BOOST_PACKAGE_BASENAME}.tar.gz" 2>/dev/null | cut -d " " -f 1 ) != "${BOOST_SHA256SUM}" ]] ; then
+      log "ERROR: boost package missing or sha256 mismatch (expected ${BOOST_SHA256SUM})."
+      exit 1
     fi
 
     log "Extracting boost for Python ${PY_VERSION}."
