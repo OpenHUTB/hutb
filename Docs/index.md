@@ -1,6 +1,6 @@
 # CARLA/VR Documentation
 
-Welcome to the CARLA and [VR](https://openhutb.github.io/doc_en/vr/) documentation.
+Welcome to the CARLA and [VR](https://openhutb.github.io/doc_en/vr/) documentation1.
 
 This home page contains an index with a brief description of the different sections in the documentation. Feel free to read in whatever order preferred. In any case, here are a few suggestions for newcomers.
 
