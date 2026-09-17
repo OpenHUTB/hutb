@@ -25,6 +25,7 @@
   <img src="https://img.shields.io/badge/Python-3776AB?logo=python&logoColor=fff" alt="Python 3.7+"/>
   <img src="https://img.shields.io/badge/Ubuntu-E95420?logo=ubuntu&logoColor=white" alt="Platform"/>
   <img src="https://custom-icon-badges.demolab.com/badge/Windows-0078D6?logo=windows11&logoColor=white" alt="Platform"/>
+  <img src="https://atomgit.com/OpenHUTB/hutb/star/badge.svg" alt="AtomGit Star"/>
 </div>
 
 <p align="center">
