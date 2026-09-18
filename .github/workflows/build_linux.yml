@@ -9,8 +9,8 @@ jobs:
     linux-dev:
              name: Linux CI/CD
              timeout-minutes: 1440
-             runs-on: [self-hosted, ubuntu-hutb]
-            #  runs-on: [self-hosted, dev]
+            #  runs-on: [self-hosted, ubuntu-hutb]
+             runs-on: [self-hosted, dev]
 
              env:
                 UE4_ROOT: /home/ubuntu/UnrealEngine_4.26
