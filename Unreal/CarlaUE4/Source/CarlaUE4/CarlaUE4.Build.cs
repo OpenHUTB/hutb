@@ -95,6 +95,6 @@ public class CarlaUE4 : ModuleRules
             PublicDependencyModuleNames.AddRange(new string[] { "EyeTracker", "VRSPlugin" });
         }
 
-        PrivateDependencyModuleNames.AddRange(new string[] { "ImageWriteQueue" });
+        PrivateDependencyModuleNames.AddRange(new string[] { "ImageWriteQueue", "RenderCore", "RHI" });
     }
 }
