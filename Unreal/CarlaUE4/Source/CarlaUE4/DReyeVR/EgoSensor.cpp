@@ -1,4 +1,5 @@
 #include "EgoSensor.h"
+#include "CameraGazeComponent.h"
 
 #include "Carla/Game/CarlaStatics.h"    // GetCurrentEpisode
 #include "DReyeVRUtils.h"               // GeneralParams.Get, ComputeClosestToRayIntersection
@@ -18,6 +19,69 @@
 #endif
 
 #include <string>
+
+#if WITH_DEV_AUTOMATION_TESTS
+#include "Misc/AutomationTest.h"
+#endif
+
+namespace
+{
+struct FDebugGazeSegment
+{
+    FVector Start;
+    FVector End;
+};
+
+FDebugGazeSegment MakeDebugGazeSegment(const FVector &CameraPosition, const FRotator &CameraRotation,
+                                     const FVector &FocusPoint)
+{
+    // Display only: keep the visible pivot in front of the near clipping plane.
+    // Never offset along the gaze direction: that would move the pivot with the eyes.
+    constexpr float ForwardOffsetCm = 30.f;
+    return {CameraPosition + CameraRotation.Vector() * ForwardOffsetCm, FocusPoint};
+}
+} // namespace
+
+#if WITH_DEV_AUTOMATION_TESTS
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FDebugGazeAnchorTest, "HUTB.Pimax.GazeDisplay.FixedAnchor",
+                                EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
+
+bool FDebugGazeAnchorTest::RunTest(const FString &Parameters)
+{
+    const FVector Camera(100.f, 200.f, 300.f);
+    const FVector LeftTarget(1000.f, -100.f, 350.f);
+    const FVector RightTarget(1000.f, 500.f, 400.f);
+    const auto Left = MakeDebugGazeSegment(Camera, FRotator::ZeroRotator, LeftTarget);
+    const auto Right = MakeDebugGazeSegment(Camera, FRotator::ZeroRotator, RightTarget);
+    TestTrue(TEXT("Eye movement does not move the displayed origin"), Left.Start.Equals(Right.Start));
+    TestTrue(TEXT("Origin is 30 cm in front of the headset"), Left.Start.Equals(Camera + FVector(30.f, 0.f, 0.f)));
+    TestTrue(TEXT("Left endpoint is the measured focus point"), Left.End.Equals(LeftTarget));
+    TestTrue(TEXT("Right endpoint is the measured focus point"), Right.End.Equals(RightTarget));
+    const auto Turned = MakeDebugGazeSegment(Camera, FRotator(0.f, 90.f, 0.f), RightTarget);
+    TestTrue(TEXT("Origin follows headset rotation"), Turned.Start.Equals(Camera + FVector(0.f, 30.f, 0.f), 0.001f));
+    const FVector Movement(50.f, 20.f, -10.f);
+    const auto Moved = MakeDebugGazeSegment(Camera + Movement, FRotator::ZeroRotator, RightTarget);
+    TestTrue(TEXT("Origin follows headset translation"), Moved.Start.Equals(Right.Start + Movement));
+    return true;
+}
+#endif
+
+#if PLATFORM_WINDOWS
+/// Parse a comma-separated list of hex IDs ("0x34A4, 0x0044") from DReyeVRConfig.ini.
+static TArray<int32> ParseHexIdList(const FString &Csv, const TArray<int32> &Fallback)
+{
+    TArray<int32> Out;
+    TArray<FString> Parts;
+    Csv.ParseIntoArray(Parts, TEXT(","), /*CullEmpty=*/true);
+    for (FString &Part : Parts)
+    {
+        Part.TrimStartAndEndInline();
+        if (!Part.IsEmpty())
+            Out.Add((int32)FCString::Strtoi(*Part, nullptr, 16));
+    }
+    return Out.Num() > 0 ? Out : Fallback;
+}
+#endif
 
 #ifndef NO_DREYEVR_EXCEPTIONS
 #include <exception>
@@ -46,6 +110,10 @@ void AEgoSensor::ReadConfigVariables()
     GeneralParams.Get("EgoSensor", "StreamSensorData", bStreamData);
     GeneralParams.Get("EgoSensor", "MaxTraceLenM", MaxTraceLenM);
     GeneralParams.Get("EgoSensor", "DrawDebugFocusTrace", bDrawDebugFocusTrace);
+    GeneralParams.Get("EgoSensor", "UseCameraRelativeGazeDisplay", bUseCameraRelativeGazeDisplay);
+
+    // Pimax PVR eye tracking (dynamically loaded backend, Windows only)
+    GeneralParams.Get("Pimax", "EnablePvrEyeTracking", bEnablePvrEyeTracking);
 
     // variables corresponding to the action of screencapture during replay
     GeneralParams.Get("Replayer", "RecordAllShaders", bRecordAllShaders);
@@ -106,8 +174,8 @@ void AEgoSensor::ManualTick(float DeltaSeconds)
         const float Timestamp = int64_t(1000.f * UGameplayStatics::GetRealTimeSeconds(World));
         /// TODO: query the eye tracker hardware asynchronously (not limited to UE4 tick)
         TickEyeTracker();   // query the eye-tracker hardware for current data
-        ComputeFocusInfo(); // compute gaze focus data
-        ComputeEgoVars();   // get all necessary ego-vehicle data
+        ComputeEgoVars();   // sample this frame's camera pose before computing focus
+        ComputeFocusInfo(); // compute gaze focus data using this frame's eye data and pose
 
         // Update the internal sensor data that gets handed off to Carla (for recording/replaying/PythonAPI)
         const auto &Inputs = Vehicle.IsValid() ? Vehicle.Get()->GetVehicleInputs() : DReyeVR::UserInputs{};
@@ -119,7 +187,30 @@ void AEgoSensor::ManualTick(float DeltaSeconds)
         );
         TickFoveatedRender();
     }
+    UpdateGazeDisplay();
     TickCount++;
+}
+
+void AEgoSensor::UpdateGazeDisplay()
+{
+    if (!bDrawDebugFocusTrace || !bUseCameraRelativeGazeDisplay || !Vehicle.IsValid())
+        return;
+    auto *Camera = Vehicle->GetCamera();
+    if (!Camera)
+        return;
+    if (!GazeDisplay)
+    {
+        GazeDisplay = NewObject<UCameraGazeComponent>(this, TEXT("CameraGazeDisplay"));
+        GazeDisplay->SetupAttachment(Camera);
+        GazeDisplay->RegisterComponent();
+        LOG("Gaze display: camera-attached primitive, post-camera tick, XR late update");
+    }
+    if (GazeDisplay->GetAttachParent() != Camera)
+        GazeDisplay->AttachToComponent(Camera, FAttachmentTransformRules::SnapToTargetNotIncludingScale);
+    GazeDisplay->Configure(MaxTraceLenM * 100.f, Vehicle.Get());
+    // Do not display cached live gaze during replay or tracker failure.
+    GazeDisplay->SetSample(EyeSensorData.Combined.GazeOrigin, EyeSensorData.Combined.GazeDir,
+                          !ADReyeVRSensor::bIsReplaying && EyeSensorData.Combined.GazeValid);
 }
 
 /// ========================================== ///
@@ -175,6 +266,41 @@ void AEgoSensor::InitEyeTracker()
 #else
     LOG("Not using SRanipal eye tracking");
 #endif
+
+#if PLATFORM_WINDOWS
+    if (bEnablePvrEyeTracking)
+    {
+#if USE_SRANIPAL_PLUGIN
+        if (bSRanipalEnabled)
+        {
+            LOG_WARN("Both SRanipal and Pimax PVR eye tracking are enabled; SRanipal takes precedence");
+        }
+        else
+#endif
+        {
+            FPimaxPvrEyeSource::FConfig PvrConfig;
+            GeneralParams.Get("Pimax", "AllowUnknownPimaxDevice", PvrConfig.bAllowUnknownPimaxDevice);
+            GeneralParams.Get("Pimax", "MaxSampleAgeSeconds", PvrConfig.MaxSampleAgeSeconds);
+            GeneralParams.Get("Pimax", "GazeInvertHorizontal", PvrConfig.bInvertHorizontal);
+            GeneralParams.Get("Pimax", "GazeInvertVertical", PvrConfig.bInvertVertical);
+            PvrConfig.AllowedVendorIds =
+                ParseHexIdList(GeneralParams.Get<FString>("Pimax", "AllowedVendorIds"), PvrConfig.AllowedVendorIds);
+            PvrConfig.AllowedProductIds =
+                ParseHexIdList(GeneralParams.Get<FString>("Pimax", "AllowedProductIds"), PvrConfig.AllowedProductIds);
+
+            PvrEyeSource = TUniquePtr<FPimaxPvrEyeSource>(new FPimaxPvrEyeSource(PvrConfig));
+            if (PvrEyeSource->Initialize())
+            {
+                LOG("Using Pimax PVR eye tracking");
+            }
+            else
+            {
+                // keep the object alive: PollLatest() retries initialization with bounded backoff
+                LOG_ERROR("Pimax PVR eye tracking failed to initialize; using invalid samples until it recovers");
+            }
+        }
+    }
+#endif
 }
 
 void AEgoSensor::DestroyEyeTracker()
@@ -187,6 +313,13 @@ void AEgoSensor::DestroyEyeTracker()
     }
     if (SRanipal)
         SRanipalEye_Core::DestroyEyeModule();
+#endif
+#if PLATFORM_WINDOWS
+    if (PvrEyeSource.IsValid())
+    {
+        PvrEyeSource->Shutdown();
+        PvrEyeSource.Reset();
+    }
 #endif
 }
 
@@ -231,17 +364,50 @@ void AEgoSensor::TickEyeTracker()
             Left->PupilDiameter = EyeData.verbose_data.left.pupil_diameter_mm;
             Right->PupilDiameter = EyeData.verbose_data.right.pupil_diameter_mm;
         }
+        Combined->Vergence = ComputeVergence(Left->GazeOrigin, Left->GazeDir, Right->GazeOrigin, Right->GazeDir);
+        return;
     }
-    else
-    {
-        ComputeDummyEyeData();
-    }
-#else
-    ComputeDummyEyeData();
 #endif
+#if PLATFORM_WINDOWS
+    if (PvrEyeSource.IsValid())
+    {
+        TickPimaxEyeTracker();
+        return;
+    }
+#endif
+    ComputeDummyEyeData();
     Combined->Vergence = ComputeVergence(Left->GazeOrigin, Left->GazeDir, Right->GazeOrigin, Right->GazeDir);
 
     // FPlatformProcess::Sleep(0.00833f); // use in async thread to get 120hz
+}
+
+void AEgoSensor::TickPimaxEyeTracker()
+{
+#if PLATFORM_WINDOWS
+    check(PvrEyeSource.IsValid());
+    auto Combined = &(EyeSensorData.Combined);
+    auto Left = &(EyeSensorData.Left);
+    auto Right = &(EyeSensorData.Right);
+
+    const DReyeVR::FEyeSample Sample = PvrEyeSource->PollLatest();
+
+    // PVR 1.26 only provides a combined gaze direction (no per-eye origins, pupil
+    // diameter or openness): leave those fields invalid instead of fabricating data.
+    Combined->GazeValid = Sample.bValid;
+    Combined->GazeOrigin = Sample.LocalOrigin; // ZeroVector: approximate, no true origin in PVR
+    Combined->GazeDir = Sample.bValid ? Sample.LocalDirection : FVector::ZeroVector;
+    Combined->Vergence = -1.f; // sentinel: unavailable (needs per-eye rays PVR does not provide)
+
+    Left->GazeValid = false;
+    Right->GazeValid = false;
+    Left->EyeOpennessValid = false;
+    Right->EyeOpennessValid = false;
+    Left->PupilPositionValid = false;
+    Right->PupilPositionValid = false;
+
+    EyeSensorData.TimestampDevice = Sample.bSourceTimeKnown ? int64_t(Sample.SourceTime * 1000.0) : 0;
+    EyeSensorData.FrameSequence = int64_t(Sample.Sequence);
+#endif
 }
 
 void AEgoSensor::ComputeDummyEyeData()
@@ -277,6 +443,22 @@ void AEgoSensor::ComputeDummyEyeData()
 
 void AEgoSensor::ComputeFocusInfo()
 {
+    if (!EyeSensorData.Combined.GazeValid)
+    {
+        // gaze invalid this frame: publish an empty focus straight ahead instead of
+        // tracing with a stale/zero gaze direction (reticle stays far away, hit is
+        // flagged invalid for the recorder and the PythonAPI)
+        const FRotator &WorldRot = EgoVars.CameraRotationAbs;
+        const FVector &WorldPos = EgoVars.CameraLocationAbs;
+        const float TraceLen = MaxTraceLenM * 100.f; // convert m to cm
+        FocusInfoData.Actor = nullptr;
+        FocusInfoData.HitPoint = WorldPos + WorldRot.Vector() * TraceLen;
+        FocusInfoData.Normal = -WorldRot.Vector();
+        FocusInfoData.ActorNameTag = TEXT("None");
+        FocusInfoData.Distance = TraceLen;
+        FocusInfoData.bDidHit = false;
+        return;
+    }
     // ECC_Visibility: General visibility testing channel.
     // ECC_Camera: Usually used when tracing from the camera to something.
     // https://docs.unrealengine.com/4.27/en-US/API/Runtime/Engine/Engine/ECollisionChannel/
@@ -287,10 +469,15 @@ void AEgoSensor::ComputeFocusInfo()
 bool AEgoSensor::ComputeGazeTrace(FHitResult &Hit, const ECollisionChannel TraceChannel, float TraceRadius) const
 {
     const float TraceLen = MaxTraceLenM * 100.f; // convert to m from cm
-    const FRotator &WorldRot = GetData()->GetCameraRotationAbs();
-    const FVector &WorldPos = GetData()->GetCameraLocationAbs();
-    const FVector GazeOrigin = WorldPos + WorldRot.RotateVector(GetData()->GetGazeOrigin());
-    const FVector GazeRay = TraceLen * WorldRot.RotateVector(GetData()->GetGazeDir()).GetSafeNormal();
+    // GetData() is published after focus computation, so in live mode it still
+    // contains the previous frame. Replay continues to use the recorded data.
+    const bool bReplay = ADReyeVRSensor::bIsReplaying;
+    const FRotator WorldRot = bReplay ? GetData()->GetCameraRotationAbs() : EgoVars.CameraRotationAbs;
+    const FVector WorldPos = bReplay ? GetData()->GetCameraLocationAbs() : EgoVars.CameraLocationAbs;
+    const FVector LocalOrigin = bReplay ? GetData()->GetGazeOrigin() : EyeSensorData.Combined.GazeOrigin;
+    const FVector LocalDirection = bReplay ? GetData()->GetGazeDir() : EyeSensorData.Combined.GazeDir;
+    const FVector GazeOrigin = WorldPos + WorldRot.RotateVector(LocalOrigin);
+    const FVector GazeRay = TraceLen * WorldRot.RotateVector(LocalDirection).GetSafeNormal();
     // Create collision information container.
     FCollisionQueryParams TraceParam;
     TraceParam = FCollisionQueryParams(FName("TraceParam"), true);
@@ -325,13 +512,11 @@ bool AEgoSensor::ComputeGazeTrace(FHitResult &Hit, const ECollisionChannel Trace
         Hit.Distance = TraceLen;
     }
 
-    if (bDrawDebugFocusTrace)
+    if (bDrawDebugFocusTrace && !bUseCameraRelativeGazeDisplay)
     {
         DrawDebugSphere(World, Hit.Location, 8.0f, 30, FColor::Blue);
-        DrawDebugLine(World,
-                      GazeOrigin,           // start line
-                      GazeOrigin + GazeRay, // end line
-                      FColor::Purple, false, -1, 0, 1);
+        const auto Segment = MakeDebugGazeSegment(WorldPos, WorldRot, Hit.Location);
+        DrawDebugLine(World, Segment.Start, Segment.End, FColor::Blue, false, -1, 0, 1);
     }
     return bDidHit;
 }
