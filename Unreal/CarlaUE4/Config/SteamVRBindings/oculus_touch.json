@@ -74,17 +74,10 @@
         },
         {
           "path": "/user/hand/right/input/joystick",
-          "mode": "joystick",
-          "parameters": {
-            "deadzone_pct": "15",
-            "exponent": "1"
-          },
+          "mode": "button",
           "inputs": {
             "click": {
               "output": "/actions/main/in/PrevCameraView_DReyeVR"
-            },
-            "position": {
-              "output": "/actions/main/in/SeatMove_DReyeVR axis"
             }
           }
         },
@@ -101,8 +94,8 @@
           "path": "/user/hand/left/input/grip",
           "mode": "trigger",
           "inputs": {
-            "click": {
-              "output": "/actions/main/in/CameraDown_DReyeVR"
+            "pull": {
+              "output": "/actions/main/in/SeatLower_DReyeVR axis"
             }
           }
         },
@@ -110,8 +103,21 @@
           "path": "/user/hand/right/input/grip",
           "mode": "trigger",
           "inputs": {
-            "click": {
-              "output": "/actions/main/in/CameraUp_DReyeVR"
+            "pull": {
+              "output": "/actions/main/in/SeatLift_DReyeVR axis"
+            }
+          }
+        },
+        {
+          "path": "/user/hand/right/input/joystick",
+          "mode": "joystick",
+          "parameters": {
+            "deadzone_pct": "15",
+            "exponent": "1"
+          },
+          "inputs": {
+            "position": {
+              "output": "/actions/main/in/SeatMove_DReyeVR_X,SeatMove_DReyeVR_Y X Y_axis2d"
             }
           }
         }

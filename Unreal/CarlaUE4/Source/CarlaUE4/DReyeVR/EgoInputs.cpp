@@ -2,6 +2,41 @@
 #include "Math/NumericLimits.h" // TNumericLimits<float>::Max
 #include <string>               // std::string, std::wstring
 
+#if WITH_DEV_AUTOMATION_TESTS
+#include "Misc/AutomationTest.h"
+#endif
+
+namespace
+{
+float SeatAxisValue(float Input)
+{
+    constexpr float DeadZone = 0.15f;
+    if (!FMath::IsFinite(Input) || FMath::Abs(Input) <= DeadZone)
+        return 0.f;
+    Input = FMath::Clamp(Input, -1.f, 1.f);
+    return FMath::Sign(Input) * (FMath::Abs(Input) - DeadZone) / (1.f - DeadZone);
+}
+} // namespace
+
+#if WITH_DEV_AUTOMATION_TESTS
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FSeatAxisInputTest, "HUTB.Pimax.SeatInput.DeadZone",
+                                EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
+
+bool FSeatAxisInputTest::RunTest(const FString &Parameters)
+{
+    TestEqual(TEXT("Released input stops movement"), SeatAxisValue(0.f), 0.f);
+    TestEqual(TEXT("Small drift is ignored"), SeatAxisValue(0.1f), 0.f);
+    TestEqual(TEXT("Negative drift is ignored"), SeatAxisValue(-0.15f), 0.f);
+    TestEqual(TEXT("Full input gives full speed"), SeatAxisValue(1.f), 1.f);
+    TestEqual(TEXT("Reverse input gives reverse speed"), SeatAxisValue(-1.f), -1.f);
+    TestTrue(TEXT("Partial grip gives proportional speed"),
+             FMath::IsNearlyEqual(SeatAxisValue(0.575f), 0.5f, KINDA_SMALL_NUMBER));
+    TestEqual(TEXT("Out of range input is bounded"), SeatAxisValue(2.f), 1.f);
+    TestEqual(TEXT("Negative out of range input is bounded"), SeatAxisValue(-2.f), -1.f);
+    return true;
+}
+#endif
+
 ////////////////:INPUTS:////////////////
 /// NOTE: Here we define all the Input functions for the EgoVehicle just to keep them
 // from cluttering the EgoVehcile.cpp file
@@ -54,24 +89,40 @@ void AEgoVehicle::CameraDown()
 
 void AEgoVehicle::CameraMoveDepth(const float Input)
 {
-    constexpr float InputDeadZone = 0.15f;
-    if (FMath::IsNearlyZero(Input, InputDeadZone) || GetWorld() == nullptr)
-        return;
-
-    const float Magnitude = FMath::Abs(Input);
-    const float AdjustedInput = FMath::Sign(Input) * (Magnitude - InputDeadZone) / (1.f - InputDeadZone);
-    CameraPositionAdjust(FVector::ForwardVector * AdjustedInput * SeatMoveSpeedCmPerSecond * GetWorld()->GetDeltaSeconds());
+    CameraMoveAxis(Input, FVector::ForwardVector, 1, TEXT("depth"));
 }
 
 void AEgoVehicle::CameraMoveHorizontal(const float Input)
 {
-    constexpr float InputDeadZone = 0.15f;
-    if (FMath::IsNearlyZero(Input, InputDeadZone) || GetWorld() == nullptr)
-        return;
+    CameraMoveAxis(Input, FVector::RightVector, 2, TEXT("horizontal"));
+}
 
-    const float Magnitude = FMath::Abs(Input);
-    const float AdjustedInput = FMath::Sign(Input) * (Magnitude - InputDeadZone) / (1.f - InputDeadZone);
-    CameraPositionAdjust(FVector::RightVector * AdjustedInput * SeatMoveSpeedCmPerSecond * GetWorld()->GetDeltaSeconds());
+void AEgoVehicle::CameraMoveUp(const float Input)
+{
+    CameraMoveAxis(Input, FVector::UpVector, 4, TEXT("up"));
+}
+
+void AEgoVehicle::CameraMoveDown(const float Input)
+{
+    CameraMoveAxis(Input, FVector::DownVector, 8, TEXT("down"));
+}
+
+void AEgoVehicle::CameraMoveAxis(const float Input, const FVector &Direction, const uint8 DiagnosticBit,
+                               const TCHAR *AxisName)
+{
+    const float Value = SeatAxisValue(Input);
+    const bool bActive = Value != 0.f;
+    if (bActive != ((ActiveSeatAxes & DiagnosticBit) != 0))
+    {
+        LOG("Seat input: %s %s (raw=%.3f, offset=%s)", AxisName, bActive ? TEXT("start") : TEXT("stop"),
+            Input, *CameraPoseOffset.GetLocation().ToString());
+        if (bActive)
+            ActiveSeatAxes |= DiagnosticBit;
+        else
+            ActiveSeatAxes &= ~DiagnosticBit;
+    }
+    if (bActive && GetWorld() != nullptr && VRCameraRoot != nullptr)
+        CameraPositionAdjust(Direction * Value * SeatMoveSpeedCmPerSecond * GetWorld()->GetDeltaSeconds());
 }
 
 void AEgoVehicle::CameraPositionAdjust(const FVector &Disp)
@@ -95,6 +146,7 @@ void AEgoVehicle::CameraPositionAdjust(bool bForward, bool bRight, bool bBackwar
 
 void AEgoVehicle::PressNextCameraView()
 {
+    LOG("Seat input: next-view press (ready=%d, poses=%d)", bCanPressNextCameraView, CameraPoseKeys.Num());
     if (!bCanPressNextCameraView)
         return;
     bCanPressNextCameraView = false;
@@ -102,11 +154,13 @@ void AEgoVehicle::PressNextCameraView()
 };
 void AEgoVehicle::ReleaseNextCameraView()
 {
+    LOG("Seat input: next-view release");
     bCanPressNextCameraView = true;
 };
 
 void AEgoVehicle::PressPrevCameraView()
 {
+    LOG("Seat input: prev-view press (ready=%d, poses=%d)", bCanPressPrevCameraView, CameraPoseKeys.Num());
     if (!bCanPressPrevCameraView)
         return;
     bCanPressPrevCameraView = false;
@@ -114,6 +168,7 @@ void AEgoVehicle::PressPrevCameraView()
 };
 void AEgoVehicle::ReleasePrevCameraView()
 {
+    LOG("Seat input: prev-view release");
     bCanPressPrevCameraView = true;
 };
 
