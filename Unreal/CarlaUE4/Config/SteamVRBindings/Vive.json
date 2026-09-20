@@ -1,0 +1,13 @@
+{
+	"name": "Default bindings for Vive Headset",
+	"controller_type": "Vive",
+	"last_edited_by": "UnrealEngine",
+	"bindings":
+	{
+		"/actions/main":
+		{
+			"sources": []
+		}
+	},
+	"description": ""
+}

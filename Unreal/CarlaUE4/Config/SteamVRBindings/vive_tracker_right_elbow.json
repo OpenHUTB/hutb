@@ -1,0 +1,19 @@
+{
+	"name": "Default bindings for Vive Tracker (Right Elbow)",
+	"controller_type": "vive_tracker_right_elbow",
+	"last_edited_by": "UnrealEngine",
+	"bindings":
+	{
+		"/actions/main":
+		{
+			"poses": [
+				{
+					"output": "/actions/main/in/tracker_elbow_right",
+					"path": "/user/elbow/right/pose/raw",
+					"requirement": "optional"
+				}
+			]
+		}
+	},
+	"description": ""
+}
