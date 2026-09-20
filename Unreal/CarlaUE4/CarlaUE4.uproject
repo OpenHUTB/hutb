@@ -95,7 +95,7 @@
 		},
 		{
 			"Name": "SteamVR",
-			"Enabled": false,
+			"Enabled": true,
 			"WhitelistPlatforms": [
 				"Win32",
 				"Win64",

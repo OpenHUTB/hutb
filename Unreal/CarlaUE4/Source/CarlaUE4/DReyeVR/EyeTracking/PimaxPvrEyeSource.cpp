@@ -4,6 +4,8 @@
 
 #include "CarlaUE4.h" // LOG / LOG_WARN / LOG_ERROR
 #include "HAL/PlatformTime.h"
+#include "HAL/PlatformMisc.h"
+#include "PimaxRuntimePaths.h"
 
 #if WITH_DEV_AUTOMATION_TESTS
 #include "Misc/AutomationTest.h"
@@ -107,12 +109,56 @@ static_assert(sizeof(PvrAbi::FPvrHmdStatus) == 8, "PVR ABI mismatch: pvrHmdStatu
 
 namespace
 {
-/// Fixed absolute paths only (never PATH or the working directory) to avoid DLL
-/// planting. These are the two locations the Pimax runtime is known to use.
-const TCHAR *PvrDllCandidates[] = {
-    TEXT("C:\\Windows\\System32\\libPVRClient64.dll"),
-    TEXT("C:\\Program Files\\Pimax\\Runtime\\libPVRClient64.dll"),
-};
+// Pimax Play supplies this library AND the runtime/services it communicates with.
+// These are alternate locations of ONE DLL, not two required libraries.
+TArray<FString> FindPvrDllCandidates()
+{
+    TArray<FString> Roots;
+    for (HKEY Hive : {HKEY_LOCAL_MACHINE, HKEY_CURRENT_USER})
+    {
+        for (REGSAM View : {KEY_WOW64_64KEY, KEY_WOW64_32KEY})
+        {
+            HKEY Uninstall = nullptr;
+            if (RegOpenKeyExW(Hive, L"SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall", 0,
+                              KEY_READ | View, &Uninstall) != ERROR_SUCCESS)
+                continue;
+            WCHAR Name[256];
+            for (DWORD Index = 0;; ++Index)
+            {
+                DWORD Length = UE_ARRAY_COUNT(Name);
+                const LSTATUS Result = RegEnumKeyExW(Uninstall, Index, Name, &Length, nullptr, nullptr, nullptr, nullptr);
+                if (Result == ERROR_NO_MORE_ITEMS)
+                    break;
+                if (Result != ERROR_SUCCESS)
+                    continue;
+                HKEY Product = nullptr;
+                if (RegOpenKeyExW(Uninstall, Name, 0, KEY_READ | View, &Product) != ERROR_SUCCESS)
+                    continue;
+                WCHAR DisplayName[512] = {}, Location[32768] = {};
+                DWORD DisplayBytes = sizeof(DisplayName), LocationBytes = sizeof(Location);
+                if (RegGetValueW(Product, nullptr, L"DisplayName", RRF_RT_REG_SZ, nullptr, DisplayName,
+                                  &DisplayBytes) == ERROR_SUCCESS &&
+                    (FString(DisplayName).Contains(TEXT("Pimax")) || FString(DisplayName).Contains(TEXT("PiTool"))) &&
+                    RegGetValueW(Product, nullptr, L"InstallLocation", RRF_RT_REG_SZ | RRF_RT_REG_EXPAND_SZ,
+                                  nullptr, Location, &LocationBytes) == ERROR_SUCCESS)
+                    Roots.AddUnique(FString(Location));
+                RegCloseKey(Product);
+            }
+            RegCloseKey(Uninstall);
+        }
+    }
+    for (const TCHAR *Variable : {TEXT("ProgramW6432"), TEXT("ProgramFiles"), TEXT("ProgramFiles(x86)")})
+    {
+        const FString ProgramFiles = FPlatformMisc::GetEnvironmentVariable(Variable);
+        if (!ProgramFiles.IsEmpty())
+            Roots.AddUnique(FPaths::Combine(ProgramFiles, TEXT("Pimax")));
+    }
+    WCHAR SystemDirectory[32768] = {};
+    const UINT Length = GetSystemDirectoryW(SystemDirectory, UE_ARRAY_COUNT(SystemDirectory));
+    return PimaxRuntimePaths::Build(FPlatformMisc::GetEnvironmentVariable(TEXT("PIMAX_PVR_DLL")),
+                                   Length > 0 && Length < UE_ARRAY_COUNT(SystemDirectory) ? FString(SystemDirectory)
+                                                                                        : FString(), Roots);
+}
 constexpr uint32 PvrInterfaceMajor = 1;
 constexpr uint32 PvrInterfaceMinor = 26;
 /// ~2 s of failed polls at 60 fps before the session is declared dead.
@@ -170,19 +216,22 @@ bool FPimaxPvrEyeSource::Initialize()
 
     TransitionTo(EState::Initializing, TEXT("Initialize"));
 
-    // 1. Load the Pimax client library from a fixed, absolute location.
-    for (const TCHAR *Candidate : PvrDllCandidates)
+    // 1. Discover the official installation without assuming a Windows drive letter.
+    for (const FString &Candidate : FindPvrDllCandidates())
     {
-        DllHandle = LoadLibraryExW(Candidate, NULL, LOAD_WITH_ALTERED_SEARCH_PATH);
+        DllHandle = LoadLibraryExW(*Candidate, NULL, LOAD_LIBRARY_SEARCH_DLL_LOAD_DIR | LOAD_LIBRARY_SEARCH_SYSTEM32);
         if (DllHandle != nullptr)
         {
-            LOG("Pimax PVR: loaded %s", Candidate);
+            LOG("Pimax PVR: loaded %s", *Candidate);
             break;
         }
+        LOG_WARN("Pimax PVR: cannot load %s (Windows error %lu)", *Candidate, GetLastError());
     }
     if (DllHandle == nullptr)
     {
-        LOG_ERROR("Pimax PVR: libPVRClient64.dll not found (is the Pimax runtime installed?)");
+        LOG_ERROR("Pimax PVR: install/repair official Pimax Play and start its runtime. "
+                  "For a custom installation set PIMAX_PVR_DLL to the absolute path of libPVRClient64.dll. "
+                  "Copying the DLL alone does not install the required drivers or eye-tracking services.");
         TransitionTo(EState::Failed, TEXT("dll not found"));
         return false;
     }
@@ -523,5 +572,22 @@ bool FPimaxPvrFreshnessTest::RunTest(const FString &Parameters)
     return true;
 }
 #endif // WITH_DEV_AUTOMATION_TESTS
+
+#if WITH_DEV_AUTOMATION_TESTS
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FPimaxRuntimePathsTest, "HUTB.Pimax.Runtime.DiscoveryPaths",
+                                EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
+bool FPimaxRuntimePathsTest::RunTest(const FString &Parameters)
+{
+    const auto Paths = PimaxRuntimePaths::Build(TEXT(""), TEXT("D:/Windows/System32"),
+                                               {TEXT("E:/VR/Pimax"), TEXT("E:/VR/Pimax"), TEXT("relative")});
+    TestEqual(TEXT("Alternate Windows drive and deduplicated custom installation"), Paths.Num(), 3);
+    TestEqual(TEXT("System directory is not hardcoded"), Paths[0], FString(TEXT("D:/Windows/System32/libPVRClient64.dll")));
+    TestTrue(TEXT("Custom installation included"), Paths.Contains(TEXT("E:/VR/Pimax/Runtime/libPVRClient64.dll")));
+    TestEqual(TEXT("Relative override fails closed"), PimaxRuntimePaths::Build(TEXT("bad.dll"), TEXT("D:/Windows"), {}).Num(), 0);
+    TestEqual(TEXT("Explicit override selects only that installation"),
+              PimaxRuntimePaths::Build(TEXT("E:/VR/libPVRClient64.dll"), TEXT("D:/Windows"), {}).Num(), 1);
+    return true;
+}
+#endif
 
 #endif // PLATFORM_WINDOWS
