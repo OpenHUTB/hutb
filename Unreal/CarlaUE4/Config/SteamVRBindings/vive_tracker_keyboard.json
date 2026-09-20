@@ -1,0 +1,19 @@
+{
+	"name": "Default bindings for Vive Tracker (Keyboard)",
+	"controller_type": "vive_tracker_keyboard",
+	"last_edited_by": "UnrealEngine",
+	"bindings":
+	{
+		"/actions/main":
+		{
+			"poses": [
+				{
+					"output": "/actions/main/in/tracker_keyboard",
+					"path": "/user/keyboard/pose/raw",
+					"requirement": "optional"
+				}
+			]
+		}
+	},
+	"description": ""
+}

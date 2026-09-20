@@ -1,0 +1,153 @@
+{
+  "name": "Pimax Driving - Controls and Seat Adjustment",
+  "controller_type": "oculus_touch",
+  "last_edited_by": "UnrealEngine",
+  "bindings": {
+    "/actions/main": {
+      "sources": [
+        {
+          "path": "/user/hand/left/input/joystick",
+          "mode": "joystick",
+          "parameters": {
+            "deadzone_pct": "15",
+            "exponent": "1"
+          },
+          "inputs": {
+            "position": {
+              "output": "/actions/main/in/Steer_DReyeVR axis"
+            }
+          }
+        },
+        {
+          "path": "/user/hand/right/input/trigger",
+          "mode": "trigger",
+          "inputs": {
+            "pull": {
+              "output": "/actions/main/in/Throttle_DReyeVR axis"
+            }
+          }
+        },
+        {
+          "path": "/user/hand/left/input/trigger",
+          "mode": "trigger",
+          "inputs": {
+            "pull": {
+              "output": "/actions/main/in/Brake_DReyeVR axis"
+            }
+          }
+        },
+        {
+          "path": "/user/hand/right/input/a",
+          "mode": "button",
+          "inputs": {
+            "click": {
+              "output": "/actions/main/in/ToggleReverse_DReyeVR"
+            }
+          }
+        },
+        {
+          "path": "/user/hand/left/input/x",
+          "mode": "button",
+          "inputs": {
+            "click": {
+              "output": "/actions/main/in/TurnSignalLeft_DReyeVR"
+            }
+          }
+        },
+        {
+          "path": "/user/hand/right/input/b",
+          "mode": "button",
+          "inputs": {
+            "click": {
+              "output": "/actions/main/in/TurnSignalRight_DReyeVR"
+            }
+          }
+        },
+        {
+          "path": "/user/hand/left/input/y",
+          "mode": "button",
+          "inputs": {
+            "click": {
+              "output": "/actions/main/in/NextCameraView_DReyeVR"
+            }
+          }
+        },
+        {
+          "path": "/user/hand/right/input/joystick",
+          "mode": "joystick",
+          "parameters": {
+            "deadzone_pct": "15",
+            "exponent": "1"
+          },
+          "inputs": {
+            "click": {
+              "output": "/actions/main/in/PrevCameraView_DReyeVR"
+            },
+            "position": {
+              "output": "/actions/main/in/SeatMove_DReyeVR axis"
+            }
+          }
+        },
+        {
+          "path": "/user/hand/left/input/joystick",
+          "mode": "button",
+          "inputs": {
+            "click": {
+              "output": "/actions/main/in/EgoVehicle_DReyeVR"
+            }
+          }
+        },
+        {
+          "path": "/user/hand/left/input/grip",
+          "mode": "trigger",
+          "inputs": {
+            "click": {
+              "output": "/actions/main/in/CameraDown_DReyeVR"
+            }
+          }
+        },
+        {
+          "path": "/user/hand/right/input/grip",
+          "mode": "trigger",
+          "inputs": {
+            "click": {
+              "output": "/actions/main/in/CameraUp_DReyeVR"
+            }
+          }
+        }
+      ],
+      "poses": [
+        {
+          "output": "/actions/main/in/controllerleft",
+          "path": "/user/hand/left/pose/raw",
+          "requirement": "optional"
+        },
+        {
+          "output": "/actions/main/in/controllerright",
+          "path": "/user/hand/right/pose/raw"
+        }
+      ],
+      "skeleton": [
+        {
+          "output": "/actions/main/in/skeletonleft",
+          "path": "/user/hand/left/input/skeleton/left"
+        },
+        {
+          "output": "/actions/main/in/skeletonright",
+          "path": "/user/hand/right/input/skeleton/right"
+        }
+      ],
+      "haptics": [
+        {
+          "output": "/actions/main/out/vibrateleft",
+          "path": "/user/hand/left/output/haptic"
+        },
+        {
+          "output": "/actions/main/out/vibrateright",
+          "path": "/user/hand/right/output/haptic"
+        }
+      ]
+    }
+  },
+  "description": "A: reverse; X/B: indicators; Y/right stick click: camera; left stick click: vehicle; grips: seat height; right stick: seat position."
+}

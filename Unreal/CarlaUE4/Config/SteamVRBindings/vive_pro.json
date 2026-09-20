@@ -1,0 +1,13 @@
+{
+	"name": "Default bindings for Vive Pro Headset",
+	"controller_type": "vive_pro",
+	"last_edited_by": "UnrealEngine",
+	"bindings":
+	{
+		"/actions/main":
+		{
+			"sources": []
+		}
+	},
+	"description": ""
+}

@@ -1,0 +1,13 @@
+{
+	"name": "Default bindings for Valve Index Headset",
+	"controller_type": "indexhmd",
+	"last_edited_by": "UnrealEngine",
+	"bindings":
+	{
+		"/actions/main":
+		{
+			"sources": []
+		}
+	},
+	"description": ""
+}
