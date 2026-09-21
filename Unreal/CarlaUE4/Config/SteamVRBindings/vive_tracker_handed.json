@@ -1,0 +1,64 @@
+{
+	"name": "Default bindings for Vive Tracker (Handed)",
+	"controller_type": "vive_tracker_handed",
+	"last_edited_by": "UnrealEngine",
+	"bindings":
+	{
+		"/actions/main":
+		{
+			"poses": [
+				{
+					"output": "/actions/main/in/tracker_handed_pose_left",
+					"path": "/user/hand/left/pose/raw",
+					"requirement": "optional"
+				},
+				{
+					"output": "/actions/main/in/tracker_handed_pose_right",
+					"path": "/user/hand/right/pose/raw",
+					"requirement": "optional"
+				},
+				{
+					"output": "/actions/main/in/tracker_handed_back_left",
+					"path": "/user/hand/left/pose/back",
+					"requirement": "optional"
+				},
+				{
+					"output": "/actions/main/in/tracker_handed_back_right",
+					"path": "/user/hand/right/pose/back",
+					"requirement": "optional"
+				},
+				{
+					"output": "/actions/main/in/tracker_handed_front_left",
+					"path": "/user/hand/left/pose/front",
+					"requirement": "optional"
+				},
+				{
+					"output": "/actions/main/in/tracker_handed_front_right",
+					"path": "/actions/main/in/tracker_handed_front_right",
+					"requirement": "optional"
+				},
+				{
+					"output": "/actions/main/in/tracker_handed_frontr_left",
+					"path": "/user/hand/left/pose/front_rolled",
+					"requirement": "optional"
+				},
+				{
+					"output": "/actions/main/in/tracker_handed_frontr_right",
+					"path": "/user/hand/right/pose/front_rolled",
+					"requirement": "optional"
+				},
+				{
+					"output": "/actions/main/in/tracker_handed_grip_left",
+					"path": "/user/hand/left/pose/pistol",
+					"requirement": "optional"
+				},
+				{
+					"output": "/actions/main/in/tracker_handed_grip_right",
+					"path": "/user/hand/right/pose/pistol",
+					"requirement": "optional"
+				}
+			]
+		}
+	},
+	"description": ""
+}

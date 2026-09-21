@@ -1,0 +1,19 @@
+{
+	"name": "Default bindings for Vive Tracker (Left Foot)",
+	"controller_type": "vive_tracker_left_foot",
+	"last_edited_by": "UnrealEngine",
+	"bindings":
+	{
+		"/actions/main":
+		{
+			"poses": [
+				{
+					"output": "/actions/main/in/tracker_foot_left",
+					"path": "/user/foot/left/pose/raw",
+					"requirement": "optional"
+				}
+			]
+		}
+	},
+	"description": ""
+}

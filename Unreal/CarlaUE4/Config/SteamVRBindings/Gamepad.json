@@ -1,0 +1,13 @@
+{
+	"name": "Default bindings for Gamepads",
+	"controller_type": "Gamepad",
+	"last_edited_by": "UnrealEngine",
+	"bindings":
+	{
+		"/actions/main":
+		{
+			"sources": []
+		}
+	},
+	"description": ""
+}

@@ -189,6 +189,8 @@ class CARLAUE4_API AEgoVehicle : public ACarlaWheeledVehicle
     void CameraRight();
     void CameraUp();
     void CameraDown();
+    void CameraMoveDepth(float Input);
+    void CameraMoveHorizontal(float Input);
     void CameraPositionAdjust(bool bForward, bool bRight, bool bBackwards, bool bLeft, bool bUp, bool bDown);
 
     // changing camera views
@@ -203,6 +205,7 @@ class CARLAUE4_API AEgoVehicle : public ACarlaWheeledVehicle
     float ScaleSteeringInput;
     float ScaleThrottleInput;
     float ScaleBrakeInput;
+    float SeatMoveSpeedCmPerSecond = 75.f;
 
   private: // sounds
     UPROPERTY(Category = "Audio", EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))

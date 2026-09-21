@@ -25,6 +25,7 @@
   <img src="https://img.shields.io/badge/Python-3776AB?logo=python&logoColor=fff" alt="Python 3.7+"/>
   <img src="https://img.shields.io/badge/Ubuntu-E95420?logo=ubuntu&logoColor=white" alt="Platform"/>
   <img src="https://custom-icon-badges.demolab.com/badge/Windows-0078D6?logo=windows11&logoColor=white" alt="Platform"/>
+  <img src="https://atomgit.com/OpenHUTB/hutb/star/badge.svg" alt="AtomGit Star"/>
 </div>
 
 <p align="center">
@@ -35,7 +36,7 @@
 
 
 ## 使用示例
-1. 下载并执行 [模拟器下载工具](https://gitee.com/OpenHUTB/sw/releases/download/up/hutb_downloader.exe) ；
+1. 下载并执行 [模拟器下载工具](http://openhutb.github.io/dl.bat) ；
 2. 进入生成的目录`hutb/PythonAPI/carla/dist/`，使用`pip install hutb-*.whl`安装特定 Python 版本的工具包（支持Python 3.7-3.14），运行以下脚本在场景中 [生成车辆和行人](https://github.com/OpenHUTB/doc/blob/master/src/examples/generate_traffic.py) ：
 	```shell
 	python PythonAPI/examples/generate_traffic.py

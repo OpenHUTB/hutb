@@ -1,0 +1,19 @@
+{
+	"name": "Default bindings for Vive Tracker (Chest)",
+	"controller_type": "vive_tracker_chest",
+	"last_edited_by": "UnrealEngine",
+	"bindings":
+	{
+		"/actions/main":
+		{
+			"poses": [
+				{
+					"output": "/actions/main/in/tracker_chest",
+					"path": "/user/chest/pose/raw",
+					"requirement": "optional"
+				}
+			]
+		}
+	},
+	"description": ""
+}

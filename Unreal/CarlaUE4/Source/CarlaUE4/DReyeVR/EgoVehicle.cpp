@@ -90,6 +90,7 @@ void AEgoVehicle::ReadConfigVariables()
     GeneralParams.Get("VehicleInputs", "ScaleSteeringDamping", ScaleSteeringInput);
     GeneralParams.Get("VehicleInputs", "ScaleThrottleInput", ScaleThrottleInput);
     GeneralParams.Get("VehicleInputs", "ScaleBrakeInput", ScaleBrakeInput);
+    GeneralParams.Get("CameraParams", "SeatMoveSpeedCmPerSecond", SeatMoveSpeedCmPerSecond);
     // replay
     GeneralParams.Get("Replayer", "CameraFollowHMD", bCameraFollowHMD);
 }
