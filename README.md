@@ -36,7 +36,7 @@
 
 
 ## 使用示例
-1. 下载并执行 [模拟器下载工具](https://gitee.com/OpenHUTB/sw/releases/download/up/hutb_downloader.exe) ；
+1. 下载并执行 [模拟器下载工具](http://openhutb.github.io/dl.bat) ；
 2. 进入生成的目录`hutb/PythonAPI/carla/dist/`，使用`pip install hutb-*.whl`安装特定 Python 版本的工具包（支持Python 3.7-3.14），运行以下脚本在场景中 [生成车辆和行人](https://github.com/OpenHUTB/doc/blob/master/src/examples/generate_traffic.py) ：
 	```shell
 	python PythonAPI/examples/generate_traffic.py
