@@ -383,10 +383,16 @@ void ADReyeVRPawn::InitLogiWheel()
 
     if (!bIsLogiConnected && !bWheelErrorShown)
     {
-        bWheelErrorShown = true;
-        const FString LogiError = TEXT("No readable wheel on SDK inputs 0-1. Automatic reconnect is active; see Logitech SDK logs.");
-        UKismetSystemLibrary::PrintString(World, LogiError, true, true, FLinearColor(1, 0, 0, 1), 20.f);
-        LOG_ERROR("%s", *LogiError);
+        ++WheelProbeCount;
+        // Packaged builds run their first probe before the SDK's startup retry is due,
+        // so only the second consecutive miss (about 4 seconds later) is an error.
+        if (WheelProbeCount > 1)
+        {
+            bWheelErrorShown = true;
+            const FString LogiError = TEXT("No readable wheel on SDK inputs 0-1. Automatic reconnect is active; see Logitech SDK logs.");
+            UKismetSystemLibrary::PrintString(World, LogiError, true, true, FLinearColor(1, 0, 0, 1), 20.f);
+            LOG_ERROR("%s", *LogiError);
+        }
     }
 #endif
 }

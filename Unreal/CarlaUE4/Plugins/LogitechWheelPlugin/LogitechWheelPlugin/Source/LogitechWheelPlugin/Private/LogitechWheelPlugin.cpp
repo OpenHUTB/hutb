@@ -351,7 +351,7 @@ bool FWheelReconnectTest::RunTest(const FString& Parameters)
 		return Session.Update(Now, Frame, Init, Poll, HasDevice, Shutdown);
 	};
 	TestFalse(TEXT("First initialization fails"), Update(0.0, 0));
-	TestEqual(TEXT("Failed initialization cleaned up"), ShutdownCalls, 1);
+	TestEqual(TEXT("Failed init leaves the SDK untouched for retry"), ShutdownCalls, 0);
 	TestEqual(TEXT("Do not poll an uninitialized SDK"), PollCalls, 0);
 	TestFalse(TEXT("Retry is throttled"), Update(1.0, 1));
 	TestEqual(TEXT("No premature initialization"), InitCalls, 1);
@@ -366,23 +366,23 @@ bool FWheelReconnectTest::RunTest(const FString& Parameters)
 	TestFalse(TEXT("Read failure is reported"), Update(3.0, 3));
 	bPollWorks = true;
 	TestTrue(TEXT("Transient failure recovers without shutdown"), Update(3.5, 4));
-	TestEqual(TEXT("No reset for a short interruption"), ShutdownCalls, 1);
+	TestEqual(TEXT("No reset for a short interruption"), ShutdownCalls, 0);
 	bPollWorks = false;
 	Update(4.0, 5);
 	TestFalse(TEXT("Persistent failure resets SDK"), Update(6.0, 6));
-	TestEqual(TEXT("Stuck SDK shut down"), ShutdownCalls, 2);
+	TestEqual(TEXT("Stuck SDK shut down"), ShutdownCalls, 1);
 	bPollWorks = true;
 	TestTrue(TEXT("Reinitialized after persistent failure"), Update(6.1, 7));
 	TestEqual(TEXT("Reconnect really initializes"), InitCalls, 3);
 	bHasDevice = false;
 	Update(7.0, 8);
 	TestFalse(TEXT("Persistently empty device table also resets"), Update(9.0, 9));
-	TestEqual(TEXT("Empty table caused cleanup"), ShutdownCalls, 3);
+	TestEqual(TEXT("Empty table caused cleanup"), ShutdownCalls, 2);
 	bHasDevice = true;
 	TestTrue(TEXT("Device usable after reconnect"), Update(9.1, 10));
 	Session.Close(Shutdown);
 	Session.Close(Shutdown);
-	TestEqual(TEXT("Closing twice shuts down only once"), ShutdownCalls, 4);
+	TestEqual(TEXT("Closing twice shuts down only once"), ShutdownCalls, 3);
 	return true;
 }
 #endif

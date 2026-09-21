@@ -15,8 +15,6 @@ public:
             return false;
         NextAttempt = Now + 2.0;
         bInitialized = Init();
-        if (!bInitialized)
-            Shutdown(); // Clean up a partially initialized SDK before the next attempt.
         return bInitialized;
     }
 

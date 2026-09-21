@@ -141,6 +141,7 @@ class ADReyeVRPawn : public APawn
     double NextWheelConnectAttempt = 0.0;
     double NextWheelInputLog = 0.0;
     bool bWheelErrorShown = false;
+    int32 WheelProbeCount = 0;
     bool bIsHMDConnected = false;  // checks for HMD connection on BeginPlay
     // default logi plugin behaviour is to set things to 0.5 for some reason
     // "Pedals will output a value of 0.5 until the wheel/pedals receive any kind of input."
