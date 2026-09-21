@@ -80,11 +80,15 @@ function get_conda_env_python {
     # 环境缺失时自动创建（官方默认源），供 Setup.sh / BuildPythonAPI.sh 复用。
     # 这样新工作区上 make setup（默认 python=3 → hutb_3.8）也能自给自足。
     if [[ -x "${MINICONDA_DIR}/bin/conda" ]]; then
-      log "conda env 'hutb_3.${ENV_MINOR}' not found — creating it with python=3.${ENV_MINOR} ..."
+      # 本函数的 stdout 会被调用方 $(get_conda_env_python ...) 捕获，
+      # 因此这里的日志和 conda 输出不能进 stdout，否则会污染 CONDA_PY
+      # （曾导致 Setup.sh 220 行把彩色前缀当命令执行：$'\E[1;35mSetup.sh:' 未找到命令）。
+      log "conda env 'hutb_3.${ENV_MINOR}' not found — creating it with python=3.${ENV_MINOR} ..." >&2
       # fix: CondaToSNonInteractiveError — 官方源需先接受 ToS
-      "${MINICONDA_DIR}/bin/conda" tos accept --override-channels --channel https://repo.anaconda.com/pkgs/main 2>/dev/null || true
-      "${MINICONDA_DIR}/bin/conda" tos accept --override-channels --channel https://repo.anaconda.com/pkgs/r 2>/dev/null || true
-      "${MINICONDA_DIR}/bin/conda" create -n "hutb_3.${ENV_MINOR}" python="3.${ENV_MINOR}" --yes || \
+      "${MINICONDA_DIR}/bin/conda" tos accept --override-channels --channel https://repo.anaconda.com/pkgs/main >/dev/null 2>&1 || true
+      "${MINICONDA_DIR}/bin/conda" tos accept --override-channels --channel https://repo.anaconda.com/pkgs/r >/dev/null 2>&1 || true
+      # stdout 丢弃、stderr 保留：警告/报错仍可见于 CI 日志
+      "${MINICONDA_DIR}/bin/conda" create -n "hutb_3.${ENV_MINOR}" python="3.${ENV_MINOR}" --yes >/dev/null || \
         fatal_error "Failed to create conda env 'hutb_3.${ENV_MINOR}'. Run ./setup.sh first, or create it manually with:
     ${MINICONDA_DIR}/bin/conda create -n hutb_3.${ENV_MINOR} python=3.${ENV_MINOR} --yes"
     else
