@@ -191,6 +191,10 @@ class CARLAUE4_API AEgoVehicle : public ACarlaWheeledVehicle
     void CameraDown();
     void CameraMoveDepth(float Input);
     void CameraMoveHorizontal(float Input);
+    void CameraMoveUp(float Input);
+    void CameraMoveDown(float Input);
+    void CameraMoveAxis(float Input, const FVector &Direction, uint8 DiagnosticBit, const TCHAR *AxisName);
+    uint8 ActiveSeatAxes = 0; // log starts/stops, not every frame
     void CameraPositionAdjust(bool bForward, bool bRight, bool bBackwards, bool bLeft, bool bUp, bool bDown);
 
     // changing camera views
