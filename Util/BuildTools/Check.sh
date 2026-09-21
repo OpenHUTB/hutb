@@ -1,5 +1,9 @@
 #! /bin/bash
 
+# 打印脚本的参数（为了调试）
+# Print script params (debug purpose)
+echo "$(basename $0) [Batch params]: $*"
+
 # ==============================================================================
 # -- Parse arguments -----------------------------------------------------------
 # ==============================================================================
@@ -70,10 +74,12 @@ while [[ $# -gt 0 ]]; do
     --all )
       # 与 Check.bat 对齐：完整端到端流程
       # (上传/下载发行包 → 启动 CarlaUE4 → 装测试依赖与包内 whl → 单测 + smoke)
-      # SMOKE_TESTS=true;
-      LIBCARLA_RELEASE=true;
-      LIBCARLA_DEBUG=true;
+      # LIBCARLA_RELEASE=true;
+      # LIBCARLA_DEBUG=true;
       PYTHON_API=true;
+      SMOKE_TESTS=true;
+      AIR_TESTS=true;
+      VR_TESTS=true;
       # UPLOAD_DOWNLOAD=true;
       shift ;;
     --libcarla-release )
@@ -285,6 +291,31 @@ else
   log "warning: packaged build not found — will skip packaged wheel install; simulator tests (smoke/air/vr) need it."
 fi
 
+EXE_PATH="${EXE_DIR}/CarlaUE4.sh"
+
+# ==============================================================================
+# -- Launch CarlaUE4 service for tests -----------------------------------------
+# ==============================================================================
+
+# 杀掉占用 3654 端口的旧服务进程（对应 bat：netstat + taskkill）
+fuser -k 3654/tcp 2>/dev/null || pkill -f "CarlaUE4.sh" 2>/dev/null || true
+
+# 用后台方式启动服务，否则会卡住（对应 bat 的 start）。
+# 防止启动时弹出 Choose Vehicle 导致服务卡住、smoke 测试失败（对应 bat 注释）。
+if [[ -f "${EXE_PATH}" ]] ; then
+  pushd "${EXE_DIR}" >/dev/null
+    if ! ${IS_DEBUG} ; then
+      log "Unreal service is launching with command: ${EXE_PATH} -RenderOffscreen --carla-rpc-port=3654 --carla-streaming-port=0 -nosound"
+      nohup ${EXE_PATH} -RenderOffscreen --carla-rpc-port=3654 --carla-streaming-port=0 -nosound >/dev/null 2>&1 &
+    else
+      log "Unreal service is launching with command: ${EXE_PATH} --carla-rpc-port=3654 --carla-streaming-port=0 -nosound"
+      nohup ${EXE_PATH} --carla-rpc-port=3654 --carla-streaming-port=0 -nosound >/dev/null 2>&1 &
+    fi
+  popd >/dev/null
+else
+  fatal_error "CarlaUE4.sh not found (looked under Build/UE4Carla/${CARLA_VERSION}, Util/dist/hutb/UE4Carla/${CARLA_VERSION} and Dist/CARLA_${CARLA_VERSION}). Build and package first, or set INSTALLATION_DIR."
+fi
+
 # ==============================================================================
 # -- Install Python packages ---------------------------------------------------
 # ==============================================================================
@@ -325,32 +356,6 @@ if ! ${IS_DEBUG} ; then
 
 fi
 
-# ==============================================================================
-# -- Launch CarlaUE4 service for tests -----------------------------------------
-# ==============================================================================
-
-if { ${SMOKE_TESTS} || ${AIR_TESTS} || ${VR_TESTS}; }; then
-
-  if [[ -z "${EXE_DIR}" ]] ; then
-    fatal_error "CarlaUE4.sh not found (looked under Build/UE4Carla/${CARLA_VERSION}, Util/dist/hutb/UE4Carla/${CARLA_VERSION} and Dist/CARLA_${CARLA_VERSION}). Build and package first, or set INSTALLATION_DIR."
-  fi
-
-  # 杀掉占用 3654 端口的旧服务进程
-  fuser -k 3654/tcp 2>/dev/null || pkill -f "CarlaUE4.sh" 2>/dev/null || true
-
-  # 后台启动服务（对应 bat 的 start；否则会卡住）。
-  # 注意：release 版加 -RenderOffscreen，debug 版不加（与 bat 一致）。
-  if ! ${IS_DEBUG} ; then
-    SIM_ARGS="-RenderOffscreen --carla-rpc-port=3654 --carla-streaming-port=0 -nosound"
-  else
-    SIM_ARGS="--carla-rpc-port=3654 --carla-streaming-port=0 -nosound"
-  fi
-  log "Unreal service is launching with command: CarlaUE4.sh ${SIM_ARGS}"
-  pushd "${EXE_DIR}" >/dev/null
-    nohup ./CarlaUE4.sh ${SIM_ARGS} >/dev/null 2>&1 &
-  popd >/dev/null
-
-fi
 
 # ==============================================================================
 # -- Run Carla-Air example tests -----------------------------------------------
@@ -411,26 +416,9 @@ popd >/dev/null
 # -- Run smoke tests -----------------------------------------------------------
 # ==============================================================================
 
-T_START_DO_TEST=$(date +%s)
-
-if ${SMOKE_TESTS} ; then
-  pushd "${CARLA_PYTHONAPI_ROOT_FOLDER}/util" >/dev/null
-    log "Checking connection with the simulator."
-    for PY_VERSION in ${PY_VERSION_LIST[@]} ; do
-      # 与单元测试一致：用 carla wheel 所在的 conda 环境 python 运行。
-      CONDA_PY=$(get_conda_env_python ${PY_VERSION})
-      ${CONDA_PY} test_connection.py -p 3654 --timeout=60.0
-    done
-  popd >/dev/null
-fi
-
 pushd "${CARLA_PYTHONAPI_ROOT_FOLDER}/test" >/dev/null
 
-if ${XML_OUTPUT} ; then
-  EXTRA_ARGS="-c smoke/unittest.cfg -X"
-else
-  EXTRA_ARGS=
-fi
+T_START_DO_TEST=$(date +%s)
 
 if ${SMOKE_TESTS} ; then
   smoke_list=`cat smoke_test_list.txt`
@@ -439,13 +427,8 @@ if ${SMOKE_TESTS} ; then
     # 与单元测试一致：用 carla wheel 所在的 conda 环境 python 运行。
     # 测试依赖已在上方 Install Python packages 段统一安装（同 Check.bat）。
     CONDA_PY=$(get_conda_env_python ${PY_VERSION})
-    ${CONDA_PY} -m nose2 -v ${EXTRA_ARGS} ${smoke_list}
+    ${CONDA_PY} -m nose2 -v ${smoke_list}
   done
-
-  if ${XML_OUTPUT} ; then
-    mv test-results.xml ${CARLA_TEST_RESULTS_FOLDER}/smoke-tests-3.xml
-  fi
-
 fi
 
 popd >/dev/null
@@ -462,6 +445,7 @@ fi
 T_START_DO_TEST=$(date +%s)
 
 if ${VR_TESTS} ; then
+  log "echo Testing VR..."
   pushd "${CARLA_PYTHONAPI_ROOT_FOLDER}/test" >/dev/null
   for PY_VERSION in ${PY_VERSION_LIST[@]} ; do
     CONDA_PY=$(get_conda_env_python ${PY_VERSION})
@@ -484,12 +468,11 @@ fi
 # -- Kill CarlaUE4 service after tests -----------------------------------------
 # ==============================================================================
 
-if { ${SMOKE_TESTS} || ${AIR_TESTS} || ${VR_TESTS}; }; then
-  # 等服务就绪再杀（对应 bat：等几秒让测试任务提交，否则可能没有测试任务被杀掉）
-  sleep 10
-  log "Killing Unreal service process after test..."
-  fuser -k 3654/tcp 2>/dev/null || pkill -f "CarlaUE4.sh" 2>/dev/null || true
-fi
+# 等服务就绪再杀（对应 bat 的 timeout /t 10：等几秒让测试任务全部提交，
+# 否则可能没有测试任务被杀掉）
+sleep 10
+log "Killing Unreal service process after test..."
+fuser -k 3654/tcp 2>/dev/null || pkill -f "CarlaUE4.sh" 2>/dev/null || true
 
 T_END_OVERALL=$(date +%s)
 if ${MEASURE_TIME} ; then

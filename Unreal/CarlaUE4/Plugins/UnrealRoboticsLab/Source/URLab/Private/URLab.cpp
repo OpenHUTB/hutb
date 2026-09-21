@@ -72,14 +72,14 @@ void FURLabModule::StartupModule()
 #if PLATFORM_WINDOWS
     LoadDependencyDLL(TEXT("mujoco.dll"), TEXT("MuJoCo"));
 #else
-    LoadDependencyDLL(TEXT("libmujoco.so"), TEXT("MuJoCo"));
+    
 #endif
 
     // Load ZMQ
 #if PLATFORM_WINDOWS
     LoadDependencyDLL(TEXT("libzmq-v143-mt-4_3_6.dll"), TEXT("libzmq"));
 #else
-    LoadDependencyDLL(TEXT("libzmq.so"), TEXT("libzmq"));
+    
 #endif
 
     // Load CoACD (Shared library — Windows only; header-only on Linux)

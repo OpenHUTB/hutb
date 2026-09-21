@@ -49,7 +49,8 @@ hard-clean:
 	@${CARLA_BUILD_TOOLS_FOLDER}/BuildLibCarla.sh --clean
 	@echo "To force recompiling dependencies run: rm -Rf ${CARLA_BUILD_FOLDER}"
 
-check: LibCarla PythonAPI
+# check: LibCarla PythonAPI
+check:
 	@${CARLA_BUILD_TOOLS_FOLDER}/Check.sh --all $(ARGS)
 
 check.LibCarla: LibCarla
@@ -61,8 +62,21 @@ check.LibCarla.debug: LibCarla.debug
 check.LibCarla.release: LibCarla.release
 	@${CARLA_BUILD_TOOLS_FOLDER}/Check.sh --libcarla-release $(ARGS)
 
-check.PythonAPI: PythonAPI
+# check.PythonAPI: PythonAPI
+check.PythonAPI:
 	@${CARLA_BUILD_TOOLS_FOLDER}/Check.sh --python-api $(ARGS)
+
+check.smoke:
+	@${CARLA_BUILD_TOOLS_FOLDER}/Check.sh --smoke $(ARGS)
+
+check.air:
+	@${CARLA_BUILD_TOOLS_FOLDER}/Check.sh --air $(ARGS)
+
+check.vr:
+	@${CARLA_BUILD_TOOLS_FOLDER}/Check.sh --vr $(ARGS)
+
+check.upload:
+	@${CARLA_BUILD_TOOLS_FOLDER}/Check.sh --upload $(ARGS)
 
 check.PythonAPI.3: PythonAPI.3
 	@${CARLA_BUILD_TOOLS_FOLDER}/Check.sh --python-api --python-version=3 $(ARGS)
