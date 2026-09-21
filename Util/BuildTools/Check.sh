@@ -1,5 +1,9 @@
 #! /bin/bash
 
+# 打印脚本的参数（为了调试）
+# Print script params (debug purpose)
+echo "$(basename $0) [Batch params]: $*"
+
 # ==============================================================================
 # -- Parse arguments -----------------------------------------------------------
 # ==============================================================================
@@ -464,12 +468,11 @@ fi
 # -- Kill CarlaUE4 service after tests -----------------------------------------
 # ==============================================================================
 
-if { ${SMOKE_TESTS} || ${AIR_TESTS} || ${VR_TESTS}; }; then
-  # 等服务就绪再杀（对应 bat：等几秒让测试任务提交，否则可能没有测试任务被杀掉）
-  sleep 10
-  log "Killing Unreal service process after test..."
-  fuser -k 3654/tcp 2>/dev/null || pkill -f "CarlaUE4.sh" 2>/dev/null || true
-fi
+# 等服务就绪再杀（对应 bat 的 timeout /t 10：等几秒让测试任务全部提交，
+# 否则可能没有测试任务被杀掉）
+sleep 10
+log "Killing Unreal service process after test..."
+fuser -k 3654/tcp 2>/dev/null || pkill -f "CarlaUE4.sh" 2>/dev/null || true
 
 T_END_OVERALL=$(date +%s)
 if ${MEASURE_TIME} ; then
