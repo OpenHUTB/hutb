@@ -34,7 +34,7 @@ Use ARROWS or WASD keys for control.
     [1-9]        : change to sensor [1-9]
     G            : toggle radar visualization
     C            : change weather (Shift+C reverse)
-    Backspace    : change vehicle (cycle through --vehicle-pool if given)
+    Backspace    : change vehicle (cycle through --vehicle-pool values if given)
 
     O            : open/close all doors of vehicle
     T            : toggle vehicle's telemetry
@@ -198,9 +198,8 @@ class World(object):
         self._actor_filter = args.filter
         self._actor_generation = args.generation
         self._gamma = args.gamma
-        # --- 指定车型支持：由命令行 --vehicle / --vehicle-pool 传入 ---
-        self._vehicle_override = (getattr(args, 'vehicle', '') or '').strip()
-        raw_pool = (getattr(args, 'vehicle_pool', '') or '').strip()
+        # --- 指定车型支持：由命令行 --vehicle-pool 传入 ---
+        raw_pool = (args.vehicle_pool or '').strip()
         self._vehicle_pool = [x.strip() for x in raw_pool.split(',') if x.strip()]
         self._pool_index = 0
         self.restart()
@@ -231,14 +230,12 @@ class World(object):
         # Keep same camera config if the camera manager exists.
         cam_index = self.camera_manager.index if self.camera_manager is not None else 0
         cam_pos_index = self.camera_manager.transform_index if self.camera_manager is not None else 0
-        # 选择蓝图：优先「备选车池」轮换 -> 指定车型 -> 随机。
+        # 选择蓝图：优先「备选车池」轮换 -> 随机。
         blueprint = None
         bp_id = None
         if self._vehicle_pool:
             bp_id = self._vehicle_pool[self._pool_index % len(self._vehicle_pool)]
             self._pool_index += 1
-        elif self._vehicle_override:
-            bp_id = self._vehicle_override
         if bp_id:
             try:
                 blueprint = self.world.get_blueprint_library().find(bp_id)
@@ -300,8 +297,6 @@ class World(object):
             print('    Driving vehicle : %s' % blueprint.id)
             if self._vehicle_pool:
                 print('    Vehicle pool    : %s   [BACKSPACE cycles]' % ', '.join(self._vehicle_pool))
-            elif self._vehicle_override:
-                print('    Vehicle fixed   : BACKSPACE only resets in place')
         except Exception:
             pass
         actor_type = get_actor_display_name(self.player)
@@ -1378,15 +1373,10 @@ def main():
         default='hero',
         help='actor role name (default: "hero")')
     argparser.add_argument(
-        '--vehicle',
-        metavar='ID',
-        default='',
-        help='force a specific vehicle blueprint id (e.g. "vehicle.byd.seal"); empty means random')
-    argparser.add_argument(
         '--vehicle-pool',
         metavar='IDS',
         default='',
-        help='comma separated vehicle blueprint ids; BACKSPACE cycles through this list (default: random change)')
+        help='comma separated vehicle blueprint ids; a single id fixes the vehicle and multiple ids are cycled with BACKSPACE (default: random)')
     argparser.add_argument(
         '--gamma',
         default=2.2,

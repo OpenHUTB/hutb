@@ -21,6 +21,10 @@
 #include "SRanipalEye_Framework.h" // StartFramework
 #endif
 
+#if PLATFORM_WINDOWS
+#include "EyeTracking/PimaxPvrEyeSource.h" // FPimaxPvrEyeSource
+#endif
+
 #include "EgoSensor.generated.h"
 
 class AEgoVehicle;
@@ -64,6 +68,10 @@ class CARLAUE4_API AEgoSensor : public ADReyeVRSensor
     void ComputeTraceFocusInfo(const ECollisionChannel TraceChannel, float TraceRadius = 0.f);
     float MaxTraceLenM = 100.f;        // maximum trace length in m
     bool bDrawDebugFocusTrace = false; // draw the trace ray and hit point or not
+    bool bUseCameraRelativeGazeDisplay = true;
+    UPROPERTY(Transient)
+    class UCameraGazeComponent *GazeDisplay = nullptr;
+    void UpdateGazeDisplay();
     float ComputeVergence(const FVector &L0, const FVector &LDir, const FVector &R0, const FVector &RDir) const;
 #if USE_SRANIPAL_PLUGIN
     SRanipalEye_Core *SRanipal;               // SRanipalEye_Core.h
@@ -71,6 +79,13 @@ class CARLAUE4_API AEgoSensor : public ADReyeVRSensor
     ViveSR::anipal::Eye::EyeData EyeData;     // SRanipal_Eyes_Enums.h
     bool bSRanipalEnabled;                    // Whether or not the framework has been loaded
 #endif
+#if PLATFORM_WINDOWS
+    // Pimax PVR eye-tracking backend (alternative to SRanipal), enabled via
+    // DReyeVRConfig.ini [Pimax] EnablePvrEyeTracking
+    TUniquePtr<FPimaxPvrEyeSource> PvrEyeSource;
+#endif
+    bool bEnablePvrEyeTracking = false; // read from config regardless of platform
+    void TickPimaxEyeTracker();         // poll Pimax PVR and fill EyeSensorData (no-op off Windows)
     struct DReyeVR::EyeTracker EyeSensorData;                           // data from eye tracker
     struct DReyeVR::FocusInfo FocusInfoData;                            // data from the focus computed from eye gaze
     std::chrono::time_point<std::chrono::system_clock> ChronoStartTime; // std::chrono time at BeginPlay

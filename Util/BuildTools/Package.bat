@@ -253,6 +253,16 @@ if %DO_COPY_FILES%==true (
     set XCOPY_FROM=%ROOT_PATH:/=\%
     set XCOPY_TO=%SOURCE:/=\%
 
+    :: Pimax launcher and editable runtime configuration (no third-party Pimax DLLs).
+    copy /y "!XCOPY_FROM!StartPimaxVR.ps1" "!XCOPY_TO!StartPimaxVR.ps1" >nul
+    if errorlevel 1 goto bad_exit
+    echo f | xcopy /y "!XCOPY_FROM!Unreal\CarlaUE4\CarlaUE4.uproject" "!XCOPY_TO!CarlaUE4\CarlaUE4.uproject"
+    if errorlevel 1 goto bad_exit
+    echo f | xcopy /y "!XCOPY_FROM!Unreal\CarlaUE4\Config\DReyeVRConfig.ini" "!XCOPY_TO!CarlaUE4\Config\DReyeVRConfig.ini"
+    if errorlevel 1 goto bad_exit
+    echo d | xcopy /y /s "!XCOPY_FROM!Unreal\CarlaUE4\Config\SteamVRBindings\*.json" "!XCOPY_TO!CarlaUE4\Config\SteamVRBindings"
+    if errorlevel 1 goto bad_exit
+
     echo f | xcopy /y "!XCOPY_FROM!LICENSE"                                         "!XCOPY_TO!LICENSE"
     echo f | xcopy /y "!XCOPY_FROM!CHANGELOG.md"                                    "!XCOPY_TO!CHANGELOG"
     echo f | xcopy /y "!XCOPY_FROM!Docs\release_readme.md"                          "!XCOPY_TO!README"

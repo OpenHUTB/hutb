@@ -208,8 +208,16 @@
 			"type": "vector2"
 		},
 		{
-			"name": "/actions/main/in/SeatMove_DReyeVR axis",
+			"name": "/actions/main/in/SeatMove_DReyeVR_X,SeatMove_DReyeVR_Y X Y_axis2d",
 			"type": "vector2"
+		},
+		{
+			"name": "/actions/main/in/SeatLift_DReyeVR axis",
+			"type": "vector1"
+		},
+		{
+			"name": "/actions/main/in/SeatLower_DReyeVR axis",
+			"type": "vector1"
 		},
 		{
 			"name": "/actions/main/in/MouseLookUp_DReyeVR axis",
@@ -511,7 +519,9 @@
 			"/actions/main/in/Throttle_DReyeVR axis": "Throttle_DReyeVR",
 			"/actions/main/in/Brake_DReyeVR axis": "Brake_DReyeVR",
 			"/actions/main/in/Steer_DReyeVR axis": "Steer_DReyeVR",
-			"/actions/main/in/SeatMove_DReyeVR axis": "SeatMove_DReyeVR",
+			"/actions/main/in/SeatMove_DReyeVR_X,SeatMove_DReyeVR_Y X Y_axis2d": "Seat position (right stick)",
+			"/actions/main/in/SeatLift_DReyeVR axis": "Seat up (hold right grip)",
+			"/actions/main/in/SeatLower_DReyeVR axis": "Seat down (hold left grip)",
 			"/actions/main/in/MouseLookUp_DReyeVR axis": "MouseLookUp_DReyeVR",
 			"/actions/main/in/MouseTurn_DReyeVR axis": "MouseTurn_DReyeVR",
 			"/actions/main/in/CameraZoom axis": "CameraZoom",
