@@ -36,7 +36,7 @@
 
 
 ## 使用示例
-1. 下载并执行 [模拟器下载工具](http://openhutb.github.io/dl.bat) ；
+1. 下载并执行 [模拟器下载工具](http://openhutb.github.io/dl.bat) ，运行`StartOpenHUTB.bat`，默认同时支持 Carla 模式和 AirSim 模式；
 2. 进入生成的目录`hutb/PythonAPI/carla/dist/`，使用`pip install hutb-*.whl`安装特定 Python 版本的工具包（支持Python 3.7-3.14），运行以下脚本在场景中 [生成车辆和行人](https://github.com/OpenHUTB/doc/blob/master/src/examples/generate_traffic.py) ：
 	```shell
 	python PythonAPI/examples/generate_traffic.py
@@ -48,12 +48,6 @@
 	使用 [config.py](https://github.com/OpenHUTB/hutb/blob/hutb/PythonAPI/util/config.py) [切换](ue/switch_mode.md) 到 [VR 驾驶舱模式](https://openhutb.github.io/doc/interbehavior/) ，使用罗技方向盘或键盘`W`、`A`、`S`、`D`等进行控制，`Z`为倒档：
 	```shell
 	python config.py --map Town10HD?GAME=VR
-	```
-	切换到 [无人机模式](https://openhutb.github.io/air_doc/) （v2.3.0 版之后默认同时支持 Carla 模式和 AirSim 模式）：
-	```shell
-	python config.py --map Town10HD?GAME=AIR
-	# 起飞后按回车键进入不同状态
-	python PythonClient/multirotor/hello_drone.py
 	```
 
 
