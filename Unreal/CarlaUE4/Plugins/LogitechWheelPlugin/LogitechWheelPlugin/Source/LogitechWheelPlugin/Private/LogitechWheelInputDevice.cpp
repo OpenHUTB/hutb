@@ -53,8 +53,7 @@ FLogitechWheelInputDevice::FLogitechWheelInputDevice(const TSharedRef<FGenericAp
 
 FLogitechWheelInputDevice::~FLogitechWheelInputDevice()
 {
-	// Close your device here
-	InputDevice.WheelShutdown();
+	// The module owns the SDK session; destroying a consumer must not close it.
 }
 
 
@@ -66,13 +65,15 @@ void FLogitechWheelInputDevice::Tick(float DeltaTime)
 
 void FLogitechWheelInputDevice::SendControllerEvents()
 {
-	InputDevice.WheelUpdate();
-	if (!IsDeviceAvailable(0)) {
+	if (!InputDevice.WheelUpdate() || !IsDeviceAvailable(0)) {
 		//UE_LOG(LogTemp, Warning, TEXT("Device Not Available"));
 		return;
 	}
 	
-	currentState = ConvertDeviceState(InputDevice.WheelGetState(0));
+	DIJOYSTATE2* State = InputDevice.WheelGetState(0);
+	if (State == nullptr)
+		return;
+	currentState = ConvertDeviceState(State);
 
 	// check if states has changed compared to previous state
 	int stateChange = 0; //0 = no change, 1 = Button Pressed, 2 = Button Released;
