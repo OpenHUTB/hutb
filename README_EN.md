@@ -32,7 +32,7 @@ The OpenHUTB (Open source Human-vehicle Twin Build) is a photorealistic-quality 
 
 
 ## Usage example
-1. Download and run the [simulator download tool](https://gitee.com/OpenHUTB/sw/releases/download/up/hutb_downloader.exe);
+1. Download and run the [simulator download tool](https://gitee.com/OpenHUTB/sw/releases/download/up/hutb_downloader.exe), then run `StartOpenHUTB.bat`. By default, it supports both Carla and AirSim game modes.
 2. Navigate to the generated directory `hutb/PythonAPI/carla/dist/`, and use `pip install hutb-*.whl` to install the toolkit for your specific Python version (supports Python 3.7-3.14). Run the following script to [generate vehicles and pedestrians](https://github.com/OpenHUTB/doc/blob/master/src/examples/generate_traffic.py)  in the scene: 
 	```shell
 	python PythonAPI/examples/generate_traffic.py
@@ -44,12 +44,6 @@ The OpenHUTB (Open source Human-vehicle Twin Build) is a photorealistic-quality 
 	Use [config.py](https://github.com/OpenHUTB/hutb/blob/hutb/PythonAPI/util/config.py) to [switch to](ue/switch_mode.md) [VR cockpit mode](https://openhutb.github.io/doc/interbehavior/) , and use the Logitech steering wheel or keyboard keys `W`, `A`, `S`, `D`, etc. for control; `Z` is reverse gear. 
 	```shell
 	python config.py --map Town10HD?GAME=VR
-	```
-	Switch to: [drone mode](https://openhutb.github.io/air_doc/) (Version 2.3.0 and later support both Carla mode and AirSim mode by default.)：
-	```shell
-	python config.py --map Town10HD?GAME=AIR
-	# Press Enter after takeoff to enter different states.
-	python PythonClient/multirotor/hello_drone.py
 	```
 
 
