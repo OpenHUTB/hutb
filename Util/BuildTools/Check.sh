@@ -369,7 +369,7 @@ if ${AIR_TESTS} ; then
     log "Running Carla-Air Python API for Python ${PY_VERSION} example tests."
     # 与 bat 相同跑 4 个脚本；失败即中止
     for SCRIPT in 01_hello_world.py 02_weather_control.py 03_spawn_traffic.py 04_sensor_capture.py ; do
-      ${CONDA_PY} ${SCRIPT} --port 3654 
+      ${CONDA_PY} ${SCRIPT} --port 3654 || fatal_error "AIR test failed: ${SCRIPT} (Python ${PY_VERSION})."
     done
     log "Finished Carla-Air Python API for Python ${PY_VERSION} example tests."
   done
