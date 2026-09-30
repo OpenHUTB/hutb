@@ -11,7 +11,7 @@
 #endif
 
 #if USE_LOGITECH_PLUGIN
-#include "LogitechSteeringWheelLib.h" // LogitechWheel plugin for hardware integration & force feedback
+#include "ILogitechWheelPlugin.h" // LogitechWheel plugin for hardware integration & force feedback
 #endif
 
 #include "DReyeVRPawn.generated.h"
@@ -138,6 +138,10 @@ class ADReyeVRPawn : public APawn
     float WheelRotationLast, AccelerationPedalLast, BrakePedalLast;
 #endif
     bool bIsLogiConnected = false; // check if Logi device is connected (on BeginPlay)
+    double NextWheelConnectAttempt = 0.0;
+    double NextWheelInputLog = 0.0;
+    bool bWheelErrorShown = false;
+    int32 WheelProbeCount = 0;
     bool bIsHMDConnected = false;  // checks for HMD connection on BeginPlay
     // default logi plugin behaviour is to set things to 0.5 for some reason
     // "Pedals will output a value of 0.5 until the wheel/pedals receive any kind of input."

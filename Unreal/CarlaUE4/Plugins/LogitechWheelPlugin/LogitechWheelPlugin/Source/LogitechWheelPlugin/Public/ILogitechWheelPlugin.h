@@ -94,7 +94,7 @@ struct FDeviceState
 };
 
 
-class ILogitechWheelPlugin : public IInputDeviceModule
+class LOGITECHWHEELPLUGIN_API ILogitechWheelPlugin : public IInputDeviceModule
 {
 public:
 	/**
