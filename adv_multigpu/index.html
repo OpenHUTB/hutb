@@ -183,7 +183,7 @@ The parameters we can use are:
 <p>The primary server will use by default the port 2002 to listen for secondary servers. If you need to listen on another port, then you can change it with the flag</p>
 <p><strong>./CarlaUE4.sh -nullrhi -carla-primary-port=3002</strong></p>
 <h2 id="secondary-servers">Secondary servers</h2>
-<p>Then we need to start as many servers as we want, but the ideal is to have as many secondary servers as GPU. Through parameters we need to specify the GPU we want the server use and also the host/port where the primary server is listenning, with the flags:
+<p>Then we need to start as many servers as we want, but the ideal is to have as many secondary servers as GPU. Through parameters we need to specify the GPU we want the server use and also the host/port where the primary server is listening, with the flags:
   * <code>-carla-rpc-port</code>: TCP port to accept client connections (for secondary servers it is not needed, but the port needs to be free)
   * <code>-carla-primary-host</code>: IP of the primary server to connect
   * <code>-carla-primary-port</code>: TCP port of the primary server to connect
