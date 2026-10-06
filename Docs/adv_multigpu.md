@@ -24,7 +24,7 @@ The primary server will use by default the port 2002 to listen for secondary ser
 
 ## Secondary servers
 
-Then we need to start as many servers as we want, but the ideal is to have as many secondary servers as GPU. Through parameters we need to specify the GPU we want the server use and also the host/port where the primary server is listenning, with the flags:
+Then we need to start as many servers as we want, but the ideal is to have as many secondary servers as GPU. Through parameters we need to specify the GPU we want the server use and also the host/port where the primary server is listening, with the flags:
   * `-carla-rpc-port`: TCP port to accept client connections (for secondary servers it is not needed, but the port needs to be free)
   * `-carla-primary-host`: IP of the primary server to connect
   * `-carla-primary-port`: TCP port of the primary server to connect

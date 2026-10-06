@@ -1,6 +1,6 @@
 # PTV-Vissim co-simulation
 
-CARLA has developed a co-simulation feature with PTV-Vissim. This allows to distribute the tasks at will, and exploit the capabilities of each simulation in favour of the user.  
+CARLA has developed a co-simulation feature with PTV-Vissim. This allows the user to distribute the tasks at will and exploit the capabilities of each simulation in favour of the user.  
 
 *   [__Requisites__](#requisites)  
 *   [__Run a co-simulation__](#run-the-co-simulation)  

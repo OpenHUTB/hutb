@@ -91,7 +91,7 @@ The procedural generation tool extracts the building footprints and height infor
 
 ![procedural_cities](img/digital_twins_vegetation.jpg)
 
-Vegetation is also added to the pavements in the next step step for additional detail.
+Vegetation is also added to the pavements in the next step for additional detail.
 
 ![residential_building_style](img/digital_twins_buildings.jpg)
 *Digital Twin Tool building styles*
