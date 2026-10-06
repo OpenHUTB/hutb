@@ -370,6 +370,7 @@ if ${AIR_TESTS} ; then
     # 与 bat 相同跑 4 个脚本；失败即中止
     for SCRIPT in 01_hello_world.py 02_weather_control.py 03_spawn_traffic.py 04_sensor_capture.py ; do
       ${CONDA_PY} ${SCRIPT} --port 3654 
+    done
     log "Finished Carla-Air Python API for Python ${PY_VERSION} example tests."
   done
   popd >/dev/null
