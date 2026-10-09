@@ -48,8 +48,10 @@ set VR_TESTS=false
 set PYTHON_API=false
 set RUN_BENCHMARK=false
 set AIR_TESTS=false
+set WATER_TESTS=false
 set MEASURE_TIME=true
 set UPLOAD_DOWNLOAD=false
+
 
 rem set home_dir=%LOCAL_PATH%..\..\
 rem 相对路径转换为完整的绝对路径
@@ -58,6 +60,28 @@ set python_dir=%ROOT_PATH%Build\dependencies\prerequisites\miniconda3\envs\hutb_
 set python_path=%python_dir%python.exe
 set pip_path=%python_dir%Scripts\pip.exe
 echo python_path: %python_path%
+
+
+rem Get the directory where CarlaUE4 is located (refer to Package.bat).
+for /f %%i in ('git rev-parse --short HEAD') do set CARLA_VERSION=%%i
+if not defined CARLA_VERSION goto bad_exit
+
+rem If the "dirty" suffix is ​​present, it indicates that the package was compiled after switching between multiple versions, and this package is also used during testing.
+rem (Solve the problem of not being able to find the executable file in the dirty directory during testing)
+if exist %INSTALLATION_DIR%UE4Carla/%CARLA_VERSION%-dirty/ (
+    set CARLA_VERSION=%CARLA_VERSION%-dirty
+)
+
+rem The directory of CarlaUE4.exe
+set BUILD_FOLDER=%INSTALLATION_DIR%UE4Carla/%CARLA_VERSION%/
+rem debug only with rename (CARLA_VERSION to debug)
+if %IS_DEBUG%==true (
+    set BUILD_FOLDER=%INSTALLATION_DIR%UE4Carla\debug\
+)
+
+set exe_dir=%BUILD_FOLDER:\=/%WindowsNoEditor/%
+set exe_path=%BUILD_FOLDER:/=\%WindowsNoEditor\CarlaUE4.exe
+
 
 :arg-parse
 if not "%1"=="" (
@@ -93,6 +117,13 @@ if not "%1"=="" (
         shift
     )
 
+    if "%1"=="--water" (
+        set WATER_TESTS=true
+        rem switch to WATER configuration by replacing the settings.json file
+        copy /Y %BUILD_FOLDER:/=\%WindowsNoEditor\settings_rov.json  %BUILD_FOLDER:/=\%WindowsNoEditor\settings.json
+        shift
+    )
+
     if "%1"=="--vr" (
         set VR_TESTS=true
         shift
@@ -124,15 +155,6 @@ rem ============================================================================
 rem -- Launch Serve for test ---------------------------------------------------
 rem ============================================================================
 
-rem Get the directory where CarlaUE4 is located (refer to Package.bat).
-for /f %%i in ('git rev-parse --short HEAD') do set CARLA_VERSION=%%i
-if not defined CARLA_VERSION goto bad_exit
-
-rem If the "dirty" suffix is ​​present, it indicates that the package was compiled after switching between multiple versions, and this package is also used during testing.
-rem (Solve the problem of not being able to find the executable file in the dirty directory during testing)
-if exist %INSTALLATION_DIR%UE4Carla/%CARLA_VERSION%-dirty/ (
-    set CARLA_VERSION=%CARLA_VERSION%-dirty
-)
 
 if %UPLOAD_DOWNLOAD%==true (
     cd /d %ROOT_PATH%Util
@@ -152,17 +174,6 @@ if %UPLOAD_DOWNLOAD%==true (
     echo Skipping upload and download of package for version %CARLA_VERSION%.
 )
 
-
-
-rem The directory of CarlaUE4.exe
-set BUILD_FOLDER=%INSTALLATION_DIR%UE4Carla/%CARLA_VERSION%/
-rem debug only (rename with no dirty)
-if %IS_DEBUG%==true (
-    set BUILD_FOLDER=%INSTALLATION_DIR%UE4Carla\debug\
-)
-
-set exe_dir=%BUILD_FOLDER:\=/%WindowsNoEditor/%
-set exe_path=%BUILD_FOLDER:/=\%WindowsNoEditor\CarlaUE4.exe
 
 rem If exist CarlaUE4.exe process, kill it
 for /f "tokens=5" %%a in ('netstat -ano ^| findstr :3654') do taskkill /F /PID %%a
@@ -325,6 +336,35 @@ if %VR_TESTS%==true (
         echo Switch to VR mode...
         python ../util/config.py -p 3654 --map Town10HD?GAME=VR
         python ./function/test_VR_diagram_mode.py
+        rem 判断是否正常退出
+        if %errorlevel% equ 0 (
+            echo VR test passed.
+        ) else (
+            echo VR test failed with errorlevel %errorlevel%.
+            goto bad_exit
+        )
+    )
+)
+
+
+rem ============================================================================
+rem -- Run water tests ---------------------------------------------------------
+rem ============================================================================
+
+call :get_current_time_in_seconds T_START_DO_TEST
+
+
+if %WATER_TESTS%==true (
+    echo Testing water... 
+    echo Current directory: %cd%
+    for /l %%i in (14,-1,7) do (
+        echo Running water tests for Python 3.%%i
+        call conda activate hutb_3.%%i
+        echo Current Python path: 
+        where python
+        timeout /t 10 /nobreak > NUL
+        echo Switch to water mode...
+        python ./holoocean/airsim_rov.py
         rem 判断是否正常退出
         if %errorlevel% equ 0 (
             echo VR test passed.
