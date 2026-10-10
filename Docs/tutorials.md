@@ -19,7 +19,7 @@ Here you will find the multitude of tutorials available to help you understand h
 * [__Build Unreal Engine and CARLA in Docker__](build_docker_unreal.md) — Build Unreal Engine and CARLA in Docker.
 * [__CarSim Integration__](tuto_G_carsim_integration.md) — Tutorial on how to run a simulation using the CarSim vehicle dynamics engine.
 * [__RLlib Integration__](tuto_G_rllib_integration.md) — Find out how to run your own experiment using the RLlib library.
-* [__Chrono Integration__](tuto_G_chrono.md) — Use the Chrono integration to simulation physics.
+* [__Chrono Integration__](tuto_G_chrono.md) — Use the Chrono integration to simulate physics.
 * [__PyGame control__](tuto_G_pygame.md) — Use PyGame to display the output of camera sensors.
 
 ## Assets and maps

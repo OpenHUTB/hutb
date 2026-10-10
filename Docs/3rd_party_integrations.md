@@ -33,7 +33,7 @@ The ROS bridge boasts the following features:
 
 ## SUMO
 
-CARLA has developed a co-simulation feature with [__SUMO__](https://www.eclipse.org/sumo/). This allows to distribute the tasks at will, and exploit the capabilities of each simulation in favour of the user.
+CARLA has developed a co-simulation feature with [__SUMO__](https://www.eclipse.org/sumo/). This allows the user to distribute the tasks at will and exploit the capabilities of each simulation in favour of the user.
 
 Please refer to the full documentation [__here__](adv_sumo.md).
 

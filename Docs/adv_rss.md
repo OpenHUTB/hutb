@@ -111,7 +111,7 @@ So far, the server provides the sensor with ground truth data of the surrounding
 
 When the client calls for it, the [__carla.RssRestrictor__](python_api.md#carla.RssRestrictor) will modify the vehicle controller to best reach the desired accelerations or decelerations by a given response.
 
-Due to the stucture of [carla.VehicleControl](python_api.md#carla.VehicleControl) objects, the restrictions applied have certain limitations. These controllers include `throttle`, `brake` and `streering` values. However, due to car physics and the simple control options these might not be met. The restriction intervenes in lateral direction simply by counter steering towards the parallel lane direction. The brake will be activated if deceleration requested by RSS. This depends on vehicle mass and brake torques provided by the [carla.Vehicle](python_api.md#carla.Vehicle).
+Due to the stucture of [carla.VehicleControl](python_api.md#carla.VehicleControl) objects, the restrictions applied have certain limitations. These controllers include `throttle`, `brake` and `streering` values. However, due to car physics and the simple control options these might not be met. The restriction intervenes in lateral direction simply by counter steering towards the parallel lane direction. The brake will be activated if deceleration is requested by RSS. This depends on vehicle mass and brake torques provided by the [carla.Vehicle](python_api.md#carla.Vehicle).
 
 !!! Note
     In an automated vehicle controller it might be possible to adapt the planned trajectory to the restrictions. A fast control loop (>1KHz) can be used to ensure these are followed.
