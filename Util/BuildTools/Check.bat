@@ -222,17 +222,16 @@ if %AIR_TESTS%==true (
         cd %ROOT_PATH:/=\%PythonAPI\examples\air\
         rem AirSim: python 3.7 - 3.11 is normal, but 3.12, 3.13, 3.14 is abnormal: No module named 'backports'
         rem requirements: backports.weakref, backports.ssl_match_hostname
-        python 01_hello_world.py --port 3654
-        python 02_weather_control.py --port 3654
-        python 03_spawn_traffic.py --port 3654
-        python 04_sensor_capture.py --port 3654
-        echo Finished Carla-Air Python API for Python %%i example tests.
-        if %errorlevel% equ 0 (
-            echo AIR test passed with level %errorlevel%.
-        ) else (
-            echo AIR test failed with errorlevel %errorlevel%.
-            goto bad_exit
+        rem 判定必须用 !errorlevel!：块内的 %errorlevel% 会在解析期就被
+        rem 替换成进入本段之前的旧值，判定恒为真，脚本失败永远不会被发现。
+        for %%s in (01_hello_world.py 02_weather_control.py 03_spawn_traffic.py 04_sensor_capture.py) do (
+            python %%s --port 3654
+            if !errorlevel! neq 0 (
+                echo AIR test failed: %%s for Python 3.%%i.
+                goto bad_exit
+            )
         )
+        echo Finished Carla-Air Python API for Python %%i example tests.
     )
 )
 
