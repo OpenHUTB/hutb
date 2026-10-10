@@ -40,7 +40,7 @@
 	```shell
 	curl -fsSL -o dl.bat https://openhutb.github.io/dl.bat && dl.bat
 	```
-	双击执行`StartOpenHUTB.bat`启动模拟器。
+	双击执行`CarlaUE4.exe`启动模拟器。
 
 2. 进入生成的目录`hutb/PythonAPI/carla/dist/`，使用`pip install hutb-*.whl`安装特定 Python 版本的工具包（支持Python 3.7-3.14），运行以下脚本在场景中 [生成车辆和行人](https://github.com/OpenHUTB/doc/blob/master/src/examples/generate_traffic.py) ：
 	```shell
