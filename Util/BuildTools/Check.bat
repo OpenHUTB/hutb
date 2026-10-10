@@ -119,7 +119,7 @@ if not "%1"=="" (
 
     if "%1"=="--water" (
         set WATER_TESTS=true
-        rem switch to WATER configuration by replacing the settings.json file
+        echo switch to WATER configuration by replacing the settings.json file
         copy /Y %BUILD_FOLDER:/=\%WindowsNoEditor\settings_rov.json  %BUILD_FOLDER:/=\%WindowsNoEditor\settings.json
         shift
     )

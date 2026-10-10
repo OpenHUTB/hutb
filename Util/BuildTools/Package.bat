@@ -282,9 +282,14 @@ if %DO_COPY_FILES%==true (
     echo f | xcopy /y "!XCOPY_FROM!Unreal\CarlaUE4\Content\Carla\HDMaps\*.pcd"      "!XCOPY_TO!HDMaps\"
     echo f | xcopy /y "!XCOPY_FROM!Unreal\CarlaUE4\Content\Carla\HDMaps\Readme.md"  "!XCOPY_TO!HDMaps\README"
     :: 无人机配置文件
-    echo f | xcopy /y "!XCOPY_FROM!Build\AirSim\Unreal\Environments\Blocks\settings.json"    "!XCOPY_TO!settings.json"
-    if exist "!XCOPY_FROM!Plugins" (
-        echo d | xcopy /y /s "!XCOPY_FROM!Plugins"                                  "!XCOPY_TO!Plugins"
+    echo f | xcopy /y "!XCOPY_FROM!Unreal\CarlaUE4\settings.json"    "!XCOPY_TO!settings.json"
+    :: 水下机器人载具配置文件
+    echo f | xcopy /y "!XCOPY_FROM!Unreal\CarlaUE4\settings_rov.json"    "!XCOPY_TO!settings_rov.json"
+    :: AirSim 联合仿真示例与测试套件
+    if exist "!XCOPY_FROM!PythonAPI\examples\air" (
+        echo d | xcopy /y /s "!XCOPY_FROM!PythonAPI\examples\air"                   "!XCOPY_TO!PythonAPI\examples\air"
+    ) else (
+        echo %FILE_N% [WARNING]: AirSim example folder not found, skipping copying it to the package.
     )
     
     :: 下载 Mujoco
