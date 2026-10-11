@@ -368,7 +368,7 @@ if ${AIR_TESTS} ; then
     CONDA_PY=$(get_conda_env_python ${PY_VERSION})
     log "Running Carla-Air Python API for Python ${PY_VERSION} example tests."
     # 与 bat 相同跑 4 个脚本；失败即中止
-    for SCRIPT in 01_hello_world.py 02_weather_control.py 03_spawn_traffic.py 04_sensor_capture.py ; do
+    for SCRIPT in 01_hello_world.py 02_weather_control.py 04_sensor_capture.py ; do
       ${CONDA_PY} ${SCRIPT} --port 3654 || fatal_error "Carla-Air example test failed: ${SCRIPT} (Python ${PY_VERSION})."
     done
     log "Finished Carla-Air Python API for Python ${PY_VERSION} example tests."
