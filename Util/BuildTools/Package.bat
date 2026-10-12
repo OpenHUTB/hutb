@@ -286,11 +286,7 @@ if %DO_COPY_FILES%==true (
     :: 水下机器人载具配置文件
     echo f | xcopy /y "!XCOPY_FROM!Unreal\CarlaUE4\settings_rov.json"    "!XCOPY_TO!settings_rov.json"
     :: AirSim 联合仿真示例与测试套件
-    if exist "!XCOPY_FROM!PythonAPI\examples\air" (
-        echo d | xcopy /y /s "!XCOPY_FROM!PythonAPI\examples\air"                   "!XCOPY_TO!PythonAPI\examples\air"
-    ) else (
-        echo %FILE_N% [WARNING]: AirSim example folder not found, skipping copying it to the package.
-    )
+    echo d | xcopy /y /s "!XCOPY_FROM!PythonAPI\examples\air"                     "!XCOPY_TO!PythonAPI\examples\air"
     
     :: 下载 Mujoco
     set Mujoco_FILE_NAME=mujoco-3.3.5-windows-x86_64.zip
