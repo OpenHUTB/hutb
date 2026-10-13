@@ -594,11 +594,41 @@ if __name__ == "__main__":
         f.close()
         print()  # 换行
 
-        # 赋予 Ubuntu 下二进制文件的执行权限
+         # Linux 包内是 CARLA_Shipping_xxx/LinuxNoEditor/CarlaUE4.sh 的嵌套结构，
+        # 与 Windows 包（根目录直接是 CarlaUE4.exe）不一致。
+        # 这里把模拟器根目录（含 CarlaUE4.sh 的目录）的内容上移到下载目录，
+        # 保证最终启动路径为 hutb/CarlaUE4.sh
         if IS_LINUX:
-            carla_sh = os.path.join(local_path, 'CarlaUE4.sh')
+            sh_dir = local_path
+            for root, dirs, files in os.walk(local_path):
+                # os.walk 自顶向下，第一个匹配的就是最浅层的目录
+                if "CarlaUE4.sh" in files:
+                    sh_dir = root
+                    break
+            if os.path.abspath(sh_dir) != os.path.abspath(local_path):
+                print("Moving simulator files from %s to %s ..." % (sh_dir, local_path))
+                for name in os.listdir(sh_dir):
+                    src = os.path.join(sh_dir, name)
+                    dst = os.path.join(local_path, name)
+                    if os.path.exists(dst):
+                        # 如下载目录下已有同名文件，跳过避免覆盖
+                        print("Skip existing path: ", dst)
+                        continue
+                    shutil.move(src, dst)
+                # 删除上移后残留的空目录（如 CARLA_Shipping_xxx/LinuxNoEditor）
+                dir_to_remove = os.path.abspath(sh_dir)
+                while os.path.abspath(dir_to_remove) != os.path.abspath(local_path):
+                    if os.listdir(dir_to_remove):
+                        break  # 目录非空，停止清理
+                    os.rmdir(dir_to_remove)
+                    dir_to_remove = os.path.dirname(dir_to_remove)
+
+            # 赋予 Ubuntu 下二进制文件的执行权限
+            carla_sh = os.path.join(local_path, "CarlaUE4.sh")
             if os.path.exists(carla_sh):
                 os.chmod(carla_sh, os.stat(carla_sh).st_mode | stat.S_IEXEC)
+            else:
+                print("Warning: CarlaUE4.sh not found in", local_path)
 
         # if os.path.exists(os.path.join(local_path, "hutb.zip")):
         #     print("Remove hutb.zip...")
