@@ -34,9 +34,12 @@ The OpenHUTB (Open source Human-vehicle Twin Build) is a photorealistic-quality 
 ## Usage example
 1. Run the following command in the terminal to download the simulator:
 	```shell
+	# Download command for Windows; run CarlaUE4.exe to launch the simulator.
 	curl -fsSL -o dl.bat https://openhutb.github.io/dl.bat && dl.bat
+	
+	# Download command for Ubuntu; run CarlaUE4.sh to launch the simulator.
+	curl -fsSL -o dl.sh https://openhutb.github.io/dl.sh && chmod +x dl.sh && ./dl.sh
 	```
-	then run `CarlaUE4.exe` to launch the simulator.
 
 2. Navigate to the generated directory `hutb/PythonAPI/carla/dist/`, and use `pip install hutb-*.whl` to install the toolkit for your specific Python version (supports Python 3.7-3.14). Run the following script to [generate vehicles and pedestrians](https://github.com/OpenHUTB/doc/blob/master/src/examples/generate_traffic.py)  in the scene: 
 	```shell
