@@ -481,19 +481,19 @@ if __name__ == "__main__":
             print("Removing previous release directory: ", rep_path)
             shutil.rmtree(rep_path, onerror=remove_readonly)
         repo = GitRepository(rep_path, remote_path)
-        # 寻找 local_path 目录下修改日期最新的 .zip 文件
+        # 寻找 local_path 目录下修改日期最新的发行版压缩包（.zip 或 .tar.gz）
         latest_file = None
         latest_file_name = None
         latest_time = 0
         for file_name in os.listdir(local_path):
-            if file_name.endswith(".zip"):
+            if file_name.endswith((".zip", ".tar.gz")):
                 file_path = os.path.join(local_path, file_name)
                 file_time = os.path.getmtime(file_path)
                 if file_time > latest_time:
                     latest_time = file_time
                     latest_file = file_path
                     latest_file_name = file_name
-        print("Latest zip file to upload: ", latest_file)
+        print("Latest package file to upload: ", latest_file)
         # 如果提交的记录数超过2，则重置仓库到最新状态，避免提交记录过多
         if len(repo.commits()) > 2:
             repo.reset_hard()
@@ -504,26 +504,24 @@ if __name__ == "__main__":
                 file_path = os.path.join(rep_path, file_name)
                 print("Removing file: ", file_path)
                 os.remove(file_path)
-        # 将最新的 .zip 重命名为 hutb.zip，并切分成多个 .dat 小文件，上传到 git 仓库中
-        # Build/UE4Carla下没有.zip文件需要判断一下，避免报错
+        # 将最新的压缩包统一重命名，并切分成多个 .dat 小文件，上传到 git 仓库中
+        # Build/UE4Carla下没有压缩包需要判断一下，避免报错
         if latest_file is None:
-            print("No zip file found in local path: ", local_path)
+            print("No .zip / .tar.gz file found in local path: ", local_path)
             sys.exit(1)
-        if os.path.exists(os.path.join(local_path, latest_file)):
-            # 如果 hutb.zip 已经存在，则先删除
-            if os.path.exists(os.path.join(local_path, "hutb.zip"))  and latest_file != "hutb.zip":
-                print("Removing existing hutb.zip file: ", os.path.join(local_path, "hutb.zip"))
-                os.remove(os.path.join(local_path, "hutb.zip"))
-            # 如果 latest_file 不是 hutb.zip，则重命名为 hutb.zip
-            if latest_file != "hutb.zip":
-                os.rename(
-                    os.path.join(local_path, latest_file),
-                    os.path.join(local_path, "hutb.zip"),
-                )
-        if os.path.exists(os.path.join(rep_path, "*.dat")) is False:
-            split_file(
-                os.path.join(local_path, "hutb.zip"), rep_path, 5120 * 1024 * 1024
-            )  # 每个小文件最大为 128MB
+
+        # 重命名时保持扩展名与压缩格式一致，下载端通过文件头识别格式
+        archive_name = (
+            "hutb.tar.gz" if latest_file_name.endswith(".tar.gz") else "hutb.zip"
+        )
+        archive_path = os.path.join(local_path, archive_name)
+        # 如果上一次上传留下的同名压缩包还在，则先删除
+        if os.path.exists(archive_path) and latest_file != archive_path:
+            print("Removing existing archive file: ", archive_path)
+            os.remove(archive_path)
+        if latest_file != archive_path:
+            os.rename(latest_file, archive_path)
+        split_file(archive_path, rep_path, 5120 * 1024 * 1024)  # 每个小文件最大为 5GB
         # repo.commit_push_force(message=latest_file_name)
         
         # ---------- 修复 504 超时：增量分批推送逻辑开始 ----------
