@@ -120,7 +120,7 @@ AIRSIM_SETTINGS="${HOME}/Documents/AirSim/settings.json"
 if [ ! -f "${AIRSIM_SETTINGS}" ]; then
     echo "Setting up AirSim configuration..."
     mkdir -p "${HOME}/Documents/AirSim"
-    cp "${SCRIPT_DIR}/AirSimConfig/settings.json" "${AIRSIM_SETTINGS}"
+    cp "${SCRIPT_DIR}/settings.json" "${AIRSIM_SETTINGS}"
     echo "  -> Created ${AIRSIM_SETTINGS}"
 fi
 
