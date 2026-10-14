@@ -51,7 +51,7 @@ The OpenHUTB (Open source Human-vehicle Twin Build) is a photorealistic-quality 
 	```
 	Use [config.py](https://github.com/OpenHUTB/hutb/blob/hutb/PythonAPI/util/config.py) to [switch to](ue/switch_mode.md) [VR cockpit mode](https://openhutb.github.io/doc/interbehavior/) , and use the Logitech steering wheel or keyboard keys `W`, `A`, `S`, `D`, etc. for control; `Z` is reverse gear. 
 	```shell
-	python config.py --map Town10HD?GAME=VR
+	python PythonAPI/util/config.py --map Town10HD?GAME=VR
 	```
 
 

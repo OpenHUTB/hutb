@@ -55,7 +55,7 @@
 	```
 	使用 [config.py](https://github.com/OpenHUTB/hutb/blob/hutb/PythonAPI/util/config.py) [切换](ue/switch_mode.md) 到 [VR 驾驶舱模式](https://openhutb.github.io/doc/interbehavior/) ，使用罗技方向盘或键盘`W`、`A`、`S`、`D`等进行控制，`Z`为倒档：
 	```shell
-	python config.py --map Town10HD?GAME=VR
+	python PythonAPI/util/config.py --map Town10HD?GAME=VR
 	```
 
 
