@@ -5,8 +5,11 @@
 # hutb_downloader.exe -r lfs_demo
 # 3. 添加不删除.git记录的选项(--skipp, -s)
 #
-# 打包方法： 
+# 打包方法：
+# Windows 
 # Pyinstaller download_from_git.py --onefile --name hutb_downloader -i hutb_log.ico
+# Ubuntu (fix: Pyinstaller: command not found)
+# python -m PyInstaller download_from_git.py --onefile --name hutb_downloader -i hutb_log.ico
 # 
 # 
 # 从git下载发行版
@@ -60,6 +63,7 @@ import sys
 import subprocess
 import urllib.request
 import zipfile
+import tarfile
 
 
 # 解决：urllib.error.URLError: <urlopen error [SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: unable to get local issuer certificate (_ssl.c:1017)>
@@ -81,6 +85,23 @@ home_dir = os.path.abspath(os.path.join(os.getcwd(), ".."))
 script_dir = inspect.getfile(inspect.currentframe())
 script_dir = os.path.dirname(os.path.abspath(script_dir))
 
+
+def untar(fname, dirs):
+    """
+    解压tar.gz文件
+    :param fname: 压缩文件名
+    :param dirs: 解压后的存放路径
+    :return: bool
+    """
+    try:
+        t = tarfile.open(fname)
+        t.extractall(path = dirs)
+        return True
+    except Exception as e:
+        print(e)
+        return False
+
+
 # 使用当前 git 目录下的 git 可执行文件
 # 判断git目录是否存在
 if IS_WINDOWS:
@@ -98,10 +119,11 @@ if IS_WINDOWS:
             "Git directory not found in prerequisites, download it from https://gitee.com/OpenHUTB/sw/releases/download/up/git_min.zip and extract it to %s"
             % script_dir
         )
-        urllib.request.urlretrieve(
-            "https://gitee.com/OpenHUTB/sw/releases/download/up/git_min.zip",
-            os.path.join(script_dir, "git_min.zip"),
-        )
+        if not os.path.exists(os.path.join(script_dir, "git_min.zip")):
+            urllib.request.urlretrieve(
+                "https://gitee.com/OpenHUTB/sw/releases/download/up/git_min.zip",
+                os.path.join(script_dir, "git_min.zip"),
+            )
         with zipfile.ZipFile(os.path.join(script_dir, "git_min.zip"), "r") as zip_ref:
             zip_ref.extractall(script_dir)
     else:
@@ -111,17 +133,33 @@ if IS_WINDOWS:
     git_exe = os.path.join(script_dir, "git", "bin", "git.exe")
 
 else:
-    # Ubuntu/Linux 环境：使用系统自带的 Git
-    git_exe = shutil.which("git")
-    if not git_exe:
-        print("Error: Git not found. Please install git and git-lfs (e.g., sudo apt-get install git git-lfs)")
-        sys.exit(1)
-
+    if not os.path.exists(os.path.join(script_dir, "git")):
+        # 从gitee下载git_min.zip，并解压到当前目录下
+        print(
+            "Git directory not found in current directory, download it from https://gitee.com/OpenHUTB/sw/releases/download/up/git_linux.tar.gz and extract it to %s"
+            % script_dir
+        )
+        if not os.path.exists(os.path.join(script_dir, "git_linux.tar.gz")):
+            urllib.request.urlretrieve(
+                "https://gitee.com/OpenHUTB/sw/releases/download/up/git_linux.tar.gz",
+                os.path.join(script_dir, "git_linux.tar.gz"),
+            )
+            
+        untar('git_linux.tar.gz', script_dir)
+        
+    git_exe = os.path.join(script_dir, "git", "git")
+    # solve: sudo apt install git-lfs
+    # sudo apt remove git-lfs
+    os.system('export PREFIX="$HOME/.local"')
+    os.system('./git/install.sh')
+    
+        
 print("Using git executable: ", git_exe)
 os.environ["GIT_PYTHON_GIT_EXECUTABLE"] = git_exe
 
+
 # 必须在设置GIT_PYTHON_GIT_EXECUTABLE环境变量之后，才能导入git库，否则git库会使用系统环境变量中默认的git路径，导致找不到git可执行文件的问题
-from git.repo import Repo
+from git.repo import Repo  # On Linux: Git (1.7.x or newer)
 from git.repo.fun import is_git_dir
 
 # disable_ssl_verify_command = "%s config --global http.sslVerify false" % os.path.join(script_dir, 'git', 'bin', 'git.exe')
@@ -181,10 +219,10 @@ class GitRepository(object):
                     "1",
                     "-b",
                     branch,
-                    "--no-checkout",
                     repo_url,
                     self.local_path,
                 ]
+                # print(clone_cmd)
                 result = subprocess.run(
                     clone_cmd,
                     shell=False,
@@ -372,6 +410,7 @@ def merge_files(input_dir, output_file):
 
     total_files = len(files)
     print("Merging files...")
+    # require memory > 9GB
     with open(output_file, "wb") as out:
         for idx, file_name in enumerate(files, 1):
             file_path = os.path.join(input_dir, file_name)
@@ -379,6 +418,7 @@ def merge_files(input_dir, output_file):
             with open(file_path, "rb") as f:
                 chunk = f.read()
                 out.write(chunk)
+        print("\nMreged:", file_name)
     print()  # 换行
 
 
@@ -559,6 +599,7 @@ if __name__ == "__main__":
     # os.system(clone_cmd)
 
 
+    # input("Press any key to continue!")
     # 移除工程中不相关的文件
     if os.path.exists(os.path.join(local_path, ".git")):
         print("Remove .git folder and .gitattributes file...")

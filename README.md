@@ -55,7 +55,7 @@
 	```
 	使用 [config.py](https://github.com/OpenHUTB/hutb/blob/hutb/PythonAPI/util/config.py) [切换](ue/switch_mode.md) 到 [VR 驾驶舱模式](https://openhutb.github.io/doc/interbehavior/) ，使用罗技方向盘或键盘`W`、`A`、`S`、`D`等进行控制，`Z`为倒档：
 	```shell
-	python config.py --map Town10HD?GAME=VR
+	python PythonAPI/util/config.py --map Town10HD?GAME=VR
 	```
 
 
@@ -67,7 +67,8 @@ git clone https://github.com/OpenHUTB/hutb.git
 # Windows
 setup.bat -l
 # Ubuntu
-# setup.sh -l
+./setup.sh -l
+./setup.sh -p
 ```
 请注意，hutb分支包含最新版本以及最新的修复程序和功能。
 或者按照 [如何在Windows上构建中文说明](https://openhutb.github.io/doc/build_windows/) 、[如何在Linux上构建](https://openhutb.github.io/doc/build_linux/) 中的说明进行操作。
