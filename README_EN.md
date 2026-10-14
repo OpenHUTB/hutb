@@ -64,6 +64,9 @@ git clone https://github.com/OpenHUTB/hutb.git
 setup.bat -l
 # Package
 setup.bat -p
+# Ubuntu
+./setup.sh -l
+./setup.sh -p
 ```
 Please note that the hutb branch contains the latest version, as well as the latest fixes and features. Alternatively, follow the instructions in [How to Build on Windows (Chinese Guide)](https://openhutb.github.io/doc/build_windows/) and [How to Build on Linux](https://openhutb.github.io/doc/build_linux/).
 
