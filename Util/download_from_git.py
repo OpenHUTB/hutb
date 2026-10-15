@@ -561,6 +561,10 @@ if __name__ == "__main__":
                     sys.exit(1)
         # ---------- 增量分批推送逻辑结束 ----------
 
+        # 全部推成功后删除本地上传工作目录（源包保留），下次上传会自动重新克隆
+        print("Removing upload working directory: ", rep_path)
+        shutil.rmtree(rep_path, onerror=remove_readonly)
+
         print("Upload finished.")
         sys.exit(0)
 
@@ -610,8 +614,21 @@ if __name__ == "__main__":
     if args.repository == "release":
         # 合并小文件
         print("Merge small files...")
-        if os.path.exists(os.path.join(local_path, "hutb.zip")) is False:
-            merge_files(local_path, os.path.join(local_path, "hutb.zip"))
+        hutb_zip = os.path.join(local_path, "hutb.zip")
+        hutb_targz = os.path.join(local_path, "hutb.tar.gz")
+        if not (os.path.exists(hutb_zip) or os.path.exists(hutb_targz)):
+            # 先合并成临时文件，再按文件头判断实际压缩格式，重命名为对应的后缀
+            merged_file = os.path.join(local_path, "hutb.tmp")
+            merge_files(local_path, merged_file)
+            with open(merged_file, "rb") as f:
+                header = f.read(4)
+            if header[:2] == b"PK":  # zip：PK\x03\x04（空 zip 为 PK\x05\x06）
+                os.rename(merged_file, hutb_zip)
+            elif header[:2] == b"\x1f\x8b":  # gzip 压缩的 tar.gz
+                os.rename(merged_file, hutb_targz)
+            else:
+                print("Unknown archive format, file header: %r" % header)
+                sys.exit(1)
 
         # 先于解压删除后缀名为.dat的小文件，防止整个过程占用过多的磁盘空间
         dat_files = [f for f in os.listdir(local_path) if f.endswith(".dat")]
@@ -623,51 +640,19 @@ if __name__ == "__main__":
                 os.remove(os.path.join(local_path, file_name))
             print()  # 换行
 
-        print("Unzipping hutb.zip...")
-        f = zipfile.ZipFile(os.path.join(local_path, "hutb.zip"), "r")  # 压缩文件位置
-        file_list = f.namelist()
-        total_files = len(file_list)
-        for idx, file in enumerate(file_list, 1):
-            show_progress_bar(idx, total_files)
-            f.extract(file, local_path)  # 解压位置
-        f.close()
-        print()  # 换行
-
-         # Linux 包内是 CARLA_Shipping_xxx/LinuxNoEditor/CarlaUE4.sh 的嵌套结构，
-        # 与 Windows 包（根目录直接是 CarlaUE4.exe）不一致。
-        # 这里把模拟器根目录（含 CarlaUE4.sh 的目录）的内容上移到下载目录，
-        # 保证最终启动路径为 hutb/CarlaUE4.sh
-        if IS_LINUX:
-            sh_dir = local_path
-            for root, dirs, files in os.walk(local_path):
-                # os.walk 自顶向下，第一个匹配的就是最浅层的目录
-                if "CarlaUE4.sh" in files:
-                    sh_dir = root
-                    break
-            if os.path.abspath(sh_dir) != os.path.abspath(local_path):
-                print("Moving simulator files from %s to %s ..." % (sh_dir, local_path))
-                for name in os.listdir(sh_dir):
-                    src = os.path.join(sh_dir, name)
-                    dst = os.path.join(local_path, name)
-                    if os.path.exists(dst):
-                        # 如下载目录下已有同名文件，跳过避免覆盖
-                        print("Skip existing path: ", dst)
-                        continue
-                    shutil.move(src, dst)
-                # 删除上移后残留的空目录（如 CARLA_Shipping_xxx/LinuxNoEditor）
-                dir_to_remove = os.path.abspath(sh_dir)
-                while os.path.abspath(dir_to_remove) != os.path.abspath(local_path):
-                    if os.listdir(dir_to_remove):
-                        break  # 目录非空，停止清理
-                    os.rmdir(dir_to_remove)
-                    dir_to_remove = os.path.dirname(dir_to_remove)
-
-            # 赋予 Ubuntu 下二进制文件的执行权限
-            carla_sh = os.path.join(local_path, "CarlaUE4.sh")
-            if os.path.exists(carla_sh):
-                os.chmod(carla_sh, os.stat(carla_sh).st_mode | stat.S_IEXEC)
-            else:
-                print("Warning: CarlaUE4.sh not found in", local_path)
+        if os.path.exists(hutb_zip):
+            print("Unzipping hutb.zip...")
+            f = zipfile.ZipFile(hutb_zip, "r")  # 压缩文件位置
+            file_list = f.namelist()
+            total_files = len(file_list)
+            for idx, file in enumerate(file_list, 1):
+                show_progress_bar(idx, total_files)
+                f.extract(file, local_path)  # 解压位置
+            f.close()
+            print()  # 换行
+        elif os.path.exists(hutb_targz):
+            print("Extracting hutb.tar.gz...")
+            untar(hutb_targz, local_path)
 
         # if os.path.exists(os.path.join(local_path, "hutb.zip")):
         #     print("Remove hutb.zip...")
