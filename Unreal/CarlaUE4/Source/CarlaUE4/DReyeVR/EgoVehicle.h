@@ -55,6 +55,7 @@ class CARLAUE4_API AEgoVehicle : public ACarlaWheeledVehicle
     const UCameraComponent *GetCamera() const;
     UCameraComponent *GetCamera();
     const DReyeVR::UserInputs &GetVehicleInputs() const;
+    const ADReyeVRPawn *GetDrivingPawn() const { return Pawn; }
     const class AEgoSensor *GetSensor() const;
     const struct ConfigFile &GetVehicleParams() const;
 

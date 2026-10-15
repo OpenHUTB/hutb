@@ -3,9 +3,13 @@
 #if PLATFORM_WINDOWS
 
 #include "CarlaUE4.h" // LOG / LOG_WARN / LOG_ERROR
+#include "HAL/PlatformProcess.h"
 #include "HAL/PlatformTime.h"
-#include "HAL/PlatformMisc.h"
+#include "HAL/Runnable.h"
+#include "HAL/RunnableThread.h"
 #include "PimaxRuntimePaths.h"
+
+#include <atomic>
 
 #if WITH_DEV_AUTOMATION_TESTS
 #include "Misc/AutomationTest.h"
@@ -165,9 +169,178 @@ constexpr uint32 PvrInterfaceMinor = 26;
 constexpr int32 MaxConsecutiveFailures = 120;
 /// |tan(angle)| beyond this (~84 deg) is not a plausible gaze direction.
 constexpr float MaxPlausibleGazeTan = 10.f;
+
+/// Convert one raw PVR record into per-eye and cyclopean gaze. Shared by the live poll and
+/// the background poll thread so both apply the same plausibility and sign rules.
+/// Returns false when the tangents are not usable; the caller keeps its own gates.
+bool ApplyGazeInfo(const PvrAbi::FPvrEyeTrackingInfo &Info, const FPimaxPvrEyeSource::FConfig &Config,
+                   DReyeVR::FEyeSample &Out)
+{
+    const float TanHL = Info.GazeTan[0].X, TanVL = Info.GazeTan[0].Y;
+    const float TanHR = Info.GazeTan[1].X, TanVR = Info.GazeTan[1].Y;
+    if (!FMath::IsFinite(TanHL) || !FMath::IsFinite(TanVL) || !FMath::IsFinite(TanHR) ||
+        !FMath::IsFinite(TanVR) || FMath::Abs(TanHL) > MaxPlausibleGazeTan ||
+        FMath::Abs(TanVL) > MaxPlausibleGazeTan || FMath::Abs(TanHR) > MaxPlausibleGazeTan ||
+        FMath::Abs(TanVR) > MaxPlausibleGazeTan)
+    {
+        return false;
+    }
+
+    // PVR is right-handed with -Z forward: dir = (sinH*cosV, sinV, -cosH*cosV).
+    // Converted to UE4 camera-local left-handed (X forward, Y right, Z up):
+    auto ToEye = [&](float TanH, float TanV, DReyeVR::FEyeGaze &Eye) {
+        float H = FMath::Atan(TanH), V = FMath::Atan(TanV);
+        if (Config.bInvertHorizontal)
+            H = -H;
+        if (Config.bInvertVertical)
+            V = -V;
+        const float CosH = FMath::Cos(H), SinH = FMath::Sin(H);
+        const float CosV = FMath::Cos(V), SinV = FMath::Sin(V);
+        Eye.Direction = FVector(CosH * CosV, SinH * CosV, SinV).GetSafeNormal();
+        Eye.HRad = H;
+        Eye.VRad = V;
+        Eye.bValid = true;
+    };
+    ToEye(TanHL, TanVL, Out.Left);
+    ToEye(TanHR, TanVR, Out.Right);
+
+    // Cyclopean direction stays the mean of the tangents, as before this refactor.
+    float H = FMath::Atan(0.5f * (TanHL + TanHR));
+    float V = FMath::Atan(0.5f * (TanVL + TanVR));
+    if (Config.bInvertHorizontal)
+        H = -H;
+    if (Config.bInvertVertical)
+        V = -V;
+    const float CosH = FMath::Cos(H), SinH = FMath::Sin(H);
+    const float CosV = FMath::Cos(V), SinV = FMath::Sin(V);
+    Out.LocalDirection = FVector(CosH * CosV, SinH * CosV, SinV).GetSafeNormal();
+    return true;
+}
 /// Poll getHmdStatus once per N eye-tracking polls (~1 Hz at 60 fps).
 constexpr uint64 StatusCheckInterval = 60;
 } // namespace
+
+/// ---------------------------------------------------------------------------
+/// Background sampling thread. Polls on a fixed wall-clock grid so the gaze
+/// stream keeps the tracker's native density even when the render loop runs far
+/// slower (measured 30 fps in VR against a 120 Hz tracker on Dream Air).
+/// ---------------------------------------------------------------------------
+class FPimaxPvrEyeSource::FAsyncPoller final : public FRunnable
+{
+  public:
+    /// Backlog cap: ~17 s at 120 Hz before the oldest sample is dropped.
+    static constexpr int32 MaxBufferedSamples = 2048;
+
+    FAsyncPoller(FPimaxPvrEyeSource &InOwner, double InHz)
+        : Owner(InOwner), PeriodSeconds(1.0 / InHz),
+          Timer(CreateWaitableTimerExW(nullptr, nullptr, CREATE_WAITABLE_TIMER_HIGH_RESOLUTION, TIMER_ALL_ACCESS))
+    {
+        if (Timer == nullptr)
+            Timer = CreateWaitableTimerExW(nullptr, nullptr, 0, TIMER_ALL_ACCESS);
+    }
+
+    ~FAsyncPoller() override
+    {
+        if (Thread != nullptr)
+            StopAndJoin();
+        if (Timer != nullptr)
+            CloseHandle(Timer);
+    }
+
+    void Start()
+    {
+        check(Thread == nullptr);
+        Thread = FRunnableThread::Create(this, TEXT("PimaxEyePoller"), 0, TPri_AboveNormal);
+    }
+
+    /// Not FRunnable::Stop(): Kill(true) calls that virtual from the dying thread, so
+    /// sharing the name made Stop() re-enter Kill() until the stack overflowed.
+    void StopAndJoin()
+    {
+        bStop.store(true, std::memory_order_relaxed);
+        if (Thread != nullptr)
+        {
+            Thread->Kill(true); // the loop notices bStop within one poll period
+            delete Thread;
+            Thread = nullptr;
+        }
+    }
+
+    /// Hand every buffered sample to the game thread, oldest first.
+    TArray<DReyeVR::FEyeSample> Drain()
+    {
+        FScopeLock Lock(&BufferCS);
+        TArray<DReyeVR::FEyeSample> Out(MoveTemp(Buffer));
+        Buffer.Reset();
+        return Out;
+    }
+
+  private:
+    uint32 Run() override
+    {
+        const double Start = FPlatformTime::Seconds();
+        uint64 Tick = 0;
+        while (!bStop.load(std::memory_order_relaxed))
+        {
+            // absolute schedule: one late poll never shifts the grid
+            WaitUntil(Start + static_cast<double>(++Tick) * PeriodSeconds);
+            if (bStop.load(std::memory_order_relaxed))
+                break;
+            DReyeVR::FEyeSample Sample;
+            Sample.ReceivedTime = FPlatformTime::Seconds();
+            {
+                FScopeLock Lock(&Owner.RuntimeCS);
+                if (Owner.State.load() == EState::Running)
+                {
+                    Sample.Sequence = ++Owner.SampleSequence;
+                    Owner.PollRunningLocked(Sample, Sample.ReceivedTime);
+                }
+            }
+            if (!Sample.bValid)
+                continue;
+            FScopeLock Lock(&BufferCS);
+            Buffer.Add(Sample);
+            if (Buffer.Num() > MaxBufferedSamples)
+            {
+                Buffer.RemoveAt(0);
+                if ((++DroppedSamples % 240) == 1) // warn once per 2 s of backlog at 120 Hz
+                    LOG_WARN("Pimax PVR: gaze sample backlog over %d; dropping the oldest samples", MaxBufferedSamples);
+            }
+        }
+        return 0;
+    }
+
+    void WaitUntil(double TargetSeconds) const
+    {
+        // CREATE_WAITABLE_TIMER_HIGH_RESOLUTION (Win10 1803+) is accurate well below a
+        // millisecond, which Sleep() is not. Without it the coarse timer keeps a
+        // 1.5 ms margin and busy-waits the remainder.
+        for (;;)
+        {
+            const double Remaining = TargetSeconds - FPlatformTime::Seconds();
+            if (Remaining <= 0.0)
+                return;
+            LARGE_INTEGER Due;
+            Due.QuadPart = -static_cast<LONGLONG>(Remaining * 1e7);
+            if (Timer == nullptr || !SetWaitableTimer(Timer, &Due, 0, nullptr, nullptr, 0))
+            {
+                if (Remaining > 0.0015)
+                    FPlatformProcess::Sleep(Remaining - 0.0015);
+                continue;
+            }
+            WaitForSingleObject(Timer, INFINITE);
+        }
+    }
+
+    FPimaxPvrEyeSource &Owner;
+    double PeriodSeconds;
+    FRunnableThread *Thread = nullptr;
+    std::atomic<bool> bStop{false};
+    FCriticalSection BufferCS;
+    TArray<DReyeVR::FEyeSample> Buffer;
+    uint64 DroppedSamples = 0;
+    HANDLE Timer = nullptr;
+};
 
 FPimaxPvrEyeSource::FPimaxPvrEyeSource(const FConfig &InConfig) : Config(InConfig)
 {
@@ -180,13 +353,13 @@ FPimaxPvrEyeSource::~FPimaxPvrEyeSource()
 
 void FPimaxPvrEyeSource::TransitionTo(EState NewState, const TCHAR *Reason)
 {
-    if (State == NewState)
+    if (State.load() == NewState)
         return;
-    LOG("Pimax PVR eye source: state %d -> %d (%s)", (int32)State, (int32)NewState, Reason);
+    LOG("Pimax PVR eye source: state %d -> %d (%s)", (int32)State.load(), (int32)NewState, Reason);
     State = NewState;
 }
 
-void FPimaxPvrEyeSource::ReleaseRuntime()
+void FPimaxPvrEyeSource::ReleaseRuntimeImpl()
 {
     if (InterfaceSlots != nullptr)
     {
@@ -211,9 +384,14 @@ void FPimaxPvrEyeSource::ReleaseRuntime()
 
 bool FPimaxPvrEyeSource::Initialize()
 {
-    if (State == EState::Running)
+    FScopeLock Lock(&RuntimeCS);
+    if (State.load() == EState::Running)
         return true;
+    return InitializeImpl();
+}
 
+bool FPimaxPvrEyeSource::InitializeImpl()
+{
     TransitionTo(EState::Initializing, TEXT("Initialize"));
 
     // 1. Discover the official installation without assuming a Windows drive letter.
@@ -241,7 +419,7 @@ bool FPimaxPvrEyeSource::Initialize()
     if (GetPvrInterfaceProc == nullptr)
     {
         LOG_ERROR("Pimax PVR: getPvrInterface export missing");
-        ReleaseRuntime();
+        ReleaseRuntimeImpl();
         TransitionTo(EState::Failed, TEXT("getPvrInterface missing"));
         return false;
     }
@@ -252,7 +430,7 @@ bool FPimaxPvrEyeSource::Initialize()
     if (Table == nullptr)
     {
         LOG_ERROR("Pimax PVR: runtime does not provide interface v%u.%u", PvrInterfaceMajor, PvrInterfaceMinor);
-        ReleaseRuntime();
+        ReleaseRuntimeImpl();
         TransitionTo(EState::Failed, TEXT("interface v1.26 unavailable"));
         return false;
     }
@@ -267,7 +445,7 @@ bool FPimaxPvrEyeSource::Initialize()
         if (InterfaceSlots[Slot] == nullptr)
         {
             LOG_ERROR("Pimax PVR: interface slot %d is null", Slot);
-            ReleaseRuntime();
+            ReleaseRuntimeImpl();
             TransitionTo(EState::Failed, TEXT("null interface slot"));
             return false;
         }
@@ -277,7 +455,7 @@ bool FPimaxPvrEyeSource::Initialize()
     if (reinterpret_cast<PvrAbi::InitialiseFn>(InterfaceSlots[PvrAbi::Slot_Initialise])() != PvrAbi::Success)
     {
         LOG_ERROR("Pimax PVR: initialise failed (is the Pimax runtime running?)");
-        ReleaseRuntime();
+        ReleaseRuntimeImpl();
         TransitionTo(EState::Failed, TEXT("initialise failed"));
         return false;
     }
@@ -291,22 +469,24 @@ bool FPimaxPvrEyeSource::Initialize()
         HmdHandle == nullptr)
     {
         LOG_ERROR("Pimax PVR: createHmd failed (no HMD connected?)");
-        ReleaseRuntime();
+        ReleaseRuntimeImpl();
         TransitionTo(EState::Failed, TEXT("createHmd failed"));
         return false;
     }
 
     if (!ValidateDevice())
     {
-        ReleaseRuntime();
+        ReleaseRuntimeImpl();
         TransitionTo(EState::Failed, TEXT("device rejected"));
         return false;
     }
 
     ConsecutiveFailures = 0;
     bHasLastSourceTime = false;
+    bHasFrozenBaseline = false; // a new session has no previous distinct angle to repeat
     InitBackoffSeconds = 1.0;
     TransitionTo(EState::Running, TEXT("ready"));
+    StartPoller();
     return true;
 }
 
@@ -341,6 +521,30 @@ bool FPimaxPvrEyeSource::ValidateDevice()
     return true;
 }
 
+void FPimaxPvrEyeSource::RecoverIfNeeded()
+{
+    // bounded exponential backoff before attempting to bring the session back
+    if (State.load() != EState::Failed)
+        return;
+    FScopeLock Lock(&RuntimeCS);
+    if (State.load() != EState::Failed)
+        return;
+    const double Now = FPlatformTime::Seconds();
+    if (Now < NextInitRetryHostTime)
+        return;
+    LOG_WARN("Pimax PVR: retrying initialization (backoff was %.1fs)", InitBackoffSeconds);
+    ReleaseRuntimeImpl();
+    if (InitializeImpl())
+    {
+        InitBackoffSeconds = 1.0;
+    }
+    else
+    {
+        NextInitRetryHostTime = Now + InitBackoffSeconds;
+        InitBackoffSeconds = FMath::Min(InitBackoffSeconds * 2.0, 30.0);
+    }
+}
+
 DReyeVR::FEyeSample FPimaxPvrEyeSource::PollLatest()
 {
     DReyeVR::FEyeSample Sample; // invalid by default
@@ -348,28 +552,17 @@ DReyeVR::FEyeSample FPimaxPvrEyeSource::PollLatest()
     Sample.Sequence = ++SampleSequence;
     const double Now = Sample.ReceivedTime;
 
-    if (State == EState::Failed)
-    {
-        // bounded exponential backoff before attempting to bring the session back
-        if (Now >= NextInitRetryHostTime)
-        {
-            LOG_WARN("Pimax PVR: retrying initialization (backoff was %.1fs)", InitBackoffSeconds);
-            ReleaseRuntime();
-            if (Initialize())
-            {
-                InitBackoffSeconds = 1.0;
-            }
-            else
-            {
-                NextInitRetryHostTime = Now + InitBackoffSeconds;
-                InitBackoffSeconds = FMath::Min(InitBackoffSeconds * 2.0, 30.0);
-            }
-        }
-        return Sample;
-    }
-    if (State != EState::Running)
+    RecoverIfNeeded();
+    if (State.load() != EState::Running)
         return Sample;
 
+    FScopeLock Lock(&RuntimeCS);
+    PollRunningLocked(Sample, Now);
+    return Sample;
+}
+
+void FPimaxPvrEyeSource::PollRunningLocked(DReyeVR::FEyeSample &Sample, double Now)
+{
     auto GetTimeSeconds = reinterpret_cast<PvrAbi::GetTimeSecondsFn>(InterfaceSlots[PvrAbi::Slot_GetTimeSeconds]);
     auto GetEyeTrackingInfo = reinterpret_cast<PvrAbi::GetEyeTrackingInfoFn>(InterfaceSlots[PvrAbi::Slot_GetEyeTrackingInfo]);
 
@@ -387,8 +580,8 @@ DReyeVR::FEyeSample FPimaxPvrEyeSource::PollLatest()
         InvalidReason = "call-failed";
         if (ConsecutiveFailures >= MaxConsecutiveFailures)
         {
-            TransitionTo(EState::Failed, TEXT("repeated poll failure"));
             NextInitRetryHostTime = Now + InitBackoffSeconds;
+            TransitionTo(EState::Failed, TEXT("repeated poll failure"));
         }
     }
     else
@@ -396,7 +589,7 @@ DReyeVR::FEyeSample FPimaxPvrEyeSource::PollLatest()
         ConsecutiveFailures = 0;
 
         // the device must actually be present and worn for data to be meaningful
-        if ((SampleSequence % StatusCheckInterval) == 1)
+        if ((SampleSequence.load(std::memory_order_relaxed) % StatusCheckInterval) == 1)
         {
             PvrAbi::FPvrHmdStatus Status;
             FMemory::Memzero(Status);
@@ -417,54 +610,36 @@ DReyeVR::FEyeSample FPimaxPvrEyeSource::PollLatest()
         }
         else
         {
-            // plausibility: finite, bounded tangents
-            const float TanHL = Info.GazeTan[0].X, TanVL = Info.GazeTan[0].Y;
-            const float TanHR = Info.GazeTan[1].X, TanVR = Info.GazeTan[1].Y;
-            if (!FMath::IsFinite(TanHL) || !FMath::IsFinite(TanVL) || !FMath::IsFinite(TanHR) ||
-                !FMath::IsFinite(TanVR) || FMath::Abs(TanHL) > MaxPlausibleGazeTan ||
-                FMath::Abs(TanVL) > MaxPlausibleGazeTan || FMath::Abs(TanHR) > MaxPlausibleGazeTan ||
-                FMath::Abs(TanVR) > MaxPlausibleGazeTan)
+            // staleness: the device timestamp must keep advancing
+            if (!bHasLastSourceTime || Info.TimeInSeconds != LastSourceTime)
+            {
+                LastSourceTime = Info.TimeInSeconds;
+                LastSourceTimeSeenHost = Now;
+                bHasLastSourceTime = true;
+            }
+            // New timestamps must also reach gaze conversion below. An
+            // else-if here would silently discard every advancing sample.
+            if (Now - LastSourceTimeSeenHost > (double)Config.MaxSampleAgeSeconds)
+            {
+                InvalidReason = "stale";
+            }
+            else if (!ApplyGazeInfo(Info, Config, Sample))
             {
                 InvalidReason = "implausible-values";
             }
+            else if (IsFrozenValue(Info.GazeTan[0].X, Info.GazeTan[0].Y, Info.GazeTan[1].X, Info.GazeTan[1].Y,
+                                    Info.TimeInSeconds))
+            {
+                InvalidReason = "frozen-value";
+                ++DiagFrozenSamples;
+            }
             else
             {
-                // staleness: the device timestamp must keep advancing
-                if (!bHasLastSourceTime || Info.TimeInSeconds != LastSourceTime)
-                {
-                    LastSourceTime = Info.TimeInSeconds;
-                    LastSourceTimeSeenHost = Now;
-                    bHasLastSourceTime = true;
-                }
-                // New timestamps must also reach gaze conversion below. An
-                // else-if here would silently discard every advancing sample.
-                if (Now - LastSourceTimeSeenHost > (double)Config.MaxSampleAgeSeconds)
-                {
-                    InvalidReason = "stale";
-                }
-                else
-                {
-                    // average both eyes into a combined (cyclopean) gaze; PVR exposes no per-eye origin
-                    float H = FMath::Atan(0.5f * (TanHL + TanHR)); // horizontal angle
-                    float V = FMath::Atan(0.5f * (TanVL + TanVR)); // vertical angle
-                    if (Config.bInvertHorizontal)
-                        H = -H;
-                    if (Config.bInvertVertical)
-                        V = -V;
-
-                    // The PVR reference math is right-handed with -Z forward:
-                    //     dir = (sinH*cosV, sinV, -cosH*cosV)
-                    // Converted to UE4 camera-local left-handed (X forward, Y right, Z up):
-                    const float CosH = FMath::Cos(H), SinH = FMath::Sin(H);
-                    const float CosV = FMath::Cos(V), SinV = FMath::Sin(V);
-                    const FVector Direction(CosH * CosV, SinH * CosV, SinV);
-
-                    Sample.LocalDirection = Direction.GetSafeNormal();
-                    Sample.LocalOrigin = FVector::ZeroVector; // PVR exposes no eye origin (approximation)
-                    Sample.SourceTime = Info.TimeInSeconds;
-                    Sample.bSourceTimeKnown = true;
-                    Sample.bValid = true;
-                }
+                // PVR exposes no eye origin, so gaze is treated as starting at the camera.
+                Sample.LocalOrigin = FVector::ZeroVector;
+                Sample.SourceTime = Info.TimeInSeconds;
+                Sample.bSourceTimeKnown = true;
+                Sample.bValid = true;
             }
         }
     }
@@ -476,7 +651,8 @@ DReyeVR::FEyeSample FPimaxPvrEyeSource::PollLatest()
         if (!bEverValid)
         {
             bEverValid = true;
-            LOG("Pimax PVR: first valid eye sample (poll #%llu, timeInSec=%.3f, dir=%s)", SampleSequence,
+            LOG("Pimax PVR: first valid eye sample (poll #%llu, timeInSec=%.3f, dir=%s)",
+                static_cast<unsigned long long>(SampleSequence.load(std::memory_order_relaxed)),
                 Info.TimeInSeconds, *Sample.LocalDirection.ToString());
         }
     }
@@ -487,20 +663,100 @@ DReyeVR::FEyeSample FPimaxPvrEyeSource::PollLatest()
     if (Now - LastDiagHostTime >= 5.0)
     {
         LastDiagHostTime = Now;
-        LOG("Pimax PVR diag: valid=%llu invalid=%llu lastResult=%d timeInSec=%.3f present=%d mounted=%d age=%.3f "
-            "reason=%s",
-            DiagValidCount, DiagInvalidCount, LastResult, LastTimeInSeconds, LastHmdPresent, LastHmdMounted,
+        // samples/frame == 1 means this frame got no fresher reading than the last one;
+        // > 1 only happens with AsyncPollHz, where the poll thread fills the buffer.
+        const uint64 PollAllCalls = DiagPollAllCalls.exchange(0, std::memory_order_relaxed);
+        const uint64 SamplesCollected = DiagSamplesCollected.exchange(0, std::memory_order_relaxed);
+        LOG("Pimax PVR diag: valid=%llu invalid=%llu frozen=%llu lastResult=%d timeInSec=%.3f present=%d mounted=%d "
+            "age=%.3f reason=%s polls=%llu samplesPerPoll=%.2f",
+            DiagValidCount, DiagInvalidCount, DiagFrozenSamples, LastResult, LastTimeInSeconds, LastHmdPresent,
+            LastHmdMounted,
             bHasLastSourceTime ? (float)(Now - LastSourceTimeSeenHost) : -1.f,
-            InvalidReason != nullptr ? ANSI_TO_TCHAR(InvalidReason) : TEXT("none"));
+            InvalidReason != nullptr ? ANSI_TO_TCHAR(InvalidReason) : TEXT("none"),
+            static_cast<unsigned long long>(PollAllCalls),
+            PollAllCalls ? (double)SamplesCollected / PollAllCalls : 0.0);
         DiagValidCount = 0;
         DiagInvalidCount = 0;
+        DiagFrozenSamples = 0;
     }
-    return Sample;
+}
+
+bool FPimaxPvrEyeSource::IsFrozenValue(float TanHL, float TanVL, float TanHR, float TanVR, double DeviceTimeS)
+{
+    const bool bMoved = !bHasFrozenBaseline || TanHL != LastDistinctTan[0] || TanVL != LastDistinctTan[1] ||
+                        TanHR != LastDistinctTan[2] || TanVR != LastDistinctTan[3];
+    if (bMoved)
+    {
+        LastDistinctTan[0] = TanHL;
+        LastDistinctTan[1] = TanVL;
+        LastDistinctTan[2] = TanHR;
+        LastDistinctTan[3] = TanVR;
+        LastDistinctChangeTime = DeviceTimeS;
+        bHasFrozenBaseline = true;
+        return false;
+    }
+    // The tracker clock moved but the eye did not. Measured repeat runs inside normal
+    // activity reach p99 = 11-14 samples, so this only fires on the tens-of-seconds holds.
+    return Config.MaxFrozenSeconds > 0.0 && DeviceTimeS - LastDistinctChangeTime > Config.MaxFrozenSeconds;
+}
+
+TArray<DReyeVR::FEyeSample> FPimaxPvrEyeSource::PollAllAvailable()
+{
+    if (Poller != nullptr)
+    {
+        // Async mode: the poll thread owns every PVR call; this frame only drains what
+        // it collected. The recovery state machine stays identical to the sync path.
+        RecoverIfNeeded();
+        TArray<DReyeVR::FEyeSample> Out = Poller->Drain();
+        DiagPollAllCalls.fetch_add(1, std::memory_order_relaxed); // samplesPerPoll measures stream density vs the frame rate
+        DiagSamplesCollected.fetch_add((uint64)Out.Num(), std::memory_order_relaxed);
+        if (Out.Num() == 0)
+        {
+            DReyeVR::FEyeSample Empty; // callers use Last() unconditionally
+            Empty.ReceivedTime = FPlatformTime::Seconds();
+            Empty.Sequence = ++SampleSequence;
+            Out.Add(Empty);
+        }
+        return Out;
+    }
+
+    // One sample per frame. Probing getEyeTrackingInfo() at earlier device times to recover
+    // the samples a slow frame skipped was measured not to work: PVR runtime 1.33.1 ignores the
+    // AbsTime argument and re-serves the newest sample (reproduced with a standalone probe
+    // against the same handle), so the probes cost cross-DLL calls and never added a row.
+    // FConfig::AsyncPollHz is what keeps the stream at 120 Hz under a slower render loop.
+    TArray<DReyeVR::FEyeSample> Out;
+    Out.Add(PollLatest());
+    DiagPollAllCalls.fetch_add(1, std::memory_order_relaxed);
+    DiagSamplesCollected.fetch_add(1, std::memory_order_relaxed);
+    return Out;
+}
+
+void FPimaxPvrEyeSource::StartPoller()
+{
+    if (Poller != nullptr || !(Config.AsyncPollHz > 0.0))
+        return;
+    Poller = new FAsyncPoller(*this, Config.AsyncPollHz);
+    Poller->Start();
+    LOG("Pimax PVR: background sampling thread at %.0f Hz", Config.AsyncPollHz);
+}
+
+void FPimaxPvrEyeSource::StopPoller()
+{
+    if (Poller == nullptr)
+        return;
+    Poller->StopAndJoin(); // join before touching the runtime the thread is polling
+    delete Poller;
+    Poller = nullptr;
 }
 
 void FPimaxPvrEyeSource::Shutdown()
 {
-    ReleaseRuntime();
+    StopPoller();
+    {
+        FScopeLock Lock(&RuntimeCS);
+        ReleaseRuntimeImpl();
+    }
     TransitionTo(EState::Disabled, TEXT("Shutdown"));
 }
 
@@ -537,7 +793,9 @@ bool FPimaxPvrFreshnessTest::RunTest(const FString &Parameters)
     Slots[PvrAbi::Slot_GetHmdStatus] = reinterpret_cast<void *>(Status);
     Slots[PvrAbi::Slot_DestroyHmd] = reinterpret_cast<void *>(Destroy);
 
-    FPimaxPvrEyeSource Source{FPimaxPvrEyeSource::FConfig{}};
+    FPimaxPvrEyeSource::FConfig Cfg;
+    Cfg.MaxFrozenSeconds = 0.0; // this test is about the timestamp gates; the frozen-value gate has its own
+    FPimaxPvrEyeSource Source{Cfg};
     Source.InterfaceSlots = Slots;
     Source.HmdHandle = &Frame;
     Source.State = FPimaxPvrEyeSource::EState::Running;
@@ -569,6 +827,180 @@ bool FPimaxPvrFreshnessTest::RunTest(const FString &Parameters)
     Frame.Result = PvrAbi::Success;
     Frame.Info.GazeTan[0].X = 1000.f;
     TestFalse(TEXT("Implausible gaze remains invalid"), Source.PollLatest().bValid);
+    return true;
+}
+#endif // WITH_DEV_AUTOMATION_TESTS
+
+#if WITH_DEV_AUTOMATION_TESTS
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FPimaxPvrFrozenValueTest, "HUTB.Pimax.EyeTracking.FrozenValue",
+                                EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
+
+bool FPimaxPvrFrozenValueTest::RunTest(const FString &Parameters)
+{
+    // Same fake PVR table as the freshness test, no headset and no Pimax runtime: here the
+    // device timestamp keeps advancing on the measured grid while the angles stay
+    // bit-identical, which is the failure the staleness gate cannot see (three sessions lost
+    // 6.3% / 15.6% / 43.8% of their samples to it).
+    struct FFrame
+    {
+        PvrAbi::FPvrEyeTrackingInfo Info{};
+        PvrAbi::FPvrResult Result = PvrAbi::Success;
+    } Frame;
+    void *Slots[PvrAbi::Slot_Count] = {};
+    Slots[PvrAbi::Slot_GetTimeSeconds] = reinterpret_cast<void *>(+[]() -> double { return 0.0; });
+    Slots[PvrAbi::Slot_GetEyeTrackingInfo] =
+        reinterpret_cast<void *>(+[](PvrAbi::FPvrHmdHandle Handle, double, PvrAbi::FPvrEyeTrackingInfo *Out)
+                                 -> PvrAbi::FPvrResult {
+            const FFrame &Current = *static_cast<FFrame *>(Handle);
+            *Out = Current.Info;
+            return Current.Result;
+        });
+    Slots[PvrAbi::Slot_GetHmdStatus] =
+        reinterpret_cast<void *>(+[](PvrAbi::FPvrHmdHandle, PvrAbi::FPvrHmdStatus *Out) -> PvrAbi::FPvrResult {
+            FMemory::Memzero(*Out);
+            Out->HmdPresent = Out->HmdMounted = Out->ServiceReady = 1;
+            return PvrAbi::Success;
+        });
+    Slots[PvrAbi::Slot_DestroyHmd] = reinterpret_cast<void *>(+[](PvrAbi::FPvrHmdHandle) {});
+
+    constexpr double Grid = 1.0 / 120.0;
+    FPimaxPvrEyeSource::FConfig Cfg; // the calibrated 250 ms window
+    FPimaxPvrEyeSource Source{Cfg};
+    Source.InterfaceSlots = Slots;
+    Source.HmdHandle = &Frame;
+    Source.State = FPimaxPvrEyeSource::EState::Running;
+
+    Frame.Info.TimeInSeconds = 1.0;
+    Frame.Info.GazeTan[0] = {0.25f, 0.1f};
+    Frame.Info.GazeTan[1] = {0.25f, 0.1f};
+    TestTrue(TEXT("The first sample of a session is valid"), Source.PollLatest().bValid);
+
+    int32 Valid = 0, Invalid = 0;
+    for (int32 Step = 1; Step <= 30; ++Step) // 250 ms of one identical reading, clock moving
+    {
+        Frame.Info.TimeInSeconds = 1.0 + Step * Grid;
+        if (Source.PollLatest().bValid) ++Valid; else ++Invalid;
+    }
+    TestEqual(TEXT("A hold up to the window is still recorded"), Valid, 30);
+    TestEqual(TEXT("Nothing rejected inside the window"), Invalid, 0);
+
+    bool bAllRejected = true;
+    for (int32 Step = 31; Step <= 60; ++Step) // the measured holds run for seconds
+    {
+        Frame.Info.TimeInSeconds = 1.0 + Step * Grid;
+        bAllRejected = bAllRejected && !Source.PollLatest().bValid;
+    }
+    TestTrue(TEXT("A bit-identical hold past the window is rejected"), bAllRejected);
+    TestTrue(TEXT("The freeze is counted for the diagnostic line"), Source.DiagFrozenSamples > 0);
+
+    // The rejected stretch must not look like data: no source time means the recorder skips
+    // it, exactly as the other gates behave.
+    const auto Frozen = Source.PollLatest();
+    TestFalse(TEXT("A frozen sample does not claim a source time"), Frozen.bSourceTimeKnown);
+
+    Frame.Info.TimeInSeconds = 1.0 + 61 * Grid;
+    Frame.Info.GazeTan[0].X = 0.251f; // moved by well under a tenth of a degree
+    TestTrue(TEXT("The next changed angle is valid again"), Source.PollLatest().bValid);
+    bool bRecovered = true;
+    for (int32 Step = 62; Step <= 71; ++Step)
+    {
+        Frame.Info.TimeInSeconds = 1.0 + Step * Grid;
+        bRecovered = bRecovered && Source.PollLatest().bValid;
+    }
+    TestTrue(TEXT("A new hold starts from the moved angle, not the old one"), bRecovered);
+
+    // MaxFrozenSeconds = 0 disables the gate: a multi-second hold stays valid, so the check
+    // can be switched off without a rebuild if a future tracker reports genuinely frozen eyes.
+    FPimaxPvrEyeSource::FConfig Off;
+    Off.MaxFrozenSeconds = 0.0;
+    FPimaxPvrEyeSource Disabled{Off};
+    Disabled.InterfaceSlots = Slots;
+    Disabled.HmdHandle = &Frame;
+    Disabled.State = FPimaxPvrEyeSource::EState::Running;
+    Frame.Info.TimeInSeconds = 5.0;
+    bool bDisabledAllValid = Disabled.PollLatest().bValid;
+    for (int32 Step = 1; Step <= 240; ++Step) // 2 s of one identical reading
+    {
+        Frame.Info.TimeInSeconds = 5.0 + Step * Grid;
+        bDisabledAllValid = bDisabledAllValid && Disabled.PollLatest().bValid;
+    }
+    TestTrue(TEXT("With MaxFrozenSeconds = 0 a multi-second hold stays valid"), bDisabledAllValid);
+    return true;
+}
+#endif // WITH_DEV_AUTOMATION_TESTS
+
+#if WITH_DEV_AUTOMATION_TESTS
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FPimaxPvrAsyncThreadTest, "HUTB.Pimax.EyeTracking.AsyncThread",
+                                EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
+
+bool FPimaxPvrAsyncThreadTest::RunTest(const FString &Parameters)
+{
+    // The real runtime only ever serves the newest sample, so the async thread is the
+    // only way to keep 120 Hz with a 30 fps render loop. The fake tracker below moves
+    // on a host-clock-driven 120 Hz device grid and needs no headset.
+    void *Slots[PvrAbi::Slot_Count] = {};
+    Slots[PvrAbi::Slot_GetTimeSeconds] =
+        reinterpret_cast<void *>(+[]() -> double { return FPlatformTime::Seconds(); });
+    Slots[PvrAbi::Slot_GetEyeTrackingInfo] = reinterpret_cast<void *>(
+        +[](PvrAbi::FPvrHmdHandle, double, PvrAbi::FPvrEyeTrackingInfo *Out) -> PvrAbi::FPvrResult {
+            const double Grid = 1.0 / 120.0;
+            Out->TimeInSeconds = FMath::FloorToDouble(FPlatformTime::Seconds() / Grid) * Grid;
+            Out->GazeTan[0] = {0.25f, 0.f};
+            Out->GazeTan[1] = {0.25f, 0.f};
+            return PvrAbi::Success;
+        });
+    Slots[PvrAbi::Slot_GetHmdStatus] =
+        reinterpret_cast<void *>(+[](PvrAbi::FPvrHmdHandle, PvrAbi::FPvrHmdStatus *Out) -> PvrAbi::FPvrResult {
+            FMemory::Memzero(*Out);
+            Out->HmdPresent = Out->HmdMounted = Out->ServiceReady = 1;
+            return PvrAbi::Success;
+        });
+    Slots[PvrAbi::Slot_DestroyHmd] = reinterpret_cast<void *>(+[](PvrAbi::FPvrHmdHandle) {});
+
+    FPimaxPvrEyeSource::FConfig Cfg;
+    Cfg.AsyncPollHz = 500.0; // poll faster than the device grid; duplicates are deduped downstream
+    FPimaxPvrEyeSource Source{Cfg};
+    Source.InterfaceSlots = Slots;
+    Source.HmdHandle = reinterpret_cast<PvrAbi::FPvrHmdHandle>(0x1);
+    Source.State = FPimaxPvrEyeSource::EState::Running;
+    Source.StartPoller();
+    FPlatformProcess::Sleep(0.3); // ~36 device grid points
+
+    const auto First = Source.PollAllAvailable();
+    TestTrue(TEXT("The poll thread collected samples well above one per frame"), First.Num() >= 10);
+    bool bAscending = true;
+    bool bSeqStrictlyIncreasing = First.Num() > 0 && First[0].Sequence > 0;
+    for (int32 i = 1; i < First.Num(); ++i)
+    {
+        bAscending = bAscending && First[i].SourceTime >= First[i - 1].SourceTime;
+        bSeqStrictlyIncreasing = bSeqStrictlyIncreasing && First[i].Sequence > First[i - 1].Sequence;
+    }
+    TestTrue(TEXT("Samples are ordered by device time, oldest first"), bAscending);
+    TestTrue(TEXT("Sample.Sequence is strictly increasing across drained samples"), bSeqStrictlyIncreasing);
+    TestTrue(TEXT("Samples keep per-eye data"),
+             First.Num() > 0 && First.Last().bValid && First.Last().Left.bValid && First.Last().Right.bValid);
+
+    // A drain must hand out only what arrived after the previous drain, and sequences
+    // must stay strictly increasing across drains (including empty-drain fallback).
+    const auto Second = Source.PollAllAvailable();
+    TestTrue(TEXT("A drain does not repeat samples it already returned"), Second.Num() < First.Num());
+    {
+        FScopeLock Lock(&Source.RuntimeCS);
+        Source.State = FPimaxPvrEyeSource::EState::Disabled; // freeze poller additions so the next drain is guaranteed empty
+    }
+    FPlatformProcess::Sleep(0.005); // let any in-flight poller iteration finish pushing to Buffer
+    const auto PreEmptyDrain = Source.PollAllAvailable();
+    const auto EmptyDrain = Source.PollAllAvailable();
+    TestEqual(TEXT("Empty drain returns one invalid fallback sample"), EmptyDrain.Num(), 1);
+    TestFalse(TEXT("Empty-drain fallback sample is marked invalid"), EmptyDrain[0].bValid);
+    TestTrue(TEXT("Sample.Sequence strictly increases across drains and empty-drain fallback"),
+             First.Num() > 0 && Second.Num() > 0 && PreEmptyDrain.Num() > 0 &&
+                 Second[0].Sequence > First.Last().Sequence &&
+                 PreEmptyDrain.Last().Sequence >= Second.Last().Sequence &&
+                 EmptyDrain[0].Sequence > PreEmptyDrain.Last().Sequence);
+
+    // Shutdown must join the thread before releasing the (fake) runtime.
+    Source.Shutdown();
     return true;
 }
 #endif // WITH_DEV_AUTOMATION_TESTS
