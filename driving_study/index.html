@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <link rel="shortcut icon" href="../img/favicon.ico" />
+    <title>Driving Study Launcher and Data Recording - CARLA Simulator</title>
+    <link rel="stylesheet" href="../css/theme.css" />
+    <link rel="stylesheet" href="../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+        <link href="../extra.css" rel="stylesheet" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "Driving Study Launcher and Data Recording";
+        var mkdocs_page_input_path = "driving_study.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href=".." class="icon icon-home"> CARLA Simulator
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+      <input type="text" name="q" placeholder="搜索文档" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="..">Home</a>
+                </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Getting started</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../start_introduction/">Introduction</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../start_quickstart/">Quick start package installation</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_first_steps/">First steps</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../build_carla/">Building CARLA</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Next steps</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_content_authoring_maps/">Content authoring - maps</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_content_authoring_vehicles/">Content authoring - vehicles</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../content_authoring_props/">Content authoring - props</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">CARLA topics</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../coordinates/">Coordinates and transformations</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../foundations/">Foundations</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../core_actors/">Actors</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../core_map/">Maps</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../core_sensors/">Sensors and data</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../ts_traffic_simulation_overview/">Traffic</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../ai_rendering/">AI rendering</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../development_tutorials/">Development</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../custom_assets_tutorials/">Custom assets</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Resources</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../python_api/">Python API</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../catalogue/">Catalogue</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../ref_cpp/">C++ reference</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../bp_library/">Blueprint library</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tutorials/">Tutorials</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../ext_docs/">Extended documentation</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../download/">Downloads</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">CARLA Ecosystem</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../ecosys_ansys/">ANSYS</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_G_rllib_integration/">AWS</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_G_carsim_integration/">CarSIM</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_G_chrono/">Chrono</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../large_map_roadrunner/">MathWorks</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../inverted_ai/">Inverted AI</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../nvidia/">NVIDIA</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../adv_opendrive/">ASAM OpenDRIVE</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../adv_ptv/">PTV Vissim</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../adv_rss/">RSS</a>
+                  </li>
+                  <li class="toctree-l1"><a class="" href="https://carla.readthedocs.io/projects/ros-bridge/en/latest/">ROS</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../tuto_G_scenic/">Scenic</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../adv_sumo/">SUMO</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../ecosys_synkrotron/">SYNKROTRON</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Contributing</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../cont_contribution_guidelines/">Guidelines</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../cont_coding_standard/">Coding standards</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../cont_doc_standard/">Documentation standard</a>
+                  </li>
+                  <li class="toctree-l1"><a class="" href=".."></a>
+                  </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="..">CARLA Simulator</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href=".." class="icon icon-home" aria-label="Docs"></a></li>
+      <li class="breadcrumb-item active">Driving Study Launcher and Data Recording</li>
+    <li class="wy-breadcrumbs-aside">
+          <a href="https://github.com/carla-simulator/carla/edit/master/Docs/driving_study.md"> 编辑页面</a>
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="driving-study-launcher-and-data-recording">Driving Study Launcher and Data Recording</h1>
+<h2 id="quick-start">Quick Start</h2>
+<ol>
+<li>Connect the headset, enable eye tracking in Pimax Play, and complete calibration. When using a Logitech G29 / G920 / G923 racing wheel, confirm that Logitech G HUB detects the wheel and that steering and pedal axes respond in Windows <code>joy.cpl</code>, then close the test dialog.</li>
+<li>Double-click <code>StartDrivingStudy.cmd</code> in the repository or package root.</li>
+<li>Choose <strong>Pimax Controller</strong> or <strong>Logitech Racing Wheel</strong>. On a source checkout, enter the UE4 engine root directory; installed maps and ego vehicle profiles are discovered automatically from the project.</li>
+<li>To record a trial, check <strong>Record driving data</strong>. The default target rate is <strong>120 Hz</strong> (set to <strong>20 Hz</strong> for lightweight classroom sessions) and enter or select a participant ID and output directory. Optional switches:</li>
+<li><strong>Record viewport screenshots</strong> (default <strong>20 Hz</strong>, 640x480 JPEG; optionally check <strong>Async screenshots</strong> so GPU readback and JPEG encoding do not block the game thread).</li>
+<li><strong>120 Hz eye-tracking thread</strong> (polls the eye tracker on a dedicated background thread and runs the online I-VT saccade detector at 120 Hz).</li>
+<li><strong>Render quality downgrade</strong> (explicitly sets <code>sg.ShadowQuality 0</code>, <code>sg.EffectsQuality 0</code>, <code>sg.PostProcessQuality 0</code>; off by default so normal launches preserve existing scalability settings).</li>
+<li>Click <strong>Check Settings</strong>, then click <strong>Start VR</strong> once preflight succeeds. The launcher starts Pimax Play, SteamVR, and the simulator in order.</li>
+<li>When driving with a racing wheel, press and release the throttle and brake pedals once before starting the trial to calibrate pedal travel. After exiting the simulator, click <strong>Open Data Directory</strong> to inspect the generated CSV files.</li>
+</ol>
+<p>Recording is off by default. Each recorded run creates a new <code>&lt;session&gt;.csv</code> (71 columns) and <code>&lt;session&gt;_gaze.csv</code> (18 columns) without overwriting previous sessions. The default output root is <code>Unreal/CarlaUE4/Saved/DrivingStudy/</code> in a source build or <code>CarlaUE4/Saved/DrivingStudy/</code> in a packaged build; when a valid participant name is provided and recording or screenshots are enabled, files are placed under <code>&lt;OutputDir&gt;/&lt;Participant&gt;/</code>. Reloading the map or respawning the ego vehicle starts a new session file.</p>
+<p>When the racing wheel input mode is selected, VR controllers and the keyboard no longer drive steering, throttle, brake, gear shift, or turn signals (controllers still adjust camera/seat pose). When the controller input mode is selected, racing wheel driving axes are ignored and standard keyboard shortcuts remain available. If the racing wheel disconnects or read fails during wheel mode, full brake is applied and reconnection is retried every 2 seconds.</p>
+<p>If the wheel does not respond, inspect <code>Unreal/CarlaUE4/Saved/Logs/CarlaUE4.log</code>:
+- <code>Logitech SDK initialize: success</code> indicates the DirectInput/Logitech SDK initialized.
+- <code>Found Logitech wheel</code> indicates a supported wheel device was opened.
+- <code>Logitech wheel sample</code> logs raw steering and pedal values every 2 seconds.</p>
+<p>Command-line launch is also supported:</p>
+<pre><code class="language-powershell">powershell -NoProfile -ExecutionPolicy Bypass -File .\StartPimaxVR.ps1 -UE4Root '&lt;UE4 source engine root&gt;' -Map /Game/Carla/Maps/Town10HD_Opt -InputDevice wheel -RecordDriving -RecordHz 120 -EyeThreadHz 120
+</code></pre>
+<ul>
+<li>Use <code>-InputDevice controller</code> for VR controller mode; omit <code>-RecordDriving</code> when recording is not needed.</li>
+<li>Pass <code>-RecordHz 20</code> for lightweight 20 Hz logging, or <code>-RecordDirectory &lt;local absolute path&gt;</code> to customize the output directory.</li>
+<li>Optional flags: <code>-ScreenshotDriving -ScreenshotHz 20</code> (also honors <code>-RecordDirectory</code> when used standalone), <code>-AsyncScreenshot</code>, <code>-EyeThreadHz 120</code>, and <code>-PerfDowngrade</code>.</li>
+</ul>
+<p>Building from source requires <code>LogitechWheelPlugin</code> and <code>SteamVR</code> enabled in <code>CarlaUE4.uproject</code>.</p>
+<h2 id="csv-schema">CSV Schema</h2>
+<h3 id="1-primary-driving-table-sessioncsv-71-columns">1. Primary Driving Table <code>&lt;session&gt;.csv</code> (71 Columns)</h3>
+<p>Each row represents one game-thread sample combining current eye-tracking state, focus raycast hit, head pose, online saccade metrics, vehicle kinematics, control inputs, OpenDRIVE road location, and affecting traffic light state.</p>
+<table>
+<thead>
+<tr>
+<th>Column</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>schema_version</code></td>
+<td>CSV schema version (<code>2</code>)</td>
+</tr>
+<tr>
+<td><code>ue_frame</code>, <code>sim_time_s</code>, <code>host_elapsed_s</code></td>
+<td>Unreal frame number, simulation timestamp (s), wall-clock elapsed time since recording started (s)</td>
+</tr>
+<tr>
+<td><code>eye_device_timestamp_ms</code></td>
+<td>Eye-tracker device timestamp (ms); uses the device clock rather than simulation time</td>
+</tr>
+<tr>
+<td><code>input_mode</code>, <code>wheel_connected</code>, <code>autopilot</code></td>
+<td>Selected input mode (<code>controller</code> / <code>wheel</code>), wheel connection state, autopilot state</td>
+</tr>
+<tr>
+<td><code>map</code>, <code>vehicle_id</code></td>
+<td>Map name and ego vehicle CARLA actor ID</td>
+</tr>
+<tr>
+<td><code>road_id</code>, <code>lane_id</code>, <code>road_s_m</code></td>
+<td>OpenDRIVE road ID, lane ID, and longitudinal <code>s</code> coordinate (m)</td>
+</tr>
+<tr>
+<td><code>junction_id</code>, <code>in_junction</code></td>
+<td>OpenDRIVE junction ID and junction flag (<code>1</code>/<code>0</code>); empty if off-road</td>
+</tr>
+<tr>
+<td><code>motion</code>, <code>yaw_rate_deg_s</code></td>
+<td>Motion label (<code>stopped</code>, <code>straight</code>, <code>left</code>, <code>right</code>; first row <code>unknown</code>) and yaw rate (deg/s)</td>
+</tr>
+<tr>
+<td><code>red_light_stop_candidate</code></td>
+<td><code>1</code> when the affecting traffic light is <code>red</code> and vehicle speed is below 1 km/h (filter helper, not causal proof)</td>
+</tr>
+<tr>
+<td><code>traffic_light_id</code>, <code>traffic_light_state</code>, <code>traffic_light_distance_m</code></td>
+<td>Affecting traffic light ID, state, and pole distance (m); state may be <code>unknown</code> outside the light's trigger box</td>
+</tr>
+<tr>
+<td><code>vehicle_x_m</code>, <code>vehicle_y_m</code>, <code>vehicle_z_m</code>, <code>vehicle_yaw_deg</code>, <code>speed_kmh</code></td>
+<td>Ego vehicle world position (m), heading (deg), and speed (km/h)</td>
+</tr>
+<tr>
+<td><code>steer_input</code>, <code>throttle_input</code>, <code>brake_input</code></td>
+<td>Current frame control inputs (<code>steer</code> in <code>[-1, 1]</code>, <code>throttle</code>/<code>brake</code> in <code>[0, 1]</code>, after project input scaling)</td>
+</tr>
+<tr>
+<td><code>previous_applied_steer</code>, <code>previous_applied_throttle</code>, <code>previous_applied_brake</code>, <code>previous_reverse</code></td>
+<td>Control values and reverse gear state already applied on the vehicle before the current frame's input is flushed</td>
+</tr>
+<tr>
+<td><code>eye_source</code>, <code>gaze_valid</code></td>
+<td>Eye-tracker backend (<code>pimax_pvr</code>, <code>sranipal</code>, <code>dummy</code>, etc.) and validity flag (<code>1</code>/<code>0</code>; <code>dummy</code> is never marked valid)</td>
+</tr>
+<tr>
+<td><code>gaze_origin_x_m</code>, <code>gaze_origin_y_m</code>, <code>gaze_origin_z_m</code>, <code>gaze_dir_x</code>, <code>gaze_dir_y</code>, <code>gaze_dir_z</code></td>
+<td>World-space gaze ray origin (m) and unit direction vector</td>
+</tr>
+<tr>
+<td><code>gaze_local_x</code>, <code>gaze_local_y</code>, <code>gaze_local_z</code></td>
+<td>Camera-local gaze unit direction vector (separates eye rotation from head rotation)</td>
+</tr>
+<tr>
+<td><code>focus_hit</code>, <code>focus_actor_id</code>, <code>focus_actor_name</code>, <code>focus_kind</code></td>
+<td>Whether the gaze ray hit an actor (<code>1</code>/<code>0</code>), plus actor ID, name, and semantic kind</td>
+</tr>
+<tr>
+<td><code>focus_x_m</code>, <code>focus_y_m</code>, <code>focus_z_m</code>, <code>focus_distance_m</code></td>
+<td>World hit location and distance (m); empty when <code>focus_hit=0</code></td>
+</tr>
+<tr>
+<td><code>focus_traffic_light_state</code>, <code>looking_at_affecting_light</code></td>
+<td>State of a focused traffic light and whether the focused actor is the affecting traffic light (<code>1</code>/<code>0</code>)</td>
+</tr>
+<tr>
+<td><code>head_x_m</code>, <code>head_y_m</code>, <code>head_z_m</code>, <code>head_pitch_deg</code>, <code>head_yaw_deg</code>, <code>head_roll_deg</code></td>
+<td>World-space headset camera position (m) and orientation (deg)</td>
+</tr>
+<tr>
+<td><code>gaze_h_deg</code>, <code>gaze_v_deg</code></td>
+<td>Combined horizontal (<code>atan2(Y, X)</code>) and vertical (<code>atan2(Z, sqrt(X^2+Y^2))</code>) gaze angles (deg)</td>
+</tr>
+<tr>
+<td><code>focus_actor_yaw_deg</code>, <code>focus_actor_pitch_deg</code>, <code>focus_actor_roll_deg</code></td>
+<td>World orientation (deg) of the focused actor; empty when <code>focus_hit=0</code></td>
+</tr>
+<tr>
+<td><code>gaze_velocity_deg_s</code>, <code>saccade_state</code>, <code>saccade_onset_s</code>, <code>saccade_amplitude_deg</code>, <code>saccade_peak_velocity_deg_s</code></td>
+<td>Angular gaze velocity (deg/s) and online I-VT saccade state (<code>fixation</code> / <code>saccade</code>), onset simulation time (s), amplitude (deg), and peak velocity (deg/s)</td>
+</tr>
+<tr>
+<td><code>sample_dt_ms</code></td>
+<td>Simulation time delta from the previous recorded row (ms)</td>
+</tr>
+</tbody>
+</table>
+<h3 id="2-high-frequency-gaze-stream-session_gazecsv-18-columns">2. High-Frequency Gaze Stream <code>&lt;session&gt;_gaze.csv</code> (18 Columns)</h3>
+<p>Recorded on the eye tracker's native sample grid with closed-event saccade verdicts:</p>
+<table>
+<thead>
+<tr>
+<th>Column</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>device_time_ms</code>, <code>host_recv_s</code>, <code>sim_time_s</code>, <code>ue_frame</code></td>
+<td>Tracker timestamp (ms), host receive time (s), simulation time (s), and UE frame number</td>
+</tr>
+<tr>
+<td><code>comb_h_deg</code>, <code>comb_v_deg</code>, <code>l_h_deg</code>, <code>l_v_deg</code>, <code>r_h_deg</code>, <code>r_v_deg</code></td>
+<td>Combined cyclopean horizontal/vertical gaze angles (deg) and raw per-eye fields reported by the runtime (on Pimax PVR 1.33.1, <code>l_*</code>/<code>r_*</code> are synthesized from the fused cyclopean ray with a constant <code>4.0000 deg</code> horizontal offset; use <code>comb_h_deg</code>/<code>comb_v_deg</code> for analysis)</td>
+</tr>
+<tr>
+<td><code>vergence_deg</code>, <code>valid</code></td>
+<td>Angle between the two runtime rays (deg; synthesized on Pimax PVR, do not use for vergence analysis) and sample validity (<code>1</code>/<code>0</code>)</td>
+</tr>
+<tr>
+<td><code>gaze_vel_deg_s</code>, <code>saccade_state</code></td>
+<td>Instantaneous gaze angular velocity (deg/s) and closed-event verdict (<code>fixation</code>, <code>saccade</code>, <code>rejected</code>, or <code>saccade_open</code>)</td>
+</tr>
+<tr>
+<td><code>saccade_onset_s</code>, <code>saccade_amp_deg</code>, <code>saccade_peak_deg_s</code>, <code>saccade_samples</code></td>
+<td>Closed saccade event onset time (s), amplitude (deg), peak velocity (deg/s), and sample count (identical across all rows of a closed event)</td>
+</tr>
+</tbody>
+</table>
+<p>Coordinates use the UE/CARLA left-handed coordinate system (X forward, Y right, Z up) with large-map origin offset support. When <code>gaze_valid=0</code>, vehicle and road columns are still written while gaze and focus coordinates remain empty.</p>
+<h2 id="example-filter-queries">Example Filter Queries</h2>
+<ul>
+<li><strong>Gaze allocation during turns:</strong> filter <code>in_junction=1</code>, <code>motion</code> in <code>left</code>/<code>right</code>, and <code>gaze_valid=1</code>, then compare <code>steer_input</code>, <code>gaze_local_*</code>, <code>head_yaw_deg</code>, and <code>focus_*</code>.</li>
+<li><strong>Braking behavior at red lights:</strong> filter <code>red_light_stop_candidate=1</code> and inspect <code>throttle_input</code>, <code>brake_input</code>, and <code>focus_*</code> across <code>sim_time_s</code>, grouping by <code>traffic_light_id</code>.</li>
+</ul>
+<h2 id="performance-and-verification">Performance and Verification</h2>
+<ul>
+<li><code>&lt;session&gt;.csv</code> defaults to <strong>120 Hz</strong> target sampling (at most once per rendered frame; no synthetic interpolation on low-FPS frames; configurable down to <strong>20 Hz</strong>). When <code>-EyeThreadHz 120</code> is enabled, <code>&lt;session&gt;_gaze.csv</code> polls the tracker on a dedicated 120 Hz background thread and runs the calibrated I-VT detector (onset 120 deg/s, offset 60 deg/s, minimum duration 20 ms). No samples are written while the simulation is paused.</li>
+<li>CSV writers use buffered I/O flushed once per second and on session close. If a disk write fails, recording stops and logs <code>Driving study: write failed</code>.</li>
+</ul>
+<p>Developer test commands (run from the repository root):</p>
+<pre><code class="language-powershell">powershell -NoProfile -ExecutionPolicy Bypass -File .\Util\Tests\RunPimaxTests.ps1 -UE4Root '&lt;UE4 source engine root&gt;'
+powershell -NoProfile -ExecutionPolicy Bypass -File .\Util\Tests\TestPimaxLauncher.ps1
+powershell -NoProfile -STA -ExecutionPolicy Bypass -File .\StartDrivingStudy.ps1 -ValidateOnly
+</code></pre>
+              
+            </div>
+          </div><footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+        <span>
+          <a href="https://github.com/carla-simulator/carla" style="color: #fcfcfc">OpenHUTB</a>
+        </span>
+    
+    
+    
+  </span>
+</div>
+    <script src="../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "..";</script>
+    <script src="../js/theme_extra.js"></script>
+    <script src="../js/theme.js"></script>
+      <script src="../extra.js"></script>
+      <script src="../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>
