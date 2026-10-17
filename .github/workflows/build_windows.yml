@@ -53,6 +53,7 @@ jobs:
           make check.smoke
           make check.air
           make check.vr
+          make check.water
         shell: cmd
 
 

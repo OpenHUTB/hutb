@@ -1619,3 +1619,103 @@ class CarClient(VehicleClient, object):
         """
         controls_raw = self.client.call('getCarControls', vehicle_name)
         return CarControls.from_msgpack(controls_raw)
+
+#----------------------------------- ROV APIs ---------------------------------------------
+class RovClient(VehicleClient, object):
+    def __init__(self, ip = "", port = 41451, timeout_value = 3600):
+        super(RovClient, self).__init__(ip, port, timeout_value)
+
+    def takeoffAsync(self, timeout_sec = 20, vehicle_name = ''):
+        return self.client.call_async('takeoff', timeout_sec, vehicle_name)
+
+    def landAsync(self, timeout_sec = 60, vehicle_name = ''):
+        return self.client.call_async('land', timeout_sec, vehicle_name)
+
+    def goHomeAsync(self, timeout_sec = 3e+38, vehicle_name = ''):
+        return self.client.call_async('goHome', timeout_sec, vehicle_name)
+
+    def hoverAsync(self, vehicle_name = ''):
+        return self.client.call_async('hover', vehicle_name)
+
+    def moveByVelocityBodyFrameAsync(self, vx, vy, vz, duration, drivetrain = DrivetrainType.MaxDegreeOfFreedom, yaw_mode = YawMode(), vehicle_name = ''):
+        return self.client.call_async('moveByVelocityBodyFrame', vx, vy, vz, duration, drivetrain, yaw_mode, vehicle_name)
+
+    def moveByVelocityZBodyFrameAsync(self, vx, vy, z, duration, drivetrain = DrivetrainType.MaxDegreeOfFreedom, yaw_mode = YawMode(), vehicle_name = ''):
+        return self.client.call_async('moveByVelocityZBodyFrame', vx, vy, z, duration, drivetrain, yaw_mode, vehicle_name)
+
+    def moveByMotorPWMsAsync(self, pwm_values, duration, vehicle_name = ''):
+        return self.client.call_async('moveByMotorPWMs', pwm_values, duration, vehicle_name)
+
+    def moveByRollPitchYawZAsync(self, roll, pitch, yaw, z, duration, vehicle_name = ''):
+        return self.client.call_async('moveByRollPitchYawZ', roll, pitch, yaw, z, duration, vehicle_name)
+
+    def moveByRollPitchYawThrottleAsync(self, roll, pitch, yaw, throttle, duration, vehicle_name = ''):
+        return self.client.call_async('moveByRollPitchYawThrottle', roll, pitch, yaw, throttle, duration, vehicle_name)
+
+    def moveByRollPitchYawrateThrottleAsync(self, roll, pitch, yaw_rate, throttle, duration, vehicle_name = ''):
+        return self.client.call_async('moveByRollPitchYawrateThrottle', roll, pitch, yaw_rate, throttle, duration, vehicle_name)
+
+    def moveByRollPitchYawrateZAsync(self, roll, pitch, yaw_rate, z, duration, vehicle_name = ''):
+        return self.client.call_async('moveByRollPitchYawrateZ', roll, pitch, yaw_rate, z, duration, vehicle_name)
+
+    def moveByAngleRatesZAsync(self, roll_rate, pitch_rate, yaw_rate, z, duration, vehicle_name = ''):
+        return self.client.call_async('moveByAngleRatesZ', roll_rate, pitch_rate, yaw_rate, z, duration, vehicle_name)
+
+    def moveByAngleRatesThrottleAsync(self, roll_rate, pitch_rate, yaw_rate, throttle, duration, vehicle_name = ''):
+        return self.client.call_async('moveByAngleRatesThrottle', roll_rate, pitch_rate, yaw_rate, throttle, duration, vehicle_name)
+
+    def moveByVelocityAsync(self, vx, vy, vz, duration, drivetrain = DrivetrainType.MaxDegreeOfFreedom, yaw_mode = YawMode(), vehicle_name = ''):
+        return self.client.call_async('moveByVelocity', vx, vy, vz, duration, drivetrain, yaw_mode, vehicle_name)
+
+    def moveByVelocityZAsync(self, vx, vy, z, duration, drivetrain = DrivetrainType.MaxDegreeOfFreedom, yaw_mode = YawMode(), vehicle_name = ''):
+        return self.client.call_async('moveByVelocityZ', vx, vy, z, duration, drivetrain, yaw_mode, vehicle_name)
+
+    def moveOnPathAsync(self, path, velocity, timeout_sec = 3e+38, drivetrain = DrivetrainType.MaxDegreeOfFreedom, yaw_mode = YawMode(),
+                        lookahead = -1, adaptive_lookahead = 1, vehicle_name = ''):
+        return self.client.call_async('moveOnPath', path, velocity, timeout_sec, drivetrain, yaw_mode, lookahead, adaptive_lookahead, vehicle_name)
+
+    def moveToGPSAsync(self, latitude, longitude, altitude, velocity, timeout_sec = 3e+38, drivetrain = DrivetrainType.MaxDegreeOfFreedom,
+                       yaw_mode = YawMode(), lookahead = -1, adaptive_lookahead = 1, vehicle_name = ''):
+        return self.client.call_async('moveToGPS', latitude, longitude, altitude, velocity, timeout_sec, drivetrain, yaw_mode, lookahead, adaptive_lookahead, vehicle_name)
+
+    def moveToPositionAsync(self, x, y, z, velocity, timeout_sec = 3e+38, drivetrain = DrivetrainType.MaxDegreeOfFreedom,
+                            yaw_mode = YawMode(), lookahead = -1, adaptive_lookahead = 1, vehicle_name = ''):
+        return self.client.call_async('moveToPosition', x, y, z, velocity, timeout_sec, drivetrain, yaw_mode, lookahead, adaptive_lookahead, vehicle_name)
+
+    def moveToZAsync(self, z, velocity, timeout_sec = 3e+38, yaw_mode = YawMode(), lookahead = -1, adaptive_lookahead = 1, vehicle_name = ''):
+        return self.client.call_async('moveToZ', z, velocity, timeout_sec, yaw_mode, lookahead, adaptive_lookahead, vehicle_name)
+
+    def moveByManualAsync(self, vx_max, vy_max, z_min, duration, drivetrain = DrivetrainType.MaxDegreeOfFreedom, yaw_mode = YawMode(), vehicle_name = ''):
+        return self.client.call_async('moveByManual', vx_max, vy_max, z_min, duration, drivetrain, yaw_mode, vehicle_name)
+
+    def rotateToYawAsync(self, yaw, timeout_sec = 3e+38, margin = 5, vehicle_name = ''):
+        return self.client.call_async('rotateToYaw', yaw, timeout_sec, margin, vehicle_name)
+
+    def rotateByYawRateAsync(self, yaw_rate, duration, vehicle_name = ''):
+        return self.client.call_async('rotateByYawRate', yaw_rate, duration, vehicle_name)
+
+    def setAngleLevelControllerGains(self, kp, ki, kd, vehicle_name = ''):
+        self.client.call('setAngleLevelControllerGains', kp, ki, kd, vehicle_name)
+
+    def setAngleRateControllerGains(self, kp, ki, kd, vehicle_name = ''):
+        self.client.call('setAngleRateControllerGains', kp, ki, kd, vehicle_name)
+
+    def setVelocityControllerGains(self, kp, ki, kd, vehicle_name = ''):
+        self.client.call('setVelocityControllerGains', kp, ki, kd, vehicle_name)
+
+    def setPositionControllerGains(self, kp, ki, kd, vehicle_name = ''):
+        self.client.call('setPositionControllerGains', kp, ki, kd, vehicle_name)
+
+    def moveByRC(self, rc_data, vehicle_name = ''):
+        self.client.call('moveByRC', rc_data, vehicle_name)
+
+    def simSetRovPose(self, pose, tilt_angles, ignore_collision = True, spin_props = False, vehicle_name = ''):
+        self.client.call('simSetRovPose', pose, tilt_angles, ignore_collision, spin_props, vehicle_name)
+
+    def getRotorStates(self, vehicle_name = ''):
+        return RotorTiltableStates.from_msgpack(self.client.call('getRotorStates', vehicle_name))
+    getRotorStates.__annotations__ = {'return': RotorTiltableStates}
+
+    def getRovState(self, vehicle_name = ''):
+        return RovState.from_msgpack(self.client.call('getRovState', vehicle_name))
+    getRovState.__annotations__ = {'return': RovState}
