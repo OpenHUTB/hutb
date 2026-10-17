@@ -1,9 +1,12 @@
 #include "EgoVehicle.h"
+#include "DrivingStudy.h"
 #include "Math/NumericLimits.h" // TNumericLimits<float>::Max
 #include <string>               // std::string, std::wstring
 
 #if WITH_DEV_AUTOMATION_TESTS
 #include "Misc/AutomationTest.h"
+#include "Misc/FileHelper.h"
+#include "Misc/Paths.h"
 #endif
 
 namespace
@@ -33,6 +36,18 @@ bool FSeatAxisInputTest::RunTest(const FString &Parameters)
              FMath::IsNearlyEqual(SeatAxisValue(0.575f), 0.5f, KINDA_SMALL_NUMBER));
     TestEqual(TEXT("Out of range input is bounded"), SeatAxisValue(2.f), 1.f);
     TestEqual(TEXT("Negative out of range input is bounded"), SeatAxisValue(-2.f), -1.f);
+
+    FString IniText;
+    const FString InputIniPath = FPaths::Combine(FPaths::ProjectConfigDir(), TEXT("DefaultInput.ini"));
+    TestTrue(TEXT("DefaultInput.ini is readable"), FFileHelper::LoadFileToString(IniText, *InputIniPath));
+    TestTrue(TEXT("SeatMove_DReyeVR_Y axis exists in DefaultInput.ini"),
+             IniText.Contains(TEXT("AxisName=\"SeatMove_DReyeVR_Y\"")));
+    TestTrue(TEXT("SeatMove_DReyeVR_X axis exists in DefaultInput.ini"),
+             IniText.Contains(TEXT("AxisName=\"SeatMove_DReyeVR_X\"")));
+    TestTrue(TEXT("SeatLift_DReyeVR axis exists in DefaultInput.ini"),
+             IniText.Contains(TEXT("AxisName=\"SeatLift_DReyeVR\"")));
+    TestTrue(TEXT("SeatLower_DReyeVR axis exists in DefaultInput.ini"),
+             IniText.Contains(TEXT("AxisName=\"SeatLower_DReyeVR\"")));
     return true;
 }
 #endif
@@ -266,6 +281,23 @@ void AEgoVehicle::ReleaseReverse()
     bCanPressReverse = true;
 }
 
+void AEgoVehicle::SetReverseGate(bool bEngaged)
+{
+    if (bReverse == bEngaged)
+        return;
+    bReverse = bEngaged;
+
+    // apply new light state
+    FVehicleLightState Lights = this->GetVehicleLightState();
+    Lights.Reverse = this->bReverse;
+    this->SetVehicleLightState(Lights);
+
+    PlayGearShiftSound();
+
+    // call to parent
+    SetReverse(bReverse);
+}
+
 void AEgoVehicle::PressTurnSignalR()
 {
     if (!bCanPressTurnSignalR)
@@ -340,11 +372,12 @@ void AEgoVehicle::TickVehicleInputs()
     ManualInputs.Throttle = VehicleInputs.Throttle + bIncludeLast * LastAppliedControl.Throttle;
     ManualInputs.bReverse = bReverse;
 
-    // apply inputs to this vehicle only when either one of the parameter is non-zero or autopilot is on
+    // Explicit device modes must also submit zeros when a pedal/stick is released.
+    // Keep legacy launch behaviour unchanged.
     if ((!FMath::IsNearlyEqual(ManualInputs.Steer, 0.f, 0.02f) ||
         !FMath::IsNearlyEqual(ManualInputs.Brake, 0.f, 0.02f) ||
         !FMath::IsNearlyEqual(ManualInputs.Throttle, 0.f, 0.02f)) ||
-        GetAutopilotStatus())
+        GetAutopilotStatus() || !DrivingStudy::InputMode().Equals(TEXT("legacy")))
     {
         this->ApplyVehicleControl(ManualInputs, EVehicleInputPriority::User);
         // send these inputs to the Carla (parent) vehicle

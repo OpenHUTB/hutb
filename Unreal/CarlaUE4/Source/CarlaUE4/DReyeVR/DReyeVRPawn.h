@@ -135,12 +135,14 @@ class ADReyeVRPawn : public APawn
     void LogitechWheelUpdate();                              // for logitech wheel integration
     void ManageButtonPresses(const DIJOYSTATE2 &WheelState); // for managing button presses
     void ApplyForceFeedback() const;                         // for logitech wheel integration
-    float WheelRotationLast, AccelerationPedalLast, BrakePedalLast;
+    float WheelRotationLast = 0.f, AccelerationPedalLast = 0.f, BrakePedalLast = 0.f;
 #endif
     bool bIsLogiConnected = false; // check if Logi device is connected (on BeginPlay)
+    FString DrivingInputMode = TEXT("legacy");
     double NextWheelConnectAttempt = 0.0;
     double NextWheelInputLog = 0.0;
     bool bWheelErrorShown = false;
+    bool bShifterReverseLast = false;
     int32 WheelProbeCount = 0;
     bool bIsHMDConnected = false;  // checks for HMD connection on BeginPlay
     // default logi plugin behaviour is to set things to 0.5 for some reason
