@@ -20,7 +20,7 @@ try {
     New-Item -ItemType Directory -Path $ReportPath | Out-Null
     $log = Join-Path $ReportPath 'automation.log'
     $arguments = @('"' + $project + '"', '/Engine/Maps/Entry', '-unattended', '-NullRHI', '-nosound',
-        '-nop4', '-nosplash', '-nohmd', '"-ExecCmds=Automation RunTests HUTB.Pimax"',
+        '-nop4', '-nosplash', '-nohmd', '"-ExecCmds=Automation RunTests HUTB"',
         '"-TestExit=Automation Test Queue Empty"', '"-ReportExportPath=' + $ReportPath + '"', '"-abslog=' + $log + '"')
     $process = Start-Process -FilePath $editor -ArgumentList $arguments -WindowStyle Hidden -PassThru
     if (-not $process.WaitForExit(600000)) {
@@ -29,12 +29,20 @@ try {
     }
     if ($process.ExitCode -ne 0) { throw "Editor exited with code $($process.ExitCode). See $log" }
     $report = Get-Content -LiteralPath (Join-Path $ReportPath 'index.json') -Raw | ConvertFrom-Json
-    $expected = @('HUTB.Pimax.EyeTracking.Freshness', 'HUTB.Pimax.GazeDisplay.CameraAttachment',
-        'HUTB.Pimax.GazeDisplay.FixedAnchor', 'HUTB.Pimax.SeatInput.DeadZone', 'HUTB.Pimax.Runtime.DiscoveryPaths')
+    $expected = @('HUTB.Pimax.EyeTracking.Freshness', 'HUTB.Pimax.EyeTracking.FrozenValue',
+        'HUTB.Pimax.EyeTracking.AsyncThread', 'HUTB.Pimax.GazeDisplay.CameraAttachment',
+        'HUTB.Pimax.GazeDisplay.FixedAnchor', 'HUTB.Pimax.SeatInput.DeadZone',
+        'HUTB.Pimax.Runtime.DiscoveryPaths', 'HUTB.Pimax.Driving.Csv', 'HUTB.Pimax.Driving.Motion',
+        'HUTB.Pimax.Driving.InputMode',
+        'HUTB.DReyeVR.Gaze.SaccadeDetector', 'HUTB.DReyeVR.Gaze.SaccadeStamping',
+        'HUTB.DReyeVR.LiveCapture.AsyncQueue')
     foreach ($name in $expected) {
         if (-not @($report.tests | Where-Object { $_.fullTestPath -eq $name -and $_.state -eq 'Success' }).Count) {
             throw "Missing or failed test: $name. See $ReportPath"
         }
+    }
+    if (-not @($report.tests | Where-Object { $_.fullTestPath -in @('HUTB.Pimax.Driving.WheelReconnect', 'HUTB.Driving.WheelReconnect') -and $_.state -eq 'Success' }).Count) {
+        throw "Missing or failed test: WheelReconnect. See $ReportPath"
     }
     if ($report.failed -ne 0 -or $report.notRun -ne 0) { throw "Incomplete or failed tests. See $ReportPath" }
     Write-Host "PASS: $($report.succeeded) tests. Report: $ReportPath"

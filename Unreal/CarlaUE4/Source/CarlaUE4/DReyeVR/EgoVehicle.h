@@ -55,6 +55,7 @@ class CARLAUE4_API AEgoVehicle : public ACarlaWheeledVehicle
     const UCameraComponent *GetCamera() const;
     UCameraComponent *GetCamera();
     const DReyeVR::UserInputs &GetVehicleInputs() const;
+    const ADReyeVRPawn *GetDrivingPawn() const { return Pawn; }
     const class AEgoSensor *GetSensor() const;
     const struct ConfigFile &GetVehicleParams() const;
 
@@ -168,6 +169,8 @@ class CARLAUE4_API AEgoVehicle : public ACarlaWheeledVehicle
     void PressReverse();
     void ReleaseReverse();
     bool bCanPressReverse = true;
+    // Reverse as a level: engaged only while the argument is true (H-shifter gate)
+    void SetReverseGate(bool bEngaged);
     // turn signals
     bool bEnableTurnSignalAction = true; // tune with "EnableTurnSignalAction" in config
     // left turn signal

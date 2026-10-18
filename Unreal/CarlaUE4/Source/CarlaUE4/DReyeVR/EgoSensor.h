@@ -1,8 +1,10 @@
 #pragma once
 
+#include "AsyncFrameCapture.h"                    // FAsyncFrameCaptureQueue (opt-in async screenshots)
 #include "Carla/Sensor/DReyeVRData.h"           // DReyeVR namespace
 #include "Carla/Sensor/DReyeVRSensor.h"         // ADReyeVRSensor
 #include "Components/SceneCaptureComponent2D.h" // USceneCaptureComponent2D
+#include "DrivingRecorder.h"
 #include <chrono>                               // timing threads
 #include <cstdint>
 
@@ -52,11 +54,14 @@ class CARLAUE4_API AEgoSensor : public ADReyeVRSensor
   protected:
     void BeginPlay();
     void BeginDestroy();
+    void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 
     class UWorld *World; // to get info about the world: time, frames, etc.
 
   private:
     int64_t TickCount = 0; // how many ticks have been executed
+    FDrivingRecorder DrivingRecorder;
+    FString EyeSourceName = TEXT("dummy");
     void ReadConfigVariables();
 
   private: // eye tracker
@@ -118,4 +123,25 @@ class CARLAUE4_API AEgoSensor : public ADReyeVRSensor
     void ConvertToEyeTrackerSpace(FVector &inVec) const;
     bool bEnableFovRender = false;
     bool bUseEyeTrackingVRS = true;
+
+  private: // live screenshot capture (20 Hz during driving study recording)
+    void SetupLiveCapture();
+    void TickLiveCapture(double SimTime);
+    void CleanupLiveCapture();
+    UPROPERTY(Transient)
+    class UTextureRenderTarget2D *LiveCapRT = nullptr;
+    UPROPERTY(Transient)
+    class USceneCaptureComponent2D *LiveCapComp = nullptr;
+    double LiveCapInterval = 0.05; // 20 Hz default; overridden by -DReyeVRScreenshotHz
+    double LiveCapLastTime = -1.0;
+    uint64 LiveCapCount = 0;
+    FString LiveCapDir;
+    bool bLiveCapReady = false;
+    bool bLiveCapDisabled = false;
+    // opt-in via -DReyeVRScreenshotAsync: GPU readback + encode off the game thread
+    bool bLiveCapAsync = false;
+    TUniquePtr<IDReyeVRFrameReader> LiveCapReader;
+    TUniquePtr<IDReyeVRFrameSink> LiveCapSink;
+    TUniquePtr<FAsyncFrameCaptureQueue> LiveCapQueue;
+    uint64 LiveCapDropLogCount = 0; // throttles the "queue full" warning
 };

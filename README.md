@@ -9,7 +9,7 @@
 
 该项目是一个用于研究 **人** 和 **载具**（[具身人](https://openhutb.github.io/doc/#_5)、[地面载具](https://openhutb.github.io/doc/#_4)、[空域载具](https://openhutb.github.io/air_doc/)、[水域载具](https://openhutb.github.io/mujoco_plugin/underwater/)）的 **影视级物理模拟器**，旨在加速人和机器人的算法开发、训练和验证。
 除了开源代码外，还提供了为此目的创建的可自由使用的开放数字资产（[城镇布局](https://openhutb.github.io/doc/core_map/#non-layered-maps) 、[建筑](https://openhutb.github.io/doc/catalogue/) 、[载具](https://openhutb.github.io/doc/catalogue_vehicles/) 、[行人](https://openhutb.github.io/doc/catalogue_pedestrians/) 、[道具](https://openhutb.github.io/doc/catalogue_props/) 等）。
-该模拟平台支持 [VR 驾驶舱](https://openhutb.github.io/doc/interbehavior/)、[空地一体](https://openhutb.github.io/air_doc/dev/Carla_Air/)、[水下机器人](https://openhutb.github.io/mujoco_plugin/underwater/)、[传感器](https://openhutb.github.io/doc/ref_sensors/) 、[数据合成](https://openhutb.github.io/doc/tuto_G_retrieve_data/) 、[交通管理器](https://openhutb.github.io/doc/adv_traffic_manager/) 、[多物理场仿真](https://openhutb.github.io/doc/tuto_G_chrono/) 、[行人导航](https://openhutb.github.io/doc/tuto_G_pedestrian_navigation/) 、[Python接口](https://openhutb.github.io/doc/python_api/) 等标准规范，
+该模拟平台支持 [VR 驾驶舱](https://openhutb.github.io/doc/interbehavior/)、[VR 数据收集文档](Docs/driving_study.md)、[空地一体](https://openhutb.github.io/air_doc/dev/Carla_Air/)、[水下机器人](https://openhutb.github.io/mujoco_plugin/underwater/)、[传感器](https://openhutb.github.io/doc/ref_sensors/) 、[数据合成](https://openhutb.github.io/doc/tuto_G_retrieve_data/) 、[交通管理器](https://openhutb.github.io/doc/adv_traffic_manager/) 、[多物理场仿真](https://openhutb.github.io/doc/tuto_G_chrono/) 、[行人导航](https://openhutb.github.io/doc/tuto_G_pedestrian_navigation/) 、[Python接口](https://openhutb.github.io/doc/python_api/) 等标准规范，
 详细介绍请参考[文档](https://openhutb.github.io) 。
 
 <!-- https://github.com/inttter/md-badges -->
@@ -36,11 +36,14 @@
 
 
 ## 使用示例
-1. 在终端运行以下命令下载模拟器：
+1. 在终端运行下面命令下载模拟器：
 	```shell
+	# Windows 系统的下载命令，运行 CarlaUE4.exe 启动模拟器
 	curl -fsSL -o dl.bat https://openhutb.github.io/dl.bat && dl.bat
+
+	# Ubuntu 系统的下载命令，运行 CarlaUE4.sh 启动模拟器
+	curl -fsSL -o dl.sh https://openhutb.github.io/dl.sh && chmod +x dl.sh && ./dl.sh
 	```
-	双击执行`CarlaUE4.exe`启动模拟器。
 
 2. 进入生成的目录`hutb/PythonAPI/carla/dist/`，使用`pip install hutb-*.whl`安装特定 Python 版本的工具包（支持Python 3.7-3.14），运行以下脚本在场景中 [生成车辆和行人](https://github.com/OpenHUTB/doc/blob/master/src/examples/generate_traffic.py) ：
 	```shell
@@ -52,19 +55,20 @@
 	```
 	使用 [config.py](https://github.com/OpenHUTB/hutb/blob/hutb/PythonAPI/util/config.py) [切换](ue/switch_mode.md) 到 [VR 驾驶舱模式](https://openhutb.github.io/doc/interbehavior/) ，使用罗技方向盘或键盘`W`、`A`、`S`、`D`等进行控制，`Z`为倒档：
 	```shell
-	python config.py --map Town10HD?GAME=VR
+	python PythonAPI/util/config.py --map Town10HD?GAME=VR
 	```
 
 
 ## 源代码编译
 
 ```shell
-# 克隆项目
 git clone https://github.com/OpenHUTB/hutb.git
-# 启动编辑器
+# 启动编辑器(-l)、打包（-p）
+# Windows
 setup.bat -l
-# 打包
-setup.bat -p
+# Ubuntu
+./setup.sh -l
+./setup.sh -p
 ```
 请注意，hutb分支包含最新版本以及最新的修复程序和功能。
 或者按照 [如何在Windows上构建中文说明](https://openhutb.github.io/doc/build_windows/) 、[如何在Linux上构建](https://openhutb.github.io/doc/build_linux/) 中的说明进行操作。

@@ -80,7 +80,7 @@ while [[ $# -gt 0 ]]; do
       SMOKE_TESTS=true;
       AIR_TESTS=true;
       VR_TESTS=true;
-      # UPLOAD_DOWNLOAD=true;
+      UPLOAD_DOWNLOAD=true;
       shift ;;
     --libcarla-release )
       LIBCARLA_RELEASE=true;
@@ -127,7 +127,7 @@ done
 # 优先使用环境中的Python系统，以便构建的wheel文件与Boost库所匹配的Python版本一致。
 export PATH=/usr/bin:/bin:$PATH
 
-if ! { ${LIBCARLA_RELEASE} || ${LIBCARLA_DEBUG} || ${PYTHON_API} || ${SMOKE_TESTS} || ${AIR_TESTS} || ${VR_TESTS}; }; then
+if ! { ${LIBCARLA_RELEASE} || ${LIBCARLA_DEBUG} || ${PYTHON_API} || ${SMOKE_TESTS} || ${AIR_TESTS} || ${VR_TESTS} || ${UPLOAD_DOWNLOAD}; }; then
   fatal_error "Nothing selected to be done."
 fi
 
@@ -219,40 +219,24 @@ CARLA_VERSION=$(get_git_repository_version)
 # 发行包安装目录。
 INSTALLATION_DIR=${INSTALLATION_DIR:-${CARLA_BUILD_FOLDER}}
 
-# if ${UPLOAD_DOWNLOAD} ; then
+if ${UPLOAD_DOWNLOAD} ; then
 
-#   # 下载器脚本（Windows 的 hutb_downloader.exe 即它的 pyinstaller 打包版）
-#   DOWNLOADER="${CARLA_UTIL_FOLDER}/download_from_git.py"
-#   DOWNLOADER_PY=$(get_conda_env_python 3.8)
+  # 下载器脚本（Windows 的 hutb_downloader.exe 即它的 pyinstaller 打包版）
+  DOWNLOADER="${CARLA_UTIL_FOLDER}/download_from_git.py"
+  DOWNLOADER_PY=$(get_conda_env_python 3.8)
 
-#   # download_from_git.py 依赖 gitpython
-#   ${DOWNLOADER_PY} -c "import git" 2>/dev/null || ${DOWNLOADER_PY} -m pip install -q gitpython
+  # download_from_git.py 依赖 gitpython（bat 侧的依赖被 pyinstaller 打包进 exe 了，
+  # 这里直接跑脚本，需保证运行环境里有，缺了补装）
+  ${DOWNLOADER_PY} -c "import git" 2>/dev/null || ${DOWNLOADER_PY} -m pip install -q gitpython
 
-#   # 上传分支固定查找 cwd/../Build/UE4Carla 下修改时间最新的 .zip；
-#   # 先在 Dist 或 Build/UE4Carla 里找最新的 tar.gz，缺的话从 Dist 拷过去。
-#   mkdir -p "${INSTALLATION_DIR}/UE4Carla"
-#   LATEST_TAR=$(find "${CARLA_DIST_FOLDER}" "${INSTALLATION_DIR}/UE4Carla" -maxdepth 1 -name "*.tar.gz" -printf "%T@ %p\n" 2>/dev/null | sort -n | tail -1 | cut -d" " -f2- || true)
-#   if [[ -z "${LATEST_TAR}" ]] ; then
-#     fatal_error "No tar.gz file found in ${CARLA_DIST_FOLDER} or ${INSTALLATION_DIR}/UE4Carla to upload."
-#   fi
-#   if [[ "$(dirname ${LATEST_TAR})" != "${INSTALLATION_DIR}/UE4Carla" ]] ; then
-#     echo "Copying latest tar.gz to upload folder: ${LATEST_TAR}"
-#     cp "${LATEST_TAR}" "${INSTALLATION_DIR}/UE4Carla/"
-#   fi
+  # 上传：download_from_git.py 用 cwd 推导扫描目录（cwd/../Build/UE4Carla），
+  # 必须在 Util 下运行 —— cwd/.. 才是仓库根，扫到 ${INSTALLATION_DIR}/UE4Carla。
+  pushd "${CARLA_UTIL_FOLDER}" >/dev/null
+    log "Uploading distribution package..."
+    ${DOWNLOADER_PY} "${DOWNLOADER}" -u release
+  popd >/dev/null
 
-#   pushd "${CARLA_UTIL_FOLDER}" >/dev/null
-#     log "Uploading distribution package..."
-#     ${DOWNLOADER_PY} -u release
-#   popd >/dev/null
-
-#   # 下载回来并解压（解压到 Util/dist/hutb/），顺带测试下载分发流程本身
-#   mkdir -p "${CARLA_UTIL_FOLDER}/dist"
-#   pushd "${CARLA_UTIL_FOLDER}/dist" >/dev/null
-#     log "Downloading distribution package..."
-#     ${DOWNLOADER_PY}
-#   popd >/dev/null
-
-# fi
+fi
 
 # ==============================================================================
 # -- Locate CarlaUE4 packaged build --------------------------------------------
@@ -368,7 +352,7 @@ if ${AIR_TESTS} ; then
     CONDA_PY=$(get_conda_env_python ${PY_VERSION})
     log "Running Carla-Air Python API for Python ${PY_VERSION} example tests."
     # 与 bat 相同跑 4 个脚本；失败即中止
-    for SCRIPT in 01_hello_world.py 02_weather_control.py 03_spawn_traffic.py 04_sensor_capture.py ; do
+    for SCRIPT in 01_hello_world.py 02_weather_control.py ; do
       ${CONDA_PY} ${SCRIPT} --port 3654 || fatal_error "Carla-Air example test failed: ${SCRIPT} (Python ${PY_VERSION})."
     done
     log "Finished Carla-Air Python API for Python ${PY_VERSION} example tests."

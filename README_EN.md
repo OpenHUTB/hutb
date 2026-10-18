@@ -34,9 +34,12 @@ The OpenHUTB (Open source Human-vehicle Twin Build) is a photorealistic-quality 
 ## Usage example
 1. Run the following command in the terminal to download the simulator:
 	```shell
+	# Download command for Windows; run CarlaUE4.exe to launch the simulator.
 	curl -fsSL -o dl.bat https://openhutb.github.io/dl.bat && dl.bat
+	
+	# Download command for Ubuntu; run CarlaUE4.sh to launch the simulator.
+	curl -fsSL -o dl.sh https://openhutb.github.io/dl.sh && chmod +x dl.sh && ./dl.sh
 	```
-	then run `CarlaUE4.exe` to launch the simulator.
 
 2. Navigate to the generated directory `hutb/PythonAPI/carla/dist/`, and use `pip install hutb-*.whl` to install the toolkit for your specific Python version (supports Python 3.7-3.14). Run the following script to [generate vehicles and pedestrians](https://github.com/OpenHUTB/doc/blob/master/src/examples/generate_traffic.py)  in the scene: 
 	```shell
@@ -48,7 +51,7 @@ The OpenHUTB (Open source Human-vehicle Twin Build) is a photorealistic-quality 
 	```
 	Use [config.py](https://github.com/OpenHUTB/hutb/blob/hutb/PythonAPI/util/config.py) to [switch to](ue/switch_mode.md) [VR cockpit mode](https://openhutb.github.io/doc/interbehavior/) , and use the Logitech steering wheel or keyboard keys `W`, `A`, `S`, `D`, etc. for control; `Z` is reverse gear. 
 	```shell
-	python config.py --map Town10HD?GAME=VR
+	python PythonAPI/util/config.py --map Town10HD?GAME=VR
 	```
 
 
@@ -61,6 +64,9 @@ git clone https://github.com/OpenHUTB/hutb.git
 setup.bat -l
 # Package
 setup.bat -p
+# Ubuntu
+./setup.sh -l
+./setup.sh -p
 ```
 Please note that the hutb branch contains the latest version, as well as the latest fixes and features. Alternatively, follow the instructions in [How to Build on Windows (Chinese Guide)](https://openhutb.github.io/doc/build_windows/) and [How to Build on Linux](https://openhutb.github.io/doc/build_linux/).
 
@@ -120,7 +126,7 @@ In addition to the documentation, supplementary content has been created for use
 
 ## References and Licenses
 
-This project stands on the shoulders of giants, and we sincerely thank the developers of the following open-source projects: [Carla](https://github.com/carla-simulator/carla) (MIT License), [AirSim](https://github.com/microsoft/AirSim) (MIT License), [DReyeVR](https://openhutb.github.io/doc/interbehavior/) (MIT License), [CarlaAir](https://github.com/louiszengCN/CarlaAir) (MIT License), (MIT License), and [OpenSim](https://openhutb.github.io/doc/pedestrian/tuto_content_chrono_opensim/) (Apache License).
+This project stands on the shoulders of giants, and we sincerely thank the developers of the following open-source projects: [Carla](https://github.com/carla-simulator/carla) (MIT License), [AirSim](https://github.com/microsoft/AirSim) (MIT License), [DReyeVR](https://openhutb.github.io/doc/interbehavior/) (MIT License), [CarlaAir](https://github.com/louiszengCN/CarlaAir) (MIT License), [HoloOcean](https://bitbucket.org/frostlab/holoocean-engine/src/master/) (MIT License), and [OpenSim](https://openhutb.github.io/doc/pedestrian/tuto_content_chrono_opensim/) (Apache License).
 
 Related assets are licensed under the CC-BY license. Other related assets (including map scenes of [Hunan University of Technology and Business](https://www.hutb.edu.cn/),  [Changsha CEC Software Park](https://map.baidu.com/poi/%E9%95%BF%E6%B2%99%E4%B8%AD%E7%94%B5%E8%BD%AF%E4%BB%B6%E5%9B%AD/@12566933.66,3258249.376047685,17.83z?uid=694ec5236c53273882a00c5a&ugc_type=3&ugc_ver=1&device_ratio=1&compat=1&en_uid=694ec5236c53273882a00c5a&pcevaname=pc4.1&querytype=detailConInfo&da_src=shareurl), [Chinese Vehicles](https://openhutb.github.io/doc/catalogue_vehicles/), etc.) and code are open source under the MIT license.
 

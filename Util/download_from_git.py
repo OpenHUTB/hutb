@@ -5,8 +5,11 @@
 # hutb_downloader.exe -r lfs_demo
 # 3. 添加不删除.git记录的选项(--skipp, -s)
 #
-# 打包方法： 
+# 打包方法：
+# Windows 
 # Pyinstaller download_from_git.py --onefile --name hutb_downloader -i hutb_log.ico
+# Ubuntu (fix: Pyinstaller: command not found)
+# python -m PyInstaller download_from_git.py --onefile --name hutb_downloader -i hutb_log.ico
 # 
 # 
 # 从git下载发行版
@@ -60,6 +63,7 @@ import sys
 import subprocess
 import urllib.request
 import zipfile
+import tarfile
 
 
 # 解决：urllib.error.URLError: <urlopen error [SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: unable to get local issuer certificate (_ssl.c:1017)>
@@ -81,6 +85,23 @@ home_dir = os.path.abspath(os.path.join(os.getcwd(), ".."))
 script_dir = inspect.getfile(inspect.currentframe())
 script_dir = os.path.dirname(os.path.abspath(script_dir))
 
+
+def untar(fname, dirs):
+    """
+    解压tar.gz文件
+    :param fname: 压缩文件名
+    :param dirs: 解压后的存放路径
+    :return: bool
+    """
+    try:
+        t = tarfile.open(fname)
+        t.extractall(path = dirs)
+        return True
+    except Exception as e:
+        print(e)
+        return False
+
+
 # 使用当前 git 目录下的 git 可执行文件
 # 判断git目录是否存在
 if IS_WINDOWS:
@@ -98,10 +119,11 @@ if IS_WINDOWS:
             "Git directory not found in prerequisites, download it from https://gitee.com/OpenHUTB/sw/releases/download/up/git_min.zip and extract it to %s"
             % script_dir
         )
-        urllib.request.urlretrieve(
-            "https://gitee.com/OpenHUTB/sw/releases/download/up/git_min.zip",
-            os.path.join(script_dir, "git_min.zip"),
-        )
+        if not os.path.exists(os.path.join(script_dir, "git_min.zip")):
+            urllib.request.urlretrieve(
+                "https://gitee.com/OpenHUTB/sw/releases/download/up/git_min.zip",
+                os.path.join(script_dir, "git_min.zip"),
+            )
         with zipfile.ZipFile(os.path.join(script_dir, "git_min.zip"), "r") as zip_ref:
             zip_ref.extractall(script_dir)
     else:
@@ -111,17 +133,33 @@ if IS_WINDOWS:
     git_exe = os.path.join(script_dir, "git", "bin", "git.exe")
 
 else:
-    # Ubuntu/Linux 环境：使用系统自带的 Git
-    git_exe = shutil.which("git")
-    if not git_exe:
-        print("Error: Git not found. Please install git and git-lfs (e.g., sudo apt-get install git git-lfs)")
-        sys.exit(1)
-
+    if not os.path.exists(os.path.join(script_dir, "git")):
+        # 从gitee下载git_min.zip，并解压到当前目录下
+        print(
+            "Git directory not found in current directory, download it from https://gitee.com/OpenHUTB/sw/releases/download/up/git_linux.tar.gz and extract it to %s"
+            % script_dir
+        )
+        if not os.path.exists(os.path.join(script_dir, "git_linux.tar.gz")):
+            urllib.request.urlretrieve(
+                "https://gitee.com/OpenHUTB/sw/releases/download/up/git_linux.tar.gz",
+                os.path.join(script_dir, "git_linux.tar.gz"),
+            )
+            
+        untar('git_linux.tar.gz', script_dir)
+        
+    git_exe = os.path.join(script_dir, "git", "git")
+    # solve: sudo apt install git-lfs
+    # sudo apt remove git-lfs
+    os.system('export PREFIX="$HOME/.local"')
+    os.system('./git/install.sh')
+    
+        
 print("Using git executable: ", git_exe)
 os.environ["GIT_PYTHON_GIT_EXECUTABLE"] = git_exe
 
+
 # 必须在设置GIT_PYTHON_GIT_EXECUTABLE环境变量之后，才能导入git库，否则git库会使用系统环境变量中默认的git路径，导致找不到git可执行文件的问题
-from git.repo import Repo
+from git.repo import Repo  # On Linux: Git (1.7.x or newer)
 from git.repo.fun import is_git_dir
 
 # disable_ssl_verify_command = "%s config --global http.sslVerify false" % os.path.join(script_dir, 'git', 'bin', 'git.exe')
@@ -181,10 +219,10 @@ class GitRepository(object):
                     "1",
                     "-b",
                     branch,
-                    "--no-checkout",
                     repo_url,
                     self.local_path,
                 ]
+                # print(clone_cmd)
                 result = subprocess.run(
                     clone_cmd,
                     shell=False,
@@ -372,6 +410,7 @@ def merge_files(input_dir, output_file):
 
     total_files = len(files)
     print("Merging files...")
+    # require memory > 9GB
     with open(output_file, "wb") as out:
         for idx, file_name in enumerate(files, 1):
             file_path = os.path.join(input_dir, file_name)
@@ -379,6 +418,7 @@ def merge_files(input_dir, output_file):
             with open(file_path, "rb") as f:
                 chunk = f.read()
                 out.write(chunk)
+        print("\nMreged:", file_name)
     print()  # 换行
 
 
@@ -441,19 +481,19 @@ if __name__ == "__main__":
             print("Removing previous release directory: ", rep_path)
             shutil.rmtree(rep_path, onerror=remove_readonly)
         repo = GitRepository(rep_path, remote_path)
-        # 寻找 local_path 目录下修改日期最新的 .zip 文件
+        # 寻找 local_path 目录下修改日期最新的发行版压缩包（.zip 或 .tar.gz）
         latest_file = None
         latest_file_name = None
         latest_time = 0
         for file_name in os.listdir(local_path):
-            if file_name.endswith(".zip"):
+            if file_name.endswith((".zip", ".tar.gz")):
                 file_path = os.path.join(local_path, file_name)
                 file_time = os.path.getmtime(file_path)
                 if file_time > latest_time:
                     latest_time = file_time
                     latest_file = file_path
                     latest_file_name = file_name
-        print("Latest zip file to upload: ", latest_file)
+        print("Latest package file to upload: ", latest_file)
         # 如果提交的记录数超过2，则重置仓库到最新状态，避免提交记录过多
         if len(repo.commits()) > 2:
             repo.reset_hard()
@@ -464,26 +504,24 @@ if __name__ == "__main__":
                 file_path = os.path.join(rep_path, file_name)
                 print("Removing file: ", file_path)
                 os.remove(file_path)
-        # 将最新的 .zip 重命名为 hutb.zip，并切分成多个 .dat 小文件，上传到 git 仓库中
-        # Build/UE4Carla下没有.zip文件需要判断一下，避免报错
+        # 将最新的压缩包统一重命名，并切分成多个 .dat 小文件，上传到 git 仓库中
+        # Build/UE4Carla下没有压缩包需要判断一下，避免报错
         if latest_file is None:
-            print("No zip file found in local path: ", local_path)
+            print("No .zip / .tar.gz file found in local path: ", local_path)
             sys.exit(1)
-        if os.path.exists(os.path.join(local_path, latest_file)):
-            # 如果 hutb.zip 已经存在，则先删除
-            if os.path.exists(os.path.join(local_path, "hutb.zip"))  and latest_file != "hutb.zip":
-                print("Removing existing hutb.zip file: ", os.path.join(local_path, "hutb.zip"))
-                os.remove(os.path.join(local_path, "hutb.zip"))
-            # 如果 latest_file 不是 hutb.zip，则重命名为 hutb.zip
-            if latest_file != "hutb.zip":
-                os.rename(
-                    os.path.join(local_path, latest_file),
-                    os.path.join(local_path, "hutb.zip"),
-                )
-        if os.path.exists(os.path.join(rep_path, "*.dat")) is False:
-            split_file(
-                os.path.join(local_path, "hutb.zip"), rep_path, 5120 * 1024 * 1024
-            )  # 每个小文件最大为 128MB
+
+        # 重命名时保持扩展名与压缩格式一致，下载端通过文件头识别格式
+        archive_name = (
+            "hutb.tar.gz" if latest_file_name.endswith(".tar.gz") else "hutb.zip"
+        )
+        archive_path = os.path.join(local_path, archive_name)
+        # 如果上一次上传留下的同名压缩包还在，则先删除
+        if os.path.exists(archive_path) and latest_file != archive_path:
+            print("Removing existing archive file: ", archive_path)
+            os.remove(archive_path)
+        if latest_file != archive_path:
+            os.rename(latest_file, archive_path)
+        split_file(archive_path, rep_path, 5120 * 1024 * 1024)  # 每个小文件最大为 5GB
         # repo.commit_push_force(message=latest_file_name)
         
         # ---------- 修复 504 超时：增量分批推送逻辑开始 ----------
@@ -523,6 +561,10 @@ if __name__ == "__main__":
                     sys.exit(1)
         # ---------- 增量分批推送逻辑结束 ----------
 
+        # 全部推成功后删除本地上传工作目录（源包保留），下次上传会自动重新克隆
+        print("Removing upload working directory: ", rep_path)
+        shutil.rmtree(rep_path, onerror=remove_readonly)
+
         print("Upload finished.")
         sys.exit(0)
 
@@ -559,6 +601,7 @@ if __name__ == "__main__":
     # os.system(clone_cmd)
 
 
+    # input("Press any key to continue!")
     # 移除工程中不相关的文件
     if os.path.exists(os.path.join(local_path, ".git")):
         print("Remove .git folder and .gitattributes file...")
@@ -571,8 +614,21 @@ if __name__ == "__main__":
     if args.repository == "release":
         # 合并小文件
         print("Merge small files...")
-        if os.path.exists(os.path.join(local_path, "hutb.zip")) is False:
-            merge_files(local_path, os.path.join(local_path, "hutb.zip"))
+        hutb_zip = os.path.join(local_path, "hutb.zip")
+        hutb_targz = os.path.join(local_path, "hutb.tar.gz")
+        if not (os.path.exists(hutb_zip) or os.path.exists(hutb_targz)):
+            # 先合并成临时文件，再按文件头判断实际压缩格式，重命名为对应的后缀
+            merged_file = os.path.join(local_path, "hutb.tmp")
+            merge_files(local_path, merged_file)
+            with open(merged_file, "rb") as f:
+                header = f.read(4)
+            if header[:2] == b"PK":  # zip：PK\x03\x04（空 zip 为 PK\x05\x06）
+                os.rename(merged_file, hutb_zip)
+            elif header[:2] == b"\x1f\x8b":  # gzip 压缩的 tar.gz
+                os.rename(merged_file, hutb_targz)
+            else:
+                print("Unknown archive format, file header: %r" % header)
+                sys.exit(1)
 
         # 先于解压删除后缀名为.dat的小文件，防止整个过程占用过多的磁盘空间
         dat_files = [f for f in os.listdir(local_path) if f.endswith(".dat")]
@@ -584,21 +640,19 @@ if __name__ == "__main__":
                 os.remove(os.path.join(local_path, file_name))
             print()  # 换行
 
-        print("Unzipping hutb.zip...")
-        f = zipfile.ZipFile(os.path.join(local_path, "hutb.zip"), "r")  # 压缩文件位置
-        file_list = f.namelist()
-        total_files = len(file_list)
-        for idx, file in enumerate(file_list, 1):
-            show_progress_bar(idx, total_files)
-            f.extract(file, local_path)  # 解压位置
-        f.close()
-        print()  # 换行
-
-        # 赋予 Ubuntu 下二进制文件的执行权限
-        if IS_LINUX:
-            carla_sh = os.path.join(local_path, 'CarlaUE4.sh')
-            if os.path.exists(carla_sh):
-                os.chmod(carla_sh, os.stat(carla_sh).st_mode | stat.S_IEXEC)
+        if os.path.exists(hutb_zip):
+            print("Unzipping hutb.zip...")
+            f = zipfile.ZipFile(hutb_zip, "r")  # 压缩文件位置
+            file_list = f.namelist()
+            total_files = len(file_list)
+            for idx, file in enumerate(file_list, 1):
+                show_progress_bar(idx, total_files)
+                f.extract(file, local_path)  # 解压位置
+            f.close()
+            print()  # 换行
+        elif os.path.exists(hutb_targz):
+            print("Extracting hutb.tar.gz...")
+            untar(hutb_targz, local_path)
 
         # if os.path.exists(os.path.join(local_path, "hutb.zip")):
         #     print("Remove hutb.zip...")
