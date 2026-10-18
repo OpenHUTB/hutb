@@ -342,6 +342,12 @@ if %DO_COPY_FILES%==true (
     if exist "!VC143_CRT_FILE!" (
         echo d | xcopy /y /s "!XCOPY_FROM!Build\dependencies\prerequisites\vc_redist.x64.exe"      "!XCOPY_TO!CarlaUE4"
     )
+
+    :: copy Python environment directory to the package
+    set PYTHON_PACKAGE_FILE="!XCOPY_FROM!Build\dependencies\prerequisites\miniconda3\envs\hutb_3.10\"
+    if exist "!PYTHON_PACKAGE_FILE!" (
+        echo d | xcopy /y /s "!XCOPY_FROM!Build\dependencies\prerequisites\miniconda3\envs\hutb_3.10"      "!XCOPY_TO!Python"
+    )
 )
 call :get_current_time_in_seconds T_END_DO_COPY_FILES
 set /A ELAPSED_TIME=!T_END_DO_COPY_FILES! - !T_START_DO_COPY_FILES!
