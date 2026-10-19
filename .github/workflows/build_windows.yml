@@ -54,6 +54,7 @@ jobs:
           make check.air
           make check.vr
           make check.water
+          make check.python
         shell: cmd
 
 

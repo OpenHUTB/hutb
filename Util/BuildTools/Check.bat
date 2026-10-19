@@ -49,6 +49,7 @@ set PYTHON_API=false
 set RUN_BENCHMARK=false
 set AIR_TESTS=false
 set WATER_TESTS=false
+set PYTHON_TESTS=false
 set MEASURE_TIME=true
 set UPLOAD_DOWNLOAD=false
 
@@ -126,6 +127,11 @@ if not "%1"=="" (
 
     if "%1"=="--vr" (
         set VR_TESTS=true
+        shift
+    )
+
+    if "%1"=="--python" (
+        set PYTHON_TESTS=true
         shift
     )
 
@@ -375,7 +381,25 @@ if %WATER_TESTS%==true (
 )
 
 
-call :get_current_time_in_seconds T_END_DO_TEST
+rem ============================================================================
+rem -- Run Python packaging tests ----------------------------------------------
+rem ============================================================================
+if %PYTHON_TESTS%==true (
+    echo Testing Python packaging... 
+    echo Current directory: %cd%
+
+    set PYTHON_PATH=%exe_dir%Python\python.exe
+    echo %FILE_N% Checking if Python is packaged...
+    %PYTHON_PATH% --version
+    %PYTHON_PATH% -m pip list
+
+    if %errorlevel% equ 0 (
+        echo Python packaging test passed.
+    ) else (
+        echo Python packaging test failed with level %errorlevel%.
+        goto bad_exit
+    )
+)call :get_current_time_in_seconds T_END_DO_TEST
 set /A ELAPSED_TIME=!T_END_DO_TEST! - !T_START_DO_TEST!
 if %MEASURE_TIME%==true if %VR_TESTS%==true echo %FILE_N% [TIME]: Running VR test took !ELAPSED_TIME! seconds.
 
