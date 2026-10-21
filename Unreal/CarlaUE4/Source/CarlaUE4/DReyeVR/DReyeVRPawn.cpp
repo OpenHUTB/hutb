@@ -1,4 +1,5 @@
 #include "DReyeVRPawn.h"
+#include "DrivingStudy.h"
 #include "HAL/PlatformTime.h"
 #include "DReyeVRUtils.h"                      // CreatePostProcessingEffect
 #include "EgoVehicle.h"                        // AEgoVehicle
@@ -31,6 +32,7 @@ ADReyeVRPawn::ADReyeVRPawn(const FObjectInitializer &ObjectInitializer) : Super(
 
 void ADReyeVRPawn::ReadConfigVariables()
 {
+    DrivingInputMode = DrivingStudy::InputMode();
     // camera
     GeneralParams.Get("CameraParams", "FieldOfView", FieldOfView);
     /// NOTE: all the postprocessing params are used in DReyeVRUtils::CreatePostProcessingParams
@@ -378,14 +380,17 @@ void ADReyeVRPawn::InitLogiWheel()
         LOG("Found Logitech wheel (%s) on input %d", LogiName.IsEmpty() ? TEXT("Unknown") : *LogiName, Index);
         bPedalsDefaulting = true;
         bWheelErrorShown = false;
+        WheelProbeCount = 0;
         break;
     }
 
     if (!bIsLogiConnected && !bWheelErrorShown)
     {
-        ++WheelProbeCount;
-        // Packaged builds run their first probe before the SDK's startup retry is due,
-        // so only the second consecutive miss (about 4 seconds later) is an error.
+        // Only complain once the SDK itself is up: in packaged builds the first
+        // successful LogiSteeringInitialize can take tens of seconds after startup,
+        // and probing before that is expected, not an error.
+        if (bUpdated)
+            ++WheelProbeCount;
         if (WheelProbeCount > 1)
         {
             bWheelErrorShown = true;
@@ -412,7 +417,7 @@ void ADReyeVRPawn::DestroyLogiWheel(bool DestroyModule)
 
 void ADReyeVRPawn::TickLogiWheel()
 {
-    if (EgoVehicle == nullptr)
+    if (EgoVehicle == nullptr || DrivingInputMode == TEXT("controller"))
         return;
     // first try to initialize the Logi hardware if not currently active
     if (!bIsLogiConnected && FPlatformTime::Seconds() >= NextWheelConnectAttempt)
@@ -424,14 +429,29 @@ void ADReyeVRPawn::TickLogiWheel()
     // Refresh before checking the connection state. Without this call the
     // SDK can keep reporting an empty controller table indefinitely.
     const bool bUpdated = ILogitechWheelPlugin::Get().WheelUpdate();
-    bIsLogiConnected = bUpdated && ILogitechWheelPlugin::Get().WheelIsConnected(WheelDeviceIdx);
-    if (bIsLogiConnected && bOverrideInputsWithKbd == false)
+    bIsLogiConnected = bUpdated && ILogitechWheelPlugin::Get().WheelIsConnected(WheelDeviceIdx) &&
+                       ILogitechWheelPlugin::Get().WheelGetState(WheelDeviceIdx) != nullptr;
+    if (bIsLogiConnected && (DrivingInputMode == TEXT("wheel") || bOverrideInputsWithKbd == false))
     {
+        bOverrideInputsWithKbd = false;
         // Taking logitech inputs for steering
         LogitechWheelUpdate();
 
         // Add Force Feedback to the hardware steering wheel when a LogitechWheel is used
         ApplyForceFeedback();
+    }
+    // Explicit wheel mode never silently falls back to a different driving device.
+    if (!bIsLogiConnected && DrivingInputMode == TEXT("wheel"))
+    {
+        bPedalsDefaulting = true;
+        if (bShifterReverseLast)
+        {
+            // A disconnected shifter can no longer report its gate; release reverse.
+            EgoVehicle->SetReverseGate(false);
+            bShifterReverseLast = false;
+        }
+        EgoVehicle->SetAutopilot(false);
+        EgoVehicle->AddBrake(1.f);
     }
     bOverrideInputsWithKbd = false; // disable for the next tick (unless held, which will set to true)
 #endif
@@ -541,6 +561,7 @@ void ADReyeVRPawn::LogitechWheelUpdate()
     // value as zero for the pedals only; steering must remain usable.
     const bool bAccelerationDefaulting = FMath::IsNearlyEqual(AccelerationPedal, 0.5f, LogiThresh);
     const bool bBrakeDefaulting = FMath::IsNearlyEqual(BrakePedal, 0.5f, LogiThresh);
+    const bool bWasPedalsDefaulting = bPedalsDefaulting;
     if (bPedalsDefaulting)
     {
         // Only a pedal leaving 0.5 proves the pedal values are real. Clearing
@@ -551,25 +572,45 @@ void ADReyeVRPawn::LogitechWheelUpdate()
             bPedalsDefaulting = false;
         }
     }
-    else
+
+    const float SafeAccelerationPedal = bAccelerationDefaulting ? 0.f : AccelerationPedal;
+    const float SafeBrakePedal = bBrakeDefaulting ? 0.f : BrakePedal;
+    if ((DrivingInputMode == TEXT("wheel") || !bWasPedalsDefaulting) && FPlatformTime::Seconds() >= NextWheelInputLog)
+    {
+        NextWheelInputLog = FPlatformTime::Seconds() + 2.0;
+        FString PressedButtons;
+        for (int32 Index = 0; Index < 24; ++Index)
+            if (WheelState->rgbButtons[Index])
+                PressedButtons += FString::Printf(TEXT("%d,"), Index + 1); // re-numbered to match joy.cpl
+        // gear/forward speed come from the movement component, not from GetVehicleControl():
+        // the AI controller re-applies an empty control every tick, so that struct reads as zeros.
+        LOG("Logitech wheel sample: input=%d raw=(%d,%d,%d) buttons=(%s) steer=%.3f throttle=%.3f brake=%.3f gear=%d fwd_kmh=%.1f",
+            WheelDeviceIdx, int32(WheelState->lX), int32(WheelState->lY), int32(WheelState->lRz),
+            *PressedButtons, WheelRotation, SafeAccelerationPedal, SafeBrakePedal,
+            EgoVehicle->GetVehicleCurrentGear(), EgoVehicle->GetVehicleForwardSpeed() * 0.036f);
+    }
+
+    if (DrivingInputMode == TEXT("wheel"))
+    {
+        // Explicit wheel mode is manual mode: continuously submit all three
+        // axes so releasing a control also clears the previous frame's value.
+        EgoVehicle->SetAutopilot(false);
+        EgoVehicle->AddSteering(WheelRotation);
+        EgoVehicle->AddThrottle(SafeAccelerationPedal);
+        EgoVehicle->AddBrake(SafeBrakePedal);
+        if (bPedalsDefaulting)
+        {
+            // Hold the car until the pedals have been touched once.
+            EgoVehicle->AddBrake(1.f);
+        }
+        // save the last values for the wheel & pedals
+        WheelRotationLast = WheelRotation;
+        AccelerationPedalLast = SafeAccelerationPedal;
+        BrakePedalLast = SafeBrakePedal;
+    }
+    else if (!bWasPedalsDefaulting)
     {
         /// NOTE: directly calling the EgoVehicle functions
-        const float SafeAccelerationPedal = bAccelerationDefaulting ? 0.f : AccelerationPedal;
-        const float SafeBrakePedal = bBrakeDefaulting ? 0.f : BrakePedal;
-        if (FPlatformTime::Seconds() >= NextWheelInputLog)
-        {
-            NextWheelInputLog = FPlatformTime::Seconds() + 2.0;
-            FString PressedButtons;
-            for (int32 Index = 0; Index < 24; ++Index)
-                if (WheelState->rgbButtons[Index])
-                    PressedButtons += FString::Printf(TEXT("%d,"), Index + 1); // re-numbered to match joy.cpl
-            // gear/forward speed come from the movement component, not from GetVehicleControl():
-            // the AI controller re-applies an empty control every tick, so that struct reads as zeros.
-            LOG("Logitech wheel sample: input=%d raw=(%d,%d,%d) buttons=(%s) steer=%.3f throttle=%.3f brake=%.3f gear=%d fwd_kmh=%.1f",
-                WheelDeviceIdx, int32(WheelState->lX), int32(WheelState->lY), int32(WheelState->lRz),
-                *PressedButtons, WheelRotation, SafeAccelerationPedal, SafeBrakePedal,
-                EgoVehicle->GetVehicleCurrentGear(), EgoVehicle->GetVehicleForwardSpeed() * 0.036f);
-        }
         if (EgoVehicle->GetAutopilotStatus() &&
             (FMath::IsNearlyEqual(WheelRotation, WheelRotationLast, LogiThresh) &&
              FMath::IsNearlyEqual(SafeAccelerationPedal, AccelerationPedalLast, LogiThresh) &&
@@ -606,10 +647,34 @@ void ADReyeVRPawn::ManageButtonPresses(const DIJOYSTATE2 &WheelState)
     const bool bABXY_X = static_cast<bool>(WheelState.rgbButtons[1]);
     const bool bABXY_Y = static_cast<bool>(WheelState.rgbButtons[3]);
 
-    if (bABXY_A || bABXY_B || bABXY_X || bABXY_Y)
-        EgoVehicle->PressReverse();
+    if (DrivingInputMode == TEXT("wheel"))
+    {
+        // Driving Force Shifter reports one held button per gate: joy.cpl 13-18 = gears 1-6,
+        // so joy.cpl 19 (press the knob, then 6th) is the reverse gate -> zero-based index 18.
+        const bool bShifterReverse = static_cast<bool>(WheelState.rgbButtons[18]);
+
+        // The shifter selects a gear, so it drives reverse while held and releases on exit,
+        // without clobbering face-button reverse toggles when the shifter is not in reverse.
+        if (bShifterReverse || bShifterReverseLast)
+        {
+            EgoVehicle->SetReverseGate(bShifterReverse);
+        }
+        bShifterReverseLast = bShifterReverse;
+
+        // The face buttons expose no gear position, so they keep the momentary D/R toggle.
+        if (!bShifterReverse && (bABXY_A || bABXY_B || bABXY_X || bABXY_Y))
+            EgoVehicle->PressReverse();
+        else
+            EgoVehicle->ReleaseReverse();
+    }
     else
-        EgoVehicle->ReleaseReverse();
+    {
+        bShifterReverseLast = false;
+        if (bABXY_A || bABXY_B || bABXY_X || bABXY_Y)
+            EgoVehicle->PressReverse();
+        else
+            EgoVehicle->ReleaseReverse();
+    }
 
     EgoVehicle->UpdateWheelButton(EgoVehicle->Button_ABXY_A, bABXY_A);
     EgoVehicle->UpdateWheelButton(EgoVehicle->Button_ABXY_B, bABXY_B);
@@ -709,20 +774,26 @@ void ADReyeVRPawn::SetupEgoVehicleInputComponent(UInputComponent *PlayerInputCom
     check(PlayerInputComponent != nullptr);
     check(EV != nullptr);
     // steering and throttle analog inputs (axes)
-    PlayerInputComponent->BindAxis("Steer_DReyeVR", EV, &AEgoVehicle::AddSteering);
-    PlayerInputComponent->BindAxis("Throttle_DReyeVR", EV, &AEgoVehicle::AddThrottle);
-    PlayerInputComponent->BindAxis("Brake_DReyeVR", EV, &AEgoVehicle::AddBrake);
+    if (DrivingInputMode != TEXT("wheel"))
+    {
+        PlayerInputComponent->BindAxis("Steer_DReyeVR", EV, &AEgoVehicle::AddSteering);
+        PlayerInputComponent->BindAxis("Throttle_DReyeVR", EV, &AEgoVehicle::AddThrottle);
+        PlayerInputComponent->BindAxis("Brake_DReyeVR", EV, &AEgoVehicle::AddBrake);
+    }
     PlayerInputComponent->BindAxis("SeatMove_DReyeVR_Y", EV, &AEgoVehicle::CameraMoveDepth);
     PlayerInputComponent->BindAxis("SeatMove_DReyeVR_X", EV, &AEgoVehicle::CameraMoveHorizontal);
     PlayerInputComponent->BindAxis("SeatLift_DReyeVR", EV, &AEgoVehicle::CameraMoveUp);
     PlayerInputComponent->BindAxis("SeatLower_DReyeVR", EV, &AEgoVehicle::CameraMoveDown);
     // button actions (press & release)
-    PlayerInputComponent->BindAction("ToggleReverse_DReyeVR", IE_Pressed, EV, &AEgoVehicle::PressReverse);
-    PlayerInputComponent->BindAction("ToggleReverse_DReyeVR", IE_Released, EV, &AEgoVehicle::ReleaseReverse);
-    PlayerInputComponent->BindAction("TurnSignalRight_DReyeVR", IE_Pressed, EV, &AEgoVehicle::PressTurnSignalR);
-    PlayerInputComponent->BindAction("TurnSignalLeft_DReyeVR", IE_Released, EV, &AEgoVehicle::ReleaseTurnSignalL);
-    PlayerInputComponent->BindAction("TurnSignalLeft_DReyeVR", IE_Pressed, EV, &AEgoVehicle::PressTurnSignalL);
-    PlayerInputComponent->BindAction("TurnSignalRight_DReyeVR", IE_Released, EV, &AEgoVehicle::ReleaseTurnSignalR);
+    if (DrivingInputMode != TEXT("wheel"))
+    {
+        PlayerInputComponent->BindAction("ToggleReverse_DReyeVR", IE_Pressed, EV, &AEgoVehicle::PressReverse);
+        PlayerInputComponent->BindAction("ToggleReverse_DReyeVR", IE_Released, EV, &AEgoVehicle::ReleaseReverse);
+        PlayerInputComponent->BindAction("TurnSignalRight_DReyeVR", IE_Pressed, EV, &AEgoVehicle::PressTurnSignalR);
+        PlayerInputComponent->BindAction("TurnSignalLeft_DReyeVR", IE_Released, EV, &AEgoVehicle::ReleaseTurnSignalL);
+        PlayerInputComponent->BindAction("TurnSignalLeft_DReyeVR", IE_Pressed, EV, &AEgoVehicle::PressTurnSignalL);
+        PlayerInputComponent->BindAction("TurnSignalRight_DReyeVR", IE_Released, EV, &AEgoVehicle::ReleaseTurnSignalR);
+    }
     // camera view adjustments
     PlayerInputComponent->BindAction("NextCameraView_DReyeVR", IE_Pressed, EV, &AEgoVehicle::PressNextCameraView);
     PlayerInputComponent->BindAction("NextCameraView_DReyeVR", IE_Released, EV, &AEgoVehicle::ReleaseNextCameraView);

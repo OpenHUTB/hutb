@@ -256,9 +256,16 @@ if %DO_COPY_FILES%==true (
     :: Pimax launcher and editable runtime configuration (no third-party Pimax DLLs).
     copy /y "!XCOPY_FROM!StartPimaxVR.ps1" "!XCOPY_TO!StartPimaxVR.ps1" >nul
     if errorlevel 1 goto bad_exit
+    copy /y "!XCOPY_FROM!StartDrivingStudy.ps1" "!XCOPY_TO!StartDrivingStudy.ps1" >nul
+    if errorlevel 1 goto bad_exit
+    copy /y "!XCOPY_FROM!StartDrivingStudy.cmd" "!XCOPY_TO!StartDrivingStudy.cmd" >nul
+    if errorlevel 1 goto bad_exit
     echo f | xcopy /y "!XCOPY_FROM!Unreal\CarlaUE4\CarlaUE4.uproject" "!XCOPY_TO!CarlaUE4\CarlaUE4.uproject"
     if errorlevel 1 goto bad_exit
     echo f | xcopy /y "!XCOPY_FROM!Unreal\CarlaUE4\Config\DReyeVRConfig.ini" "!XCOPY_TO!CarlaUE4\Config\DReyeVRConfig.ini"
+    if errorlevel 1 goto bad_exit
+    if not exist "!XCOPY_TO!CarlaUE4\Config\EgoVehicles" mkdir "!XCOPY_TO!CarlaUE4\Config\EgoVehicles"
+    copy /y "!XCOPY_FROM!Unreal\CarlaUE4\Config\EgoVehicles\*.ini" "!XCOPY_TO!CarlaUE4\Config\EgoVehicles\" >nul
     if errorlevel 1 goto bad_exit
     echo d | xcopy /y /s "!XCOPY_FROM!Unreal\CarlaUE4\Config\SteamVRBindings\*.json" "!XCOPY_TO!CarlaUE4\Config\SteamVRBindings"
     if errorlevel 1 goto bad_exit
@@ -334,6 +341,12 @@ if %DO_COPY_FILES%==true (
     set VC143_CRT_FILE="!XCOPY_FROM!Build\dependencies\prerequisites\vc_redist.x64.exe"
     if exist "!VC143_CRT_FILE!" (
         echo d | xcopy /y /s "!XCOPY_FROM!Build\dependencies\prerequisites\vc_redist.x64.exe"      "!XCOPY_TO!CarlaUE4"
+    )
+
+    :: copy Python environment directory to the package
+    set PYTHON_PACKAGE_FILE="!XCOPY_FROM!Build\dependencies\prerequisites\miniconda3\envs\hutb_3.10\"
+    if exist "!PYTHON_PACKAGE_FILE!" (
+        echo d | xcopy /y /s "!XCOPY_FROM!Build\dependencies\prerequisites\miniconda3\envs\hutb_3.10"      "!XCOPY_TO!Python"
     )
 )
 call :get_current_time_in_seconds T_END_DO_COPY_FILES
