@@ -48,6 +48,7 @@ set VR_TESTS=false
 set PYTHON_API=false
 set RUN_BENCHMARK=false
 set AIR_TESTS=false
+set PYTHON_TESTS=false
 set MEASURE_TIME=true
 set UPLOAD_DOWNLOAD=false
 
@@ -95,6 +96,11 @@ if not "%1"=="" (
 
     if "%1"=="--vr" (
         set VR_TESTS=true
+        shift
+    )
+
+    if "%1"=="--python" (
+        set PYTHON_TESTS=true
         shift
     )
 
@@ -331,6 +337,24 @@ if %VR_TESTS%==true (
             echo VR test failed with errorlevel %errorlevel%.
             goto bad_exit
         )
+    )
+)
+
+
+if %PYTHON_TESTS%==true (
+    echo Testing Python packaging... 
+    echo Current directory: %cd%
+
+    set PYTHON_PATH=%exe_dir%Python\python.exe
+    echo %FILE_N% Checking if Python is packaged...
+    %PYTHON_PATH% --version
+    %PYTHON_PATH% -m pip list
+
+    if %errorlevel% equ 0 (
+        echo Python packaging test passed.
+    ) else (
+        echo Python packaging test failed with level %errorlevel%.
+        goto bad_exit
     )
 )
 

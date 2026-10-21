@@ -5,6 +5,17 @@
 namespace DReyeVR
 {
 
+/// One eye's visual axis, in the EgoVehicle camera's local space.
+struct FEyeGaze
+{
+    /// Unit direction of this eye. Only meaningful when bValid.
+    FVector Direction = FVector::ZeroVector;
+    /// Horizontal / vertical rotation in radians, after the backend's sign fixes.
+    float HRad = 0.f;
+    float VRad = 0.f;
+    bool bValid = false;
+};
+
 /// One eye-tracking sample, expressed in the EgoVehicle camera's local space
 /// (UE4 convention: +X forward, +Y right, +Z up).
 struct FEyeSample
@@ -16,6 +27,22 @@ struct FEyeSample
 
     /// Normalized combined (cyclopean) gaze direction in camera-local space.
     FVector LocalDirection = FVector::ForwardVector;
+
+    /// Per-eye gaze. PVR reports both eyes' angles, so averaging them away would throw
+    /// away the only information that makes vergence computable.
+    FEyeGaze Left;
+    FEyeGaze Right;
+
+    /// Angle between the two eyes' axes in radians: positive when converged, zero when
+    /// parallel, negative when diverged. Returns 0 when either eye is missing.
+    float VergenceRad() const
+    {
+        if (!Left.bValid || !Right.bValid)
+            return 0.f;
+        const float Dot = FMath::Clamp(FVector::DotProduct(Left.Direction, Right.Direction), -1.f, 1.f);
+        const float Sign = FMath::Sign(Left.HRad - Right.HRad); // eyes crossed => left points right of right
+        return FMath::Acos(Dot) * (Sign == 0.f ? 1.f : Sign);
+    }
 
     /// True only when every validity gate passed (call success, finite values,
     /// normalizable direction, fresh timestamp, device state OK). Consumers must
@@ -45,6 +72,18 @@ class IEyeSource
     /// Fetch the most recent sample. Never blocks waiting for new data; returns an
     /// invalid sample (bValid == false) whenever fresh data is unavailable.
     virtual FEyeSample PollLatest() = 0;
+
+    /// Every sample available since the previous call, oldest first. The list always
+    /// holds exactly one entry per call when the backend cannot recover the samples a
+    /// poll skipped, so callers can use Last() as a drop-in for PollLatest().
+    /// The device usually runs faster than the render loop; polling once per frame
+    /// silently discards everything in between.
+    virtual TArray<FEyeSample> PollAllAvailable()
+    {
+        TArray<FEyeSample> Out;
+        Out.Add(PollLatest());
+        return Out;
+    }
 
     /// Release the device. Safe to call repeatedly and after a failed Initialize().
     virtual void Shutdown() = 0;

@@ -2,11 +2,16 @@
 #include "CameraGazeComponent.h"
 
 #include "Carla/Game/CarlaStatics.h"    // GetCurrentEpisode
-#include "DReyeVRUtils.h"               // GeneralParams.Get, ComputeClosestToRayIntersection
+#include "DReyeVRUtils.h"               // GeneralParams.Get, ComputeClosestToRayIntersection, SaveFrameToDisk
 #include "EgoVehicle.h"                 // AEgoVehicle
+#include "Engine/TextureRenderTarget2D.h" // UTextureRenderTarget2D (live capture)
 #include "Kismet/GameplayStatics.h"     // UGameplayStatics::ProjectWorldToScreen
 #include "Kismet/KismetMathLibrary.h"   // Sin, Cos, Normalize
+#include "Misc/CommandLine.h"           // FCommandLine (eye poll thread rate)
 #include "Misc/DateTime.h"              // FDateTime
+#include "Misc/Guid.h"                  // FGuid
+#include "Misc/Parse.h"                 // FParse::Value
+#include "Misc/Paths.h"                 // FPaths
 #include "UObject/UObjectBaseUtility.h" // GetName
 
 #if USE_SRANIPAL_PLUGIN
@@ -142,6 +147,7 @@ void AEgoSensor::BeginPlay()
 
     // Initialize the eye tracker hardware
     InitEyeTracker();
+    DrivingRecorder.Start();
 
 #if USE_FOVEATED_RENDER
     // Initialize VRS plugin (using our VRS fork!)
@@ -155,6 +161,8 @@ void AEgoSensor::BeginPlay()
 
 void AEgoSensor::BeginDestroy()
 {
+    CleanupLiveCapture();
+    DrivingRecorder.Close();
     Super::BeginDestroy();
 
     if (RecordingCF != nullptr)
@@ -167,12 +175,19 @@ void AEgoSensor::BeginDestroy()
     LOG("EgoSensor has been destroyed");
 }
 
+void AEgoSensor::EndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+    CleanupLiveCapture();
+    DrivingRecorder.Close();
+    Super::EndPlay(EndPlayReason);
+}
+
 void AEgoSensor::ManualTick(float DeltaSeconds)
 {
     if (!ADReyeVRSensor::bIsReplaying) // only update the sensor with local values if not replaying
     {
         const float Timestamp = int64_t(1000.f * UGameplayStatics::GetRealTimeSeconds(World));
-        /// TODO: query the eye tracker hardware asynchronously (not limited to UE4 tick)
+        // With -DReyeVREyeThreadHz>0 the hardware is polled on its own thread and this only drains it.
         TickEyeTracker();   // query the eye-tracker hardware for current data
         ComputeEgoVars();   // sample this frame's camera pose before computing focus
         ComputeFocusInfo(); // compute gaze focus data using this frame's eye data and pose
@@ -185,7 +200,21 @@ void AEgoSensor::ManualTick(float DeltaSeconds)
                           FocusInfoData, // FocusData
                           Inputs         // User inputs
         );
+        if (Vehicle.IsValid())
+            DrivingRecorder.Record(*Vehicle.Get(), *GetData(), FocusInfoData, EyeSourceName);
         TickFoveatedRender();
+        // Live screenshot capture (independent 20 Hz timer, runs with or without CSV recording)
+        if (Vehicle.IsValid() && !bLiveCapDisabled)
+        {
+            auto *Episode = UCarlaStatics::GetCurrentEpisode(World);
+            const double SimTime = Episode ? Episode->GetElapsedGameTime() : World->GetTimeSeconds();
+            TickLiveCapture(SimTime);
+        }
+    }
+    // Pump async screenshot completions on every tick (no-op when the queue does not exist)
+    if (LiveCapQueue)
+    {
+        LiveCapQueue->Tick();
     }
     UpdateGazeDisplay();
     TickCount++;
@@ -281,12 +310,35 @@ void AEgoSensor::InitEyeTracker()
             FPimaxPvrEyeSource::FConfig PvrConfig;
             GeneralParams.Get("Pimax", "AllowUnknownPimaxDevice", PvrConfig.bAllowUnknownPimaxDevice);
             GeneralParams.Get("Pimax", "MaxSampleAgeSeconds", PvrConfig.MaxSampleAgeSeconds);
+            // Samples whose angles never change while the device clock keeps advancing are
+            // frozen tracker reads, not fixations (measured: 6.3-43.8% of samples per session).
+            // The ini value is a float like every other knob here, so it goes through a float
+            // before landing in the double. 0 disables the gate.
+            float MaxFrozenSec = static_cast<float>(PvrConfig.MaxFrozenSeconds);
+            GeneralParams.Get("Pimax", "MaxFrozenSeconds", MaxFrozenSec);
+            float CmdMaxFrozenSec = 0.f;
+            if (FParse::Value(FCommandLine::Get(), TEXT("DReyeVREyeMaxFrozenSec="), CmdMaxFrozenSec) &&
+                FMath::IsFinite(static_cast<double>(CmdMaxFrozenSec)))
+                MaxFrozenSec = CmdMaxFrozenSec;
+            if (MaxFrozenSec >= 0.f)
+                PvrConfig.MaxFrozenSeconds = MaxFrozenSec;
             GeneralParams.Get("Pimax", "GazeInvertHorizontal", PvrConfig.bInvertHorizontal);
             GeneralParams.Get("Pimax", "GazeInvertVertical", PvrConfig.bInvertVertical);
             PvrConfig.AllowedVendorIds =
                 ParseHexIdList(GeneralParams.Get<FString>("Pimax", "AllowedVendorIds"), PvrConfig.AllowedVendorIds);
             PvrConfig.AllowedProductIds =
                 ParseHexIdList(GeneralParams.Get<FString>("Pimax", "AllowedProductIds"), PvrConfig.AllowedProductIds);
+            // 0 (default) keeps the frame-driven polling path unchanged; >0 polls on a
+            // dedicated thread at that rate so the gaze stream keeps its native density
+            // even when VR renders at 30 fps.
+            float EyeThreadHz = 0.f;
+            GeneralParams.Get("Pimax", "EyeThreadHz", EyeThreadHz);
+            float CmdEyeThreadHz = 0.f;
+            if (FParse::Value(FCommandLine::Get(), TEXT("DReyeVREyeThreadHz="), CmdEyeThreadHz) &&
+                CmdEyeThreadHz > 0.f)
+                EyeThreadHz = CmdEyeThreadHz;
+            if (EyeThreadHz > 0.f)
+                PvrConfig.AsyncPollHz = FMath::Clamp((double)EyeThreadHz, 30.0, 500.0);
 
             PvrEyeSource = TUniquePtr<FPimaxPvrEyeSource>(new FPimaxPvrEyeSource(PvrConfig));
             if (PvrEyeSource->Initialize())
@@ -332,6 +384,7 @@ void AEgoSensor::TickEyeTracker()
 #if USE_SRANIPAL_PLUGIN
     if (bSRanipalEnabled)
     {
+        EyeSourceName = TEXT("sranipal");
         /// NOTE: the GazeRay is the normalized direction vector of the actual gaze "ray"
         // Getting real eye tracker data
         check(SRanipal != nullptr);
@@ -371,10 +424,12 @@ void AEgoSensor::TickEyeTracker()
 #if PLATFORM_WINDOWS
     if (PvrEyeSource.IsValid())
     {
+        EyeSourceName = TEXT("pimax");
         TickPimaxEyeTracker();
         return;
     }
 #endif
+    EyeSourceName = TEXT("dummy");
     ComputeDummyEyeData();
     Combined->Vergence = ComputeVergence(Left->GazeOrigin, Left->GazeDir, Right->GazeOrigin, Right->GazeDir);
 
@@ -389,17 +444,28 @@ void AEgoSensor::TickPimaxEyeTracker()
     auto Left = &(EyeSensorData.Left);
     auto Right = &(EyeSensorData.Right);
 
-    const DReyeVR::FEyeSample Sample = PvrEyeSource->PollLatest();
+    // The tracker advances on a ~120 Hz grid while the render loop can be far slower, so
+    // drain everything this frame produced instead of keeping only the newest one.
+    const TArray<DReyeVR::FEyeSample> Samples = PvrEyeSource->PollAllAvailable();
+    const DReyeVR::FEyeSample &Sample = Samples.Last(); // the live path always uses the newest
 
-    // PVR 1.26 only provides a combined gaze direction (no per-eye origins, pupil
-    // diameter or openness): leave those fields invalid instead of fabricating data.
+    // PVR 1.26 gives per-eye angles but no eye origins, pupil diameter or openness:
+    // leave those fields invalid instead of fabricating data.
     Combined->GazeValid = Sample.bValid;
     Combined->GazeOrigin = Sample.LocalOrigin; // ZeroVector: approximate, no true origin in PVR
     Combined->GazeDir = Sample.bValid ? Sample.LocalDirection : FVector::ZeroVector;
-    Combined->Vergence = -1.f; // sentinel: unavailable (needs per-eye rays PVR does not provide)
 
-    Left->GazeValid = false;
-    Right->GazeValid = false;
+    Left->GazeValid = Sample.bValid && Sample.Left.bValid;
+    Left->GazeOrigin = Sample.LocalOrigin;
+    Left->GazeDir = Left->GazeValid ? Sample.Left.Direction : FVector::ZeroVector;
+    Right->GazeValid = Sample.bValid && Sample.Right.bValid;
+    Right->GazeOrigin = Sample.LocalOrigin;
+    Right->GazeDir = Right->GazeValid ? Sample.Right.Direction : FVector::ZeroVector;
+    // Vergence here means the distance to the two rays' intersection, which needs
+    // separate eye origins PVR does not expose. The origin-free interocular angle is
+    // written to the gaze stream instead (vergence_deg).
+    Combined->Vergence = -1.f; // sentinel: unavailable
+
     Left->EyeOpennessValid = false;
     Right->EyeOpennessValid = false;
     Left->PupilPositionValid = false;
@@ -407,6 +473,9 @@ void AEgoSensor::TickPimaxEyeTracker()
 
     EyeSensorData.TimestampDevice = Sample.bSourceTimeKnown ? int64_t(Sample.SourceTime * 1000.0) : 0;
     EyeSensorData.FrameSequence = int64_t(Sample.Sequence);
+
+    if (UWorld *World = GetWorld())
+        DrivingRecorder.RecordGaze(Samples, *World, GFrameCounter);
 #endif
 }
 
@@ -755,6 +824,156 @@ void AEgoSensor::TickFoveatedRender()
     F.ConfidenceValue = 0.99f;
     UVariableRateShadingFunctionLibrary::UpdateStereoGazeDataToFoveatedRendering(F);
 #endif
+}
+
+/// ========================================== ///
+/// -----------:LIVESCREENCAPTURE:------------ ///
+/// ========================================== ///
+
+void AEgoSensor::SetupLiveCapture()
+{
+    if (bLiveCapReady || bLiveCapDisabled) return;
+    if (!Vehicle.IsValid()) return;
+
+    // Parse screenshot frequency from command line (default 20 Hz)
+    if (!FParse::Param(FCommandLine::Get(), TEXT("DReyeVRScreenshot")))
+    {
+        bLiveCapDisabled = true;
+        return;
+    }
+    float Hz = 20.f;
+    FParse::Value(FCommandLine::Get(), TEXT("DReyeVRScreenshotHz="), Hz);
+    LiveCapInterval = 1.0 / FMath::Clamp(Hz, 1.f, 60.f);
+    bLiveCapAsync = FParse::Param(FCommandLine::Get(), TEXT("DReyeVRScreenshotAsync"));
+
+    // Screenshot directory: same base as the CSV when recording, or an independent session base path
+    FString BasePath = DrivingRecorder.GetSessionBasePath();
+    if (BasePath.IsEmpty())
+    {
+        FString Directory;
+        FParse::Value(FCommandLine::Get(), TEXT("DReyeVRRecordDir="), Directory);
+        if (Directory.IsEmpty())
+            Directory = FPaths::Combine(FPaths::ProjectSavedDir(), TEXT("DrivingStudy"));
+        Directory = FPaths::ConvertRelativePathToFull(Directory);
+        BasePath = FPaths::Combine(Directory, FDateTime::UtcNow().ToString(TEXT("%Y%m%dT%H%M%SZ")) + TEXT("-") +
+                                                  FGuid::NewGuid().ToString(EGuidFormats::Digits));
+    }
+    LiveCapDir = BasePath + TEXT("_screenshots");
+    if (!IFileManager::Get().MakeDirectory(*LiveCapDir, true))
+    {
+        LOG_ERROR("Driving study: cannot create screenshot dir %s", *LiveCapDir);
+        bLiveCapDisabled = true;
+        return;
+    }
+
+    // Create a lightweight render target (640x480, enough for gaze annotation at 20 Hz)
+    LiveCapRT = NewObject<UTextureRenderTarget2D>(this, TEXT("LiveCaptureRT"));
+    LiveCapRT->ClearColor = FLinearColor::Black;
+    LiveCapRT->bGPUSharedFlag = true;
+    LiveCapRT->bAutoGenerateMips = false;
+    LiveCapRT->InitCustomFormat(640, 480, PF_B8G8R8A8, /*bForceLinearGamma=*/false);
+    check(LiveCapRT->GetSurfaceWidth() > 0 && LiveCapRT->GetSurfaceHeight() > 0);
+
+    // Create a scene capture component attached to the VR camera
+    LiveCapComp = NewObject<USceneCaptureComponent2D>(this, TEXT("LiveCapture"));
+    LiveCapComp->TextureTarget = LiveCapRT;
+    LiveCapComp->bCaptureEveryFrame = false;
+    LiveCapComp->bCaptureOnMovement = false;
+    LiveCapComp->bAlwaysPersistRenderingState = true;
+    LiveCapComp->CaptureSource = ESceneCaptureSource::SCS_FinalColorLDR;
+    LiveCapComp->PrimitiveRenderMode = ESceneCapturePrimitiveRenderMode::PRM_RenderScenePrimitives;
+    auto *Camera = Vehicle.Get()->GetCamera();
+    if (Camera)
+    {
+        LiveCapComp->SetupAttachment(Camera);
+    }
+    LiveCapComp->RegisterComponent();
+
+    if (bLiveCapAsync)
+    {
+        FAsyncFrameCaptureConfig QueueConfig;
+        LiveCapReader = MakeUnique<FDReyeVRRenderThreadFrameReader>();
+        LiveCapSink = MakeUnique<FDReyeVRImageWriteSink>();
+        LiveCapQueue = MakeUnique<FAsyncFrameCaptureQueue>(*LiveCapReader, *LiveCapSink, QueueConfig);
+        LOG("Driving study: async screenshot path enabled (max %d in flight)", QueueConfig.MaxInFlightCaptures);
+    }
+
+    bLiveCapReady = true;
+    LOG("Driving study: live screenshot capture %.1f Hz (640x480 JPEG) to %s", 1.0 / LiveCapInterval, *LiveCapDir);
+}
+
+void AEgoSensor::TickLiveCapture(double SimTime)
+{
+    // Lazy init: Vehicle is not yet available in BeginPlay, so set up on first tick
+    if (!bLiveCapReady)
+    {
+        SetupLiveCapture();
+        if (!bLiveCapReady) return;
+    }
+    if (!LiveCapComp || !LiveCapRT) return;
+
+    // Rate-limit to the configured Hz
+    if (LiveCapLastTime >= 0.0 && SimTime < LiveCapLastTime + LiveCapInterval - 1e-6) return;
+    LiveCapLastTime = SimTime;
+
+    // Match the SceneCapture viewpoint to the current VR camera
+    auto *Camera = Vehicle.IsValid() ? Vehicle.Get()->GetCamera() : nullptr;
+    if (Camera)
+    {
+        FMinimalViewInfo View;
+        Camera->GetCameraView(0, View);
+        LiveCapComp->SetCameraView(View);
+    }
+
+    // CaptureScene renders the scene a second time; the synchronous readback that used to
+    // follow it is what stalled the game thread. Measured 2026-10-11: 1554 captures produced
+    // 1550 rows whose ue_frame advanced by 2, i.e. one whole extra presented frame each.
+    LiveCapComp->CaptureScene();
+
+    // File name encodes frame number and sim_time for CSV alignment
+    const FString FileName = FString::Printf(TEXT("%06llu_%.4fs.jpg"), LiveCapCount, SimTime);
+    if (LiveCapQueue)
+    {
+        // async path (-DReyeVRScreenshotAsync): the name and index are frozen at submit time;
+        // GPU readback and JPEG encode/write happen off the game thread
+        if (!LiveCapQueue->EnqueueCapture(LiveCapRT, FPaths::Combine(LiveCapDir, FileName), LiveCapCount, SimTime) &&
+            (++LiveCapDropLogCount % 100) == 1)
+        {
+            LOG_WARN("Driving study: async screenshot queue full, dropped %llu captures so far",
+                     LiveCapQueue->GetDropped());
+        }
+    }
+    else
+    {
+        SaveFrameToDisk(*LiveCapRT, FPaths::Combine(LiveCapDir, FileName), /*bJPG=*/true);
+    }
+    ++LiveCapCount;
+}
+
+void AEgoSensor::CleanupLiveCapture()
+{
+    if (LiveCapQueue)
+    {
+        LiveCapQueue->Flush();
+        LOG("Driving study: async screenshot stats: submitted=%llu completed=%llu dropped=%llu maxInFlight=%d",
+            LiveCapQueue->GetSubmitted(), LiveCapQueue->GetCompleted(), LiveCapQueue->GetDropped(),
+            LiveCapQueue->GetMaxInFlightSeen());
+        LiveCapQueue.Reset(); // must die before the reader/sink it references
+        LiveCapSink.Reset();
+        LiveCapReader.Reset();
+    }
+    if (LiveCapComp)
+    {
+        LiveCapComp->DestroyComponent();
+        LiveCapComp = nullptr;
+    }
+    LiveCapRT = nullptr;
+    bLiveCapReady = false;
+    bLiveCapDisabled = false;
+    if (LiveCapCount > 0)
+    {
+        LOG("Driving study: captured %llu screenshots to %s", LiveCapCount, *LiveCapDir);
+    }
 }
 
 /// ========================================== ///
