@@ -48,12 +48,12 @@ function _libcxx_paths {
 
 function get_libcxx_cflags {
   _libcxx_paths || return 1
-  echo "-stdlib=libc++ -nostdinc++ -isystem $LIBCXX_HEADERS"
+  echo "-stdlib=libc++ -nostdinc++ -isystem -pthread $LIBCXX_HEADERS"
 }
 
 function get_libcxx_ldflags {
   _libcxx_paths || return 1
-  echo "-stdlib=libc++ -L$LIBCXX_LIBS"
+  echo "-stdlib=libc++ -pthread -L$LIBCXX_LIBS"
 }
 
 function get_git_repository_version {
