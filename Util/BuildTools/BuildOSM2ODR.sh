@@ -117,10 +117,6 @@ if ${BUILD_OSM2ODR} ; then
   mkdir -p ${OSM2ODR_SERVER_BUILD_FOLDER}
   cd ${OSM2ODR_SERVER_BUILD_FOLDER}
 
-  if ! LIBCXX_CFLAGS=$(get_libcxx_cflags) || ! LIBCXX_LDFLAGS=$(get_libcxx_ldflags); then
-    fatal_error "UE4's bundled libc++ was not found (set UE4_ROOT)."
-  fi
-
   # LLVM_BASENAME=llvm-8.0
   # LLVM_INCLUDE="$UE4_ROOT/Engine/Source/ThirdParty/Linux/LibCxx/include/c++/v1"
   # LLVM_LIBPATH="$UE4_ROOT/Engine/Source/ThirdParty/Linux/LibCxx/lib/Linux/x86_64-unknown-linux-gnu"
@@ -138,7 +134,7 @@ if ${BUILD_OSM2ODR} ; then
       -G "Eclipse CDT4 - Ninja" \
       -DCMAKE_C_COMPILER=/usr/bin/clang \
       -DCMAKE_CXX_COMPILER=/usr/bin/clang++ \
-      -DCMAKE_CXX_FLAGS="-fPIC -std=c++14 ${LIBCXX_CFLAGS} ${LIBCXX_LDFLAGS}" \
+      -DCMAKE_CXX_FLAGS="-fPIC -std=c++14 -stdlib=libc++" \
       -DCMAKE_INSTALL_PREFIX=${LIBCARLA_INSTALL_SERVER_FOLDER} \
       -DPROJ_INCLUDE_DIR=${CARLA_BUILD_FOLDER}/proj-install-server/include \
       -DPROJ_LIBRARY=${CARLA_BUILD_FOLDER}/proj-install-server/lib/libproj.a \
@@ -165,7 +161,7 @@ if ${BUILD_OSM2ODR} ; then
       -G "Eclipse CDT4 - Ninja" \
       -DCMAKE_C_COMPILER=/usr/bin/clang \
       -DCMAKE_CXX_COMPILER=/usr/bin/clang++ \
-      -DCMAKE_CXX_FLAGS="-fPIC -std=c++14 ${LIBCXX_CFLAGS} ${LIBCXX_LDFLAGS} -lc++ -lc++abi" \
+      -DCMAKE_CXX_FLAGS="-fPIC -std=c++14 -stdlib=libc++" \
       -DCMAKE_INSTALL_PREFIX=${LIBCARLA_INSTALL_SERVER_FOLDER} \
       -DPROJ_INCLUDE_DIR=${CARLA_BUILD_FOLDER}/proj-install-server/include \
       -DPROJ_LIBRARY=${CARLA_BUILD_FOLDER}/proj-install-server/lib/libproj.a \
