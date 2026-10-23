@@ -438,12 +438,20 @@ world.SpawnActor(walker_controller_bp, carla.Transform(), parent_walker)
 <p>The AI controller is bodiless and has no physics. It will not appear on scene. Also, location <code>(0,0,0)</code> relative to its parent will not cause a collision.  </p>
 </div>
 <p><strong>Each AI controller needs initialization, a goal and, optionally, a speed</strong>. Stopping the controller works in the same manner. </p>
-<pre><code class="language-py">ai_controller.start()
+<pre><code class="language-py">world.tick()  # Use world.wait_for_tick() in asynchronous mode.
+ai_controller.start()
 ai_controller.go_to_location(world.get_random_location_from_navigation())
 ai_controller.set_max_speed(1 + random.random())  # Between 1 and 2 m/s (default is 1.4 m/s).
 ...
 ai_controller.stop()
 </code></pre>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>The world must tick at least once between spawning the walker and calling <code>start()</code>.
+<code>start()</code> reads the walker's location from the last snapshot the client received, and a
+walker spawned after that snapshot is not in it yet. Without the tick, the walker will not
+walk.</p>
+</div>
 <p>When a walker reaches the target location, they will automatically walk to another random point. If the target point is not reachable, walkers will go to the closest point from their current location.</p>
 <p>A snipet in <a href="../python_api/#carla.Client.apply_batch_sync">carla.Client</a> uses batches to spawn a lot of walkers and make them wander around.</p>
 <div class="admonition important">

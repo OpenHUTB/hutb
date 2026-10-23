@@ -6059,7 +6059,11 @@ Sets the destination that the pedestrian will reach.  <ul>
 </ul>
 </li>
 <li><a name="carla.WalkerAIController.start"></a><strong><font color="#7fb800">start</font></strong>(<font color="#00a6ed"><strong>self</strong></font>)<br />
-Enables AI control for its parent walker.  </li>
+Enables AI control for its parent walker.  <ul>
+<li><strong>Note:</strong> <font color="#8E8E8E"><em>Tick the world at least once between spawning the walker and calling this method. The method reads the walker's location from the last snapshot received by the client, and the walker will not walk if it is not in it yet.
+</em></font>  </li>
+</ul>
+</li>
 <li><a name="carla.WalkerAIController.stop"></a><strong><font color="#7fb800">stop</font></strong>(<font color="#00a6ed"><strong>self</strong></font>)<button class="SnipetButton" id="carla.WalkerAIController.stop-snipet_button">snippet &rarr;</button><br />
 Disables AI control for its parent walker.  </li>
 </ul>
