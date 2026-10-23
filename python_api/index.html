@@ -1687,7 +1687,7 @@ Sets the actor's angular velocity vector. This is applied before the physics ste
 </ul>
 </li>
 <li><a name="carla.Actor.set_target_velocity"></a><strong><font color="#7fb800">set_target_velocity</font></strong>(<font color="#00a6ed"><strong>self</strong></font>, <font color="#00a6ed"><strong>velocity</strong></font>)<br />
-Sets the actor's velocity vector. This is applied before the physics step so the resulting angular velocity will be affected by external forces such as friction.  <ul>
+Sets the actor's velocity vector, in world coordinates. This is applied before the physics step so the resulting velocity will be affected by external forces such as friction. Only the linear velocity is set: the method does not steer a vehicle or change the actor's rotation.  <ul>
 <li><strong>Parameters:</strong><ul>
 <li><code>velocity</code> (<em><a href="#carla.Vector3D">carla.Vector3D</a></em>)  </li>
 </ul>
