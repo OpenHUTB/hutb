@@ -48,7 +48,7 @@ function _libcxx_paths {
 
 function get_libcxx_cflags {
   _libcxx_paths || return 1
-  echo "-stdlib=libc++ -nostdinc++ -isystem -pthread $LIBCXX_HEADERS"
+  echo "-stdlib=libc++ -nostdinc++ -pthread -isystem $LIBCXX_HEADERS"
 }
 
 function get_libcxx_ldflags {
