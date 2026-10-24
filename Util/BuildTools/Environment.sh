@@ -32,6 +32,30 @@ else
 
 fi
 
+# ==============================================================================
+# -- libc++ selection ----------------------------------------------------------
+# ==============================================================================
+# 统一使用 UE4.26 内置的 libc++ 10，服务端依赖在所有发行版上用同一套标准库
+# 构建，不再依赖系统 libc++ 的版本。
+
+function _libcxx_paths {
+  local ue4="${UE4_ROOT:-$HOME/UnrealEngine_4.26}"
+  LIBCXX_HEADERS="$ue4/Engine/Source/ThirdParty/Linux/LibCxx/include/c++/v1"
+  LIBCXX_LIBS="$ue4/Engine/Source/ThirdParty/Linux/LibCxx/lib/Linux/x86_64-unknown-linux-gnu"
+
+  [[ -f "$LIBCXX_HEADERS/__config" && -f "$LIBCXX_LIBS/libc++.a" && -f "$LIBCXX_LIBS/libc++abi.a" ]]
+}
+
+function get_libcxx_cflags {
+  _libcxx_paths || return 1
+  echo "-stdlib=libc++ -nostdinc++ -pthread -isystem $LIBCXX_HEADERS"
+}
+
+function get_libcxx_ldflags {
+  _libcxx_paths || return 1
+  echo "-stdlib=libc++ -pthread -L$LIBCXX_LIBS"
+}
+
 function get_git_repository_version {
   branch=$(git rev-parse --abbrev-ref HEAD)
 
