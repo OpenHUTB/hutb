@@ -151,7 +151,7 @@ Sets the actor's angular velocity vector. This is applied before the physics ste
     - **Parameters:**
         - `angular_velocity` (_[carla.Vector3D](#carla.Vector3D)<small> - deg/s</small>_)  
 - <a name="carla.Actor.set_target_velocity"></a>**<font color="#7fb800">set_target_velocity</font>**(<font color="#00a6ed">**self**</font>, <font color="#00a6ed">**velocity**</font>)  
-Sets the actor's velocity vector. This is applied before the physics step so the resulting angular velocity will be affected by external forces such as friction.  
+Sets the actor's velocity vector, in world coordinates. This is applied before the physics step so the resulting velocity will be affected by external forces such as friction. Only the linear velocity is set: the method does not steer a vehicle or change the actor's rotation.  
     - **Parameters:**
         - `velocity` (_[carla.Vector3D](#carla.Vector3D)_)  
 - <a name="carla.Actor.set_transform"></a>**<font color="#7fb800">set_transform</font>**(<font color="#00a6ed">**self**</font>, <font color="#00a6ed">**transform**</font>)  
@@ -3554,6 +3554,8 @@ Sets the destination that the pedestrian will reach.
         - `destination` (_[carla.Location](#carla.Location)<small> - meters</small>_)  
 - <a name="carla.WalkerAIController.start"></a>**<font color="#7fb800">start</font>**(<font color="#00a6ed">**self**</font>)  
 Enables AI control for its parent walker.  
+    - **Note:** <font color="#8E8E8E">_Tick the world at least once between spawning the walker and calling this method. The method reads the walker's location from the last snapshot received by the client, and the walker will not walk if it is not in it yet.
+_</font>  
 - <a name="carla.WalkerAIController.stop"></a>**<font color="#7fb800">stop</font>**(<font color="#00a6ed">**self**</font>)<button class="SnipetButton" id="carla.WalkerAIController.stop-snipet_button">snippet &rarr;</button>  
 Disables AI control for its parent walker.  
 
