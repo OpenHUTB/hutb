@@ -92,11 +92,11 @@ jobs:
                   - name: check
                     run: |
                        source ./setEnv64.sh
-                       make check.upload
                        make check.PythonAPI
                        make check.smoke
                        make check.vr
                        make check.air
+                       make check.upload
                     shell: bash
 
 
