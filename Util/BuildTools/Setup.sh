@@ -72,18 +72,16 @@ IFS="," read -r -a PY_VERSION_LIST <<< "${PY_VERSION_LIST}"
 mkdir -p ${CARLA_BUILD_FOLDER}
 pushd ${CARLA_BUILD_FOLDER} >/dev/null
 
-if ! LIBCXX_CFLAGS=$(get_libcxx_cflags) || ! LIBCXX_LDFLAGS=$(get_libcxx_ldflags); then
-  echo "ERROR: the libc++ bundled with UE4 was not found (set UE4_ROOT)." >&2
-  exit 1
-fi
+#LLVM_INCLUDE="$UE4_ROOT/Engine/Source/ThirdParty/Linux/LibCxx/include/c++/v1"
+#LLVM_LIBPATH="$UE4_ROOT/Engine/Source/ThirdParty/Linux/LibCxx/lib/Linux/x86_64-unknown-linux-gnu"
 #UNREAL_HOSTED_CFLAGS="--sysroot=$UE4_ROOT/Engine/Extras/ThirdPartyNotUE/SDKs/HostLinux/Linux_x64/v17_clang-10.0.1-centos7/x86_64-unknown-linux-gnu/"
 
 unset UNREAL_HOSTED_CFLAGS
 unset LLVM_INCLUDE
 unset LLVM_LIBPATH
 
-export CXXFLAGS="-std=c++14 $LIBCXX_CFLAGS"
-export LDFLAGS="$LIBCXX_LDFLAGS"
+export CXXFLAGS="-std=c++14 -stdlib=libc++"
+export LDFLAGS="-stdlib=libc++"
 
 # ==============================================================================
 # -- Generate CMake toolchains -------------------------------------------------
@@ -118,9 +116,10 @@ cp ${LIBSTDCPP_TOOLCHAIN_FILE}.gen ${LIBCPP_TOOLCHAIN_FILE}.gen
 
 cat >>${LIBCPP_TOOLCHAIN_FILE}.gen <<EOL
 
-set(CMAKE_CXX_FLAGS "\${CMAKE_CXX_FLAGS} ${LIBCXX_CFLAGS} ${UNREAL_HOSTED_CFLAGS}" CACHE STRING "" FORCE)
+set(CMAKE_CXX_FLAGS "\${CMAKE_CXX_FLAGS} -stdlib=libc++" CACHE STRING "" FORCE)
+set(CMAKE_CXX_FLAGS "\${CMAKE_CXX_FLAGS} -isystem ${LLVM_INCLUDE} ${UNREAL_HOSTED_CFLAGS}" CACHE STRING "" FORCE)
 set(CMAKE_CXX_FLAGS "\${CMAKE_CXX_FLAGS} -fno-exceptions" CACHE STRING "" FORCE)
-set(CMAKE_CXX_LINK_FLAGS "\${CMAKE_CXX_LINK_FLAGS} ${LIBCXX_LDFLAGS} ${UNREAL_HOSTED_CFLAGS}" CACHE STRING "" FORCE)
+set(CMAKE_CXX_LINK_FLAGS "\${CMAKE_CXX_LINK_FLAGS} -L${LLVM_LIBPATH} ${UNREAL_HOSTED_CFLAGS}" CACHE STRING "" FORCE)
 set(CMAKE_CXX_LINK_FLAGS "\${CMAKE_CXX_LINK_FLAGS} -lc++ -lc++abi" CACHE STRING "" FORCE)
 EOL
 
@@ -223,6 +222,7 @@ for PY_VERSION in ${PY_VERSION_LIST[@]} ; do
     py3_lib=$(${py3} -c "from sysconfig import get_paths as gp; print(gp()['stdlib'])")
     pyv=`$py3 -c "import sys;x='{v[0]}.{v[1]}'.format(v=list(sys.version_info[:2]));sys.stdout.write(x)";`
     ./bootstrap.sh \
+        --with-toolset=clang \
         --prefix=../boost-install \
         --with-libraries=python,filesystem,system,program_options \
         --with-python=${py3} --with-python-root=${py3_root}
@@ -295,7 +295,7 @@ else
   pushd ${RPCLIB_BASENAME}-libcxx-build >/dev/null
 
   cmake -G "Ninja" \
-      -DCMAKE_CXX_FLAGS="-fPIC -std=c++14 ${LIBCXX_CFLAGS} ${LIBCXX_LDFLAGS} -DBOOST_NO_EXCEPTIONS -DASIO_NO_EXCEPTIONS ${UNREAL_HOSTED_CFLAGS}" \
+      -DCMAKE_CXX_FLAGS="-fPIC -std=c++14 -stdlib=libc++ -I${LLVM_INCLUDE} -Wl,-L${LLVM_LIBPATH} -DBOOST_NO_EXCEPTIONS -DASIO_NO_EXCEPTIONS ${UNREAL_HOSTED_CFLAGS}" \
       -DCMAKE_INSTALL_PREFIX="../${RPCLIB_BASENAME}-libcxx-install" \
       ../${RPCLIB_BASENAME}-source
 
@@ -364,7 +364,7 @@ else
   pushd ${GTEST_BASENAME}-libcxx-build >/dev/null
 
   cmake -G "Ninja" \
-      -DCMAKE_CXX_FLAGS="-std=c++14 ${LIBCXX_CFLAGS} ${LIBCXX_LDFLAGS} -DBOOST_NO_EXCEPTIONS -fno-exceptions ${UNREAL_HOSTED_CFLAGS}" \
+      -DCMAKE_CXX_FLAGS="-std=c++14 -stdlib=libc++ -I${LLVM_INCLUDE} -Wl,-L${LLVM_LIBPATH} -DBOOST_NO_EXCEPTIONS -fno-exceptions ${UNREAL_HOSTED_CFLAGS}" \
       -DCMAKE_INSTALL_PREFIX="../${GTEST_BASENAME}-libcxx-install" \
       ../${GTEST_BASENAME}-source
 
@@ -435,7 +435,7 @@ else
   pushd ${RECAST_BASENAME}-build >/dev/null
 
   cmake -G "Ninja" \
-      -DCMAKE_CXX_FLAGS="-std=c++14 ${LIBCXX_CFLAGS} -fPIC" \
+      -DCMAKE_CXX_FLAGS="-std=c++14 -stdlib=libc++ -fPIC" \
       -DCMAKE_INSTALL_PREFIX="../${RECAST_BASENAME}-install" \
       -DRECASTNAVIGATION_DEMO=False \
       -DRECASTNAVIGATION_TEST=False \
@@ -509,6 +509,7 @@ XERCESC_BASENAME=xerces-c-${XERCESC_VERSION}
 
 XERCESC_TEMP_FOLDER=${XERCESC_BASENAME}
 XERCESC_REPO=https://archive.apache.org/dist/xerces/c/3/sources/xerces-c-${XERCESC_VERSION}.tar.gz
+XERCESC_SHA256SUM="fb96fc49b1fb892d1e64e53a6ada8accf6f0e6d30ce0937956ec68d39bd72c7e"
 
 XERCESC_SRC_DIR=${XERCESC_BASENAME}-source
 XERCESC_INSTALL_DIR=${XERCESC_BASENAME}-install
@@ -520,17 +521,34 @@ if [[ -d ${XERCESC_INSTALL_DIR} &&  -d ${XERCESC_INSTALL_SERVER_DIR} ]] ; then
   log "Xerces-c already installed."
 else
   log "Retrieving xerces-c."
-  start=$(date +%s)
-  wget ${XERCESC_REPO}
-  end=$(date +%s)
-  echo "Elapsed Time downloading from xerces repo: $(($end-$start)) seconds"
-  # try to use the backup boost we have in Jenkins
-  if [[ ! -f "${XERCESC_BASENAME}.tar.gz" ]] ; then
+
+  # 优先使用 dependencies_u(工蜂)仓库里的本地包,避免依赖外网下载
+  if [ -f "dependencies/src/${XERCESC_BASENAME}.tar.gz" ] ; then
+    log "Using xerces-c from dependencies_u repository."
+    cp "dependencies/src/${XERCESC_BASENAME}.tar.gz" .
+  fi
+
+  # 本地包缺失或校验不通过时,从 Apache 官方源下载
+  if [[ ! -f "${XERCESC_BASENAME}.tar.gz" ]] || [[ $(sha256sum "${XERCESC_BASENAME}.tar.gz" | cut -d " " -f 1 ) != "${XERCESC_SHA256SUM}" ]] ; then
+    start=$(date +%s)
+    wget ${XERCESC_REPO}
+    end=$(date +%s)
+    echo "Elapsed Time downloading from xerces repo: $(($end-$start)) seconds"
+  fi
+
+  # 仍失败则用 Jenkins 上的备份
+  if [[ ! -f "${XERCESC_BASENAME}.tar.gz" ]] || [[ $(sha256sum "${XERCESC_BASENAME}.tar.gz" | cut -d " " -f 1 ) != "${XERCESC_SHA256SUM}" ]] ; then
     log "Using xerces backup"
     start=$(date +%s)
     wget "https://carla-releases.s3.us-east-005.backblazeb2.com/Backup/${XERCESC_BASENAME}.tar.gz" || true
     end=$(date +%s)
     echo "Elapsed Time downloading from xerces backup: $(($end-$start)) seconds"
+  fi
+
+  # 最终校验,不通过直接报错退出,避免后面的 tar 报错
+  if [[ $(sha256sum "${XERCESC_BASENAME}.tar.gz" 2>/dev/null | cut -d " " -f 1 ) != "${XERCESC_SHA256SUM}" ]] ; then
+    log "ERROR: xerces-c package missing or sha256 mismatch (expected ${XERCESC_SHA256SUM})."
+    exit 1
   fi
 
   log "Extracting xerces-c."
@@ -566,9 +584,9 @@ else
   pushd ${XERCESC_SRC_DIR}/build >/dev/null
 
   cmake -G "Ninja" \
-      -DCMAKE_CXX_FLAGS="-std=c++14 ${LIBCXX_CFLAGS} -fPIC -w" \
+      -DCMAKE_CXX_FLAGS="-std=c++14 -stdlib=libc++ -fPIC -w" \
       -DCMAKE_INSTALL_PREFIX="../../${XERCESC_INSTALL_SERVER_DIR}" \
-      -DCMAKE_EXE_LINKER_FLAGS="${LIBCXX_LDFLAGS} -lc++ -lc++abi" \
+      -DCMAKE_EXE_LINKER_FLAGS="-stdlib=libc++ -lc++ -lc++abi" \
       -DCMAKE_BUILD_TYPE=Release \
       -DBUILD_SHARED_LIBS=OFF \
       -Dtranscoder=gnuiconv \
@@ -663,7 +681,7 @@ if ${USE_CHRONO} ; then
     mkdir -p ${CHRONO_SRC_DIR}/build
     pushd ${CHRONO_SRC_DIR}/build >/dev/null
     cmake -G "Ninja" \
-      -DCMAKE_CXX_FLAGS="-fPIC -std=c++14 ${LIBCXX_CFLAGS} ${LIBCXX_LDFLAGS} -Wno-unused-command-line-argument ${UNREAL_HOSTED_CFLAGS}" \
+      -DCMAKE_CXX_FLAGS="-fPIC -std=c++14 -stdlib=libc++ -I${LLVM_INCLUDE} -L${LLVM_LIBPATH} -Wno-unused-command-line-argument ${UNREAL_HOSTED_CFLAGS}" \
       -DEIGEN3_INCLUDE_DIR="${EIGEN_INCLUDE}" \
       -DCMAKE_INSTALL_PREFIX="${CARLA_BUILD_FOLDER}/${CHRONO_INSTALL_DIR}" \
       -DCMAKE_BUILD_TYPE=Release \
@@ -781,7 +799,7 @@ else
   pushd ${PROJ_SRC_DIR}/build >/dev/null
 
   cmake -G "Ninja" .. \
-      -DCMAKE_CXX_FLAGS="-std=c++14 -fPIC -include cstdint" \
+      -DCMAKE_CXX_FLAGS="-std=c++14 -fPIC" \
       -DSQLITE3_INCLUDE_DIR=${SQLITE_INCLUDE_DIR} -DSQLITE3_LIBRARY=${SQLITE_LIB} \
       -DEXE_SQLITE3=${SQLITE_EXE} \
       -DENABLE_TIFF=OFF -DENABLE_CURL=OFF -DBUILD_SHARED_LIBS=OFF -DBUILD_PROJSYNC=OFF \
@@ -799,7 +817,7 @@ else
   pushd ${PROJ_SRC_DIR}/build >/dev/null
 
   cmake -G "Ninja" .. \
-      -DCMAKE_CXX_FLAGS="-std=c++14 -fPIC ${LIBCXX_CFLAGS} ${LIBCXX_LDFLAGS} -include cstdint"  \
+      -DCMAKE_CXX_FLAGS="-std=c++14 -fPIC -stdlib=libc++ -I${LLVM_INCLUDE} -Wl,-L${LLVM_LIBPATH}"  \
       -DSQLITE3_INCLUDE_DIR=${SQLITE_INCLUDE_DIR} -DSQLITE3_LIBRARY=${SQLITE_LIB} \
       -DEXE_SQLITE3=${SQLITE_EXE} \
       -DENABLE_TIFF=OFF -DENABLE_CURL=OFF -DBUILD_SHARED_LIBS=OFF -DBUILD_PROJSYNC=OFF \
@@ -838,10 +856,6 @@ PATCHELF_EXE=${PWD}/${PATCHELF_INSTALL_DIR}/bin/patchelf
 
 if [[ -d ${PATCHELF_INSTALL_DIR} ]] ; then
   log "Patchelf already installed."
-elif command -v patchelf >/dev/null 2>&1 ; then
-  log "Using system patchelf: $(command -v patchelf)"
-  mkdir -p ${PATCHELF_INSTALL_DIR}/bin
-  ln -sf "$(command -v patchelf)" ${PATCHELF_EXE}
 else
   log "Retrieving patchelf"
 
@@ -1039,7 +1053,7 @@ if ${USE_ROS2} ; then
     cmake -G "Ninja" \
       -DCMAKE_INSTALL_PREFIX="${FASTDDS_INSTALL_DIR}" \
       -DFORCE_CXX="14" \
-      -DCMAKE_CXX_FLAGS="-fPIC -std=c++14 ${LIBCXX_CFLAGS} ${LIBCXX_LDFLAGS} -DBOOST_NO_EXCEPTIONS ${UNREAL_HOSTED_CFLAGS}" \
+      -DCMAKE_CXX_FLAGS="-fPIC -std=c++14 -stdlib=libc++ -I${LLVM_INCLUDE} -Wl,-L${LLVM_LIBPATH} -DBOOST_NO_EXCEPTIONS ${UNREAL_HOSTED_CFLAGS}" \
       -DBUILD_SHARED_LIBS=OFF \
       -DBUILD_TESTING=OFF \
       -DCOMPILE_EXAMPLES=OFF \
