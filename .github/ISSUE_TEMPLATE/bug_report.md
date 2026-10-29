@@ -27,7 +27,6 @@ assignees: ''
 **日志**
 粘贴服务端和客户端日志。服务端日志位于：
   * Unreal Engine 4：_Unreal/CarlaUE4/Saved/Logs_
-  * Unreal Engine 5：_Unreal/CarlaUnreal/Saved/Logs_
 
 **脚本**
 添加任何有助于复现该错误的脚本。
