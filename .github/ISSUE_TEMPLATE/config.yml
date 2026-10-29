@@ -1,0 +1,5 @@
+blank_issues_enabled: true
+contact_links:
+  - name: 📖 使用文档
+    url: https://openhutb.github.io/
+    about: 安装、构建、API 用法等问题请先查阅文档
