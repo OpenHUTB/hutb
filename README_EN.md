@@ -45,8 +45,9 @@ The OpenHUTB (Open source Human-vehicle Twin Build) is a photorealistic-quality 
 	```shell
 	python PythonAPI/examples/generate_traffic.py
 	```
-	[Manual pedestrian control](https://github.com/OpenHUTB/doc/blob/master/src/examples/manual_control.py) ：
+	[Manual pedestrian control](https://github.com/OpenHUTB/doc/blob/master/src/examples/manual_control.py) (this example uses [pygame](https://www.pygame.org/) for the display window and keyboard input, so install it before the first run):
 	```shell
+	pip install pygame
 	python PythonAPI/examples/manual_control.py --filter walker.pedestrian.*
 	```
 	Use [config.py](https://github.com/OpenHUTB/hutb/blob/hutb/PythonAPI/util/config.py) to [switch to](ue/switch_mode.md) [VR cockpit mode](https://openhutb.github.io/doc/interbehavior/) , and use the Logitech steering wheel or keyboard keys `W`, `A`, `S`, `D`, etc. for control; `Z` is reverse gear. 
