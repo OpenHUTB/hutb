@@ -49,8 +49,9 @@
 	```shell
 	python PythonAPI/examples/generate_traffic.py
 	```
-	[手动控制行人](https://github.com/OpenHUTB/doc/blob/master/src/examples/manual_control.py) ：
+	[手动控制行人](https://github.com/OpenHUTB/doc/blob/master/src/examples/manual_control.py) （该示例依赖 [pygame](https://www.pygame.org/) 显示画面和接收键盘输入，首次运行前需先安装）：
 	```shell
+	pip install pygame
 	python PythonAPI/examples/manual_control.py --filter walker.pedestrian.*
 	```
 	使用 [config.py](https://github.com/OpenHUTB/hutb/blob/hutb/PythonAPI/util/config.py) [切换](ue/switch_mode.md) 到 [VR 驾驶舱模式](https://openhutb.github.io/doc/interbehavior/) ，使用罗技方向盘或键盘`W`、`A`、`S`、`D`等进行控制，`Z`为倒档：
