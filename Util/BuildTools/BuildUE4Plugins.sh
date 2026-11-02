@@ -146,10 +146,23 @@ if [ "$BUILD_AIR" = "true" ]; then
            cp -a "$CACHE_DIR/AirSim" "$AIR_BUILD_PATH"
         else 
            git clone -b "$AIR_BRANCH" "$AIR_REPO" "$AIR_BUILD_PATH"
-	fi
+	      fi
     fi
     cd "$AIR_BUILD_PATH"
     echo "Current dir: $(pwd)"
+
+    # 资产优先用 dependencies_u（工蜂）里的缓存，避免每次从 GitHub 慢速下载。
+    # 预先解压出 SUV/v1.2.0 目录后，AirSim 的 setup.sh 会跳过下载分支。
+    CAR_ASSETS_CACHE="$ROOT_PATH/Build/dependencies/Plugins/car_assets.zip"
+    SUV_TARGET="$AIR_BUILD_PATH/Unreal/Plugins/AirSim/Content/VehicleAdv/SUV/v1.2.0"
+    if [ ! -d "$SUV_TARGET" ] && [ -f "$CAR_ASSETS_CACHE" ]; then
+        echo "Using cached car_assets.zip: $CAR_ASSETS_CACHE"
+        if ! unzip -q "$CAR_ASSETS_CACHE" -d "$AIR_BUILD_PATH/Unreal/Plugins/AirSim/Content/VehicleAdv"; then
+            echo "Warning: failed to unzip $CAR_ASSETS_CACHE, falling back to download"
+            rm -rf "$SUV_TARGET"
+        fi
+    fi
+    
     # Build AirSim
     # read -p "press enter to continue ..."
     # 绕过代理，以解决通过代理失败的外部下载（例如 gitlab.com SSL）问题

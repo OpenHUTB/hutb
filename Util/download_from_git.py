@@ -139,21 +139,24 @@ else:
             "Git directory not found in current directory, download it from https://gitee.com/OpenHUTB/sw/releases/download/up/git_linux.tar.gz and extract it to %s"
             % script_dir
         )
-        if not os.path.exists(os.path.join(script_dir, "git_linux.tar.gz")):
+        git_tar = os.path.join(script_dir, "git_linux.tar.gz")
+        if not os.path.exists(git_tar):
             urllib.request.urlretrieve(
                 "https://gitee.com/OpenHUTB/sw/releases/download/up/git_linux.tar.gz",
-                os.path.join(script_dir, "git_linux.tar.gz"),
+                git_tar,
             )
-            
-        untar('git_linux.tar.gz', script_dir)
-        
+
+        # 使用绝对路径解压，避免不在脚本所在目录运行时找不到压缩包
+        if not untar(git_tar, script_dir):
+            print("Error: failed to extract %s, delete it and run again" % git_tar)
+            sys.exit(1)
+
     git_exe = os.path.join(script_dir, "git", "git")
-    # solve: sudo apt install git-lfs
-    # sudo apt remove git-lfs
-    os.system('export PREFIX="$HOME/.local"')
-    os.system('./git/install.sh')
-    
-        
+    # 将自带的 git 目录加入 PATH，使 git 能找到同目录下的 git-lfs（git lfs 会在 PATH 中查找 git-lfs），
+    # 这样无需 sudo apt install git-lfs，也无需将 git/git-lfs 安装到 /usr/local/bin 等系统目录
+    os.environ["PATH"] = os.path.join(script_dir, "git") + os.pathsep + os.environ.get("PATH", "")
+
+
 print("Using git executable: ", git_exe)
 os.environ["GIT_PYTHON_GIT_EXECUTABLE"] = git_exe
 

@@ -509,6 +509,7 @@ XERCESC_BASENAME=xerces-c-${XERCESC_VERSION}
 
 XERCESC_TEMP_FOLDER=${XERCESC_BASENAME}
 XERCESC_REPO=https://archive.apache.org/dist/xerces/c/3/sources/xerces-c-${XERCESC_VERSION}.tar.gz
+XERCESC_SHA256SUM="fb96fc49b1fb892d1e64e53a6ada8accf6f0e6d30ce0937956ec68d39bd72c7e"
 
 XERCESC_SRC_DIR=${XERCESC_BASENAME}-source
 XERCESC_INSTALL_DIR=${XERCESC_BASENAME}-install
@@ -520,17 +521,34 @@ if [[ -d ${XERCESC_INSTALL_DIR} &&  -d ${XERCESC_INSTALL_SERVER_DIR} ]] ; then
   log "Xerces-c already installed."
 else
   log "Retrieving xerces-c."
-  start=$(date +%s)
-  wget ${XERCESC_REPO}
-  end=$(date +%s)
-  echo "Elapsed Time downloading from xerces repo: $(($end-$start)) seconds"
-  # try to use the backup boost we have in Jenkins
-  if [[ ! -f "${XERCESC_BASENAME}.tar.gz" ]] ; then
+
+  # 优先使用 dependencies_u(工蜂)仓库里的本地包,避免依赖外网下载
+  if [ -f "dependencies/src/${XERCESC_BASENAME}.tar.gz" ] ; then
+    log "Using xerces-c from dependencies_u repository."
+    cp "dependencies/src/${XERCESC_BASENAME}.tar.gz" .
+  fi
+
+  # 本地包缺失或校验不通过时,从 Apache 官方源下载
+  if [[ ! -f "${XERCESC_BASENAME}.tar.gz" ]] || [[ $(sha256sum "${XERCESC_BASENAME}.tar.gz" | cut -d " " -f 1 ) != "${XERCESC_SHA256SUM}" ]] ; then
+    start=$(date +%s)
+    wget ${XERCESC_REPO}
+    end=$(date +%s)
+    echo "Elapsed Time downloading from xerces repo: $(($end-$start)) seconds"
+  fi
+
+  # 仍失败则用 Jenkins 上的备份
+  if [[ ! -f "${XERCESC_BASENAME}.tar.gz" ]] || [[ $(sha256sum "${XERCESC_BASENAME}.tar.gz" | cut -d " " -f 1 ) != "${XERCESC_SHA256SUM}" ]] ; then
     log "Using xerces backup"
     start=$(date +%s)
     wget "https://carla-releases.s3.us-east-005.backblazeb2.com/Backup/${XERCESC_BASENAME}.tar.gz" || true
     end=$(date +%s)
     echo "Elapsed Time downloading from xerces backup: $(($end-$start)) seconds"
+  fi
+
+  # 最终校验,不通过直接报错退出,避免后面的 tar 报错
+  if [[ $(sha256sum "${XERCESC_BASENAME}.tar.gz" 2>/dev/null | cut -d " " -f 1 ) != "${XERCESC_SHA256SUM}" ]] ; then
+    log "ERROR: xerces-c package missing or sha256 mismatch (expected ${XERCESC_SHA256SUM})."
+    exit 1
   fi
 
   log "Extracting xerces-c."
