@@ -289,10 +289,11 @@ if %DO_COPY_FILES%==true (
     echo f | xcopy /y "!XCOPY_FROM!Unreal\CarlaUE4\Content\Carla\HDMaps\*.pcd"      "!XCOPY_TO!HDMaps\"
     echo f | xcopy /y "!XCOPY_FROM!Unreal\CarlaUE4\Content\Carla\HDMaps\Readme.md"  "!XCOPY_TO!HDMaps\README"
     :: 无人机配置文件
-    echo f | xcopy /y "!XCOPY_FROM!Build\AirSim\Unreal\Environments\Blocks\settings.json"    "!XCOPY_TO!settings.json"
-    if exist "!XCOPY_FROM!Plugins" (
-        echo d | xcopy /y /s "!XCOPY_FROM!Plugins"                                  "!XCOPY_TO!Plugins"
-    )
+    echo f | xcopy /y "!XCOPY_FROM!Unreal\CarlaUE4\settings.json"    "!XCOPY_TO!settings.json"
+    :: 水下机器人载具配置文件
+    echo f | xcopy /y "!XCOPY_FROM!Unreal\CarlaUE4\settings_rov.json"    "!XCOPY_TO!settings_rov.json"
+    :: AirSim 联合仿真示例与测试套件
+    echo d | xcopy /y /s "!XCOPY_FROM!PythonAPI\examples\air"                     "!XCOPY_TO!PythonAPI\examples\air"
     
     :: 下载 Mujoco
     set Mujoco_FILE_NAME=mujoco-3.3.5-windows-x86_64.zip
