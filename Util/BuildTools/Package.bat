@@ -290,6 +290,7 @@ if %DO_COPY_FILES%==true (
     echo f | xcopy /y "!XCOPY_FROM!Unreal\CarlaUE4\Content\Carla\HDMaps\Readme.md"  "!XCOPY_TO!HDMaps\README"
     :: 无人机配置文件
     echo f | xcopy /y "!XCOPY_FROM!Unreal\CarlaUE4\settings.json"    "!XCOPY_TO!settings.json"
+    echo f | xcopy /y "!XCOPY_FROM!Unreal\CarlaUE4\settings_drone.json" "!XCOPY_TO!settings_drone.json"
     :: 水下机器人载具配置文件
     echo f | xcopy /y "!XCOPY_FROM!Unreal\CarlaUE4\settings_rov.json"    "!XCOPY_TO!settings_rov.json"
     :: AirSim 联合仿真示例与测试套件

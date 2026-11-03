@@ -96,8 +96,11 @@ check.vr:
 
 check.water:
 	@"${CARLA_BUILD_TOOLS_FOLDER}/Check.bat" --water $(ARGS)
+
 check.python:
-	@"${CARLA_BUILD_TOOLS_FOLDER}/Check.bat" --python $(ARGS)run-examples:
+	@"${CARLA_BUILD_TOOLS_FOLDER}/Check.bat" --python $(ARGS)
+
+run-examples:
 	@for D in ${CARLA_EXAMPLES_FOLDER}/*; do [ -d "$${D}" ] && make -C $${D} run.only; done
 
 benchmark: LibCarla

@@ -351,14 +351,37 @@ $settingsFileName = if ($vehicleType -eq "drone" -or $vehicleType -eq "multiroto
 } else {
     "settings_rov.json"
 }
-$airsimSettingsSource = Join-Path $repoRoot "AirSimConfig\$settingsFileName"
-if (-not (Test-Path $airsimSettingsSource)) {
-    $fallback = Join-Path $repoRoot "AirSimConfig\settings.json"
-    if (Test-Path $fallback) {
-        $airsimSettingsSource = $fallback
-    } else {
-        throw "AirSim settings template not found: $airsimSettingsSource"
+
+$candidateSources = @(
+    (Join-Path $repoRoot "Unreal\CarlaUE4\$settingsFileName"),
+    (Join-Path $repoRoot $settingsFileName),
+    (Join-Path $repoRoot "AirSimConfig\$settingsFileName")
+)
+
+$airsimSettingsSource = $null
+foreach ($cand in $candidateSources) {
+    if (Test-Path $cand) {
+        $airsimSettingsSource = $cand
+        break
     }
+}
+
+if (-not $airsimSettingsSource) {
+    $fallbackSources = @(
+        (Join-Path $repoRoot "Unreal\CarlaUE4\settings.json"),
+        (Join-Path $repoRoot "settings.json"),
+        (Join-Path $repoRoot "AirSimConfig\settings.json")
+    )
+    foreach ($fb in $fallbackSources) {
+        if (Test-Path $fb) {
+            $airsimSettingsSource = $fb
+            break
+        }
+    }
+}
+
+if (-not $airsimSettingsSource) {
+    throw "AirSim settings template not found: $settingsFileName. Checked paths: $($candidateSources -join ', ')"
 }
 
 $airsimSettingsDir = Join-Path $env:USERPROFILE "Documents\AirSim"

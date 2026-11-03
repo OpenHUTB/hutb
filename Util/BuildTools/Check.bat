@@ -73,15 +73,7 @@ if exist %INSTALLATION_DIR%UE4Carla/%CARLA_VERSION%-dirty/ (
     set CARLA_VERSION=%CARLA_VERSION%-dirty
 )
 
-rem The directory of CarlaUE4.exe
-set BUILD_FOLDER=%INSTALLATION_DIR%UE4Carla/%CARLA_VERSION%/
-rem debug only with rename (CARLA_VERSION to debug)
-if %IS_DEBUG%==true (
-    set BUILD_FOLDER=%INSTALLATION_DIR%UE4Carla\debug\
-)
 
-set exe_dir=%BUILD_FOLDER:\=/%WindowsNoEditor/%
-set exe_path=%BUILD_FOLDER:/=\%WindowsNoEditor\CarlaUE4.exe
 
 
 :arg-parse
@@ -120,8 +112,6 @@ if not "%1"=="" (
 
     if "%1"=="--water" (
         set WATER_TESTS=true
-        echo switch to WATER configuration by replacing the settings.json file
-        copy /Y %BUILD_FOLDER:/=\%WindowsNoEditor\settings_rov.json  %BUILD_FOLDER:/=\%WindowsNoEditor\settings.json
         shift
     )
 
@@ -154,6 +144,23 @@ if not "%1"=="" (
 
     shift
     goto :arg-parse
+)
+
+rem The directory of CarlaUE4.exe
+set BUILD_FOLDER=%INSTALLATION_DIR%UE4Carla/%CARLA_VERSION%/
+rem debug only with rename (CARLA_VERSION to debug)
+if %IS_DEBUG%==true (
+    set BUILD_FOLDER=%INSTALLATION_DIR%UE4Carla\debug\
+)
+
+set exe_dir=%BUILD_FOLDER:\=/%WindowsNoEditor/%
+set exe_path=%BUILD_FOLDER:/=\%WindowsNoEditor\CarlaUE4.exe
+
+if %WATER_TESTS%==true (
+    echo switch to WATER configuration by replacing the settings.json file
+    if exist "%BUILD_FOLDER:/=\%WindowsNoEditor\settings_rov.json" (
+        copy /Y "%BUILD_FOLDER:/=\%WindowsNoEditor\settings_rov.json" "%BUILD_FOLDER:/=\%WindowsNoEditor\settings.json"
+    )
 )
 
 
@@ -369,12 +376,12 @@ if %WATER_TESTS%==true (
         where python
         timeout /t 10 /nobreak > NUL
         echo Switch to water mode...
-        python ./holoocean/airsim_rov.py
-        rem 判断是否正常退出
+        python ./holoocean/airsim_rov.py --port 3654
+        rem check test exit status
         if %errorlevel% equ 0 (
-            echo VR test passed.
+            echo Water ROV test passed.
         ) else (
-            echo VR test failed with errorlevel %errorlevel%.
+            echo Water ROV test failed with errorlevel %errorlevel%.
             goto bad_exit
         )
     )
