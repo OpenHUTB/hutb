@@ -109,6 +109,64 @@ bool FMjImportUnderwaterRov::RunTest(const FString& Parameters)
 		mj_step(M, D);
 		mj_step(M, D);
 		AddInfo(TEXT("模型可正常步进 2 次"));
+
+		// ------------------------------------------------------------------
+		// 抓取物理连通性验证
+		//   驱动夹爪执行器闭合，步进若干帧，确认：
+		//     1) 夹爪指关节确实在动（qpos 变化）
+		//     2) 场景中出现接触（说明碰撞体在工作）
+		//   注意：模型本身不含可抓取试件，这里只验证物理链路，不做抓取成功率统计。
+		// ------------------------------------------------------------------
+		// URLab 会给 spec 里的元素名加蓝图前缀（ImportTestArt_xxx_），
+		// 所以不能按原名查找，改为后缀匹配。
+		auto FindByNameSuffix = [](const mjModel* Model, mjtObj Type, const FString& Suffix) -> int32
+		{
+			const int32 Count = (Type == mjOBJ_ACTUATOR) ? (int32)Model->nu
+				: (Type == mjOBJ_JOINT) ? (int32)Model->njnt : 0;
+			for (int32 i = 0; i < Count; ++i)
+			{
+				const char* Name = mj_id2name(Model, Type, i);
+				if (Name && FString(ANSI_TO_TCHAR(Name)).EndsWith(Suffix))
+				{
+					return i;
+				}
+			}
+			return -1;
+		};
+
+		const int32 ActId = FindByNameSuffix(M, mjOBJ_ACTUATOR, TEXT("gripper_fingers_actuator"));
+		if (ActId >= 0)
+		{
+			// 记录初始指关节位置
+			const int32 JntL = FindByNameSuffix(M, mjOBJ_JOINT, TEXT("gripper_left_driver_joint"));
+			const int32 JntR = FindByNameSuffix(M, mjOBJ_JOINT, TEXT("gripper_right_driver_joint"));
+			const double Q0L = (JntL >= 0) ? D->qpos[M->jnt_qposadr[JntL]] : 0.0;
+			const double Q0R = (JntR >= 0) ? D->qpos[M->jnt_qposadr[JntR]] : 0.0;
+
+			// 闭合夹爪（ctrlrange 是 0..255，取上限）
+			D->ctrl[ActId] = 255.0;
+			for (int32 i = 0; i < 500; ++i)
+			{
+				mj_step(M, D);
+			}
+
+			const double Q1L = (JntL >= 0) ? D->qpos[M->jnt_qposadr[JntL]] : 0.0;
+			const double Q1R = (JntR >= 0) ? D->qpos[M->jnt_qposadr[JntR]] : 0.0;
+			const double DeltaL = FMath::Abs(Q1L - Q0L);
+			const double DeltaR = FMath::Abs(Q1R - Q0R);
+
+			AddInfo(FString::Printf(
+				TEXT("夹爪闭合 500 帧后：左指位移 %.4f rad，右指位移 %.4f rad，接触数 %d"),
+				DeltaL, DeltaR, (int32)D->ncon));
+
+			TestTrue(TEXT("夹爪执行器应能驱动指关节运动"),
+				(DeltaL + DeltaR) > 1e-4);
+			TestTrue(TEXT("闭合过程中应产生接触"), (int32)D->ncon > 0);
+		}
+		else
+		{
+			AddWarning(TEXT("未找到 gripper_fingers_actuator，跳过抓取物理验证"));
+		}
 	}
 
 	S.Cleanup();
