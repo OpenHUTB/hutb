@@ -25,7 +25,7 @@ else
 fi
 
 # ---------------- UE4 tools ----------------
-UE4_ROOT="/home/ubuntu/UnrealEngine_4.26"
+UE4_ROOT="${UE4_ROOT:-$HOME/UnrealEngine_4.26}"
 BATCH_DIR="$UE4_ROOT/Engine/Build/BatchFiles"
 
 if [ -d "$BATCH_DIR" ]; then
