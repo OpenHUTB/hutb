@@ -7,6 +7,7 @@
 #include "HolodeckServer.h"
 #include "HolodeckSensor.h"
 #include "LocationSensor.h"
+#include "ImagingSonar.h"
 #include "Octree.h"
 
 #include "Engine/World.h"
@@ -107,10 +108,11 @@ void UUnderwaterSensorSubsystem::RunSensorSelfTest()
 
 	// 1. 承载传感器用的 Actor（带根组件，LocationSensor 需要 attach parent）
 	//    刻意放在一个已知偏移处，这样读回的值可以反推坐标转换是否正确：
-	//    UE 厘米 (1000, 2000, -500)
-	//      → UEToClient: ÷100        → (10, 20, -5)
-	//      → USE_RHS:    Y 取反      → (10, -20, -5)
-	const FVector TestOffset(1000.f, 2000.f, -500.f);
+	//    UE 厘米 (1000, 2000, 200)
+	//      → UEToClient: ÷100        → (10, 20, 2)
+	//      → USE_RHS:    Y 取反      → (10, -20, 2)
+	//    Z 取 +200cm（地面上方 2m），否则声呐埋在地下看不到建筑
+	const FVector TestOffset(1000.f, 2000.f, 200.f);
 	FActorSpawnParameters SpawnParams;
 	SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 	AActor* TestActor = World->SpawnActor<AActor>(
@@ -164,9 +166,79 @@ void UUnderwaterSensorSubsystem::RunSensorSelfTest()
 		}
 
 		UE_LOG(LogHolodeck, Warning,
-			TEXT("SelfTest RESULT: Location = (%.2f, %.2f, %.2f)  [expected (10.00, -20.00, -5.00) for UE offset (1000, 2000, -500)]"),
+			TEXT("SelfTest RESULT: Location = (%.2f, %.2f, %.2f)  [expected (10.00, -20.00, 2.00) for UE offset (1000, 2000, 200)]"),
 			Data[0], Data[1], Data[2]);
 	}, 2.0f, false);
+
+	// ------------------------------------------------------------------
+	// 5. 再挂一个 ImagingSonar，验证真实声呐通路
+	//    参数单位：RangeMin/RangeMax 为米（内部 ×100 转厘米），角度为度
+	// ------------------------------------------------------------------
+	UImagingSonar* Sonar = NewObject<UImagingSonar>(TestActor, TEXT("TestImagingSonar"));
+	Sonar->SetupAttachment(Root);
+	Sonar->RegisterComponent();
+
+	const FString SonarParms = TEXT(
+		"{\"RangeMin\": 0.5, \"RangeMax\": 15, \"RangeBins\": 128, "
+		"\"Azimuth\": 120, \"AzimuthBins\": 64, "
+		"\"Elevation\": 20, \"ElevationBins\": 8}");
+
+	if (!AttachSensor(Sonar, TEXT("selftest_sonar"), SonarParms))
+	{
+		UE_LOG(LogHolodeck, Error, TEXT("SelfTest: ImagingSonar attach failed"));
+		return;
+	}
+
+	const int32 SonarBins = Sonar->GetDataBufferSize() / sizeof(float);
+	UE_LOG(LogHolodeck, Log, TEXT("SelfTest: ImagingSonar attached, buffer=%p bins=%d"),
+		Sonar->GetDataBuffer(), SonarBins);
+
+	TWeakObjectPtr<UImagingSonar> WeakSonar(Sonar);
+	FTimerHandle SonarHandle;
+	World->GetTimerManager().SetTimer(SonarHandle, [WeakSonar]()
+	{
+		UImagingSonar* S = WeakSonar.Get();
+		if (S == nullptr)
+		{
+			UE_LOG(LogHolodeck, Warning, TEXT("SelfTest SONAR: sensor gone"));
+			return;
+		}
+
+		const float* Data = static_cast<const float*>(S->GetDataBuffer());
+		const int32 Num = S->GetDataBufferSize() / sizeof(float);
+		if (Data == nullptr || Num <= 0)
+		{
+			UE_LOG(LogHolodeck, Error, TEXT("SelfTest SONAR: buffer null or empty (num=%d)"), Num);
+			return;
+		}
+
+		int32 NonZero = 0;
+		float MinV = TNumericLimits<float>::Max();
+		float MaxV = TNumericLimits<float>::Lowest();
+		for (int32 i = 0; i < Num; ++i)
+		{
+			const float V = Data[i];
+			if (V != 0.0f)
+			{
+				++NonZero;
+				MinV = FMath::Min(MinV, V);
+				MaxV = FMath::Max(MaxV, V);
+			}
+		}
+
+		if (NonZero > 0)
+		{
+			UE_LOG(LogHolodeck, Warning,
+				TEXT("SelfTest SONAR RESULT: bins=%d nonzero=%d min=%.3f max=%.3f  => 声呐有回波"),
+				Num, NonZero, MinV, MaxV);
+		}
+		else
+		{
+			UE_LOG(LogHolodeck, Warning,
+				TEXT("SelfTest SONAR RESULT: bins=%d nonzero=0  => 全零，范围内可能没有障碍物或八叉树为空"),
+				Num);
+		}
+	}, 3.0f, false);
 }
 
 void UUnderwaterSensorSubsystem::Deinitialize()
@@ -187,12 +259,18 @@ void UUnderwaterSensorSubsystem::Deinitialize()
 	Super::Deinitialize();
 }
 
-bool UUnderwaterSensorSubsystem::AttachSensor(UHolodeckSensor* Sensor, const FString& AgentName)
+bool UUnderwaterSensorSubsystem::AttachSensor(UHolodeckSensor* Sensor, const FString& AgentName, const FString& ParmsJson)
 {
 	if (Sensor == nullptr || !IsReady())
 	{
 		UE_LOG(LogHolodeck, Warning, TEXT("AttachSensor: sensor or subsystem not ready"));
 		return false;
+	}
+
+	// 参数必须先于 InitializeSensor：后者按 GetNumItems() 分配缓冲区
+	if (!ParmsJson.IsEmpty())
+	{
+		Sensor->ParseSensorParms(ParmsJson);
 	}
 
 	Sensor->SetAgentAndController(Host, AgentName);

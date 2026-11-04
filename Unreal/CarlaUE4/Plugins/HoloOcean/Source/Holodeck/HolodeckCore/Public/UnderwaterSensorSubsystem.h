@@ -51,14 +51,16 @@ public:
 
 	/**
 	 * 把一个 HoloOcean 传感器接入本子系统。
-	 * 会依次调用 SetAgentAndController 与 InitializeSensor，
-	 * 顺序不能颠倒——InitializeSensor 里会判 Controller 是否为空。
+	 * 会依次调用 ParseSensorParms（若给了参数）、SetAgentAndController、InitializeSensor。
+	 * 顺序不能颠倒——InitializeSensor 里会判 Controller 是否为空，
+	 * 且它按 GetNumItems() 分配缓冲区，所以参数必须先于它生效。
 	 *
 	 * @param Sensor    传感器组件（ImagingSonar / SidescanSonar / DVL 等）
 	 * @param AgentName 代理名，用于拼接共享内存的 key
+	 * @param ParmsJson 传感器参数 JSON，留空则使用类默认值
 	 */
 	UFUNCTION(BlueprintCallable, Category = "Underwater|Sensors")
-	bool AttachSensor(UHolodeckSensor* Sensor, const FString& AgentName);
+	bool AttachSensor(UHolodeckSensor* Sensor, const FString& AgentName, const FString& ParmsJson = TEXT(""));
 
 	/** 是否已成功初始化（Server 与 Host 均就绪） */
 	UFUNCTION(BlueprintCallable, Category = "Underwater|Sensors")
