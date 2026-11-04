@@ -62,7 +62,16 @@ bool UMujocoImportFactory::FactoryCanImport(const FString& Filename)
     return FPaths::GetExtension(Filename).Equals(TEXT("xml"), ESearchCase::IgnoreCase);
 }
 
-UObject* UMujocoImportFactory::FactoryCreateFile(UClass* InClass, UObject* InParent, FName InName, EObjectFlags Flags, const FString& Filename, const TCHAR* Parms, FFeedbackContext* Warn, bool& bOutOperationCanceled)
+// 参数详见 MujocoImportFactory.h；这里标注阅读时最关键的三个参数。
+UObject* UMujocoImportFactory::FactoryCreateFile(
+    UClass* InClass,
+    UObject* InParent,                // 目标包：新蓝图挂在该包下；包名 = 拖放文件夹 + 资产名（决定“放哪”）
+    FName InName,                     // 新资产名：由源文件基名推导，不含扩展名（决定“叫什么”）
+    EObjectFlags Flags,
+    const FString& Filename,          // 源 .xml 文件在磁盘上的绝对路径（决定“从哪来”）
+    const TCHAR* Parms,
+    FFeedbackContext* Warn,
+    bool& bOutOperationCanceled)
 {
     // 导入流程概览（进度条共 4 步）：
     //   步骤 0：调用 clean_meshes.py 预处理网格，生成 _ue.xml（失败则回退原始 XML）
@@ -181,6 +190,13 @@ UObject* UMujocoImportFactory::FactoryCreateFile(UClass* InClass, UObject* InPar
         // 中 TStrongObjectPtr 处的说明）。Generator 只被 C++ 栈引用，GC 看不到它；
         // 不保持在根集里的话，生成过程中它会被回收，之后继续调用它的成员函数就会崩溃。
         TStrongObjectPtr<UMujocoGenerationAction> GeneratorGuard(Generator);
+
+        // NewBP这里的蓝图用的不是原来的xml，但是这里的ActualXmlPath用的不是新的_ue.xml？
+        // 蓝图“搭组件树”用 _ue.xml，但蓝图里“记录模型来源”用的是原始 XML
+        // 1._ue.xml 是“给 UE 用的派生图纸”：脚本清洗网格、转换成 GLB、解决了命名冲突，
+        // 把网格路径改写成 UE 能导入的形式。用它来建组件树、导入资源，才能成功。
+        // 2.原始 XML 是“给 MuJoCo 用的正版模型”：运行时仿真加载的是它；_ue.xml 只是编辑器导入过程的
+        // 中间产物，不应该成为仿真源。蓝图里记录原始路径，也保证了“这个蓝图对应哪个模型文件”可追溯。
         Generator->GenerateForBlueprint(NewBP, ActualXmlPath);
 
         // 步骤 3/4：编译与收尾。
