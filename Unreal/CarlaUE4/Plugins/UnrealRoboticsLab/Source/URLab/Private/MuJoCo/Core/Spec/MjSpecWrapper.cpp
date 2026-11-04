@@ -229,13 +229,11 @@ TArray<FString> FMujocoSpecWrapper::PrepareMeshForMuJoCo(UStaticMeshComponent* S
     if (!SMC || !SMC->GetStaticMesh()) return ResultNames;
 
     UStaticMesh* Mesh = SMC->GetStaticMesh();
-    UBodySetup* BodySetup = nullptr; // Mesh->GetBodySetup();
-    // if (!BodySetup || BodySetup->TriMeshGeometries.Num() == 0) return ResultNames;
-    if (!BodySetup) return ResultNames;
 
     FString MeshType = bComplexMeshRequired ? "Complex" : "Simple";
-    UStaticMesh* StaticMesh = Cast<UStaticMesh>(BodySetup->GetOuter());
-    FString BaseAssetName = StaticMesh ? StaticMesh->GetName() : SMC->GetName();
+    // OpenHUTB 修改（2026-11-04）：原为 Cast<UStaticMesh>(BodySetup->GetOuter())，
+    // 但 BodySetup 在 UE4.26 下已被置空（见下），这里直接用 Mesh 本身。
+    FString BaseAssetName = Mesh ? Mesh->GetName() : SMC->GetName();
     FVector Scale = SMC->GetComponentScale();
 
     FString AssetName = BaseAssetName;
@@ -288,6 +286,77 @@ TArray<FString> FMujocoSpecWrapper::PrepareMeshForMuJoCo(UStaticMeshComponent* S
         }
     }
 
+    // ========================================================================
+    // OpenHUTB 追加（2026-11-04）：UE4.26 版网格导出
+    //
+    // 上游这段实现依赖 UE5 的 Chaos API（UBodySetup::TriMeshGeometries、
+    // TriGeom.GetReference()->Particles()），在 UE4.26 下不存在，因此整段被注释掉，
+    // 导致任何含 mesh geom 的模型 Compile() 都报 "mesh not found"。
+    //
+    // 这里用 UE4.26 的 FStaticMeshLODResources 重新实现：从渲染数据读顶点与索引，
+    // 写 OBJ 后注册进 spec。坐标转换沿用上游 SaveMeshAsOBJSimple 的约定：
+    //   UE (cm, 左手, Z-up) -> MuJoCo (m, 右手, Z-up)： (x/100, -y/100, z/100)，绕序翻转
+    // ========================================================================
+    // UE4.26: RenderData 是 UStaticMesh 的公开成员（引擎内部同样这样访问）
+    if (!Mesh->HasValidRenderData() || !Mesh->RenderData.IsValid()
+        || Mesh->RenderData->LODResources.Num() == 0)
+    {
+        UE_LOG(LogURLabWrapper, Warning,
+            TEXT("PrepareMeshForMuJoCo: '%s' 没有可用的渲染数据"), *BaseAssetName);
+        return ResultNames;
+    }
+
+    const FStaticMeshLODResources& LOD = Mesh->RenderData->LODResources[0];
+    const FPositionVertexBuffer& PositionBuffer = LOD.VertexBuffers.PositionVertexBuffer;
+    const FRawStaticIndexBuffer& IndexBuffer = LOD.IndexBuffer;
+
+    const uint32 NumVerts = PositionBuffer.GetNumVertices();
+    const uint32 NumIndices = IndexBuffer.GetNumIndices();
+
+    if (NumVerts == 0 || NumIndices < 3)
+    {
+        UE_LOG(LogURLabWrapper, Warning,
+            TEXT("PrepareMeshForMuJoCo: '%s' 顶点或索引为空 (v=%u i=%u)"),
+            *BaseAssetName, NumVerts, NumIndices);
+        return ResultNames;
+    }
+
+    FString OutputString;
+    OutputString.Reserve(NumVerts * 40 + NumIndices * 12);
+
+    for (uint32 i = 0; i < NumVerts; ++i)
+    {
+        const FVector V = PositionBuffer.VertexPosition(i);
+        OutputString += FString::Printf(TEXT("v %f %f %f\n"),
+            V.X / 100.0, -V.Y / 100.0, V.Z / 100.0);
+    }
+    for (uint32 j = 0; j + 2 < NumIndices; j += 3)
+    {
+        const uint32 A = IndexBuffer.GetIndex(j);
+        const uint32 B = IndexBuffer.GetIndex(j + 1);
+        const uint32 C = IndexBuffer.GetIndex(j + 2);
+        // 绕序翻转，匹配 MuJoCo 的右手系
+        OutputString += FString::Printf(TEXT("f %u %u %u\n"), C + 1, B + 1, A + 1);
+    }
+
+    IFileManager::Get().MakeDirectory(*FPaths::GetPath(FullFilePath), true);
+    if (!FFileHelper::SaveStringToFile(OutputString, *FullFilePath))
+    {
+        UE_LOG(LogURLabWrapper, Error,
+            TEXT("PrepareMeshForMuJoCo: 写出 OBJ 失败 '%s'"), *FullFilePath);
+        return ResultNames;
+    }
+
+    // 顶点已按 cm->m 换算，这里不再额外施加组件缩放，避免二次缩放
+    ResultNames.Add(AddMeshAsset(AssetName, FullFilePath, FVector::OneVector));
+
+    UE_LOG(LogURLabWrapper, Log,
+        TEXT("PrepareMeshForMuJoCo: '%s' -> mesh '%s' (%u 顶点, %u 三角面)"),
+        *BaseAssetName, *AssetName, NumVerts, NumIndices / 3);
+
+    return ResultNames;
+
+    // 以下为上游 UE5 实现（保留备查，UE4.26 下不可用）
     const int32 GeometryIndex = 0;
     // // auto& TriGeom; // BodySetup->TriMeshGeometries[GeometryIndex];
     // auto& Vertices = TriGeom.GetReference()->Particles().X();
