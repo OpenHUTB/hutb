@@ -223,6 +223,10 @@
 		{
 			"Name": "OceanPlugin",
 			"Enabled": true
+		},
+		{
+			"Name": "UnderwaterScene",
+			"Enabled": true
 		}
 	]
 }
