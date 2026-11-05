@@ -133,7 +133,7 @@ bool URovMuJoCoBridge::ProvidePose(FVector& OutPosition, FQuat& OutRotation) con
 
     // 注意：这两个函数直接读 MuJoCo 的 xpos / xquat 数组，
     // 不依赖 UMjBody::TickComponent 是否已经执行，因此不存在「差一帧」问题。
-    OutPosition = TargetBody->GetWorldPosition();
+    OutPosition = TargetBody->GetWorldPosition() + WorldOffset;
     OutRotation = TargetBody->GetWorldRotation();
 
     // 一次性物理诊断：确认 MuJoCo 到底有没有在步进。

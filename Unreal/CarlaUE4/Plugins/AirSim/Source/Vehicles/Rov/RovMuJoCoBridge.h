@@ -80,6 +80,17 @@ public:
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ROV|MuJoCo")
     bool bAutoStartSimulation = true;
 
+    /**
+     * MuJoCo 世界坐标到 UE 世界坐标的平移偏移（cm）。
+     *
+     * MuJoCo 的模型是一个自包含的水下世界（自带 seafloor / reef / wellhead），
+     * 它的原点与 UE 地图没有关系。把 ROV 摆到城区的某个位置时，
+     * 不能靠挪编辑器里的 Actor——Pawn 的位姿每帧被 MuJoCo 覆盖，
+     * 必须在桥接这一层加偏移。
+     */
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ROV|MuJoCo")
+    FVector WorldOffset = FVector::ZeroVector;
+
     /** 桥接是否已生效。 */
     UFUNCTION(BlueprintCallable, BlueprintPure, Category = "ROV|MuJoCo")
     bool IsBridgeActive() const { return bBridgeActive; }
