@@ -1,4 +1,117 @@
 {
+  "SeeDocsAt": "https://github.com/Microsoft/AirSim/blob/master/docs/settings.md",
   "SettingsVersion": 1.2,
-  "SimMode": "Multirotor"
+  "SimMode": "Rov",
+  "ClockSpeed": 1,
+  "PawnPaths": {
+    "DefaultQuadrotor": {
+      "PawnBP": "Class'/AirSim/Blueprints/BP_FlyingPawn.BP_FlyingPawn_C'"
+    },
+    "DefaultRov": {
+      "PawnBP": "Class'/Script/AirSim.RovPawn'"
+    },
+    "DefaultComputerVision": {
+      "PawnBP": "Class'/AirSim/Blueprints/BP_ComputerVisionPawn.BP_ComputerVisionPawn_C'"
+    }
+  },
+  "ZBed": -30.0,
+  "EnableDepthClamp": true,
+  "BedStiffness": 2000.0,
+  "BedDamping": 300.0,
+  "BedContactMargin": 0.5,
+  "BedClampMargin": 0.3,
+  "EnableNeutralBuoyancy": true,
+  "EnableHydrodynamicDamping": true,
+  "OffZ": 0.05,
+  "Vehicles": {
+    "RovSimple": {
+      "VehicleType": "RovSimple",
+      "DefaultVehicleState": "Armed",
+      "PawnPath": "DefaultRov",
+      "EnableCollisions": true,
+      "AllowAPIAlways": true,
+      "RC": {
+        "RemoteControlID": 0,
+        "AllowAPIWhenDisconnected": false
+      },
+      "ZBed": -30.0,
+      "EnableDepthClamp": true,
+      "BedStiffness": 2000.0,
+      "BedDamping": 300.0,
+      "BedContactMargin": 0.5,
+      "BedClampMargin": 0.3,
+      "EnableNeutralBuoyancy": true,
+      "EnableHydrodynamicDamping": true,
+      "OffZ": 0.05,
+      "Cameras": {
+        "front_left_custom": {
+          "CaptureSettings": [
+            {
+              "PublishToRos": 1,
+              "ImageType": 0,
+              "FOV_Degrees": 90,
+              "Width": 1280,
+              "Height": 720
+            }
+          ],
+          "X": 0.5,
+          "Y": -0.06,
+          "Z": 0.1,
+          "Pitch": 0.0,
+          "Roll": 0.0,
+          "Yaw": 0.0
+        },
+        "front_right_custom": {
+          "CaptureSettings": [
+            {
+              "PublishToRos": 1,
+              "ImageType": 0,
+              "FOV_Degrees": 90,
+              "Width": 1280,
+              "Height": 720
+            }
+          ],
+          "X": 0.5,
+          "Y": 0.06,
+          "Z": 0.1,
+          "Pitch": 0.0,
+          "Roll": 0.0,
+          "Yaw": 0.0
+        }
+      },
+      "Sensors": {
+        "barometer": {
+          "SensorType": 1,
+          "Enabled": true
+        },
+        "imu": {
+          "SensorType": 2,
+          "Enabled": true
+        },
+        "magnetometer": {
+          "SensorType": 4,
+          "Enabled": true
+        },
+        "downward_sonar": {
+          "SensorType": 5,
+          "Enabled": true,
+          "MinDistance": 0.1,
+          "MaxDistance": 50.0,
+          "X": 0.0,
+          "Y": 0.0,
+          "Z": 0.15,
+          "Pitch": -90.0,
+          "Roll": 0.0,
+          "Yaw": 0.0
+        }
+      },
+      "X": 61.3,
+      "Y": -67.5,
+      "Z": 75.5,
+      "Pitch": 0.0,
+      "Roll": 0.0,
+      "Yaw": 0.0
+    }
+  },
+  "ViewMode": "FlyWithView"
 }
