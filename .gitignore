@@ -94,3 +94,7 @@ materials.csv
 # 本地调参用的 AirSim 配置副本（正式配置在 Unreal/<project>/settings.json）
 /settings.json
 /settings_rov.json
+
+# OceanPlugin（UE4.26 原生海洋/水下材质库，234 MB）
+# 体积大且是第三方仓库，不入库；用 Build/setup_ocean_plugin.ps1 拉取
+Unreal/CarlaUE4/Plugins/OceanPlugin/

@@ -1,224 +1,228 @@
 ﻿{
- "FileVersion": 3,
- "EngineAssociation": "{FF5B26C3-46CF-C440-D9FB-F48D5F122826}",
- "Category": "",
- "Description": "",
- "Modules": [
-  {
-   "Name": "CarlaUE4",
-   "Type": "Runtime",
-   "LoadingPhase": "Default",
-   "AdditionalDependencies": [
-    "Engine",
-    "PhysXVehicles",
-    "Carla",
-    "CoreUObject",
-    "AirSim"
-   ]
-  }
- ],
- "Plugins": [
-  {
-   "Name": "Carla",
-   "Enabled": true
-  },
-  {
-   "Name": "OnlineSubsystemGooglePlay",
-   "Enabled": false,
-   "SupportedTargetPlatforms": [
-    "Android"
-   ]
-  },
-  {
-   "Name": "AndroidPermission",
-   "Enabled": false
-  },
-  {
-   "Name": "AppleARKit",
-   "Enabled": false
-  },
-  {
-   "Name": "LocationServicesBPLibrary",
-   "Enabled": false
-  },
-  {
-   "Name": "AndroidDeviceProfileSelector",
-   "Enabled": false
-  },
-  {
-   "Name": "ExampleDeviceProfileSelector",
-   "Enabled": false
-  },
-  {
-   "Name": "IOSDeviceProfileSelector",
-   "Enabled": false
-  },
-  {
-   "Name": "UObjectPlugin",
-   "Enabled": false
-  },
-  {
-   "Name": "AndroidMedia",
-   "Enabled": false
-  },
-  {
-   "Name": "HTML5Networking",
-   "Enabled": false
-  },
-  {
-   "Name": "MobileLauncherProfileWizard",
-   "Enabled": false
-  },
-  {
-   "Name": "MobilePatchingUtils",
-   "Enabled": false
-  },
-  {
-   "Name": "AndroidMoviePlayer",
-   "Enabled": false
-  },
-  {
-   "Name": "AppleMoviePlayer",
-   "Enabled": false
-  },
-  {
-   "Name": "GoogleCloudMessaging",
-   "Enabled": false
-  },
-  {
-   "Name": "PerformanceMonitor",
-   "Enabled": true
-  },
-  {
-   "Name": "OculusVR",
-   "Enabled": false
-  },
-  {
-   "Name": "SteamVR",
-   "Enabled": true,
-   "WhitelistPlatforms": [
-    "Win32",
-    "Win64",
-    "Linux"
-   ],
-   "SupportedTargetPlatforms": [
-    "Win32",
-    "Win64",
-    "Linux"
-   ]
-  },
-  {
-   "Name": "RenderDocPlugin",
-   "Enabled": false
-  },
-  {
-   "Name": "CarSim",
-   "Enabled": false,
-   "MarketplaceURL": "com.epicgames.launcher://ue/marketplace/content/2d712649ca864c80812da7b5252f5608"
-  },
-  {
-   "Name": "EditorScriptingUtilities",
-   "Enabled": true
-  },
-  {
-   "Name": "CarlaTools",
-   "Enabled": true
-  },
-  {
-   "Name": "PythonScriptPlugin",
-   "Enabled": true
-  },
-  {
-   "Name": "AlembicHairImporter",
-   "Enabled": true
-  },
-  {
-   "Name": "HairStrands",
-   "Enabled": true
-  },
-  {
-   "Name": "PixelStreaming",
-   "Enabled": true
-  },
-  {
-   "Name": "MDL",
-   "Enabled": false
-  },
-  {
-   "Name": "SimReady",
-   "Enabled": false
-  },
-  {
-   "Name": "AirSim",
-   "Enabled": true
-  },
-  {
-   "Name": "UnrealRoboticsLab",
-   "Enabled": true
-  },
-  {
-   "Name": "GLTFImporter",
-   "Enabled": false
-  },
-  {
-   "Name": "FunctionalTestingEditor",
-   "Enabled": false
-  },
-  {
-   "Name": "RuntimeTests",
-   "Enabled": true
-  },
-  {
-   "Name": "DatasmithGLTFImporter",
-   "Enabled": true
-  },
-  {
-   "Name": "CesiumForUnreal",
-   "Enabled": false,
-   "MarketplaceURL": "com.epicgames.launcher://ue/marketplace/content/87b0d05800a545d49bf858ef3458c4f7",
-   "SupportedTargetPlatforms": [
-    "Win64",
-    "Mac",
-    "Linux",
-    "Android",
-    "IOS"
-   ]
-  },
-  {
-   "Name": "RoadRunnerMaterials",
-   "Enabled": true
-  },
-  {
-   "Name": "RoadRunnerCarlaContent",
-   "Enabled": false
-  },
-  {
-   "Name": "RoadRunnerCarlaIntegration",
-   "Enabled": false
-  },
-  {
-   "Name": "RoadRunnerImporter",
-   "Enabled": false
-  },
-  {
-   "Name": "StreetMap",
-   "Enabled": true
-  },
-  {
-   "Name": "RoadRunnerCarlaDatasmith",
-   "Enabled": false
-  },
-  {
-   "Name": "RoadRunnerDatasmith",
-   "Enabled": false
-  },
-  {
-   "Name": "RoadRunnerRuntime",
-   "Enabled": false
-  },
-  {
-   "Name": "LogitechWheelPlugin",
-   "Enabled": true
-  }
- ]
+	"FileVersion": 3,
+	"EngineAssociation": "{FF5B26C3-46CF-C440-D9FB-F48D5F122826}",
+	"Category": "",
+	"Description": "",
+	"Modules": [
+		{
+			"Name": "CarlaUE4",
+			"Type": "Runtime",
+			"LoadingPhase": "Default",
+			"AdditionalDependencies": [
+				"Engine",
+				"PhysXVehicles",
+				"Carla",
+				"CoreUObject",
+				"AirSim"
+			]
+		}
+	],
+	"Plugins": [
+		{
+			"Name": "Carla",
+			"Enabled": true
+		},
+		{
+			"Name": "OnlineSubsystemGooglePlay",
+			"Enabled": false,
+			"SupportedTargetPlatforms": [
+				"Android"
+			]
+		},
+		{
+			"Name": "AndroidPermission",
+			"Enabled": false
+		},
+		{
+			"Name": "AppleARKit",
+			"Enabled": false
+		},
+		{
+			"Name": "LocationServicesBPLibrary",
+			"Enabled": false
+		},
+		{
+			"Name": "AndroidDeviceProfileSelector",
+			"Enabled": false
+		},
+		{
+			"Name": "ExampleDeviceProfileSelector",
+			"Enabled": false
+		},
+		{
+			"Name": "IOSDeviceProfileSelector",
+			"Enabled": false
+		},
+		{
+			"Name": "UObjectPlugin",
+			"Enabled": false
+		},
+		{
+			"Name": "AndroidMedia",
+			"Enabled": false
+		},
+		{
+			"Name": "HTML5Networking",
+			"Enabled": false
+		},
+		{
+			"Name": "MobileLauncherProfileWizard",
+			"Enabled": false
+		},
+		{
+			"Name": "MobilePatchingUtils",
+			"Enabled": false
+		},
+		{
+			"Name": "AndroidMoviePlayer",
+			"Enabled": false
+		},
+		{
+			"Name": "AppleMoviePlayer",
+			"Enabled": false
+		},
+		{
+			"Name": "GoogleCloudMessaging",
+			"Enabled": false
+		},
+		{
+			"Name": "PerformanceMonitor",
+			"Enabled": true
+		},
+		{
+			"Name": "OculusVR",
+			"Enabled": false
+		},
+		{
+			"Name": "SteamVR",
+			"Enabled": true,
+			"WhitelistPlatforms": [
+				"Win32",
+				"Win64",
+				"Linux"
+			],
+			"SupportedTargetPlatforms": [
+				"Win32",
+				"Win64",
+				"Linux"
+			]
+		},
+		{
+			"Name": "RenderDocPlugin",
+			"Enabled": false
+		},
+		{
+			"Name": "CarSim",
+			"Enabled": false,
+			"MarketplaceURL": "com.epicgames.launcher://ue/marketplace/content/2d712649ca864c80812da7b5252f5608"
+		},
+		{
+			"Name": "EditorScriptingUtilities",
+			"Enabled": true
+		},
+		{
+			"Name": "CarlaTools",
+			"Enabled": true
+		},
+		{
+			"Name": "PythonScriptPlugin",
+			"Enabled": true
+		},
+		{
+			"Name": "AlembicHairImporter",
+			"Enabled": true
+		},
+		{
+			"Name": "HairStrands",
+			"Enabled": true
+		},
+		{
+			"Name": "PixelStreaming",
+			"Enabled": true
+		},
+		{
+			"Name": "MDL",
+			"Enabled": false
+		},
+		{
+			"Name": "SimReady",
+			"Enabled": false
+		},
+		{
+			"Name": "AirSim",
+			"Enabled": true
+		},
+		{
+			"Name": "UnrealRoboticsLab",
+			"Enabled": true
+		},
+		{
+			"Name": "GLTFImporter",
+			"Enabled": false
+		},
+		{
+			"Name": "FunctionalTestingEditor",
+			"Enabled": false
+		},
+		{
+			"Name": "RuntimeTests",
+			"Enabled": true
+		},
+		{
+			"Name": "DatasmithGLTFImporter",
+			"Enabled": true
+		},
+		{
+			"Name": "CesiumForUnreal",
+			"Enabled": false,
+			"MarketplaceURL": "com.epicgames.launcher://ue/marketplace/content/87b0d05800a545d49bf858ef3458c4f7",
+			"SupportedTargetPlatforms": [
+				"Win64",
+				"Mac",
+				"Linux",
+				"Android",
+				"IOS"
+			]
+		},
+		{
+			"Name": "RoadRunnerMaterials",
+			"Enabled": true
+		},
+		{
+			"Name": "RoadRunnerCarlaContent",
+			"Enabled": false
+		},
+		{
+			"Name": "RoadRunnerCarlaIntegration",
+			"Enabled": false
+		},
+		{
+			"Name": "RoadRunnerImporter",
+			"Enabled": false
+		},
+		{
+			"Name": "StreetMap",
+			"Enabled": true
+		},
+		{
+			"Name": "RoadRunnerCarlaDatasmith",
+			"Enabled": false
+		},
+		{
+			"Name": "RoadRunnerDatasmith",
+			"Enabled": false
+		},
+		{
+			"Name": "RoadRunnerRuntime",
+			"Enabled": false
+		},
+		{
+			"Name": "LogitechWheelPlugin",
+			"Enabled": true
+		},
+		{
+			"Name": "OceanPlugin",
+			"Enabled": true
+		}
+	]
 }
