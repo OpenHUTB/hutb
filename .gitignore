@@ -83,3 +83,14 @@ CarlaUE4.xcworkspace
 OptionalModules.ini
 CesiumForUnreal*
 Unreal/CarlaUE4/Plugins/AirSim/
+
+# --- 水下仿真整合（2026-11）---
+# HoloOcean 八叉树运行时缓存，由插件在运行时生成
+Unreal/CarlaUE4/Octrees/
+# Cook 阶段生成的材质清单
+materials.csv
+# 修改 .uproject 前留的备份
+*.uproject.bak*
+# 本地调参用的 AirSim 配置副本（正式配置在 Unreal/<project>/settings.json）
+/settings.json
+/settings_rov.json
