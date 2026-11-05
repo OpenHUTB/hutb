@@ -9,6 +9,8 @@
 #include "Kismet/GameplayStatics.h"
 
 // URLab：MuJoCo 物理
+#include "MuJoCo/Core/AMjManager.h"
+#include "MuJoCo/Core/MjPhysicsEngine.h"
 #include "MuJoCo/Core/MjArticulation.h"
 #include "MuJoCo/Components/Bodies/MjBody.h"
 
@@ -31,31 +33,34 @@ void URovMuJoCoBridge::BeginPlay()
         return;
     }
 
+    // 先尝试解析一次。注意：此时 MuJoCo 模型很可能还没编译完成，
+    // GetBodies() 会是空的——没关系，ProvidePose 里会惰性重试。
     ResolveTargets();
-
-    if (!TargetBody.IsValid()) {
-        UE_LOG(LogRovBridge, Warning,
-            TEXT("[RovMuJoCoBridge] 未找到后缀为 '%s' 的 MuJoCo body，桥接未启用。"
-                 "请确认场景里存在 AMjArticulation 且模型已编译。"),
-            *TargetBodyNameSuffix);
-        return;
-    }
 
     if (bDisablePawnPhysics) {
         DisablePawnPhysics();
     }
 
-    // 注册全局位姿源。用 TWeakObjectPtr 语义保证组件销毁后不再被调用。
+    // 无论是否解析成功都注册 provider：
+    // 模型就绪后 ProvidePose 会自动接上，不需要重启 Pawn。
     ExternalPoseProvider = [this](FVector& OutPos, FQuat& OutRot) -> bool {
         return ProvidePose(OutPos, OutRot);
     };
 
     bBridgeActive = true;
 
-    UE_LOG(LogRovBridge, Log,
-        TEXT("[RovMuJoCoBridge] ✅ 桥接已启用，跟随 body '%s'（Articulation='%s'）"),
-        *GetResolvedBodyName(),
-        Articulation.IsValid() ? *Articulation->GetName() : TEXT("<invalid>"));
+    if (TargetBody.IsValid()) {
+        UE_LOG(LogRovBridge, Log,
+            TEXT("[RovMuJoCoBridge] ✅ 桥接已启用，跟随 body '%s'（Articulation='%s'）"),
+            *GetResolvedBodyName(),
+            Articulation.IsValid() ? *Articulation->GetName() : TEXT("<invalid>"));
+    }
+    else {
+        UE_LOG(LogRovBridge, Log,
+            TEXT("[RovMuJoCoBridge] 位姿源已注册，但 MuJoCo 模型尚未就绪"
+                 "（body 后缀 '%s'）——将在运行中自动重试"),
+            *TargetBodyNameSuffix);
+    }
 }
 
 void URovMuJoCoBridge::EndPlay(const EEndPlayReason::Type EndPlayReason)
@@ -68,7 +73,7 @@ void URovMuJoCoBridge::EndPlay(const EEndPlayReason::Type EndPlayReason)
     Super::EndPlay(EndPlayReason);
 }
 
-void URovMuJoCoBridge::ResolveTargets()
+void URovMuJoCoBridge::ResolveTargets() const
 {
     UWorld* World = GetWorld();
     if (!World) return;
@@ -77,9 +82,7 @@ void URovMuJoCoBridge::ResolveTargets()
         UGameplayStatics::GetActorOfClass(World, AMjArticulation::StaticClass()));
 
     if (!Articulation.IsValid()) {
-        UE_LOG(LogRovBridge, Warning,
-            TEXT("[RovMuJoCoBridge] 场景里没有 AMjArticulation"));
-        return;
+        return; // 场景里还没有 articulation，静默等待
     }
 
     // URLab 会给 spec 元素名加蓝图前缀，所以用后缀匹配
@@ -96,18 +99,28 @@ void URovMuJoCoBridge::ResolveTargets()
         }
     }
 
-    // 没匹配上时，把候选名字打出来方便排查
-    UE_LOG(LogRovBridge, Warning,
-        TEXT("[RovMuJoCoBridge] 没有 body 以 '%s' 结尾。候选："), *TargetBodyNameSuffix);
-    for (UMjBody* Body : Bodies) {
-        if (Body) {
-            UE_LOG(LogRovBridge, Warning, TEXT("    %s"), *Body->GetName());
+    // 有 articulation 但没匹配到 body：只在第一次打印候选，避免刷屏
+    if (!bResolveWarned && Bodies.Num() > 0) {
+        bResolveWarned = true;
+        UE_LOG(LogRovBridge, Warning,
+            TEXT("[RovMuJoCoBridge] 没有 body 以 '%s' 结尾。候选（%d 个）："),
+            *TargetBodyNameSuffix, Bodies.Num());
+        for (UMjBody* Body : Bodies) {
+            if (Body) {
+                UE_LOG(LogRovBridge, Warning, TEXT("    %s"), *Body->GetName());
+            }
         }
     }
 }
 
 bool URovMuJoCoBridge::ProvidePose(FVector& OutPosition, FQuat& OutRotation) const
 {
+    // 惰性解析：MuJoCo 模型通常在 Pawn 生成之后才编译完成，
+    // 所以这里每帧检查一次，一旦 body 出现就自动接上。
+    if (!TargetBody.IsValid()) {
+        ResolveTargets();
+    }
+
     if (!TargetBody.IsValid()) {
         return false;
     }
@@ -122,6 +135,52 @@ bool URovMuJoCoBridge::ProvidePose(FVector& OutPosition, FQuat& OutRotation) con
     // 不依赖 UMjBody::TickComponent 是否已经执行，因此不存在「差一帧」问题。
     OutPosition = TargetBody->GetWorldPosition();
     OutRotation = TargetBody->GetWorldRotation();
+
+    // 一次性物理诊断：确认 MuJoCo 到底有没有在步进。
+    // 如果这里 IsRunning=0 或仿真时间一直是 0，说明物理循环没跑起来。
+    static bool bLoggedPhysicsDiag = false;
+    if (!bLoggedPhysicsDiag) {
+        bLoggedPhysicsDiag = true;
+        if (AAMjManager* Mgr = AAMjManager::GetManager()) {
+            const double Timestep = (Mgr->PhysicsEngine && Mgr->PhysicsEngine->m_model)
+                ? Mgr->PhysicsEngine->m_model->opt.timestep
+                : -1.0;
+
+            // UMjPhysicsEngine 的 bIsPaused 默认是 true（URLab 让用户在
+            // MjSimulate 控件里手动点播放）。Pawn 要跟随就必须让仿真跑起来。
+            if (bAutoStartSimulation && !Mgr->IsRunning()) {
+                Mgr->SetPaused(false);
+                UE_LOG(LogRovBridge, Log,
+                    TEXT("[RovMuJoCoBridge] MuJoCo 仿真原本处于暂停状态，已自动启动"));
+            }
+
+            UE_LOG(LogRovBridge, Log,
+                TEXT("[RovMuJoCoBridge] 物理诊断: IsRunning=%d  IsInitialized=%d  "
+                     "SimTime=%.4fs  timestep=%.4fs  SimSpeed=%.0f%%"),
+                Mgr->IsRunning() ? 1 : 0,
+                Mgr->IsInitialized() ? 1 : 0,
+                Mgr->GetSimTime(),
+                Timestep,
+                Mgr->PhysicsEngine ? Mgr->PhysicsEngine->SimSpeedPercent : -1.0f);
+        }
+    }
+
+    // 节流调试日志：每 60 次调用打印一次 MuJoCo 位姿 vs Pawn 实际位姿，
+    // 用来确认「Pawn 真的跟着 MuJoCo 走」。设 LogRovBridge 为 Log 级别即可看到。
+    static int32 CallCounter = 0;
+    if (++CallCounter % 60 == 0) {
+        const AActor* Owner = GetOwner();
+        const FVector PawnPos = Owner ? Owner->GetActorLocation() : FVector::ZeroVector;
+        AAMjManager* Mgr = AAMjManager::GetManager();
+        const float SimTime = Mgr ? Mgr->GetSimTime() : -1.0f;
+        UE_LOG(LogRovBridge, Log,
+            TEXT("[RovMuJoCoBridge] 跟随中 #%d  仿真时间=%.3fs  MuJoCo=(%s)  Pawn=(%s)  差值=%.2f cm"),
+            CallCounter,
+            SimTime,
+            *OutPosition.ToString(),
+            *PawnPos.ToString(),
+            FVector::Dist(OutPosition, PawnPos));
+    }
 
     return true;
 }

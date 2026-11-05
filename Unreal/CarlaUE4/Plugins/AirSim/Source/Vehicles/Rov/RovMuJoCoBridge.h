@@ -69,6 +69,17 @@ public:
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ROV|MuJoCo")
     bool bDisablePawnPhysics = true;
 
+    /**
+     * 是否自动启动 MuJoCo 仿真。
+     *
+     * UMjPhysicsEngine 的 bIsPaused 默认是 true——URLab 的设计是让用户在
+     * MjSimulate 控件里手动点「播放」。但 AirSim 的 Pawn 一旦跟随 MuJoCo，
+     * 仿真不跑 Pawn 就不会动，所以桥接激活时默认自动取消暂停。
+     * 需要在编辑器里手动控制时把它关掉。
+     */
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ROV|MuJoCo")
+    bool bAutoStartSimulation = true;
+
     /** 桥接是否已生效。 */
     UFUNCTION(BlueprintCallable, BlueprintPure, Category = "ROV|MuJoCo")
     bool IsBridgeActive() const { return bBridgeActive; }
@@ -88,17 +99,22 @@ private:
     /** 供 ExternalPoseProvider 调用的实际取值函数。 */
     bool ProvidePose(FVector& OutPosition, FQuat& OutRotation) const;
 
-    /** 找到 AMjArticulation 与目标 UMjBody。 */
-    void ResolveTargets();
+    /**
+     * 找到 AMjArticulation 与目标 UMjBody。
+     *
+     * 声明为 const + mutable 成员：MuJoCo 模型通常在 Pawn 生成之后才编译完成，
+     * 所以 ProvidePose（const）需要在运行中惰性重试解析。
+     */
+    void ResolveTargets() const;
 
     /** 关闭 Pawn 物理与碰撞，消除双计。 */
     void DisablePawnPhysics();
 
-    UPROPERTY()
-    TWeakObjectPtr<AMjArticulation> Articulation;
+    mutable TWeakObjectPtr<AMjArticulation> Articulation;
+    mutable TWeakObjectPtr<UMjBody> TargetBody;
 
-    UPROPERTY()
-    TWeakObjectPtr<UMjBody> TargetBody;
+    /** 只在第一次解析失败时打印候选列表，避免每帧刷屏。 */
+    mutable bool bResolveWarned = false;
 
     bool bBridgeActive = false;
 };
