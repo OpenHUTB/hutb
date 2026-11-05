@@ -226,7 +226,7 @@ log "  Step 0 — Essential System Tools"
 log "=============================================="
 
 MISSING_TOOLS=()
-for cmd in git curl wget unzip make gcc g++; do
+for cmd in git git-lfs curl wget unzip make gcc g++; do
     if ! command -v "$cmd" &>/dev/null; then
         MISSING_TOOLS+=("$cmd")
     fi
@@ -305,7 +305,7 @@ if [ ! -d "$DEPENDENCIES_DIR" ]; then
 
     if [ -d "$DEPENDENCIES_DIR" ]; then
         cd "$DEPENDENCIES_DIR"
-        git lfs pull 2>/dev/null || warn "git lfs pull failed (non-critical)."
+        git lfs pull 2>/dev/null || error "git lfs pull failed."
         success "dependencies_u cloned."
     fi
 
