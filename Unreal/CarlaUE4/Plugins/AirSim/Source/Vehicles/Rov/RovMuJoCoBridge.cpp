@@ -620,6 +620,21 @@ void URovMuJoCoBridge::ApplyControlForce()
         CurrentX = -CurrentDragCoeff * (Vrx - VCurrent.X);
         CurrentY = -CurrentDragCoeff * (Vry - VCurrent.Y);
         CurrentZ = -CurrentDragCoeff * (Vrz - VCurrent.Z);
+
+        // 洋流诊断：每秒打印一次流速与拖曳力，确认量级
+        if (bEnableOceanCurrent) {
+            static int32 OceanLogTick = -1;
+            const int32 Tick = (int32)(GetWorld() ? GetWorld()->GetTimeSeconds() : 0.0);
+            if (Tick != OceanLogTick) {
+                OceanLogTick = Tick;
+                UE_LOG(LogRovBridge, Log,
+                    TEXT("[RovMuJoCoBridge][洋流诊断] V_current=(%.4f,%.4f,%.4f) |Vc|=%.4f  "
+                         "V_robot=(%.4f,%.4f,%.4f) |Vr|=%.4f  F=(%.1f,%.1f,%.1f) N"),
+                    VCurrent.X, VCurrent.Y, VCurrent.Z, VCurrent.Size(),
+                    Vrx, Vry, Vrz, FMath::Sqrt(Vrx * Vrx + Vry * Vry + Vrz * Vrz),
+                    CurrentX, CurrentY, CurrentZ);
+            }
+        }
     }
 
     // 【7】水动力阻力/升力：由 MuJoCo 椭球流体模型自行计算，这里不重复施加

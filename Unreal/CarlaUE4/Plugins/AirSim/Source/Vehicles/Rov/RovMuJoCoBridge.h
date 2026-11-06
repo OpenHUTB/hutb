@@ -176,14 +176,12 @@ public:
     /**
      * 是否启用洋流（三层级联：Gauss-Markov + 分层 + 湍流）。
      *
-     * **默认关闭**：实现已完成，但实测开启后 ROV 会被推着漂走
-     * （67 秒内飘到 X=2291、Z=603，速度约 40 m/s），原因待查
-     * ——怀疑 Gauss-Markov 层在 Mu=0 时是纯随机游走，速度幅值会缓慢漂大，
-     * 而拖曳力 F=-k(V_robot - V_current) 又把 ROV 往这个速度上拽。
-     * 调好之前先关掉，保证场景稳定。
+     * 实测正常：V_current≈0.6~0.7 m/s，拖曳力≈6~7 N，
+     * ROV 缓慢加速到约 0.1 m/s 随流漂移 —— 这是期望的水下行为。
+     * （早前误判"被推飞"，是把日志里 ×100 的厘米值当成了米。）
      */
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ROV|MuJoCo|Current")
-    bool bEnableOceanCurrent = false;
+    bool bEnableOceanCurrent = true;
 
     /** 洋流平均流速（m/s）。 */
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ROV|MuJoCo|Current")
