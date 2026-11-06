@@ -303,6 +303,7 @@ void URovMuJoCoBridge::ApplyControlForce()
         BuoyancyScale    = FloatParam(TEXT("RovBuoyancyScale="), BuoyancyScale);
         BuoyancyArm      = FloatParam(TEXT("RovBuoyancyArm="), BuoyancyArm);
         AngularDampingCoeff = FloatParam(TEXT("RovAngularDamping="), AngularDampingCoeff);
+        ArmJointDamping = FloatParam(TEXT("RovArmDamping="), ArmJointDamping);
         ThrusterMaxRatio = FloatParam(TEXT("RovThrustRatio="), ThrusterMaxRatio);
         WaterSurfaceZ    = FloatParam(TEXT("RovWaterSurfaceZ="), WaterSurfaceZ);
         UE_LOG(LogRovBridge, Log,

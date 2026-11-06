@@ -176,7 +176,7 @@ public:
      * 加阻尼让机械臂稳定下垂，不再激励艇体。
      */
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ROV|MuJoCo")
-    float ArmJointDamping = 1000.0f;
+    float ArmJointDamping = 20000.0f;
 
     /**
      * 机械臂关节刚度（N·m/rad），相当于在每个关节上装一个位置伺服弹簧，
