@@ -113,7 +113,14 @@ public:
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ROV|MuJoCo|Control")
     float ThrusterMaxRatio = 0.5f;
 
-    /** 水面高度（MuJoCo 世界坐标，米）。ROV 到此高度以上禁止向上推力。 */
+    /**
+     * 水面高度，**单位是米（MuJoCo 模型单位）**。
+     *
+     * 已实测确认：MJCF 是米制（rov_body geom size=0.4/0.3/0.2，gravity=9.81，
+     * timestep=0.002），桥接输出到 UE 时才 ×100 转成厘米
+     * （MuJoCo xpos Z=3.00 → Pawn 世界 Z=300cm）。
+     * UE 场景水面在 Z=+800cm，对应这里 8.0。
+     */
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ROV|MuJoCo|Control")
     float WaterSurfaceZ = 8.0f;
 
@@ -147,7 +154,7 @@ public:
      * 质量 bug 修好后应改回 1.0。
      */
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ROV|MuJoCo|Fluid")
-    float BuoyancyScale = 3.2f;
+    float BuoyancyScale = 3.1923f;
 
     // ---------------------------- 洋流 ----------------------------
 
@@ -166,9 +173,17 @@ public:
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ROV|MuJoCo|Fluid")
     float AngularDampingCoeff = 6.5f;
 
-    /** 是否启用洋流（三层级联：Gauss-Markov + 分层 + 湍流）。 */
+    /**
+     * 是否启用洋流（三层级联：Gauss-Markov + 分层 + 湍流）。
+     *
+     * **默认关闭**：实现已完成，但实测开启后 ROV 会被推着漂走
+     * （67 秒内飘到 X=2291、Z=603，速度约 40 m/s），原因待查
+     * ——怀疑 Gauss-Markov 层在 Mu=0 时是纯随机游走，速度幅值会缓慢漂大，
+     * 而拖曳力 F=-k(V_robot - V_current) 又把 ROV 往这个速度上拽。
+     * 调好之前先关掉，保证场景稳定。
+     */
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ROV|MuJoCo|Current")
-    bool bEnableOceanCurrent = true;
+    bool bEnableOceanCurrent = false;
 
     /** 洋流平均流速（m/s）。 */
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ROV|MuJoCo|Current")

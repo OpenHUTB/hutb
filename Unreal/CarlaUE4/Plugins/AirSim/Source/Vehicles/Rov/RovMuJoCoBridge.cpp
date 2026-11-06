@@ -327,6 +327,39 @@ void URovMuJoCoBridge::ApplyControlForce()
             bEnableOceanCurrent ? TEXT("已启用") : TEXT("已关闭"),
             OceanCurrentMeanSpeed, OceanCurrent.Layers.Num(), OceanCurrent.TurbIntensity);
 
+        // 单位诊断：确认 MuJoCo 模型到底是米还是厘米
+        {
+            int32 RovGeomId = -1;
+            for (int32 g = 0; g < Model->ngeom; ++g) {
+                const char* GName = (Model->names && Model->name_geomadr[g] >= 0)
+                    ? (Model->names + Model->name_geomadr[g]) : "";
+                if (FString(ANSI_TO_TCHAR(GName)).EndsWith(TEXT("rov_body"))) {
+                    RovGeomId = g;
+                    break;
+                }
+            }
+            UE_LOG(LogRovBridge, Log,
+                TEXT("[RovMuJoCoBridge][单位] gravity=%.3f  timestep=%.5f  stat.extent=%.3f  "
+                     "模型包围盒中心=(%.2f,%.2f,%.2f)"),
+                Model->opt.gravity[2], Model->opt.timestep, Model->stat.extent,
+                Model->stat.center[0], Model->stat.center[1], Model->stat.center[2]);
+            if (RovGeomId >= 0) {
+                UE_LOG(LogRovBridge, Log,
+                    TEXT("[RovMuJoCoBridge][单位] rov_body geom size=(%.4f, %.4f, %.4f)  "
+                         "（若≈0.4/0.3/0.2 则模型是米；若≈40/30/20 则是厘米）"),
+                    Model->geom_size[3 * RovGeomId + 0],
+                    Model->geom_size[3 * RovGeomId + 1],
+                    Model->geom_size[3 * RovGeomId + 2]);
+            }
+            if (AActor* Owner = GetOwner()) {
+                UE_LOG(LogRovBridge, Log,
+                    TEXT("[RovMuJoCoBridge][单位] Pawn 世界坐标=(%.2f, %.2f, %.2f) cm  "
+                         "MuJoCo xpos=(%.2f, %.2f, %.2f)"),
+                    Owner->GetActorLocation().X, Owner->GetActorLocation().Y, Owner->GetActorLocation().Z,
+                    Data->xpos[3 * BodyId + 0], Data->xpos[3 * BodyId + 1], Data->xpos[3 * BodyId + 2]);
+            }
+        }
+
         // 受力诊断：三个数摆出来，一眼能看出浮沉
         const double Weight = TotalMass * Gravity;
         const double Buoyancy = FluidDensity * Gravity * DisplacedVolume * BuoyancyScale;
@@ -352,6 +385,51 @@ void URovMuJoCoBridge::ApplyControlForce()
     if (PC->IsInputKeyDown(EKeys::Q) || PC->IsInputKeyDown(EKeys::PageUp)) { LocalZ += 1.0; }
     if (PC->IsInputKeyDown(EKeys::E) || PC->IsInputKeyDown(EKeys::PageDown)) { LocalZ -= 1.0; }
 
+    // 按键诊断：状态一变就记一条（不节流），用来确认输入到底有没有进到游戏
+    {
+        // 同时读两条通道：PlayerController 和 PlayerInput，任一为真即算按下。
+        // 有些 build 里 IsInputKeyDown 取不到状态，PlayerInput 可以兜底。
+        auto IsDown = [PC](const FKey& Key) -> bool {
+            bool b = PC->IsInputKeyDown(Key);
+            if (!b && PC->PlayerInput) {
+                b = PC->PlayerInput->IsPressed(Key);
+            }
+            return b;
+        };
+
+        static int32 PrevKeyMask = 0;
+        const int32 KeyMask =
+            (IsDown(EKeys::W) ? 1 : 0) |
+            (IsDown(EKeys::S) ? 2 : 0) |
+            (IsDown(EKeys::A) ? 4 : 0) |
+            (IsDown(EKeys::D) ? 8 : 0) |
+            (IsDown(EKeys::Q) ? 16 : 0) |
+            (IsDown(EKeys::E) ? 32 : 0) |
+            (IsDown(EKeys::Z) ? 64 : 0);
+        if (KeyMask != PrevKeyMask) {
+            UE_LOG(LogRovBridge, Log,
+                TEXT("[RovMuJoCoBridge][按键] 状态 %d -> %d  (W=1 S=2 A=4 D=8 Q=16 E=32 Z=64)"),
+                PrevKeyMask, KeyMask);
+            PrevKeyMask = KeyMask;
+        }
+
+        // 每秒打印一次焦点状态，确认游戏窗口到底有没有拿到输入焦点
+        static int32 FocusLogTick = -1;
+        const double NowSec = GetWorld() ? GetWorld()->GetTimeSeconds() : 0.0;
+        const int32 CurTick = (int32)NowSec;
+        if (CurTick != FocusLogTick) {
+            FocusLogTick = CurTick;
+            UE_LOG(LogRovBridge, Log,
+                TEXT("[RovMuJoCoBridge][焦点] IsLocalController=%d  PlayerInput=%s  "
+                     "bShowMouseCursor=%d  bIgnoreInput=%d  按键掩码=%d"),
+                PC->IsLocalController() ? 1 : 0,
+                PC->PlayerInput ? TEXT("valid") : TEXT("NULL"),
+                PC->bShowMouseCursor ? 1 : 0,
+                PC->IsInputKeyDown(EKeys::LeftMouseButton) ? 1 : 0,
+                KeyMask);
+        }
+    }
+
     // 命令行自检：-RovThrustTest 会在启动后持续上浮 2 秒并打印 Z
     static const bool bAutoThrustTest =
         FParse::Param(FCommandLine::Get(), TEXT("RovThrustTest"));
@@ -365,7 +443,7 @@ void URovMuJoCoBridge::ApplyControlForce()
             UE_LOG(LogRovBridge, Log,
                 TEXT("[RovMuJoCoBridge][自检] 开始：上浮 2 秒，起始 Z=%.3f"), Data->xpos[3 * BodyId + 2]);
         }
-        if (Now - AutoTestStartTime < 2.0) {
+        if (Now - AutoTestStartTime < 10.0) {
             LocalZ = 1.0;
         }
         const int32 Tick = (int32)((Now - AutoTestStartTime) * 2.0);
