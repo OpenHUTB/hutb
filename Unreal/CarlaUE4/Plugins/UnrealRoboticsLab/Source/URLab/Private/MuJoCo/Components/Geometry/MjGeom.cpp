@@ -554,6 +554,7 @@ void UMjGeom::RegisterToSpec(FMujocoSpecWrapper& Wrapper, mjsBody* ParentBody)
     MjName = UniqueName;
 
     TArray<FString> ExtraMeshNames;
+    UStaticMeshComponent* MeshSourceSMC = nullptr;
 
     if (Type == EMjGeomType::Mesh)
     {
@@ -610,6 +611,7 @@ void UMjGeom::RegisterToSpec(FMujocoSpecWrapper& Wrapper, mjsBody* ParentBody)
             {
                 if (UStaticMeshComponent* SMC = Cast<UStaticMeshComponent>(Child))
                 {
+                    MeshSourceSMC = SMC;
                     TArray<FString> AssetNames = Wrapper.PrepareMeshForMuJoCo(SMC, bComplexMeshRequired);
                     if (AssetNames.Num() > 0)
                     {
@@ -618,6 +620,28 @@ void UMjGeom::RegisterToSpec(FMujocoSpecWrapper& Wrapper, mjsBody* ParentBody)
                         break;
                     }
                 }
+            }
+        }
+    }
+
+    // OpenHUTB 追加（2026-11-07）：打包版没有网格 CPU 数据时，PrepareMeshForMuJoCo 会跳过导出，
+    // MeshName 为空。此时若仍按 Mesh 类型提交，mj_compile 会因 meshname 缺失而失败。
+    // 退化成一个包围盒 geom：视觉仍由 UE 渲染真实网格，物理用盒子近似，保证打包版可运行。
+    if (Type == EMjGeomType::Mesh && MeshName.IsEmpty() && MeshSourceSMC)
+    {
+        if (UStaticMesh* SourceMesh = MeshSourceSMC->GetStaticMesh())
+        {
+            const FVector ExtentM = SourceMesh->GetBoundingBox().GetExtent() * 0.01; // cm -> m
+            if (ExtentM.GetMin() > 1e-4 && ExtentM.GetMax() < 100.0)
+            {
+                Type = EMjGeomType::Box;
+                bOverride_Type = true;
+                Size = ExtentM;
+                bOverride_Size = true;
+                SizeParamsCount = 3;
+                UE_LOG(LogURLab, Warning,
+                    TEXT("[MjGeom] '%s' 打包版无网格 CPU 数据，退化为包围盒 (%.3f, %.3f, %.3f) m"),
+                    *GetName(), ExtentM.X, ExtentM.Y, ExtentM.Z);
             }
         }
     }

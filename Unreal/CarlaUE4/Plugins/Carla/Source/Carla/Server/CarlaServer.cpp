@@ -3839,20 +3839,20 @@ FDataMultiStream FCarlaServer::Start(uint16_t RPCPort, uint16_t StreamingPort, u
 
 void FCarlaServer::NotifyBeginEpisode(UCarlaEpisode &Episode)
 {
-  check(Pimpl != nullptr);
+  if (Pimpl == nullptr) return;  // OpenHUTB：端口绑定失败后的降级路径
   UE_LOG(LogCarlaServer, Log, TEXT("New episode '%s' started"), *Episode.GetMapName());
   Pimpl->Episode = &Episode;
 }
 
 void FCarlaServer::NotifyEndEpisode()
 {
-  check(Pimpl != nullptr);
+  if (Pimpl == nullptr) return;  // OpenHUTB：降级路径
   Pimpl->NotifyEndEpisode();
 }
 
 void FCarlaServer::AsyncRun(uint32 NumberOfWorkerThreads)
 {
-  check(Pimpl != nullptr);
+  if (Pimpl == nullptr) return;  // OpenHUTB：降级路径
   /// @todo Define better the number of threads each server gets.
   int ThreadsPerServer = std::max(2u, NumberOfWorkerThreads / 3u);
   int32_t RPCThreads;
@@ -3884,6 +3884,7 @@ void FCarlaServer::AsyncRun(uint32 NumberOfWorkerThreads)
 
 void FCarlaServer::RunSome(uint32 Milliseconds)
 {
+  if (Pimpl == nullptr) return;  // OpenHUTB：降级路径
   TRACE_CPUPROFILER_EVENT_SCOPE_STR(__FUNCTION__);
   Pimpl->Server.SyncRunFor(carla::time_duration::milliseconds(Milliseconds));
 }
@@ -3911,6 +3912,7 @@ double FCarlaServer::GetTickDeltaSeconds() {
 
 void FCarlaServer::Tick()
 {
+  if (Pimpl == nullptr) return;  // OpenHUTB：降级路径
   (void)Pimpl->call_tick(Pimpl->SynchronizationClientId(), 
                          Pimpl->ServerSynchronizationParticipantId,
                          carla::rpc::SynchronizationTickMode::TICK_ONLY_IF_SYNC_ENABLED);
@@ -3932,7 +3934,7 @@ void FCarlaServer::Stop()
 
 FDataStream FCarlaServer::OpenStream() const
 {
-  check(Pimpl != nullptr);
+  if (Pimpl == nullptr) return FDataStream();  // OpenHUTB：降级路径
   return Pimpl->StreamingServer.MakeStream();
 }
 

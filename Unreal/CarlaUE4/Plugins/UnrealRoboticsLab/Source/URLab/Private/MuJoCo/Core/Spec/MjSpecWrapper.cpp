@@ -313,6 +313,29 @@ TArray<FString> FMujocoSpecWrapper::PrepareMeshForMuJoCo(UStaticMeshComponent* S
     const uint32 NumVerts = PositionBuffer.GetNumVertices();
     const uint32 NumIndices = IndexBuffer.GetNumIndices();
 
+    // OpenHUTB 修复（2026-11-07）：打包版（cooked）会把 IndexStorage 的 CPU 副本剥离，
+    // 但 CachedNumIndices 仍保留真实计数。此时调用 GetIndex() 会触发
+    //   Assertion failed: At >= 0 && At < (uint32)IndexStorage.Num()
+    //   [RawIndexBuffer.h:177]
+    // 在 Shipping 里表现为启动 60~70 秒后 Fatal error（退出码 3）直接退出。
+    // 用 GetIndexDataSize()（CPU 字节数）判断数据是否真的可用。
+    if (IndexBuffer.GetIndexDataSize() <= 0)
+    {
+        UE_LOG(LogURLabWrapper, Warning,
+            TEXT("PrepareMeshForMuJoCo: '%s' 的索引缓冲没有 CPU 副本（cooked 包常见），跳过网格导出"),
+            *BaseAssetName);
+        return ResultNames;
+    }
+    const uint32 IndexStride = IndexBuffer.Is32Bit() ? 4u : 2u;
+    if (NumIndices == 0 ||
+        (uint64)NumIndices * (uint64)IndexStride > (uint64)IndexBuffer.GetIndexDataSize())
+    {
+        UE_LOG(LogURLabWrapper, Warning,
+            TEXT("PrepareMeshForMuJoCo: '%s' 索引数据不完整（count=%u, stride=%u, bytes=%d），跳过网格导出"),
+            *BaseAssetName, NumIndices, IndexStride, IndexBuffer.GetIndexDataSize());
+        return ResultNames;
+    }
+
     if (NumVerts == 0 || NumIndices < 3)
     {
         UE_LOG(LogURLabWrapper, Warning,
