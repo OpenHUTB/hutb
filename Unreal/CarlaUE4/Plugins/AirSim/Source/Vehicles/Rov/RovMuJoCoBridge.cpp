@@ -840,8 +840,38 @@ void URovMuJoCoBridge::ApplyControlForce()
             const double W = (double)AttitudeBandwidth;
             const double Zeta = (double)AttitudeZeta;
             const double KiF = (double)AttitudeIntegralFactor;
+
+            // body_inertia 是**主轴系**下的主值，body_iquat 给出主轴相对机体的旋转。
+            // 直接用 body_inertia[3*BodyId+Axis] 当 X/Y/Z 惯量是错的（除非 iquat 是单位四元数）。
+            // 正确做法：把机体单位轴转到主轴系，算 vᵀ·diag(I)·v 得到该轴的等效惯量。
+            const mjtNum* IQ = &Model->body_iquat[4 * BodyId];
+            double Iaxis[3] = { 0.0, 0.0, 0.0 };
+            for (int32 a = 0; a < 3; ++a) {
+                double vx = (a == 0) ? 1.0 : 0.0;
+                double vy = (a == 1) ? 1.0 : 0.0;
+                double vz = (a == 2) ? 1.0 : 0.0;
+                double px = 0.0, py = 0.0, pz = 0.0;
+                RotByQuat(IQ[0], -IQ[1], -IQ[2], -IQ[3], vx, vy, vz, px, py, pz);
+                Iaxis[a] = Model->body_inertia[3 * BodyId + 0] * px * px
+                         + Model->body_inertia[3 * BodyId + 1] * py * py
+                         + Model->body_inertia[3 * BodyId + 2] * pz * pz;
+            }
+
+            static bool bLoggedIquat = false;
+            if (!bLoggedIquat) {
+                bLoggedIquat = true;
+                UE_LOG(LogRovBridge, Log,
+                    TEXT("[RovMuJoCoBridge][惯量诊断] body_iquat=(%.4f, %.4f, %.4f, %.4f)  "
+                         "主轴主值=(%.3f, %.3f, %.3f)  机体轴等效惯量=(%.3f, %.3f, %.3f)"),
+                    IQ[0], IQ[1], IQ[2], IQ[3],
+                    Model->body_inertia[3 * BodyId + 0],
+                    Model->body_inertia[3 * BodyId + 1],
+                    Model->body_inertia[3 * BodyId + 2],
+                    Iaxis[0], Iaxis[1], Iaxis[2]);
+            }
+
             for (int32 Axis = 0; Axis < 3; ++Axis) {
-                const double I = Model->body_inertia[3 * BodyId + Axis];
+                const double I = Iaxis[Axis];
                 const double Kp = I * W * W;
                 const double Kd = 2.0 * I * Zeta * W;
                 const double Ki = I * W * W * W * KiF;
