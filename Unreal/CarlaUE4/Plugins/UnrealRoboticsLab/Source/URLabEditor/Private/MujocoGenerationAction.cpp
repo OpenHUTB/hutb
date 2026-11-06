@@ -87,6 +87,14 @@ void UMujocoGenerationAction::GenerateForBlueprint(UBlueprint* BP, const FString
     // 可选：MuJoCo XML 基本校验（如果追求完全纯净，可以移除，但保留也无妨）
     mjModel* M = nullptr;
     char Error[1000];
+    // 这里就是一个路径为什么还要加载？
+    // 因为 MuJoCo 的 mj_loadXML 会对 XML 做完整的解析和验证，确保它符合 MuJoCo 的规范。
+    // 即使我们后续会自己解析 XML 并生成 Unreal 组件，提前验证可以避免导入无效或错误的 XML 文件，从而节省调试时间。
+    // 1.读取文件、解析 XML 树
+    // 2.按 MuJoCo 的规则编译：展开 <default> 的继承、检查属性名是否合法、
+    // 检查引用（比如 joint 引用的 body 存不存在）、构建运动学树、加载 <asset> 里引用的 mesh/texture 等
+    // 3.成功返回一个 mjModel*（内存里的运行时模型）；失败返回 nullptr，
+    // 并把可读的错误信息写进你传的 Error[1000] 缓冲区
     M = mj_loadXML(TCHAR_TO_UTF8(*XMLPath), nullptr, Error, 1000);  // 用 mj_loadXML 尝试加载 XML
     if (!M) {
         UE_LOG(LogURLabEditor, Error, TEXT("MuJoCo Load/Validation Error: %s"), UTF8_TO_TCHAR(Error));
@@ -105,6 +113,8 @@ void UMujocoGenerationAction::GenerateForBlueprintXml(UBlueprint* BP, const FStr
 {
     if (!BP || XMLPath.IsEmpty()) return;
 
+    // FXmlFile XmlFile(XMLPath) —— 构造时读取磁盘上的 XML 文件并解析，在内存里建好一棵树（DOM）；
+    // 也就是说XmlFile是一棵树
     FXmlFile XmlFile(XMLPath);
     if (!XmlFile.IsValid())
     {
@@ -140,15 +150,24 @@ void UMujocoGenerationAction::GenerateForBlueprintXml(UBlueprint* BP, const FStr
     TMap<FString, FVector> MeshScales;  // 35个
     TMap<FString, FString> TextureAssets;  // 纹理 1 个：g1\groundplane
     TMap<FString, FMuJoCoMaterialData> MaterialData;  // 材质 1 个：groundplane
-    ParseAssetsRecursive(Root, XMLDir, MeshAssets, MeshScales, TextureAssets, MaterialData);  // 递归遍历 MuJoCo XML 中和资源相关的节点，把 mesh（网格资产35个） / texture（可以引用材质） / material（反光等） 等资产信息解析出来，并整理成映射表（键、值），供后续导入 Unreal 使用
+    // 递归遍历 MuJoCo XML 中和资源相关的节点，把 mesh（网格资产35个） / texture（可以引用材质） /
+    // material（反光等） 等资产信息解析出来，并整理成映射表（键、值），供后续导入 Unreal 使用
+    ParseAssetsRecursive(Root, XMLDir, MeshAssets, MeshScales, TextureAssets, MaterialData);  
 
     // 1b. 导入纹理
     TMap<FString, UTexture2D*> ImportedTextures;
+    // 1.for ( ... : TextureAssets):遍历 TextureAssets 这个容器（它是 TMap<FString, FString>）
+    // 2.TexPair:每次循环拿到的一个元素，也就是一对“键-值”
+    // 3.auto:让编译器自动推断类型（这里推断为 TPair<FString, FString>）
+    // 4.const:只读，循环里不允许修改它
+    // 5.&:引用——不复制，直接引用容器里的那一对，省内存
     for (const auto& TexPair : TextureAssets)
     {
         const FString& TexName = TexPair.Key;
         const FString& TexPath = TexPair.Value;
 
+        // 去 TexPath 这个磁盘位置读图片-> 在 AssetImportPath 这个 UE 目录里，新建一个纹理资产 -> 
+        // 返回新资产UTexture2D*的指针
         UTexture2D* ImportedTex = ImportSingleTexture(TexPath, AssetImportPath);
         if (ImportedTex)
         {
@@ -194,12 +213,13 @@ void UMujocoGenerationAction::GenerateForBlueprintXml(UBlueprint* BP, const FStr
     USCS_Node* WorldBodyNode = nullptr;
     for (const FXmlNode* Child : Root->GetChildrenNodes())
     {
-         FString Tag = Child->GetTag();
+         FString Tag = Child->GetTag(); // 取出元素的标签名
          if (Tag.Equals(TEXT("worldbody")))
          {
              // 仅创建一次 worldbody 节点 — 将后续的 <worldbody> 部分合并到其中
              if (!WorldBodyNode)
              {
+                 // 创建组件节点 → 配置 → 挂到蓝图
                  WorldBodyNode = BP->SimpleConstructionScript->CreateNode(UMjWorldBody::StaticClass(), TEXT("worldbody"));
                  WorldBodyNode->SetVariableName(TEXT("worldbody"));
                  BP->SimpleConstructionScript->AddNode(WorldBodyNode);
