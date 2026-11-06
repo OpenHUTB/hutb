@@ -147,9 +147,15 @@ IMPLEMENT_MODULE(FCarlaModule, Carla)
 namespace carla {
 
   void throw_exception(const std::exception &e) {
-    UE_LOG(LogCarla, Fatal, TEXT("Exception thrown: %s"), UTF8_TO_TCHAR(e.what()));
-    // It should never reach this part.
-    std::terminate();
+    // OpenHUTB 修改（2026-11-06）：
+    // 原来是 UE_LOG(Fatal) + std::terminate()，调用方完全没有捕获机会。
+    // 实测后果：本机已有一个 Carla 实例（编辑器或另一个打包版）占着
+    // 2000/2001/2002 时，打包版启动 40~70 秒后直接崩掉，界面上只显示
+    // 一个 "Fatal error" 对话框，排查成本极高。
+    //
+    // 改为记录错误后正常抛出，让上层（FCarlaServer::Start）可以捕获并降级。
+    UE_LOG(LogCarla, Error, TEXT("Exception thrown: %s"), UTF8_TO_TCHAR(e.what()));
+    throw e;
   }
 
 } // namespace carla
