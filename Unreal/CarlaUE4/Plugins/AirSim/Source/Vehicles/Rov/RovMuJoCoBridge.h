@@ -291,10 +291,13 @@ private:
     std::atomic<double> CachedForceY{0.0};
     std::atomic<double> CachedForceZ{0.0};
 
-    /** 期望力矩（N·m），机体系。 */
+    /** 期望力矩（N·m），**世界系**（mj_applyFT 的入参就是世界系）。 */
     std::atomic<double> CachedTorqueX{0.0};
     std::atomic<double> CachedTorqueY{0.0};
     std::atomic<double> CachedTorqueZ{0.0};
+
+    /** 浮力大小（N）。单独存，因为要作用在浮心而不是质心。 */
+    std::atomic<double> CachedBuoyancy{0.0};
 
     std::atomic<int32> CachedBodyId{-1};
 

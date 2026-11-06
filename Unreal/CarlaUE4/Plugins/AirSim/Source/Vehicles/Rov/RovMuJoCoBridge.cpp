@@ -18,6 +18,24 @@
 
 DEFINE_LOG_CATEGORY_STATIC(LogRovBridge, Log, All);
 
+namespace {
+/** 用 MuJoCo 四元数 (w,x,y,z) 旋转向量：v' = v + 2*(w*c + q×c)，c = q×v */
+void RotByQuat(double qw, double qx, double qy, double qz,
+               double vx, double vy, double vz,
+               double& ox, double& oy, double& oz)
+{
+    const double cx = qy * vz - qz * vy;
+    const double cy = qz * vx - qx * vz;
+    const double cz = qx * vy - qy * vx;
+    const double dx = qy * cz - qz * cy;
+    const double dy = qz * cx - qx * cz;
+    const double dz = qx * cy - qy * cx;
+    ox = vx + 2.0 * (qw * cx + dx);
+    oy = vy + 2.0 * (qw * cy + dy);
+    oz = vz + 2.0 * (qw * cz + dz);
+}
+}
+
 std::function<bool(FVector&, FQuat&)> URovMuJoCoBridge::ExternalPoseProvider;
 
 URovMuJoCoBridge::URovMuJoCoBridge()
@@ -740,51 +758,14 @@ void URovMuJoCoBridge::ApplyControlForce()
 
     const double Fx = ThrusterX + CurrentX;
     const double Fy = ThrusterY + CurrentY;
-    const double Fz = ThrusterZ + Buoyancy + CurrentZ;
+    const double Fz = ThrusterZ + CurrentZ;   // 浮力单独走 mj_applyFT（作用在浮心）
 
-    // 【8】浮力的回复力矩（被动稳定）—— 关键物理项。
-    //
-    // 浮力不是作用在重心，而是作用在浮心 CB（机体系 +Z 方向，高于重心 BG）。
-    // 艇体倾斜时 r_CB 跟着倾斜，与竖直向上的浮力形成力偶：
-    //     τ = r_CB(world) × F_buoy(world)
-    // 这正是真实 ROV 撞歪后能自己回正的机制，不需要任何控制器。
-    //
-    // 力矩最终要写进 qfrc_applied 的后三维，而那里是**机体系**，
-    // 所以算出世界系力矩后要用 q⁻¹ 转回机体系。
-    double BuoyTorqueX = 0.0, BuoyTorqueY = 0.0, BuoyTorqueZ = 0.0;
-    if (Buoyancy > 0.0 && FMath::Abs(BuoyancyArm) > KINDA_SMALL_NUMBER) {
-        // 四元数旋转：v' = v + 2*(w*c + q_vec×c)，其中 c = q_vec × v
-        auto RotByQuat = [](double qw, double qx, double qy, double qz,
-                            double vx, double vy, double vz,
-                            double& ox, double& oy, double& oz) {
-            const double cx = qy * vz - qz * vy;
-            const double cy = qz * vx - qx * vz;
-            const double cz = qx * vy - qy * vx;
-            const double dx = qy * cz - qz * cy;
-            const double dy = qz * cx - qx * cz;
-            const double dz = qx * cy - qy * cx;
-            ox = vx + 2.0 * (qw * cx + dx);
-            oy = vy + 2.0 * (qw * cy + dy);
-            oz = vz + 2.0 * (qw * cz + dz);
-        };
-
-        // 机体系 r_CB = (0, 0, BG) → 世界系
-        double RcbX = 0.0, RcbY = 0.0, RcbZ = 0.0;
-        RotByQuat(Qw, Qx, Qy, Qz, 0.0, 0.0, (double)BuoyancyArm, RcbX, RcbY, RcbZ);
-
-        // τ_world = r × F，F = (0, 0, Buoyancy)
-        const double Twx = RcbY * Buoyancy;
-        const double Twy = -RcbX * Buoyancy;
-        const double Twz = 0.0;
-
-        // 世界系 → 机体系（用共轭四元数）
-        RotByQuat(Qw, -Qx, -Qy, -Qz, Twx, Twy, Twz, BuoyTorqueX, BuoyTorqueY, BuoyTorqueZ);
-    }
+    // 【8】浮力的回复力矩由 mj_applyFT 在浮心处施加时自动产生，这里不再手算。
 
     // 【9】附加角阻尼：以**力矩**形式施加（τ = -Kd·ω，机体系）。
     // MuJoCo 椭球流体模型的旋转阻力偏弱，真实 ROV 的导流罩/鳍会额外提供阻力。
     // Kd = AngularDampingCoeff × 平均主惯量，保持和之前"每秒衰减 1/s"的语义一致。
-    double TorqueX = BuoyTorqueX, TorqueY = BuoyTorqueY, TorqueZ = BuoyTorqueZ;
+    double TorqueX = 0.0, TorqueY = 0.0, TorqueZ = 0.0;
     if (AngularDampingCoeff > 0.0f && Model->body_jntnum[BodyId] >= 1) {
         const int32 DampJnt = Model->body_jntadr[BodyId];
         if (Model->jnt_type[DampJnt] == mjJNT_FREE) {
@@ -898,9 +879,16 @@ void URovMuJoCoBridge::ApplyControlForce()
         }
     }
 
-    CachedTorqueX.store(TorqueX);
-    CachedTorqueY.store(TorqueY);
-    CachedTorqueZ.store(TorqueZ);
+    // 姿态控制器和角阻尼给出的力矩是**机体系**的，而 mj_applyFT 要世界系，
+    // 在这里统一转过去。之前直接把机体系力矩写进 qfrc_applied 后三维，
+    // 实测轴系对不上（给"轴 0"却主要绕 Y 转），这是本次重构要解决的根因。
+    double TWx = 0.0, TWy = 0.0, TWz = 0.0;
+    RotByQuat(Qw, Qx, Qy, Qz, TorqueX, TorqueY, TorqueZ, TWx, TWy, TWz);
+
+    CachedTorqueX.store(TWx);
+    CachedTorqueY.store(TWy);
+    CachedTorqueZ.store(TWz);
+    CachedBuoyancy.store(Buoyancy);
 
     if (!bControlCallbackRegistered) {
         TWeakObjectPtr<URovMuJoCoBridge> WeakThis(this);
@@ -931,28 +919,22 @@ void URovMuJoCoBridge::ApplyControlForce()
 void URovMuJoCoBridge::ApplyCachedForce(mjModel_* Model, mjData_* Data)
 {
     const int32 BodyId = CachedBodyId.load();
-    if (BodyId < 0 || !Model || !Data) {
-        return;
-    }
-    if (BodyId >= Model->nbody) {
+    if (BodyId < 0 || !Model || !Data || BodyId >= Model->nbody) {
         return;
     }
 
     // =========================================================================
-    // 通道：qfrc_applied（广义力），不是 xfrc_applied，也不是直接改 qvel。
+    // 通道：mj_applyFT 直接累加进 qfrc_applied。
     //
-    // 为什么不用 xfrc_applied：
-    //   它的元素顺序有两套说法 —— MuJoCo 官方文档是 [力(3), 力矩(3)]，
-    //   而 URLab 的 MjBind.h:574 注释写成 [力矩(3), 力(3)]。两边矛盾，
-    //   一旦写反，命令"向前"会变成"俯仰"，极难排查。
+    // 为什么不用其它两种写法：
+    //   - xfrc_applied：元素顺序有两套说法（官方文档力在前，URLab 的
+    //     MjBind.h:574 注释写力矩在前），写反会让"向前"变成"俯仰"。
+    //   - 直接写 qfrc_applied 后三维：实测轴系对不上 —— 只给"轴 0"
+    //     100 N·m，结果 omega 主要绕 Y 转（-1.03 对 -0.24）。
+    //     姿态控制器的力矩因此打到了错误轴上，积分也在错误轴上卷。
     //
-    // 为什么不用直接改 qvel：
-    //   赋值 qvel 等于瞬间冲量，绕过求解器、接触约束和饱和，
-    //   这样"调通"的手感不可迁移，也无法与碰撞正确耦合。
-    //
-    // qfrc_applied 的布局是明确的（nv 维广义力）：
-    //   前 3 维 = 世界系力，后 3 维 = 关节系（自由关节即机体系）力矩。
-    //   正好对应我们"世界系推力 + 机体系力矩"的需求，零坐标转换。
+    // mj_applyFT 把 force / torque / point 分开传参、**全部世界系**，
+    // 自动补 r×F，没有布局和轴系歧义，还能让浮力正确地作用在浮心。
     // =========================================================================
     if (Model->body_jntnum[BodyId] < 1) {
         return;
@@ -961,25 +943,63 @@ void URovMuJoCoBridge::ApplyCachedForce(mjModel_* Model, mjData_* Data)
     if (Model->jnt_type[JntId] != mjJNT_FREE) {
         return;
     }
-
     const int32 DofAdr = Model->jnt_dofadr[JntId];
 
-    Data->qfrc_applied[DofAdr + 0] = CachedForceX.load();
-    Data->qfrc_applied[DofAdr + 1] = CachedForceY.load();
-    Data->qfrc_applied[DofAdr + 2] = CachedForceZ.load();
-    Data->qfrc_applied[DofAdr + 3] = CachedTorqueX.load();
-    Data->qfrc_applied[DofAdr + 4] = CachedTorqueY.load();
-    Data->qfrc_applied[DofAdr + 5] = CachedTorqueZ.load();
+    // mj_applyFT 是累加语义，先清零本 body 的 6 维广义力
+    for (int32 k = 0; k < 6; ++k) {
+        Data->qfrc_applied[DofAdr + k] = 0.0;
+    }
+
+    const mjtNum CG[3] = {
+        Data->xipos[3 * BodyId + 0],
+        Data->xipos[3 * BodyId + 1],
+        Data->xipos[3 * BodyId + 2]
+    };
+    const mjtNum ZeroT[3] = { 0.0, 0.0, 0.0 };
+    const mjtNum ZeroF[3] = { 0.0, 0.0, 0.0 };
+
+    // 【1】推进器推力 + 洋流拖曳：作用在质心
+    mjtNum F1[3] = {
+        (mjtNum)CachedForceX.load(),
+        (mjtNum)CachedForceY.load(),
+        (mjtNum)CachedForceZ.load()
+    };
+    mj_applyFT(Model, Data, F1, ZeroT, CG, BodyId, Data->qfrc_applied);
+
+    // 【2】浮力：作用在**浮心**（质心 + R·(0,0,BG)），自动产生回复力矩
+    const double Buoy = CachedBuoyancy.load();
+    if (Buoy > 0.0) {
+        double Rx = 0.0, Ry = 0.0, Rz = 0.0;
+        RotByQuat(Data->xquat[4 * BodyId + 0], Data->xquat[4 * BodyId + 1],
+                  Data->xquat[4 * BodyId + 2], Data->xquat[4 * BodyId + 3],
+                  0.0, 0.0, (double)BuoyancyArm, Rx, Ry, Rz);
+        mjtNum F2[3] = { 0.0, 0.0, (mjtNum)Buoy };
+        mjtNum CBw[3] = {
+            CG[0] + (mjtNum)Rx,
+            CG[1] + (mjtNum)Ry,
+            CG[2] + (mjtNum)Rz
+        };
+        mj_applyFT(Model, Data, F2, ZeroT, CBw, BodyId, Data->qfrc_applied);
+    }
+
+    // 【3】姿态控制器 + 角阻尼：纯力矩，作用点取质心
+    const double Tx = CachedTorqueX.load();
+    const double Ty = CachedTorqueY.load();
+    const double Tz = CachedTorqueZ.load();
+    if (Tx != 0.0 || Ty != 0.0 || Tz != 0.0) {
+        mjtNum T3[3] = { (mjtNum)Tx, (mjtNum)Ty, (mjtNum)Tz };
+        mj_applyFT(Model, Data, ZeroF, T3, CG, BodyId, Data->qfrc_applied);
+    }
 
     // 诊断
     static int32 ApplyLogCounter = 0;
     if (++ApplyLogCounter % 500 == 0) {
         UE_LOG(LogRovBridge, Log,
-            TEXT("[RovMuJoCoBridge][通道] qfrc_applied dof=%d  F=(%.1f,%.1f,%.1f) N  "
-                 "T=(%.2f,%.2f,%.2f) N·m  Z=%.3f"),
+            TEXT("[RovMuJoCoBridge][通道] mj_applyFT dof=%d  F=(%.1f,%.1f,%.1f) N  "
+                 "浮力=%.1f N  T=(%.1f,%.1f,%.1f) N·m  Z=%.3f"),
             DofAdr,
             Data->qfrc_applied[DofAdr + 0], Data->qfrc_applied[DofAdr + 1], Data->qfrc_applied[DofAdr + 2],
-            Data->qfrc_applied[DofAdr + 3], Data->qfrc_applied[DofAdr + 4], Data->qfrc_applied[DofAdr + 5],
+            Buoy, Tx, Ty, Tz,
             Data->xpos[3 * BodyId + 2]);
     }
 }
