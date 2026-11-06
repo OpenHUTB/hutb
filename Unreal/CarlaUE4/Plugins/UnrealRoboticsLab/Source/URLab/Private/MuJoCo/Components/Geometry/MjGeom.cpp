@@ -625,25 +625,51 @@ void UMjGeom::RegisterToSpec(FMujocoSpecWrapper& Wrapper, mjsBody* ParentBody)
     }
 
     // OpenHUTB 追加（2026-11-07）：打包版没有网格 CPU 数据时，PrepareMeshForMuJoCo 会跳过导出，
-    // MeshName 为空。此时若仍按 Mesh 类型提交，mj_compile 会因 meshname 缺失而失败。
-    // 退化成一个包围盒 geom：视觉仍由 UE 渲染真实网格，物理用盒子近似，保证打包版可运行。
-    if (Type == EMjGeomType::Mesh && MeshName.IsEmpty() && MeshSourceSMC)
+    // MeshName 可能为空、也可能仍是 XML 里的名字但对应 mesh 从未注册进 spec。
+    // 只要 spec 里找不到这个 mesh，就退化成一个包围盒 geom：
+    // 视觉仍由 UE 渲染真实网格，物理用盒子近似，保证打包版 mj_compile 不失败。
+    const bool bMeshRegistered = !MeshName.IsEmpty() &&
+        (mjs_findElement(Wrapper.Spec, mjOBJ_MESH, TCHAR_TO_UTF8(*MeshName)) != nullptr);
+    if (Type == EMjGeomType::Mesh && !bMeshRegistered)
     {
-        if (UStaticMesh* SourceMesh = MeshSourceSMC->GetStaticMesh())
+        if (!MeshSourceSMC)
         {
-            const FVector ExtentM = SourceMesh->GetBoundingBox().GetExtent() * 0.01; // cm -> m
-            if (ExtentM.GetMin() > 1e-4 && ExtentM.GetMax() < 100.0)
+            TArray<USceneComponent*> FallbackChildren;
+            GetChildrenComponents(true, FallbackChildren);
+            for (USceneComponent* Child : FallbackChildren)
             {
-                Type = EMjGeomType::Box;
-                bOverride_Type = true;
-                Size = ExtentM;
-                bOverride_Size = true;
-                SizeParamsCount = 3;
-                UE_LOG(LogURLab, Warning,
-                    TEXT("[MjGeom] '%s' 打包版无网格 CPU 数据，退化为包围盒 (%.3f, %.3f, %.3f) m"),
-                    *GetName(), ExtentM.X, ExtentM.Y, ExtentM.Z);
+                if (UStaticMeshComponent* SMC = Cast<UStaticMeshComponent>(Child))
+                {
+                    MeshSourceSMC = SMC;
+                    break;
+                }
             }
         }
+
+        FVector ExtentM(0.01, 0.01, 0.01);
+        bool bHasExtent = false;
+        if (MeshSourceSMC)
+        {
+            if (UStaticMesh* SourceMesh = MeshSourceSMC->GetStaticMesh())
+            {
+                const FVector LocalExtentM = SourceMesh->GetBoundingBox().GetExtent() * 0.01; // cm -> m
+                if (LocalExtentM.GetMin() > 1e-4 && LocalExtentM.GetMax() < 100.0)
+                {
+                    ExtentM = LocalExtentM;
+                    bHasExtent = true;
+                }
+            }
+        }
+
+        Type = EMjGeomType::Box;
+        bOverride_Type = true;
+        Size = ExtentM;
+        bOverride_Size = true;
+        SizeParamsCount = 3;
+        UE_LOG(LogURLab, Warning,
+            TEXT("[MjGeom] '%s' 网格 '%s' 未注册（打包版无 CPU 数据），退化为包围盒 (%.3f, %.3f, %.3f) m%s"),
+            *GetName(), *MeshName, ExtentM.X, ExtentM.Y, ExtentM.Z, bHasExtent ? TEXT("") : TEXT("（兜底尺寸）"));
+        MeshName.Empty();
     }
 
     ExportTo(geom, SpecDef);
