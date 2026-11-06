@@ -456,11 +456,23 @@ void URovMuJoCoBridge::ApplyControlForce()
             const double Now = GetWorld() ? GetWorld()->GetTimeSeconds() : 0.0;
             if (!bSpinApplied && Now > 2.0) {
                 bSpinApplied = true;
+                // 先抬到水中（Z=4m）并清零线速度，避免海底接触力矩污染测量
+                const int32 QPosAdr = Model->jnt_qposadr[SpinJnt];
+                Data->qpos[QPosAdr + 0] = 0.0;
+                Data->qpos[QPosAdr + 1] = 0.0;
+                Data->qpos[QPosAdr + 2] = 4.0;
+                Data->qpos[QPosAdr + 3] = 1.0;   // quat w
+                Data->qpos[QPosAdr + 4] = 0.0;
+                Data->qpos[QPosAdr + 5] = 0.0;
+                Data->qpos[QPosAdr + 6] = 0.0;
+                Data->qvel[SpinDof + 0] = 0.0;
+                Data->qvel[SpinDof + 1] = 0.0;
+                Data->qvel[SpinDof + 2] = 0.0;
                 Data->qvel[SpinDof + 3] = 3.0;
                 Data->qvel[SpinDof + 4] = 3.0;
                 Data->qvel[SpinDof + 5] = 3.0;
                 UE_LOG(LogRovBridge, Log,
-                    TEXT("[RovMuJoCoBridge][旋转自检] 施加 3 rad/s 三轴角速度脉冲"));
+                    TEXT("[RovMuJoCoBridge][旋转自检] 移至水中 Z=4m，施加 3 rad/s 三轴角速度脉冲"));
             }
             if (bSpinApplied) {
                 const int32 Tick = (int32)(Now * 4.0);

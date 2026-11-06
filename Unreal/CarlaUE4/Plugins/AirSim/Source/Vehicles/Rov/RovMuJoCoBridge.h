@@ -164,7 +164,7 @@ public:
      * 所以这里作为**独立受力项**补一个可调角阻尼，与流体模型叠加。
      */
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ROV|MuJoCo|Fluid")
-    float AngularDampingCoeff = 2.0f;
+    float AngularDampingCoeff = 6.5f;
 
     /** 是否启用洋流（三层级联：Gauss-Markov + 分层 + 湍流）。 */
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ROV|MuJoCo|Current")
