@@ -317,6 +317,16 @@ void URovMuJoCoBridge::ApplyControlForce()
             }
         }
 
+        // 洋流模型初始化（三层级联）
+        OceanCurrent.bEnabled = bEnableOceanCurrent;
+        OceanCurrent.MeanSpeed = OceanCurrentMeanSpeed;
+        OceanCurrent.Seed = 42;
+        OceanCurrent.Initialize();
+        UE_LOG(LogRovBridge, Log,
+            TEXT("[RovMuJoCoBridge][洋流] %s  平均流速=%.2f m/s  分层=%d 层  湍流强度=%.2f"),
+            bEnableOceanCurrent ? TEXT("已启用") : TEXT("已关闭"),
+            OceanCurrentMeanSpeed, OceanCurrent.Layers.Num(), OceanCurrent.TurbIntensity);
+
         // 受力诊断：三个数摆出来，一眼能看出浮沉
         const double Weight = TotalMass * Gravity;
         const double Buoyancy = FluidDensity * Gravity * DisplacedVolume * BuoyancyScale;
@@ -392,13 +402,107 @@ void URovMuJoCoBridge::ApplyControlForce()
     double ThrusterY = ThrusterMax * (LocalX * Sy + LocalY * Cy);
     double ThrusterZ = ThrusterMax * LocalZ;
 
-    // 【2】水面钳制：ROV 已在水面以上时，不允许推进器继续向上推
     const double RovZ = Data->xpos[3 * BodyId + 2];
+    const FVector RovPos(Data->xpos[3 * BodyId + 0],
+                         Data->xpos[3 * BodyId + 1],
+                         Data->xpos[3 * BodyId + 2]);
+
+    const double FrameDt = GetWorld() ? FMath::Max(GetWorld()->GetDeltaSeconds(), 1e-4f) : 0.016;
+
+    // 【2】洋流：三层级联求当前流速
+    const FVector VCurrent = OceanCurrent.GetVelocity(RovPos, (float)FrameDt);
+
+    // 【3】定深（PID）：按 Z 键锁定当前高度，再按解除
+    if (bEnableDepthHold && PC) {
+        const bool bDepthKeyDown = PC->IsInputKeyDown(EKeys::Z);
+        if (bDepthKeyDown && !bPrevDepthKeyDown) {
+            bDepthHoldActive = !bDepthHoldActive;
+            DepthPID.Reset();
+            if (bDepthHoldActive) {
+                DepthHoldTargetZ = RovZ;
+            }
+            UE_LOG(LogRovBridge, Log,
+                TEXT("[RovMuJoCoBridge][定深] %s（目标 Z=%.3f m）"),
+                bDepthHoldActive ? TEXT("已锁定") : TEXT("已解除"), DepthHoldTargetZ);
+        }
+        bPrevDepthKeyDown = bDepthKeyDown;
+    }
+
+    // 命令行自检：-RovDepthHoldTest 在 3 秒后自动锁定当前深度并打印误差，
+    // 用来验证 PID 定深，不依赖键盘。
+    static const bool bDepthHoldTest =
+        FParse::Param(FCommandLine::Get(), TEXT("RovDepthHoldTest"));
+    static int32 DepthTestLastTick = -1;
+    if (bDepthHoldTest) {
+        const double Now = GetWorld() ? GetWorld()->GetTimeSeconds() : 0.0;
+        if (Now > 1.0 && !bDepthHoldActive) {
+            bDepthHoldActive = true;
+            DepthPID.Reset();
+            DepthHoldTargetZ = RovZ;
+            UE_LOG(LogRovBridge, Log,
+                TEXT("[RovMuJoCoBridge][定深自检] 锁定 Z=%.3f m"), DepthHoldTargetZ);
+        }
+    }
+
+    // 命令行自检：-RovSpinTest 在 2 秒时给一个 3 rad/s 的三轴角速度脉冲，
+    // 然后打印角速度衰减，验证流体模型的旋转阻力（验收项 P7）。
+    static const bool bSpinTest = FParse::Param(FCommandLine::Get(), TEXT("RovSpinTest"));
+    static bool bSpinApplied = false;
+    static int32 SpinLogTick = -1;
+    if (bSpinTest && Model->body_jntnum[BodyId] >= 1) {
+        const int32 SpinJnt = Model->body_jntadr[BodyId];
+        if (Model->jnt_type[SpinJnt] == mjJNT_FREE) {
+            const int32 SpinDof = Model->jnt_dofadr[SpinJnt];
+            const double Now = GetWorld() ? GetWorld()->GetTimeSeconds() : 0.0;
+            if (!bSpinApplied && Now > 2.0) {
+                bSpinApplied = true;
+                Data->qvel[SpinDof + 3] = 3.0;
+                Data->qvel[SpinDof + 4] = 3.0;
+                Data->qvel[SpinDof + 5] = 3.0;
+                UE_LOG(LogRovBridge, Log,
+                    TEXT("[RovMuJoCoBridge][旋转自检] 施加 3 rad/s 三轴角速度脉冲"));
+            }
+            if (bSpinApplied) {
+                const int32 Tick = (int32)(Now * 4.0);
+                if (Tick != SpinLogTick) {
+                    SpinLogTick = Tick;
+                    const double Wx = Data->qvel[SpinDof + 3];
+                    const double Wy = Data->qvel[SpinDof + 4];
+                    const double Wz = Data->qvel[SpinDof + 5];
+                    UE_LOG(LogRovBridge, Log,
+                        TEXT("[RovMuJoCoBridge][旋转自检] t=%.2fs  |ω|=%.4f rad/s"),
+                        Now - 2.0, FMath::Sqrt(Wx * Wx + Wy * Wy + Wz * Wz));
+                }
+            }
+        }
+    }
+
+    if (bDepthHoldActive) {
+        DepthPID.MaxThrust = (float)ThrusterMax;
+        const float PidThrust = DepthPID.Compute(
+            (float)DepthHoldTargetZ, (float)RovZ, (float)FrameDt, (float)VCurrent.Z);
+        ThrusterZ = FMath::Clamp((double)PidThrust, -ThrusterMax, ThrusterMax);
+
+        // 定深自检日志（放在 PID 之后，才能看到真实的 PID 输出）
+        if (bDepthHoldTest) {
+            const double Now = GetWorld() ? GetWorld()->GetTimeSeconds() : 0.0;
+            const int32 Tick = (int32)(Now * 2.0);
+            if (Tick != DepthTestLastTick) {
+                DepthTestLastTick = Tick;
+                UE_LOG(LogRovBridge, Log,
+                    TEXT("[RovMuJoCoBridge][定深自检] t=%.1fs  目标=%.3f  当前=%.3f  误差=%+.3f m  "
+                         "PID推力=%.1f N  洋流Vz=%.3f m/s"),
+                    Now, DepthHoldTargetZ, RovZ, DepthHoldTargetZ - RovZ, ThrusterZ, VCurrent.Z);
+            }
+        }
+    }
+
+    // 【4】水面钳制：ROV 已在水面以上时，不允许推进器继续向上推
     if (RovZ >= WaterSurfaceZ && ThrusterZ > 0.0) {
         ThrusterZ = 0.0;
     }
 
-    // 【3】浮力：Fb = ρ·g·V，永远向上。
+    // 【5】浮力：Fb = ρ·g·V，永远向上。
     // 但**水面之上没有水**，所以浮力为零 —— 这也是 ROV 不会飞出水的物理原因：
     // 一旦越过水面，只剩重力把它拉回来。
     double Buoyancy = 0.0;
@@ -406,10 +510,26 @@ void URovMuJoCoBridge::ApplyControlForce()
         Buoyancy = FluidDensity * Gravity * DisplacedVolume * BuoyancyScale;
     }
 
-    // 【4】洋流拖曳（步 5 接入，暂时为 0）
+    // 【6】洋流拖曳：Fc = -k·(V_robot - V_current)
+    // 用相对流速，而不是只用洋流速度 —— 机器人自己游动时也应该受到阻力。
     double CurrentX = 0.0, CurrentY = 0.0, CurrentZ = 0.0;
+    {
+        double Vrx = 0.0, Vry = 0.0, Vrz = 0.0;
+        if (Model->body_jntnum[BodyId] >= 1) {
+            const int32 JntId = Model->body_jntadr[BodyId];
+            if (Model->jnt_type[JntId] == mjJNT_FREE) {
+                const int32 DofAdr = Model->jnt_dofadr[JntId];
+                Vrx = Data->qvel[DofAdr + 0];
+                Vry = Data->qvel[DofAdr + 1];
+                Vrz = Data->qvel[DofAdr + 2];
+            }
+        }
+        CurrentX = -CurrentDragCoeff * (Vrx - VCurrent.X);
+        CurrentY = -CurrentDragCoeff * (Vry - VCurrent.Y);
+        CurrentZ = -CurrentDragCoeff * (Vrz - VCurrent.Z);
+    }
 
-    // 【5】水动力阻力/升力：由 MuJoCo 椭球流体模型自行计算，这里不重复施加
+    // 【7】水动力阻力/升力：由 MuJoCo 椭球流体模型自行计算，这里不重复施加
 
     const double Fx = ThrusterX + CurrentX;
     const double Fy = ThrusterY + CurrentY;
@@ -438,9 +558,11 @@ void URovMuJoCoBridge::ApplyControlForce()
     if ((LocalX != 0.0 || LocalY != 0.0 || LocalZ != 0.0) && (++CtrlLogCounter % 30 == 0)) {
         UE_LOG(LogRovBridge, Log,
             TEXT("[RovMuJoCoBridge][受力] 输入=(%.0f,%.0f,%.0f)  推力=(%.1f,%.1f,%.1f) N  "
-                 "浮力=%.1f N  合计Fz=%.1f N  Z=%.3f"),
+                 "浮力=%.1f N  洋流拖曳=(%.1f,%.1f,%.1f) N  合计Fz=%.1f N  "
+                 "洋流=(%.2f,%.2f,%.2f) m/s  定深=%d  Z=%.3f"),
             LocalX, LocalY, LocalZ, ThrusterX, ThrusterY, ThrusterZ,
-            Buoyancy, Fz, RovZ);
+            Buoyancy, CurrentX, CurrentY, CurrentZ, Fz,
+            VCurrent.X, VCurrent.Y, VCurrent.Z, bDepthHoldActive ? 1 : 0, RovZ);
     }
 }
 
@@ -496,4 +618,13 @@ void URovMuJoCoBridge::ApplyCachedForce(mjModel_* Model, mjData_* Data)
     Data->qvel[DofAdr + 0] += CachedForceX.load() / Mass * Dt;
     Data->qvel[DofAdr + 1] += CachedForceY.load() / Mass * Dt;
     Data->qvel[DofAdr + 2] += CachedForceZ.load() / Mass * Dt;
+
+    // 附加角阻尼（独立受力项）：补足 MuJoCo 椭球模型偏弱的旋转阻力。
+    // 后三个 qvel 是 body 系角速度，直接按指数衰减。
+    if (AngularDampingCoeff > 0.0f) {
+        const double AngFactor = FMath::Clamp(1.0 - (double)AngularDampingCoeff * Dt, 0.0, 1.0);
+        Data->qvel[DofAdr + 3] *= AngFactor;
+        Data->qvel[DofAdr + 4] *= AngFactor;
+        Data->qvel[DofAdr + 5] *= AngFactor;
+    }
 }

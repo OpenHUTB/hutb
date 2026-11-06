@@ -28,6 +28,7 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
+#include "Vehicles/Rov/RovUnderwaterPhysics.h"
 #include <atomic>
 #include "RovMuJoCoBridge.generated.h"
 
@@ -154,6 +155,31 @@ public:
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ROV|MuJoCo|Current")
     float CurrentDragCoeff = 10.0f;
 
+    /**
+     * 附加角阻尼（1/s）。
+     *
+     * MuJoCo 椭球流体模型本身有旋转阻力，但实测偏弱：给 3 rad/s 三轴脉冲后
+     * 4 秒才衰减到 1.0 rad/s，撞一下管道仍然会明显打转。
+     * 真实 ROV 的导流罩、推进器导管、外挂设备都会提供额外的旋转阻力，
+     * 所以这里作为**独立受力项**补一个可调角阻尼，与流体模型叠加。
+     */
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ROV|MuJoCo|Fluid")
+    float AngularDampingCoeff = 2.0f;
+
+    /** 是否启用洋流（三层级联：Gauss-Markov + 分层 + 湍流）。 */
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ROV|MuJoCo|Current")
+    bool bEnableOceanCurrent = true;
+
+    /** 洋流平均流速（m/s）。 */
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ROV|MuJoCo|Current")
+    float OceanCurrentMeanSpeed = 0.5f;
+
+    // ---------------------------- 定深 ----------------------------
+
+    /** PID 定深是否可用（按 Z 键切换）。 */
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ROV|MuJoCo|Depth")
+    bool bEnableDepthHold = true;
+
     /** 桥接是否已生效。 */
     UFUNCTION(BlueprintCallable, BlueprintPure, Category = "ROV|MuJoCo")
     bool IsBridgeActive() const { return bBridgeActive; }
@@ -205,6 +231,21 @@ private:
 
     /** pre-step 回调只注册一次。 */
     bool bControlCallbackRegistered = false;
+
+    /** 洋流模型（三层级联）。 */
+    FRovOceanCurrent OceanCurrent;
+
+    /** PID 定深控制器。 */
+    FRovPIDDepthController DepthPID;
+
+    /** 是否正在定深。 */
+    bool bDepthHoldActive = false;
+
+    /** 定深目标（MuJoCo 世界系 Z，m）。 */
+    double DepthHoldTargetZ = 0.0;
+
+    /** Z 键上一帧状态，用于边沿检测。 */
+    bool bPrevDepthKeyDown = false;
 
     mutable TWeakObjectPtr<AMjArticulation> Articulation;
     mutable TWeakObjectPtr<UMjBody> TargetBody;
