@@ -354,6 +354,9 @@ void URovMuJoCoBridge::ApplyControlForce()
         if (FParse::Param(FCommandLine::Get(), TEXT("RovOceanCurrent"))) {
             bEnableOceanCurrent = true;   // 命令行强制开启，便于测试
         }
+        if (FParse::Param(FCommandLine::Get(), TEXT("RovNoAttitude"))) {
+            bEnableAttitudeHold = false;  // 自检时关掉姿态控制器，避免干扰
+        }
         OceanCurrent.bEnabled = bEnableOceanCurrent;
         OceanCurrent.MeanSpeed = OceanCurrentMeanSpeed;
         OceanCurrent.Seed = 42;
@@ -651,6 +654,21 @@ void URovMuJoCoBridge::ApplyControlForce()
         }
     }
 
+    // 命令行自检：-RovTorqueAxis=0/1/2 只给该轴一个 100 N·m 力矩，
+    // 用来确定 qfrc_applied 角向分量到底在机体系还是世界系。
+    static const bool bTorqueAxisTest = FParse::Param(FCommandLine::Get(), TEXT("RovTorqueAxisTest"));
+    static int32 TorqueTestAxis = -1;
+    if (bTorqueAxisTest && TorqueTestAxis < 0) {
+        int32 V = 0;
+        if (FParse::Value(FCommandLine::Get(), TEXT("RovTorqueAxis="), V)) {
+            TorqueTestAxis = V;
+        } else {
+            TorqueTestAxis = 0;
+        }
+        UE_LOG(LogRovBridge, Log,
+            TEXT("[RovMuJoCoBridge][力矩轴自检] 将只给轴 %d 施加 100 N·m"), TorqueTestAxis);
+    }
+
     if (bDepthHoldActive) {
         DepthPID.MaxThrust = (float)ThrusterMax;
         const float PidThrust = DepthPID.Compute(
@@ -859,6 +877,27 @@ void URovMuJoCoBridge::ApplyControlForce()
     CachedForceX.store(Fx);
     CachedForceY.store(Fy);
     CachedForceZ.store(Fz);
+
+    // 力矩轴自检：覆盖掉所有力矩项，只给指定轴 100 N·m
+    if (bTorqueAxisTest && TorqueTestAxis >= 0) {
+        TorqueX = (TorqueTestAxis == 0) ? 100.0 : 0.0;
+        TorqueY = (TorqueTestAxis == 1) ? 100.0 : 0.0;
+        TorqueZ = (TorqueTestAxis == 2) ? 100.0 : 0.0;
+
+        static int32 TorqueLogTick = -1;
+        const int32 Tick = (int32)(GetWorld()->GetTimeSeconds() * 4.0);
+        if (Tick != TorqueLogTick && Model->body_jntnum[BodyId] >= 1) {
+            TorqueLogTick = Tick;
+            const int32 J = Model->body_jntadr[BodyId];
+            if (Model->jnt_type[J] == mjJNT_FREE) {
+                const int32 D = Model->jnt_dofadr[J];
+                UE_LOG(LogRovBridge, Log,
+                    TEXT("[RovMuJoCoBridge][力矩轴自检] 给轴%d 100N·m  ->  omega=(%.4f, %.4f, %.4f)"),
+                    TorqueTestAxis, Data->qvel[D + 3], Data->qvel[D + 4], Data->qvel[D + 5]);
+            }
+        }
+    }
+
     CachedTorqueX.store(TorqueX);
     CachedTorqueY.store(TorqueY);
     CachedTorqueZ.store(TorqueZ);
