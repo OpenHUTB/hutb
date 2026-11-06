@@ -257,7 +257,7 @@ public:
 
     /** 洋流平均流速（m/s）。 */
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ROV|MuJoCo|Current")
-    float OceanCurrentMeanSpeed = 0.5f;
+    float OceanCurrentMeanSpeed = 0.15f;
 
     // ---------------------------- 定深 ----------------------------
 
