@@ -21,12 +21,36 @@ void FCarlaModule::StartupModule()
 
 void FCarlaModule::AddShaderSearchPaths()
 {
-	FString PluginBaseDir = IPluginManager::Get().FindPlugin(TEXT("Carla"))->GetBaseDir();
-	UE_LOG(LogCarla, Log, TEXT("PluginBaseDir: %s"), *PluginBaseDir);
-	check(FPaths::DirectoryExists(PluginBaseDir));
+	// OpenHUTB 修改（2026-11-06）：打包版启动即崩的根因。
+	//
+	// 原代码用 check() 断言插件目录和 Shaders 子目录必须存在。
+	// 但打包版会把插件资源 cook 进 pak，磁盘上既没有 Plugins/Carla 目录，
+	// 更没有 Shaders 子目录 —— check() 直接断言失败，进程崩在启动阶段，
+	// 界面上只显示一个 "Fatal error" 对话框。
+	//
+	// 改为：找不到就记录警告并跳过。打包版本来也不需要这个 shader 源映射
+	// （shader 已经编译进 pak），只有编辑器里热重载 shader 时才需要。
+	IPluginManager& PluginManager = IPluginManager::Get();
+	TSharedPtr<IPlugin> Plugin = PluginManager.FindPlugin(TEXT("Carla"));
+	if (!Plugin.IsValid())
+	{
+		UE_LOG(LogCarla, Warning,
+			TEXT("Carla 插件未找到，跳过 shader 源路径注册"));
+		return;
+	}
+
+	const FString PluginBaseDir = Plugin->GetBaseDir();
 	FString ShadersDirectoryPath = FPaths::Combine(PluginBaseDir, TEXT("Shaders"));
 	UE_LOG(LogCarla, Log, TEXT("ShadersDirectoryPath: %s"), *ShadersDirectoryPath);
-	check(FPaths::DirectoryExists(ShadersDirectoryPath));
+
+	if (!FPaths::DirectoryExists(ShadersDirectoryPath))
+	{
+		UE_LOG(LogCarla, Warning,
+			TEXT("Shaders 目录不存在（打包版属正常，资源已在 pak 内）：%s —— 跳过 shader 源映射"),
+			*ShadersDirectoryPath);
+		return;
+	}
+
 	ShadersDirectoryPath = FPaths::ConvertRelativePathToFull(ShadersDirectoryPath);
 	AddShaderSourceDirectoryMapping("/Plugin/Carla", ShadersDirectoryPath);
 }

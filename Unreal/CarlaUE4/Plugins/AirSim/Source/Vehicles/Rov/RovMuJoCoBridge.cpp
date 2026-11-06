@@ -391,22 +391,41 @@ void URovMuJoCoBridge::ApplyControlForce()
         // 复合惯量：从自由关节的 6×6 质量阵取转动对角元。
         // body_inertia 只有 ROV 本体，不含机械臂，用它算增益会严重偏小 ——
         // 这正是消融实验里"纯刚体 + PD 也不收敛"的原因。
+        //
+        // 安全性：qM 只有在 mj_forward/mj_step 之后才有效。打包版首帧的时序
+        // 可能与编辑器不同，若此时 qM 未就绪会读到垃圾值 → 增益变 NaN →
+        // 力矩爆炸。所以这里校验：非空、有限、为正，否则退回 body_inertia。
         {
             const int32 Nv = Model->nv;
-            TArray<mjtNum> M;
-            M.SetNumZeroed(Nv * Nv);
-            mj_fullM(Model, M.GetData(), Data->qM);
-            for (int32 a = 0; a < 3; ++a) {
-                EffInertia[a] = M[(3 + a) * Nv + (3 + a)];
+            bool bOk = (Nv >= 6) && (Data->qM != nullptr);
+            if (bOk) {
+                TArray<mjtNum> M;
+                M.SetNumZeroed(Nv * Nv);
+                mj_fullM(Model, M.GetData(), Data->qM);
+                for (int32 a = 0; a < 3; ++a) {
+                    const double V = M[(3 + a) * Nv + (3 + a)];
+                    if (!FMath::IsFinite(V) || V <= 0.0) {
+                        bOk = false;
+                        break;
+                    }
+                    EffInertia[a] = V;
+                }
+            }
+            if (!bOk) {
+                for (int32 a = 0; a < 3; ++a) {
+                    EffInertia[a] = Model->body_inertia[3 * BodyId + a];
+                }
+                UE_LOG(LogRovBridge, Warning,
+                    TEXT("[RovMuJoCoBridge][复合惯量] qM 未就绪，回退到 body_inertia"));
             }
             UE_LOG(LogRovBridge, Log,
-                TEXT("[RovMuJoCoBridge][复合惯量] 6x6 质量阵转动对角元 = (%.3f, %.3f, %.3f) kg·m²  "
-                     "（body_inertia 仅有 %.3f/%.3f/%.3f，差 %.1f 倍）"),
+                TEXT("[RovMuJoCoBridge][复合惯量] 转动对角元 = (%.3f, %.3f, %.3f) kg·m²  "
+                     "（body_inertia = %.3f/%.3f/%.3f，来源=%s）"),
                 EffInertia[0], EffInertia[1], EffInertia[2],
                 Model->body_inertia[3 * BodyId + 0],
                 Model->body_inertia[3 * BodyId + 1],
                 Model->body_inertia[3 * BodyId + 2],
-                (EffInertia[0] > 0.0 ? EffInertia[0] / FMath::Max(Model->body_inertia[3 * BodyId + 0], 1e-6) : 1.0));
+                bOk ? TEXT("6x6 质量阵") : TEXT("body_inertia 回退"));
         }
 
         // 洋流模型初始化（三层级联）
