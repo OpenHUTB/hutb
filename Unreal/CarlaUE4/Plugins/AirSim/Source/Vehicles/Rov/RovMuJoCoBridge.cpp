@@ -810,9 +810,9 @@ void URovMuJoCoBridge::ApplyControlForce()
         const int32 DampJnt = Model->body_jntadr[BodyId];
         if (Model->jnt_type[DampJnt] == mjJNT_FREE) {
             const int32 DampDof = Model->jnt_dofadr[DampJnt];
-            const double Iavg = (Model->body_inertia[3 * BodyId + 0]
-                               + Model->body_inertia[3 * BodyId + 1]
-                               + Model->body_inertia[3 * BodyId + 2]) / 3.0;
+            // 同样要用**复合惯量**：body_inertia 只有本体，实测复合惯量约为其 4 倍，
+            // 按本体算会让角阻尼衰减率慢 4 倍（P7 退步的原因）。
+            const double Iavg = (EffInertia[0] + EffInertia[1] + EffInertia[2]) / 3.0;
             const double Kd = (double)AngularDampingCoeff * Iavg;
             TorqueX += -Kd * Data->qvel[DampDof + 3];
             TorqueY += -Kd * Data->qvel[DampDof + 4];
