@@ -347,6 +347,12 @@ private:
     /** 姿态控制器是否已初始化（首次捕获目标航向）。 */
     bool bAttitudeInitialized = false;
 
+    /**
+     * 自由关节 6×6 质量阵的转动对角元（kg·m²），即 ROV+机械臂的**复合惯量**。
+     * body_inertia 只有 ROV 本体，不含机械臂；用它算增益会严重偏小。
+     */
+    double EffInertia[3] = { 0.0, 0.0, 0.0 };
+
     mutable TWeakObjectPtr<AMjArticulation> Articulation;
     mutable TWeakObjectPtr<UMjBody> TargetBody;
 
