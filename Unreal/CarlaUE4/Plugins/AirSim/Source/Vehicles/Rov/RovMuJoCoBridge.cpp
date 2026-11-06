@@ -269,22 +269,80 @@ void URovMuJoCoBridge::ApplyControlForce()
         return;
     }
 
+    const double Gravity = FMath::Abs((double)Model->opt.gravity[2]);
+
+    // ---------------- 一次性初始化：打开原生流体模型 + 受力诊断 ----------------
+    static bool bFluidInitialized = false;
+    if (!bFluidInitialized) {
+        bFluidInitialized = true;
+
+        // 命令行覆盖，便于现场调参（不用重编）
+        auto FloatParam = [](const TCHAR* Key, float Default) -> float {
+            float V = Default;
+            return FParse::Value(FCommandLine::Get(), Key, V) ? V : Default;
+        };
+        DisplacedVolume  = FloatParam(TEXT("RovDisplacedVolume="), DisplacedVolume);
+        BuoyancyScale    = FloatParam(TEXT("RovBuoyancyScale="), BuoyancyScale);
+        ThrusterMaxRatio = FloatParam(TEXT("RovThrustRatio="), ThrusterMaxRatio);
+        WaterSurfaceZ    = FloatParam(TEXT("RovWaterSurfaceZ="), WaterSurfaceZ);
+        UE_LOG(LogRovBridge, Log,
+            TEXT("[RovMuJoCoBridge][调参] 排水体积=%.4f m³  浮力倍率=%.2f  推力比=%.2f  水面Z=%.2f m"),
+            DisplacedVolume, BuoyancyScale, ThrusterMaxRatio, WaterSurfaceZ);
+
+        if (bUseNativeFluid) {
+            Model->opt.density = FluidDensity;
+            Model->opt.viscosity = FluidViscosity;
+            UE_LOG(LogRovBridge, Log,
+                TEXT("[RovMuJoCoBridge][流体] 已启用 MuJoCo 椭球流体模型  density=%.1f kg/m³  viscosity=%.6f Pa·s"),
+                Model->opt.density, Model->opt.viscosity);
+        }
+        else {
+            Model->opt.density = 0.0;
+            Model->opt.viscosity = 0.0;
+            UE_LOG(LogRovBridge, Log, TEXT("[RovMuJoCoBridge][流体] 已关闭（density=viscosity=0）"));
+        }
+
+        // 质量诊断：确认 UE 里这个模型到底多重
+        const double TotalMass = Model->body_subtreemass[BodyId];
+        UE_LOG(LogRovBridge, Log,
+            TEXT("[RovMuJoCoBridge][质量] 目标 body id=%d  body_mass=%.3f kg  body_subtreemass=%.3f kg  nbody=%d"),
+            BodyId, Model->body_mass[BodyId], TotalMass, Model->nbody);
+        for (int32 i = 1; i < Model->nbody; ++i) {
+            if (Model->body_mass[i] > 0.5) {
+                const char* Name = (Model->names && Model->name_bodyadr[i] >= 0)
+                    ? (Model->names + Model->name_bodyadr[i]) : "?";
+                UE_LOG(LogRovBridge, Log,
+                    TEXT("[RovMuJoCoBridge][质量]   body[%2d] %-24s mass=%.3f  subtreemass=%.3f"),
+                    i, ANSI_TO_TCHAR(Name), Model->body_mass[i], Model->body_subtreemass[i]);
+            }
+        }
+
+        // 受力诊断：三个数摆出来，一眼能看出浮沉
+        const double Weight = TotalMass * Gravity;
+        const double Buoyancy = FluidDensity * Gravity * DisplacedVolume * BuoyancyScale;
+        UE_LOG(LogRovBridge, Log,
+            TEXT("[RovMuJoCoBridge][受力] 重力=%.1f N  浮力=%.1f N  净力=%+.1f N（正=上浮，负=下沉）  "
+                 "排水体积=%.4f m³  浮力倍率=%.2f"),
+            Weight, Buoyancy, Buoyancy - Weight, DisplacedVolume, BuoyancyScale);
+    }
+
     APlayerController* PC = GetWorld() ? GetWorld()->GetFirstPlayerController() : nullptr;
     if (!PC) {
         return;
     }
 
     // 本体坐标系下的期望方向
+    // 注意：A/D 的符号和直觉相反——这个模型的 Y 轴朝左，所以 A 用 +1、D 用 -1。
+    // 垂直用 Q/E（PageUp/PageDown 在笔记本上常常没有，保留作别名）。
     double LocalX = 0.0, LocalY = 0.0, LocalZ = 0.0;
     if (PC->IsInputKeyDown(EKeys::W)) { LocalX += 1.0; }
     if (PC->IsInputKeyDown(EKeys::S)) { LocalX -= 1.0; }
-    if (PC->IsInputKeyDown(EKeys::D)) { LocalY += 1.0; }
-    if (PC->IsInputKeyDown(EKeys::A)) { LocalY -= 1.0; }
-    if (PC->IsInputKeyDown(EKeys::PageUp)) { LocalZ += 1.0; }
-    if (PC->IsInputKeyDown(EKeys::PageDown)) { LocalZ -= 1.0; }
+    if (PC->IsInputKeyDown(EKeys::A)) { LocalY += 1.0; }
+    if (PC->IsInputKeyDown(EKeys::D)) { LocalY -= 1.0; }
+    if (PC->IsInputKeyDown(EKeys::Q) || PC->IsInputKeyDown(EKeys::PageUp)) { LocalZ += 1.0; }
+    if (PC->IsInputKeyDown(EKeys::E) || PC->IsInputKeyDown(EKeys::PageDown)) { LocalZ -= 1.0; }
 
-    // 命令行自检：-RovThrustTest 会在启动后持续上浮 4 秒并打印 Z，
-    // 用来验证「力真的进到 MuJoCo 动力学里」，不依赖键盘输入。
+    // 命令行自检：-RovThrustTest 会在启动后持续上浮 2 秒并打印 Z
     static const bool bAutoThrustTest =
         FParse::Param(FCommandLine::Get(), TEXT("RovThrustTest"));
     static double AutoTestStartTime = -1.0;
@@ -295,8 +353,7 @@ void URovMuJoCoBridge::ApplyControlForce()
         if (AutoTestStartTime < 0.0) {
             AutoTestStartTime = Now;
             UE_LOG(LogRovBridge, Log,
-                TEXT("[RovMuJoCoBridge] 自检开始：上浮 4 秒，起始 Z=%.3f"),
-                Data->xpos[3 * BodyId + 2]);
+                TEXT("[RovMuJoCoBridge][自检] 开始：上浮 2 秒，起始 Z=%.3f"), Data->xpos[3 * BodyId + 2]);
         }
         if (Now - AutoTestStartTime < 2.0) {
             LocalZ = 1.0;
@@ -305,15 +362,12 @@ void URovMuJoCoBridge::ApplyControlForce()
         if (Tick != AutoTestLastTick) {
             AutoTestLastTick = Tick;
             UE_LOG(LogRovBridge, Log,
-                TEXT("[RovMuJoCoBridge] 自检 t=%.1fs  Z=%.3f  Fz=%.1f N  vz=%.3f"),
+                TEXT("[RovMuJoCoBridge][自检] t=%.1fs  Z=%.3f  总Fz=%.1f N  vz=%.3f"),
                 Now - AutoTestStartTime, Data->xpos[3 * BodyId + 2],
                 CachedForceZ.load(), Data->cvel[6 * BodyId + 5]);
         }
     }
 
-    // 注意：body_mass 只是这个 body **自身**的质量。ROV 还挂着机械臂、夹爪等
-    // 一堆子 body，必须用 body_subtreemass（整棵子树的质量）才对，
-    // 否则算出来的推力严重不足，按上浮也抬不起来。
     const double Mass = Model->body_subtreemass[BodyId];
     if (Mass <= 0.0) {
         return;
@@ -322,49 +376,45 @@ void URovMuJoCoBridge::ApplyControlForce()
     const mjtNum* Q = &Data->xquat[4 * BodyId];   // (w, x, y, z)
     const double Qw = Q[0], Qx = Q[1], Qy = Q[2], Qz = Q[3];
 
-    // 只取偏航角，忽略俯仰和横滚。
-    // 用完整四元数旋转会让 ROV 一翻滚就把"上"变成"下"，推力方向乱跳。
+    // 只取偏航角，忽略俯仰和横滚 —— 否则 ROV 一翻滚推力方向就乱
     const double Yaw = FMath::Atan2(2.0 * (Qw * Qz + Qx * Qy),
                                     1.0 - 2.0 * (Qy * Qy + Qz * Qz));
     const double Cy = FMath::Cos(Yaw);
     const double Sy = FMath::Sin(Yaw);
 
-    // 注意布局：xfrc_applied = [torque_x, torque_y, torque_z, force_x, force_y, force_z]
-    // 力在 3/4/5，力矩在 0/1/2。写错槽位会变成给 ROV 加扭矩（打转）而不是推力。
-    // 参见 URLab 的 MjBind.h:574 与 MjBody.cpp:380。
-    double Fx = Mass * HorizontalAccel * (LocalX * Cy - LocalY * Sy);
-    double Fy = Mass * HorizontalAccel * (LocalX * Sy + LocalY * Cy);
+    // ------------------------------------------------------------------
+    // 受力分解：每一项独立计算，最后相加。不直接设定合力。
+    // ------------------------------------------------------------------
 
-    // 垂直方向固定用世界 Z，永远是"上"，不受姿态影响
-    double Fz = Mass * VerticalAccel * LocalZ;
-    const double Gravity = FMath::Abs((double)Model->opt.gravity[2]);
-    if (LocalZ > 0.0) {
-        // 上浮：抵消重力 + 加速上升
-        Fz += Mass * Gravity;
-    } else if (LocalZ == 0.0 && bNeutralBuoyancy) {
-        // 中性浮力：松开键时抵消重力，停在当前深度（模型本身是负浮力的）
-        Fz += Mass * Gravity;
+    // 【1】推进器推力：键盘只给比例，力 = 比例 × 最大推力
+    const double ThrusterMax = Mass * Gravity * ThrusterMaxRatio;
+    double ThrusterX = ThrusterMax * (LocalX * Cy - LocalY * Sy);
+    double ThrusterY = ThrusterMax * (LocalX * Sy + LocalY * Cy);
+    double ThrusterZ = ThrusterMax * LocalZ;
+
+    // 【2】水面钳制：ROV 已在水面以上时，不允许推进器继续向上推
+    const double RovZ = Data->xpos[3 * BodyId + 2];
+    if (RovZ >= WaterSurfaceZ && ThrusterZ > 0.0) {
+        ThrusterZ = 0.0;
     }
 
-    // 速度阻尼（世界系）。自由关节 qvel 的前三个就是世界系线速度，
-    // 用它做阻尼可以给出一个稳定的终端速度，不会越推越快冲出水面。
-    if (Model->body_jntnum[BodyId] >= 1) {
-        const int32 JntId = Model->body_jntadr[BodyId];
-        if (Model->jnt_type[JntId] == mjJNT_FREE) {
-            const int32 DofAdr = Model->jnt_dofadr[JntId];
-            Fx -= Mass * LinearDamping * Data->qvel[DofAdr + 0];
-            Fy -= Mass * LinearDamping * Data->qvel[DofAdr + 1];
-            Fz -= Mass * LinearDamping * Data->qvel[DofAdr + 2];
-        }
+    // 【3】浮力：Fb = ρ·g·V，永远向上。
+    // 但**水面之上没有水**，所以浮力为零 —— 这也是 ROV 不会飞出水的物理原因：
+    // 一旦越过水面，只剩重力把它拉回来。
+    double Buoyancy = 0.0;
+    if (RovZ < WaterSurfaceZ) {
+        Buoyancy = FluidDensity * Gravity * DisplacedVolume * BuoyancyScale;
     }
 
-    // 限幅，避免数值爆炸
-    const double MaxF = Mass * 30.0;
-    Fx = FMath::Clamp(Fx, -MaxF, MaxF);
-    Fy = FMath::Clamp(Fy, -MaxF, MaxF);
-    Fz = FMath::Clamp(Fz, -MaxF, MaxF);
+    // 【4】洋流拖曳（步 5 接入，暂时为 0）
+    double CurrentX = 0.0, CurrentY = 0.0, CurrentZ = 0.0;
 
-    // 交给物理线程去写（游戏线程直接写 xfrc_applied 会被 mj_step 覆盖）
+    // 【5】水动力阻力/升力：由 MuJoCo 椭球流体模型自行计算，这里不重复施加
+
+    const double Fx = ThrusterX + CurrentX;
+    const double Fy = ThrusterY + CurrentY;
+    const double Fz = ThrusterZ + Buoyancy + CurrentZ;
+
     CachedBodyId.store(BodyId);
     CachedForceX.store(Fx);
     CachedForceY.store(Fy);
@@ -383,13 +433,14 @@ void URovMuJoCoBridge::ApplyControlForce()
             TEXT("[RovMuJoCoBridge] 已注册物理线程施力回调（PreStepCallbacks）"));
     }
 
-    // 节流日志：按住键时每 30 帧打一次，确认输入真的生效
+    // 节流日志
     static int32 CtrlLogCounter = 0;
     if ((LocalX != 0.0 || LocalY != 0.0 || LocalZ != 0.0) && (++CtrlLogCounter % 30 == 0)) {
         UE_LOG(LogRovBridge, Log,
-            TEXT("[RovMuJoCoBridge] 推进中  输入=(%.0f,%.0f,%.0f)  质量=%.2fkg  "
-                 "力=(%.1f, %.1f, %.1f) N"),
-            LocalX, LocalY, LocalZ, Mass, Fx, Fy, Fz);
+            TEXT("[RovMuJoCoBridge][受力] 输入=(%.0f,%.0f,%.0f)  推力=(%.1f,%.1f,%.1f) N  "
+                 "浮力=%.1f N  合计Fz=%.1f N  Z=%.3f"),
+            LocalX, LocalY, LocalZ, ThrusterX, ThrusterY, ThrusterZ,
+            Buoyancy, Fz, RovZ);
     }
 }
 
@@ -403,14 +454,29 @@ void URovMuJoCoBridge::ApplyCachedForce(mjModel_* Model, mjData_* Data)
         return;
     }
 
-    // 为什么不用 xfrc_applied：
-    //   AMjManager 默认挂了一个 UMjPerturbation（鼠标拖拽交互），它在自己的
-    //   pre-step 回调里执行 mju_zero(d->xfrc_applied, 6 * m->nbody)，
-    //   把所有 body 的外力每步清空（MjPerturbation.cpp:84）。
-    //   回调顺序不受我们控制，写 xfrc 会被它抹掉。
+    // xfrc_applied 布局：[torque_x, torque_y, torque_z, force_x, force_y, force_z]
+    // 力在 3/4/5。写错槽位会变成加扭矩。
+    mjtNum* F = &Data->xfrc_applied[6 * BodyId];
+    F[0] = 0.0;
+    F[1] = 0.0;
+    F[2] = 0.0;
+    F[3] = CachedForceX.load();
+    F[4] = CachedForceY.load();
+    F[5] = CachedForceZ.load();
+
+    // 同时用冲量写自由关节速度。
     //
-    // 改用冲量直接写自由关节的速度：扰动组件不碰 qvel，绕开这个清空。
-    // 物理含义相同（力 × dt = 动量增量），只是不走求解器。
+    // 为什么两个都写：xfrc_applied 是 MuJoCo 的标准外力入口，语义正确；
+    // 但在本工程里实测它不生效（AMjManager 可能装了 CustomStepHandler /
+    // Replay，绕过了 mj_step 的外力通道）。冲量路径已验证可靠，
+    // 作为兜底同时施加，保证 ROV 真的会动。
+    //
+    // 注意：两条路径同时生效会双倍施力，所以 xfrc 写入的量按 0 处理，
+    // 仅保留语义占位；真正驱动的是下面的冲量。
+    F[3] = 0.0;
+    F[4] = 0.0;
+    F[5] = 0.0;
+
     if (Model->body_jntnum[BodyId] < 1) {
         return;
     }
@@ -426,19 +492,8 @@ void URovMuJoCoBridge::ApplyCachedForce(mjModel_* Model, mjData_* Data)
         return;
     }
 
-    // 自由关节的 qvel 前三个是**世界系**线速度
+    // 自由关节 qvel 前三个 = 世界系线速度 → 力 × dt / m = 速度增量
     Data->qvel[DofAdr + 0] += CachedForceX.load() / Mass * Dt;
     Data->qvel[DofAdr + 1] += CachedForceY.load() / Mass * Dt;
     Data->qvel[DofAdr + 2] += CachedForceZ.load() / Mass * Dt;
-
-    // 诊断
-    static int32 ApplyLogCounter = 0;
-    if (++ApplyLogCounter % 500 == 0) {
-        UE_LOG(LogRovBridge, Log,
-            TEXT("[RovMuJoCoBridge] 冲量 body=%d jnt=%d dof=%d  F=(%.1f, %.1f, %.1f) N  "
-                 "vz=%.3f  Z=%.3f"),
-            BodyId, JntId, DofAdr,
-            CachedForceX.load(), CachedForceY.load(), CachedForceZ.load(),
-            Data->qvel[DofAdr + 2], Data->xpos[3 * BodyId + 2]);
-    }
 }

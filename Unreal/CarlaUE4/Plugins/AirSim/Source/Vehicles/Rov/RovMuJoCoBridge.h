@@ -100,35 +100,59 @@ public:
     FVector WorldOffset = FVector::ZeroVector;
 
     /**
-     * 键盘推进：W/S 前后、A/D 左右、PageUp/PageDown 上浮下潜。
+     * 键盘推进：W/S 前后、A/D 左右、Q/E 上浮下潜。
      *
-     * 直接给 MuJoCo 根 body 的 mjData::xfrc_applied 施力。
-     * 不走 AirSim 的 RC 通道——桥接关掉 Pawn 物理后那条链路已经断了，
-     * 而且模型里也没有推进器 actuator（7 个 actuator 全是机械臂关节）。
+     * 按受力分解设计：键盘只决定「推进器输出比例」，
+     * 真正的推力 = 比例 × ThrusterMaxForce，不直接改合力。
      */
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ROV|MuJoCo|Control")
     bool bEnableKeyboardControl = true;
 
-    /** 水平推进加速度（m/s²）。实际力 = 质量 × 加速度，不同质量的 ROV 手感一致。 */
+    /** 推进器最大推力占自重的比例。0.5 = 最大推力只有一半重力。 */
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ROV|MuJoCo|Control")
-    float HorizontalAccel = 4.0f;
+    float ThrusterMaxRatio = 0.5f;
 
-    /** 垂直推进加速度（m/s²）。上浮时会额外抵消重力，否则推不动。 */
+    /** 水面高度（MuJoCo 世界坐标，米）。ROV 到此高度以上禁止向上推力。 */
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ROV|MuJoCo|Control")
-    float VerticalAccel = 4.0f;
+    float WaterSurfaceZ = 8.0f;
 
-    /** 速度阻尼（1/s）。避免一直加速，越大越快达到终端速度。 */
-    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ROV|MuJoCo|Control")
-    float LinearDamping = 2.0f;
+    // ---------------------------- 流体 ----------------------------
+
+    /** 是否启用 MuJoCo 原生椭球流体模型（阻力/升力交给引擎算）。 */
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ROV|MuJoCo|Fluid")
+    bool bUseNativeFluid = true;
+
+    /** 流体密度（kg/m³）。1000 = 水。 */
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ROV|MuJoCo|Fluid")
+    float FluidDensity = 1000.0f;
+
+    /** 流体动力粘度（Pa·s）。水约 0.00089。 */
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ROV|MuJoCo|Fluid")
+    float FluidViscosity = 0.00089f;
+
+    // ---------------------------- 浮力 ----------------------------
+
+    /** 排水体积（m³），用于 Fb = ρ·g·V。默认 0.192 与 mujoco_plugin 的 config 一致。 */
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ROV|MuJoCo|Fluid")
+    float DisplacedVolume = 0.192f;
 
     /**
-     * 中性浮力：不按上浮/下潜键时自动抵消重力，让 ROV 停在当前深度。
+     * 浮力倍率。1.0 = 严格按 ρ·g·V。
      *
-     * 模型本身是负浮力的（会一直沉到海底），演示时松开键就沉底很难用。
-     * 打开后松开键保持深度，按 PageUp 上升、PageDown 下潜。
+     * 当前默认 3.2 是为了补偿一个已知的质量归属 bug：XML 里 rov_body 的
+     * mass="150.0" 被导入器分到了 gripper_base_mount 上，导致 ROV 本体变成
+     * 438 kg、整机 612.9 kg，而排水体积只有 0.192 m³。
+     * 3.2 ≈ 612.9 / (1000 × 0.192)，配平到中性浮态。
+     * 质量 bug 修好后应改回 1.0。
      */
-    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ROV|MuJoCo|Control")
-    bool bNeutralBuoyancy = true;
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ROV|MuJoCo|Fluid")
+    float BuoyancyScale = 3.2f;
+
+    // ---------------------------- 洋流 ----------------------------
+
+    /** 洋流拖曳系数（kg/s）。 */
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ROV|MuJoCo|Current")
+    float CurrentDragCoeff = 10.0f;
 
     /** 桥接是否已生效。 */
     UFUNCTION(BlueprintCallable, BlueprintPure, Category = "ROV|MuJoCo")
