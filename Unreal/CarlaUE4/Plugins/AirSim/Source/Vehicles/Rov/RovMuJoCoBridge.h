@@ -156,6 +156,28 @@ public:
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ROV|MuJoCo|Fluid")
     float BuoyancyScale = 3.1923f;
 
+    /**
+     * 浮心相对重心的高度（m），沿机体系 +Z。
+     *
+     * 真实 ROV 的浮心在重心之上，倾斜时浮力产生回复力矩 τ = r_CB × F_buoy，
+     * 这就是它「被撞歪后自己回正」的物理来源 —— 不需要任何控制器。
+     * 回复刚度 ≈ B × BG，BlueROV2 量级 BG = 0.01~0.05 m。
+     * 设为 0 则退化为「浮力加在质心」，无被动稳定。
+     */
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ROV|MuJoCo|Fluid")
+    float BuoyancyArm = 0.02f;
+
+    /**
+     * 机械臂关节阻尼（N·m·s/rad），施加到所有非自由关节上。
+     *
+     * 模型的 7 个 UR5e 关节没有任何 ctrl 输入，会自由摆动；
+     * 它们的反作用力矩会把 ROV 本体晃得不停翻滚
+     * （实测：两个外部力矩全关、ω 仍能冲到 3.4 rad/s）。
+     * 加阻尼让机械臂稳定下垂，不再激励艇体。
+     */
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ROV|MuJoCo")
+    float ArmJointDamping = 1000.0f;
+
     // ---------------------------- 洋流 ----------------------------
 
     /** 洋流拖曳系数（kg/s）。 */
@@ -240,6 +262,12 @@ private:
     std::atomic<double> CachedForceX{0.0};
     std::atomic<double> CachedForceY{0.0};
     std::atomic<double> CachedForceZ{0.0};
+
+    /** 期望力矩（N·m），机体系。 */
+    std::atomic<double> CachedTorqueX{0.0};
+    std::atomic<double> CachedTorqueY{0.0};
+    std::atomic<double> CachedTorqueZ{0.0};
+
     std::atomic<int32> CachedBodyId{-1};
 
     /** pre-step 回调只注册一次。 */

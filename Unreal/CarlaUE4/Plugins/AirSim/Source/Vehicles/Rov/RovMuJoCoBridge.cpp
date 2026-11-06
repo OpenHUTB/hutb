@@ -283,6 +283,8 @@ void URovMuJoCoBridge::ApplyControlForce()
         };
         DisplacedVolume  = FloatParam(TEXT("RovDisplacedVolume="), DisplacedVolume);
         BuoyancyScale    = FloatParam(TEXT("RovBuoyancyScale="), BuoyancyScale);
+        BuoyancyArm      = FloatParam(TEXT("RovBuoyancyArm="), BuoyancyArm);
+        AngularDampingCoeff = FloatParam(TEXT("RovAngularDamping="), AngularDampingCoeff);
         ThrusterMaxRatio = FloatParam(TEXT("RovThrustRatio="), ThrusterMaxRatio);
         WaterSurfaceZ    = FloatParam(TEXT("RovWaterSurfaceZ="), WaterSurfaceZ);
         UE_LOG(LogRovBridge, Log,
@@ -307,6 +309,17 @@ void URovMuJoCoBridge::ApplyControlForce()
         UE_LOG(LogRovBridge, Log,
             TEXT("[RovMuJoCoBridge][质量] 目标 body id=%d  body_mass=%.3f kg  body_subtreemass=%.3f kg  nbody=%d"),
             BodyId, Model->body_mass[BodyId], TotalMass, Model->nbody);
+        UE_LOG(LogRovBridge, Log,
+            TEXT("[RovMuJoCoBridge][惯量] body_inertia=(%.5f, %.5f, %.5f) kg·m²  "
+                 "（角阻尼 Kd = %.1f × 平均惯量 %.5f = %.3f N·m·s/rad）"),
+            Model->body_inertia[3 * BodyId + 0],
+            Model->body_inertia[3 * BodyId + 1],
+            Model->body_inertia[3 * BodyId + 2],
+            AngularDampingCoeff,
+            (Model->body_inertia[3 * BodyId + 0] + Model->body_inertia[3 * BodyId + 1]
+             + Model->body_inertia[3 * BodyId + 2]) / 3.0,
+            AngularDampingCoeff * (Model->body_inertia[3 * BodyId + 0] + Model->body_inertia[3 * BodyId + 1]
+             + Model->body_inertia[3 * BodyId + 2]) / 3.0);
         for (int32 i = 1; i < Model->nbody; ++i) {
             if (Model->body_mass[i] > 0.5) {
                 const char* Name = (Model->names && Model->name_bodyadr[i] >= 0)
@@ -315,6 +328,26 @@ void URovMuJoCoBridge::ApplyControlForce()
                     TEXT("[RovMuJoCoBridge][质量]   body[%2d] %-24s mass=%.3f  subtreemass=%.3f"),
                     i, ANSI_TO_TCHAR(Name), Model->body_mass[i], Model->body_subtreemass[i]);
             }
+        }
+
+        // 机械臂关节阻尼：模型的机械臂关节没有 ctrl 输入，会自由摆动，
+        // 反作用力矩把 ROV 本体晃得不停翻滚。加阻尼让机械臂稳定下垂。
+        {
+            int32 DampedDofs = 0;
+            for (int32 j = 0; j < Model->njnt; ++j) {
+                if (Model->jnt_type[j] == mjJNT_FREE) {
+                    continue;
+                }
+                const int32 Adr = Model->jnt_dofadr[j];
+                const int32 Num = (Model->jnt_type[j] == mjJNT_BALL) ? 3 : 1;
+                for (int32 k = 0; k < Num; ++k) {
+                    Model->dof_damping[Adr + k] = ArmJointDamping;
+                    ++DampedDofs;
+                }
+            }
+            UE_LOG(LogRovBridge, Log,
+                TEXT("[RovMuJoCoBridge][机械臂] 已给 %d 个关节自由度加阻尼 %.1f N·m·s/rad"),
+                DampedDofs, ArmJointDamping);
         }
 
         // 洋流模型初始化（三层级联）
@@ -570,6 +603,54 @@ void URovMuJoCoBridge::ApplyControlForce()
         }
     }
 
+    // 命令行自检：-RovTiltTest 在 2 秒时把 ROV 倾斜 20° 后释放，
+    // 验证被动稳定（浮心高于重心产生的回复力矩）能否把它扶正。
+    static const bool bTiltTest = FParse::Param(FCommandLine::Get(), TEXT("RovTiltTest"));
+    static bool bTiltApplied = false;
+    static int32 TiltLogTick = -1;
+    if (bTiltTest && Model->body_jntnum[BodyId] >= 1) {
+        const int32 TJnt = Model->body_jntadr[BodyId];
+        if (Model->jnt_type[TJnt] == mjJNT_FREE) {
+            const int32 TDof = Model->jnt_dofadr[TJnt];
+            const int32 TQPos = Model->jnt_qposadr[TJnt];
+            const double Now = GetWorld() ? GetWorld()->GetTimeSeconds() : 0.0;
+
+            if (!bTiltApplied && Now > 2.0) {
+                bTiltApplied = true;
+                const double HalfAngle = 10.0 * PI / 180.0;   // 20° 的一半
+                Data->qpos[TQPos + 2] = 4.0;                  // 抬到水中，避免接触干扰
+                Data->qpos[TQPos + 3] = FMath::Cos(HalfAngle); // w
+                Data->qpos[TQPos + 4] = FMath::Sin(HalfAngle); // x（绕 X 轴倾斜）
+                Data->qpos[TQPos + 5] = 0.0;
+                Data->qpos[TQPos + 6] = 0.0;
+                for (int32 k = 0; k < 6; ++k) {
+                    Data->qvel[TDof + k] = 0.0;
+                }
+                UE_LOG(LogRovBridge, Log,
+                    TEXT("[RovMuJoCoBridge][倾斜自检] 已倾斜 20° 并释放（BG=%.3f m）"), BuoyancyArm);
+            }
+
+            if (bTiltApplied) {
+                const int32 Tick = (int32)(Now * 4.0);
+                if (Tick != TiltLogTick) {
+                    TiltLogTick = Tick;
+                    // 当前倾角：机体系 +Z 转到世界后与竖直方向的夹角
+                    const double Qw2 = Data->qpos[TQPos + 3];
+                    const double Qx2 = Data->qpos[TQPos + 4];
+                    const double Qy2 = Data->qpos[TQPos + 5];
+                    const double Qz2 = Data->qpos[TQPos + 6];
+                    // 旋转 (0,0,1)：结果 z 分量 = 1 - 2*(x² + y²)
+                    const double UpZ = 1.0 - 2.0 * (Qx2 * Qx2 + Qy2 * Qy2);
+                    const double TiltDeg = FMath::RadiansToDegrees(
+                        FMath::Acos(FMath::Clamp(UpZ, -1.0, 1.0)));
+                    UE_LOG(LogRovBridge, Log,
+                        TEXT("[RovMuJoCoBridge][倾斜自检] t=%.2fs  倾角=%.2f°  ω=%.4f rad/s"),
+                        Now - 2.0, TiltDeg, Data->qvel[TDof + 4]);
+                }
+            }
+        }
+    }
+
     if (bDepthHoldActive) {
         DepthPID.MaxThrust = (float)ThrusterMax;
         const float PidThrust = DepthPID.Compute(
@@ -643,10 +724,70 @@ void URovMuJoCoBridge::ApplyControlForce()
     const double Fy = ThrusterY + CurrentY;
     const double Fz = ThrusterZ + Buoyancy + CurrentZ;
 
+    // 【8】浮力的回复力矩（被动稳定）—— 关键物理项。
+    //
+    // 浮力不是作用在重心，而是作用在浮心 CB（机体系 +Z 方向，高于重心 BG）。
+    // 艇体倾斜时 r_CB 跟着倾斜，与竖直向上的浮力形成力偶：
+    //     τ = r_CB(world) × F_buoy(world)
+    // 这正是真实 ROV 撞歪后能自己回正的机制，不需要任何控制器。
+    //
+    // 力矩最终要写进 qfrc_applied 的后三维，而那里是**机体系**，
+    // 所以算出世界系力矩后要用 q⁻¹ 转回机体系。
+    double BuoyTorqueX = 0.0, BuoyTorqueY = 0.0, BuoyTorqueZ = 0.0;
+    if (Buoyancy > 0.0 && FMath::Abs(BuoyancyArm) > KINDA_SMALL_NUMBER) {
+        // 四元数旋转：v' = v + 2*(w*c + q_vec×c)，其中 c = q_vec × v
+        auto RotByQuat = [](double qw, double qx, double qy, double qz,
+                            double vx, double vy, double vz,
+                            double& ox, double& oy, double& oz) {
+            const double cx = qy * vz - qz * vy;
+            const double cy = qz * vx - qx * vz;
+            const double cz = qx * vy - qy * vx;
+            const double dx = qy * cz - qz * cy;
+            const double dy = qz * cx - qx * cz;
+            const double dz = qx * cy - qy * cx;
+            ox = vx + 2.0 * (qw * cx + dx);
+            oy = vy + 2.0 * (qw * cy + dy);
+            oz = vz + 2.0 * (qw * cz + dz);
+        };
+
+        // 机体系 r_CB = (0, 0, BG) → 世界系
+        double RcbX = 0.0, RcbY = 0.0, RcbZ = 0.0;
+        RotByQuat(Qw, Qx, Qy, Qz, 0.0, 0.0, (double)BuoyancyArm, RcbX, RcbY, RcbZ);
+
+        // τ_world = r × F，F = (0, 0, Buoyancy)
+        const double Twx = RcbY * Buoyancy;
+        const double Twy = -RcbX * Buoyancy;
+        const double Twz = 0.0;
+
+        // 世界系 → 机体系（用共轭四元数）
+        RotByQuat(Qw, -Qx, -Qy, -Qz, Twx, Twy, Twz, BuoyTorqueX, BuoyTorqueY, BuoyTorqueZ);
+    }
+
+    // 【9】附加角阻尼：以**力矩**形式施加（τ = -Kd·ω，机体系）。
+    // MuJoCo 椭球流体模型的旋转阻力偏弱，真实 ROV 的导流罩/鳍会额外提供阻力。
+    // Kd = AngularDampingCoeff × 平均主惯量，保持和之前"每秒衰减 1/s"的语义一致。
+    double TorqueX = BuoyTorqueX, TorqueY = BuoyTorqueY, TorqueZ = BuoyTorqueZ;
+    if (AngularDampingCoeff > 0.0f && Model->body_jntnum[BodyId] >= 1) {
+        const int32 DampJnt = Model->body_jntadr[BodyId];
+        if (Model->jnt_type[DampJnt] == mjJNT_FREE) {
+            const int32 DampDof = Model->jnt_dofadr[DampJnt];
+            const double Iavg = (Model->body_inertia[3 * BodyId + 0]
+                               + Model->body_inertia[3 * BodyId + 1]
+                               + Model->body_inertia[3 * BodyId + 2]) / 3.0;
+            const double Kd = (double)AngularDampingCoeff * Iavg;
+            TorqueX += -Kd * Data->qvel[DampDof + 3];
+            TorqueY += -Kd * Data->qvel[DampDof + 4];
+            TorqueZ += -Kd * Data->qvel[DampDof + 5];
+        }
+    }
+
     CachedBodyId.store(BodyId);
     CachedForceX.store(Fx);
     CachedForceY.store(Fy);
     CachedForceZ.store(Fz);
+    CachedTorqueX.store(TorqueX);
+    CachedTorqueY.store(TorqueY);
+    CachedTorqueZ.store(TorqueZ);
 
     if (!bControlCallbackRegistered) {
         TWeakObjectPtr<URovMuJoCoBridge> WeakThis(this);
@@ -684,29 +825,22 @@ void URovMuJoCoBridge::ApplyCachedForce(mjModel_* Model, mjData_* Data)
         return;
     }
 
-    // xfrc_applied 布局：[torque_x, torque_y, torque_z, force_x, force_y, force_z]
-    // 力在 3/4/5。写错槽位会变成加扭矩。
-    mjtNum* F = &Data->xfrc_applied[6 * BodyId];
-    F[0] = 0.0;
-    F[1] = 0.0;
-    F[2] = 0.0;
-    F[3] = CachedForceX.load();
-    F[4] = CachedForceY.load();
-    F[5] = CachedForceZ.load();
-
-    // 同时用冲量写自由关节速度。
+    // =========================================================================
+    // 通道：qfrc_applied（广义力），不是 xfrc_applied，也不是直接改 qvel。
     //
-    // 为什么两个都写：xfrc_applied 是 MuJoCo 的标准外力入口，语义正确；
-    // 但在本工程里实测它不生效（AMjManager 可能装了 CustomStepHandler /
-    // Replay，绕过了 mj_step 的外力通道）。冲量路径已验证可靠，
-    // 作为兜底同时施加，保证 ROV 真的会动。
+    // 为什么不用 xfrc_applied：
+    //   它的元素顺序有两套说法 —— MuJoCo 官方文档是 [力(3), 力矩(3)]，
+    //   而 URLab 的 MjBind.h:574 注释写成 [力矩(3), 力(3)]。两边矛盾，
+    //   一旦写反，命令"向前"会变成"俯仰"，极难排查。
     //
-    // 注意：两条路径同时生效会双倍施力，所以 xfrc 写入的量按 0 处理，
-    // 仅保留语义占位；真正驱动的是下面的冲量。
-    F[3] = 0.0;
-    F[4] = 0.0;
-    F[5] = 0.0;
-
+    // 为什么不用直接改 qvel：
+    //   赋值 qvel 等于瞬间冲量，绕过求解器、接触约束和饱和，
+    //   这样"调通"的手感不可迁移，也无法与碰撞正确耦合。
+    //
+    // qfrc_applied 的布局是明确的（nv 维广义力）：
+    //   前 3 维 = 世界系力，后 3 维 = 关节系（自由关节即机体系）力矩。
+    //   正好对应我们"世界系推力 + 机体系力矩"的需求，零坐标转换。
+    // =========================================================================
     if (Model->body_jntnum[BodyId] < 1) {
         return;
     }
@@ -716,23 +850,23 @@ void URovMuJoCoBridge::ApplyCachedForce(mjModel_* Model, mjData_* Data)
     }
 
     const int32 DofAdr = Model->jnt_dofadr[JntId];
-    const double Mass = Model->body_subtreemass[BodyId];
-    const double Dt = Model->opt.timestep;
-    if (Mass <= 0.0 || Dt <= 0.0) {
-        return;
-    }
 
-    // 自由关节 qvel 前三个 = 世界系线速度 → 力 × dt / m = 速度增量
-    Data->qvel[DofAdr + 0] += CachedForceX.load() / Mass * Dt;
-    Data->qvel[DofAdr + 1] += CachedForceY.load() / Mass * Dt;
-    Data->qvel[DofAdr + 2] += CachedForceZ.load() / Mass * Dt;
+    Data->qfrc_applied[DofAdr + 0] = CachedForceX.load();
+    Data->qfrc_applied[DofAdr + 1] = CachedForceY.load();
+    Data->qfrc_applied[DofAdr + 2] = CachedForceZ.load();
+    Data->qfrc_applied[DofAdr + 3] = CachedTorqueX.load();
+    Data->qfrc_applied[DofAdr + 4] = CachedTorqueY.load();
+    Data->qfrc_applied[DofAdr + 5] = CachedTorqueZ.load();
 
-    // 附加角阻尼（独立受力项）：补足 MuJoCo 椭球模型偏弱的旋转阻力。
-    // 后三个 qvel 是 body 系角速度，直接按指数衰减。
-    if (AngularDampingCoeff > 0.0f) {
-        const double AngFactor = FMath::Clamp(1.0 - (double)AngularDampingCoeff * Dt, 0.0, 1.0);
-        Data->qvel[DofAdr + 3] *= AngFactor;
-        Data->qvel[DofAdr + 4] *= AngFactor;
-        Data->qvel[DofAdr + 5] *= AngFactor;
+    // 诊断
+    static int32 ApplyLogCounter = 0;
+    if (++ApplyLogCounter % 500 == 0) {
+        UE_LOG(LogRovBridge, Log,
+            TEXT("[RovMuJoCoBridge][通道] qfrc_applied dof=%d  F=(%.1f,%.1f,%.1f) N  "
+                 "T=(%.2f,%.2f,%.2f) N·m  Z=%.3f"),
+            DofAdr,
+            Data->qfrc_applied[DofAdr + 0], Data->qfrc_applied[DofAdr + 1], Data->qfrc_applied[DofAdr + 2],
+            Data->qfrc_applied[DofAdr + 3], Data->qfrc_applied[DofAdr + 4], Data->qfrc_applied[DofAdr + 5],
+            Data->xpos[3 * BodyId + 2]);
     }
 }
