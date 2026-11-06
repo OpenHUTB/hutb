@@ -178,6 +178,28 @@ public:
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ROV|MuJoCo")
     float ArmJointDamping = 1000.0f;
 
+    /**
+     * 机械臂关节刚度（N·m/rad），相当于在每个关节上装一个位置伺服弹簧，
+     * 把关节锁在 MJCF 的参考角度（qpos0）上。
+     *
+     * 只加阻尼不够：阻尼只抵抗运动，机械臂仍会在重力下缓慢下垂到一个
+     * 偏置姿态，那个偏置产生恒定扰动力矩，把 ROV 压在一个固定倾角上
+     * （实测约 17°，反推扰动约 130 N·m）。加刚度后机械臂被真正"锁住"，
+     * 扰动消失 —— 这也符合真实 ROV 的机械臂由伺服保持的实际情况。
+     */
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ROV|MuJoCo")
+    float ArmJointStiffness = 0.0f;
+
+    /**
+     * 机械臂重力补偿：把机械臂各 body 的 gravcomp 设为 1.0，抵消其自重。
+     *
+     * 机械臂（约 22 kg）挂在 ROV 一侧，静重产生约 130 N·m 的恒定扰动力矩，
+     * 把艇体压在一个固定倾角上。真实 ROV 的机械臂靠伺服与配重平衡掉这部分，
+     * 仿真里用 MuJoCo 的 gravcomp 等效实现，同时保留惯量与碰撞。
+     */
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ROV|MuJoCo")
+    bool bArmGravityComp = false;
+
     // ---------------------------- 姿态控制 ----------------------------
 
     /**

@@ -348,10 +348,12 @@ void URovMuJoCoBridge::ApplyControlForce()
             }
         }
 
-        // 机械臂关节阻尼：模型的机械臂关节没有 ctrl 输入，会自由摆动，
-        // 反作用力矩把 ROV 本体晃得不停翻滚。加阻尼让机械臂稳定下垂。
+        // 机械臂关节阻尼 + 刚度：模型的机械臂关节没有 ctrl 输入，
+        // 会自由摆动，反作用力矩把 ROV 本体晃得不停翻滚。
+        // 阻尼抵抗运动、刚度把它锁在参考角度，两者合起来相当于位置伺服。
         {
             int32 DampedDofs = 0;
+            int32 StiffJoints = 0;
             for (int32 j = 0; j < Model->njnt; ++j) {
                 if (Model->jnt_type[j] == mjJNT_FREE) {
                     continue;
@@ -362,10 +364,27 @@ void URovMuJoCoBridge::ApplyControlForce()
                     Model->dof_damping[Adr + k] = ArmJointDamping;
                     ++DampedDofs;
                 }
+                Model->jnt_stiffness[j] = (mjtNum)ArmJointStiffness;
+                ++StiffJoints;
             }
             UE_LOG(LogRovBridge, Log,
-                TEXT("[RovMuJoCoBridge][机械臂] 已给 %d 个关节自由度加阻尼 %.1f N·m·s/rad"),
-                DampedDofs, ArmJointDamping);
+                TEXT("[RovMuJoCoBridge][机械臂] %d 个关节：阻尼 %.1f N·m·s/rad、刚度 %.1f N·m/rad（%d 个自由度）"),
+                StiffJoints, ArmJointDamping, ArmJointStiffness, DampedDofs);
+        }
+
+        // 机械臂重力补偿：抵消其自重，消除对艇体的恒定倾覆力矩
+        if (bArmGravityComp) {
+            int32 CompBodies = 0;
+            for (int32 b = 1; b < Model->nbody; ++b) {
+                if (b == BodyId) {
+                    continue;   // ROV 本体不补偿
+                }
+                Model->body_gravcomp[b] = 1.0;
+                ++CompBodies;
+            }
+            UE_LOG(LogRovBridge, Log,
+                TEXT("[RovMuJoCoBridge][机械臂] 已对 %d 个 body 做重力补偿（gravcomp=1.0）"),
+                CompBodies);
         }
 
         // 洋流模型初始化（三层级联）
