@@ -781,6 +781,80 @@ void URovMuJoCoBridge::ApplyControlForce()
         }
     }
 
+    // 【10】姿态保持控制器（四元数 PD + 积分）
+    //
+    // 误差用四元数旋转矢量 e = 2·sign(qw)·qv，而不是欧拉角差：
+    //   - 无万向节死锁（ROV 做大俯仰时欧拉角会奇异）
+    //   - 小角度下 e 就是旋转矢量，|e| ≤ 2 天然限幅
+    //   - sign(qw) 取短弧，避免命令转 350° 而不是 10°
+    //
+    // 增益按惯量缩放（Kp = I·ω²、Kd = 2I·ζ·ω），换模型不用重调。
+    // 积分项是必需的：机械臂挂在一侧产生恒定扰动力矩，
+    // 纯 PD 只能把它平衡在某个固定倾角上，消不掉稳态误差。
+    if (bEnableAttitudeHold && Model->body_jntnum[BodyId] >= 1) {
+        const int32 AttJnt = Model->body_jntadr[BodyId];
+        if (Model->jnt_type[AttJnt] == mjJNT_FREE) {
+            const int32 AttDof = Model->jnt_dofadr[AttJnt];
+
+            // 首次运行捕获当前航向作为目标
+            if (!bAttitudeInitialized) {
+                bAttitudeInitialized = true;
+                const double InitYaw = FMath::Atan2(2.0 * (Qw * Qz + Qx * Qy),
+                                                    1.0 - 2.0 * (Qy * Qy + Qz * Qz));
+                TargetYawDeg = FMath::RadiansToDegrees(InitYaw);
+                UE_LOG(LogRovBridge, Log,
+                    TEXT("[RovMuJoCoBridge][姿态] 已锁定目标航向 %.1f°，带宽 %.2f rad/s，阻尼比 %.2f"),
+                    TargetYawDeg, AttitudeBandwidth, AttitudeZeta);
+            }
+
+            const double HalfYaw = FMath::DegreesToRadians(TargetYawDeg) * 0.5;
+            const double Qtw = FMath::Cos(HalfYaw);
+            const double Qtz = FMath::Sin(HalfYaw);
+
+            // q_e = conj(q_c) ⊗ q_t  （机体系误差）
+            auto QMul = [](double aw, double ax, double ay, double az,
+                           double bw, double bx, double by, double bz,
+                           double& ow, double& ox, double& oy, double& oz) {
+                ow = aw * bw - ax * bx - ay * by - az * bz;
+                ox = aw * bx + ax * bw + ay * bz - az * by;
+                oy = aw * by - ax * bz + ay * bw + az * bx;
+                oz = aw * bz + ax * by - ay * bx + az * bw;
+            };
+            double Qew = 0.0, Qex = 0.0, Qey = 0.0, Qez = 0.0;
+            QMul(Qw, -Qx, -Qy, -Qz, Qtw, 0.0, 0.0, Qtz, Qew, Qex, Qey, Qez);
+            if (Qew < 0.0) {          // 取短弧
+                Qew = -Qew; Qex = -Qex; Qey = -Qey; Qez = -Qez;
+            }
+
+            const double E[3] = { 2.0 * Qex, 2.0 * Qey, 2.0 * Qez };
+
+            // 积分（限幅防饱和）
+            double IntArr[3] = { (double)AttitudeIntegral.X,
+                                 (double)AttitudeIntegral.Y,
+                                 (double)AttitudeIntegral.Z };
+            for (int32 Axis = 0; Axis < 3; ++Axis) {
+                IntArr[Axis] += E[Axis] * FrameDt;
+                IntArr[Axis] = FMath::Clamp(IntArr[Axis], -2.0, 2.0);
+            }
+            AttitudeIntegral = FVector(IntArr[0], IntArr[1], IntArr[2]);
+
+            const double W = (double)AttitudeBandwidth;
+            const double Zeta = (double)AttitudeZeta;
+            const double KiF = (double)AttitudeIntegralFactor;
+            for (int32 Axis = 0; Axis < 3; ++Axis) {
+                const double I = Model->body_inertia[3 * BodyId + Axis];
+                const double Kp = I * W * W;
+                const double Kd = 2.0 * I * Zeta * W;
+                const double Ki = I * W * W * W * KiF;
+                const double Omega = Data->qvel[AttDof + 3 + Axis];
+                const double T = Kp * E[Axis] + Ki * IntArr[Axis] - Kd * Omega;
+                if (Axis == 0) { TorqueX += T; }
+                else if (Axis == 1) { TorqueY += T; }
+                else { TorqueZ += T; }
+            }
+        }
+    }
+
     CachedBodyId.store(BodyId);
     CachedForceX.store(Fx);
     CachedForceY.store(Fy);

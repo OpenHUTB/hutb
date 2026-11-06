@@ -178,6 +178,34 @@ public:
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ROV|MuJoCo")
     float ArmJointDamping = 1000.0f;
 
+    // ---------------------------- 姿态控制 ----------------------------
+
+    /**
+     * 姿态保持：roll/pitch 回水平 + yaw 锁航向。
+     *
+     * 分工按真实 ROV：被动稳定（浮心高于重心）负责 roll/pitch 的刚度，
+     * 本控制器只补阻尼和积分 —— 积分是必需的，因为机械臂挂在一侧会产生
+     * 恒定扰动力矩，纯 PD 只能平衡在某个固定倾角上。
+     */
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ROV|MuJoCo|Attitude")
+    bool bEnableAttitudeHold = true;
+
+    /** 姿态闭环带宽（rad/s）。增益按 I·ω² 自动缩放，换惯量不用重调。 */
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ROV|MuJoCo|Attitude")
+    float AttitudeBandwidth = 2.5f;
+
+    /** 阻尼比。1.0 = 临界阻尼，不超调。 */
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ROV|MuJoCo|Attitude")
+    float AttitudeZeta = 0.8f;
+
+    /** 积分增益系数（相对 I·ω³）。用于消除恒定扰动造成的稳态误差。 */
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ROV|MuJoCo|Attitude")
+    float AttitudeIntegralFactor = 0.5f;
+
+    /** 目标航向（度）。启动时自动捕获当前航向。 */
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ROV|MuJoCo|Attitude")
+    float TargetYawDeg = 0.0f;
+
     // ---------------------------- 洋流 ----------------------------
 
     /** 洋流拖曳系数（kg/s）。 */
@@ -287,6 +315,12 @@ private:
 
     /** Z 键上一帧状态，用于边沿检测。 */
     bool bPrevDepthKeyDown = false;
+
+    /** 姿态控制器积分项（机体系，rad·s）。 */
+    FVector AttitudeIntegral = FVector::ZeroVector;
+
+    /** 姿态控制器是否已初始化（首次捕获目标航向）。 */
+    bool bAttitudeInitialized = false;
 
     mutable TWeakObjectPtr<AMjArticulation> Articulation;
     mutable TWeakObjectPtr<UMjBody> TargetBody;
