@@ -318,6 +318,9 @@ void URovMuJoCoBridge::ApplyControlForce()
         }
 
         // 洋流模型初始化（三层级联）
+        if (FParse::Param(FCommandLine::Get(), TEXT("RovOceanCurrent"))) {
+            bEnableOceanCurrent = true;   // 命令行强制开启，便于测试
+        }
         OceanCurrent.bEnabled = bEnableOceanCurrent;
         OceanCurrent.MeanSpeed = OceanCurrentMeanSpeed;
         OceanCurrent.Seed = 42;
