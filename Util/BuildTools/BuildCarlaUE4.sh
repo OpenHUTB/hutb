@@ -118,7 +118,7 @@ fi
 # ==============================================================================
 
 source $(dirname "$0")/Environment.sh
-export UE4_ROOT=/home/ubuntu/UnrealEngine_4.26
+export UE4_ROOT="${UE4_ROOT:-$HOME/UnrealEngine_4.26}"
 echo $UE4_ROOT
 
 if [ ! -d "${UE4_ROOT}" ]; then

@@ -37,6 +37,7 @@
 #include "ImageUtils.h"
 #include "AssetRegistry/AssetRegistryModule.h"
 #include "UObject/SavePackage.h"
+#include "UObject/StrongObjectPtr.h"
 
 UStaticMesh* UMujocoGenerationAction::ImportSingleMesh(const FString& SourcePath, const FString& DestinationPath)
 {
@@ -180,6 +181,17 @@ UStaticMesh* UMujocoGenerationAction::AttemptMeshImport(const FString& SourcePat
 
         UE_LOG(LogURLabEditor, Log, TEXT("Using automated factory detection for mesh: %s"), *SourcePath);
     }
+
+    // 注意：Datasmith 工厂在 FactoryCreateFile() 结束时调用 CollectGarbage()
+    // （DatasmithImportFactory.cpp 的 ReportImportStats）；UE4.26 中
+    // GARBAGE_COLLECTION_KEEPFLAGS 在编辑器里等于 RF_Standalone。
+    // 这里 NewObject 出来的 ImportTask / Factory 都不是 RF_Standalone 且未被 Root，
+    // GC 会把工厂回收，AssetTools 之后在 ImportAssetsInternal() 末尾执行
+    // Factory->ResolveSupportedClass() 时就会访问已释放对象并段错误
+    // （UE4.26 AssetTools.cpp:2105）。所以导入期间必须把它们保持在根集里，
+    // TStrongObjectPtr 析构时会自动移出根集。
+    TStrongObjectPtr<UAssetImportTask> ImportTaskGuard(ImportTask);
+    TStrongObjectPtr<UFactory> ImportFactoryGuard(ImportTask->Factory);
 
     // 运行导入
     TArray<UAssetImportTask*> ImportTasks;

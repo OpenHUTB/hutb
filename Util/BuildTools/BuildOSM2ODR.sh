@@ -82,10 +82,42 @@ if ${BUILD_OSM2ODR} ; then
   log "Building OSM2ODR."
   if [ ! -d ${OSM2ODR_SOURCE_FOLDER} ] ; then
     cd ${CARLA_BUILD_FOLDER}
-    curl --retry 5 --retry-max-time 120 -L -o OSM2ODR.zip https://github.com/carla-simulator/sumo/archive/${CURRENT_OSM2ODR_COMMIT}.zip
-    unzip -qq OSM2ODR.zip
-    rm -f OSM2ODR.zip
-    mv sumo-${CURRENT_OSM2ODR_COMMIT} ${OSM2ODR_SOURCE_FOLDER}
+    OSM2ODR_PACKAGE=osm2odr-source.zip
+    # dependencies_u 里的包（内层目录 osm2odr-source/）
+    OSM2ODR_SHA256SUM=04f8924bb1c48e8cef0b41b2b9f6d02cc878ec29c49c3a8b70150e0c804b76d5
+    # GitHub 归档包（内层目录 sumo-<commit>/），源码树相同但压缩字节不同，校验和也不同
+    OSM2ODR_GITHUB_SHA256SUM=7347d0158dd6cecf2f3e443b69b1479b396df70b971b3cde5770539f7c9e9f53
+
+    # 优先使用 dependencies_u(工蜂)仓库里的本地包,避免依赖外网下载
+    if [ -f "dependencies/src/${OSM2ODR_PACKAGE}" ] ; then
+      log "Using osm2odr from dependencies_u repository."
+      cp "dependencies/src/${OSM2ODR_PACKAGE}" .
+    fi
+
+    # 本地包缺失或校验不通过时,从 GitHub 下载
+    if [ ! -f "${OSM2ODR_PACKAGE}" ] || [[ $(sha256sum "${OSM2ODR_PACKAGE}" | cut -d " " -f 1 ) != "${OSM2ODR_SHA256SUM}" ]] ; then
+      start=$(date +%s)
+      curl -fL --connect-timeout 30 --speed-limit 1024 --speed-time 60 \
+           -o "${OSM2ODR_PACKAGE}" "https://github.com/carla-simulator/sumo/archive/${CURRENT_OSM2ODR_COMMIT}.zip" || true
+      end=$(date +%s)
+      echo "Elapsed Time downloading from GitHub: $(($end-$start)) seconds"
+      # 下到的是 GitHub 的包，改用它的校验和
+      OSM2ODR_SHA256SUM=${OSM2ODR_GITHUB_SHA256SUM}
+    fi
+
+    # 仍失败则报错
+    if [ ! -f "${OSM2ODR_PACKAGE}" ] || [[ $(sha256sum "${OSM2ODR_PACKAGE}" | cut -d " " -f 1 ) != "${OSM2ODR_SHA256SUM}" ]] ; then
+      fatal_error "Failed to retrieve osm2odr ${CURRENT_OSM2ODR_COMMIT} from dependencies_u and GitHub."
+    fi
+
+    unzip -qq "${OSM2ODR_PACKAGE}"
+    rm -f "${OSM2ODR_PACKAGE}"
+    # dependencies_u 包内是 osm2odr-source/，GitHub 包内是 sumo-<commit>/
+    if [ -d osm2odr-source ] ; then
+      mv osm2odr-source ${OSM2ODR_SOURCE_FOLDER}
+    else
+      mv sumo-${CURRENT_OSM2ODR_COMMIT} ${OSM2ODR_SOURCE_FOLDER}
+    fi
   fi
 
   mkdir -p ${OSM2ODR_BUILD_FOLDER}
