@@ -407,12 +407,20 @@ void UMjPhysicsEngine::RunMujocoAsync()
                 }
             } // FScopeLock 在这里释放
 
-            // 在小时间步长下自旋等待精确计时
+            // 在小时间步长下等待精确计时
+            //
+            // OpenHUTB 修改（2026-11-05）：原来是 Sleep(0) 纯自旋，2ms 步长下会
+            // 吃满一个 CPU 核。改为「先睡掉剩余时间的 60%，再短自旋收尾」，
+            // 兼顾计时精度与 CPU 占用。
             const float SpeedFactor = FMath::Clamp(SimSpeedPercent, 5.0f, 100.0f) / 100.0f;
             const double TargetTime = LoopStartTime + (TargetInterval / SpeedFactor);
+            double Remaining = TargetTime - FPlatformTime::Seconds();
+            if (Remaining > 0.002) {
+                // 留 2ms 给自旋收尾，其余时间真正休眠
+                FPlatformProcess::Sleep(static_cast<float>(Remaining - 0.002));
+            }
             while (FPlatformTime::Seconds() < TargetTime)
             {
-                // FPlatformProcess::YieldThread();
                 FPlatformProcess::Sleep(0.0f);
             }
         }

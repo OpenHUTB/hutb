@@ -1,4 +1,4 @@
-{
+﻿{
 	"FileVersion": 3,
 	"EngineAssociation": "{FF5B26C3-46CF-C440-D9FB-F48D5F122826}",
 	"Category": "",
@@ -174,7 +174,7 @@
 		},
 		{
 			"Name": "CesiumForUnreal",
-			"Enabled": true,
+			"Enabled": false,
 			"MarketplaceURL": "com.epicgames.launcher://ue/marketplace/content/87b0d05800a545d49bf858ef3458c4f7",
 			"SupportedTargetPlatforms": [
 				"Win64",
@@ -185,16 +185,20 @@
 			]
 		},
 		{
-			"Name": "RoadRunnerCarlaContent",
+			"Name": "RoadRunnerMaterials",
 			"Enabled": true
+		},
+		{
+			"Name": "RoadRunnerCarlaContent",
+			"Enabled": false
 		},
 		{
 			"Name": "RoadRunnerCarlaIntegration",
-			"Enabled": true
+			"Enabled": false
 		},
 		{
 			"Name": "RoadRunnerImporter",
-			"Enabled": true
+			"Enabled": false
 		},
 		{
 			"Name": "StreetMap",
@@ -202,18 +206,26 @@
 		},
 		{
 			"Name": "RoadRunnerCarlaDatasmith",
-			"Enabled": true
+			"Enabled": false
 		},
 		{
 			"Name": "RoadRunnerDatasmith",
-			"Enabled": true
+			"Enabled": false
 		},
 		{
 			"Name": "RoadRunnerRuntime",
-			"Enabled": true
+			"Enabled": false
 		},
 		{
 			"Name": "LogitechWheelPlugin",
+			"Enabled": true
+		},
+		{
+			"Name": "OceanPlugin",
+			"Enabled": true
+		},
+		{
+			"Name": "UnderwaterScene",
 			"Enabled": true
 		}
 	]

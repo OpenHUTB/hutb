@@ -1,0 +1,5 @@
+<!-- Top-level include fragment carrying only a <compiler>. Its angle="radian"
+     must reach the importer (joint ranges below are authored in radians). -->
+<mujocoinclude>
+    <compiler angle="radian" inertiafromgeom="auto"/>
+</mujocoinclude>

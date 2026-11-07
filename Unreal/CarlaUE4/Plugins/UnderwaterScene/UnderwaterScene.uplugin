@@ -1,0 +1,21 @@
+{
+	"FileVersion": 3,
+	"Version": 1,
+	"VersionName": "1.0",
+	"FriendlyName": "Underwater Scene",
+	"Description": "水下场景搭建辅助：可配置的平面 Actor（海底/水面），供 Python 通过蓝图放置",
+	"Category": "Simulation",
+	"CreatedBy": "OpenHUTB",
+	"CreatedByURL": "https://github.com/OpenHUTB",
+	"CanContainContent": true,
+	"IsBetaVersion": false,
+	"IsExperimentalVersion": true,
+	"Installed": true,
+	"Modules": [
+		{
+			"Name": "UnderwaterScene",
+			"Type": "Runtime",
+			"LoadingPhase": "Default"
+		}
+	]
+}

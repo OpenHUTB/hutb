@@ -1,0 +1,15 @@
+<!-- Top-level include fragment: declares a mesh <asset> AND its own <worldbody>.
+     Both must be picked up; the <worldbody> here is what used to collide with the
+     parent's <worldbody> and crash the importer. -->
+<mujocoinclude>
+    <asset>
+        <mesh file="tabletop.stl" name="tabletop" scale="0.001 0.001 0.001"/>
+    </asset>
+
+    <worldbody>
+        <light directional="true" pos="0 0 1" dir="0 0 -1"/>
+        <body name="table" pos="0 0.6 0">
+            <geom mesh="tabletop" type="mesh" name="table_geom"/>
+        </body>
+    </worldbody>
+</mujocoinclude>

@@ -79,6 +79,16 @@ public:
 	UPROPERTY(EditAnywhere)
 	bool bOn;
 
+	/**
+	 * OpenHUTB 追加：读取传感器数据缓冲区。
+	 * 缓冲区由 UHolodeckServer::Malloc 分配，传感器在 TG_PostPhysics 阶段写入。
+	 * 返回 nullptr 表示尚未 InitializeSensor 或分配失败。
+	 */
+	void* GetDataBuffer() const { return Buffer; }
+
+	/** OpenHUTB 追加：缓冲区字节数（= GetNumItems() * GetItemSize()） */
+	int32 GetDataBufferSize() { return GetNumItems() * GetItemSize(); }
+
 protected:
 
 	/**

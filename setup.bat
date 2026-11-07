@@ -182,6 +182,15 @@ if exist "%cd%\Build\dependencies\" (
     ) else (
         echo RoadRunner Plugins already exists.
     )
+    rem Install OceanPlugin (third-party, downloaded on demand, not stored in repo)
+    if not exist "%cd%\Unreal\CarlaUE4\Plugins\OceanPlugin\OceanPlugin.uplugin" (
+        echo Installing OceanPlugin ...
+        powershell -NoProfile -ExecutionPolicy Bypass -File "%cd%\Unreal\CarlaUE4\Plugins\setup_ocean_plugin.ps1"
+        if errorlevel 1 exit /b 1
+    ) else (
+        echo OceanPlugin already exists.
+    )
+
     rem Unzip CesiumForUnreal Plugin
     if not exist "%cd%\Unreal\CarlaUE4\Plugins\CesiumForUnreal" (
         echo Unzipping CesiumForUnreal Plugin ...
