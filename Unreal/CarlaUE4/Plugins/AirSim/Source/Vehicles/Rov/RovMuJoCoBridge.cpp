@@ -604,6 +604,24 @@ void URovMuJoCoBridge::ApplyControlForce()
 
     const double FrameDt = GetWorld() ? FMath::Max(GetWorld()->GetDeltaSeconds(), 1e-4f) : 0.016;
 
+    // 【航向调整】← / → 连续改变目标航向（姿态保持开启时生效）
+    if (bEnableAttitudeHold) {
+        const bool bYawLeft  = PC->IsInputKeyDown(EKeys::Left);
+        const bool bYawRight = PC->IsInputKeyDown(EKeys::Right);
+        if (bYawLeft || bYawRight) {
+            const double Step = (double)YawRateDegPerSec * FrameDt;
+            if (bYawLeft)  { TargetYawDeg -= (float)Step; }
+            if (bYawRight) { TargetYawDeg += (float)Step; }
+            while (TargetYawDeg >  180.0f) { TargetYawDeg -= 360.0f; }
+            while (TargetYawDeg < -180.0f) { TargetYawDeg += 360.0f; }
+            static int32 YawLogCounter = 0;
+            if ((++YawLogCounter % 30) == 0) {
+                UE_LOG(LogRovBridge, Log,
+                    TEXT("[RovMuJoCoBridge][航向] 目标航向 = %.1f°（←/→ 调整）"), TargetYawDeg);
+            }
+        }
+    }
+
     // 【2】洋流：三层级联求当前流速
     const FVector VCurrent = OceanCurrent.GetVelocity(RovPos, (float)FrameDt);
 

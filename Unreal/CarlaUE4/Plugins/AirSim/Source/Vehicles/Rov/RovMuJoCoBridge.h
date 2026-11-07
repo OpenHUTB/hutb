@@ -122,7 +122,7 @@ public:
      * UE 场景水面在 Z=+800cm，对应这里 8.0。
      */
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ROV|MuJoCo|Control")
-    float WaterSurfaceZ = 8.0f;
+    float WaterSurfaceZ = -2.0f;   // 地图自带海面 Z = -200 cm（Town10 外围水体）
 
     // ---------------------------- 流体 ----------------------------
 
@@ -227,6 +227,10 @@ public:
     /** 目标航向（度）。启动时自动捕获当前航向。 */
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ROV|MuJoCo|Attitude")
     float TargetYawDeg = 0.0f;
+
+    /** 航向调整速率（度/秒）。按住 ← / → 连续改变目标航向。 */
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ROV|MuJoCo|Attitude")
+    float YawRateDegPerSec = 60.0f;
 
     // ---------------------------- 洋流 ----------------------------
 
