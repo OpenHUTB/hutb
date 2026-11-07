@@ -3,7 +3,7 @@ import time
 import os
 
 # Ensure AirSim python client is in path
-sys.path.append(r"E:\Projects\OpenHUTB-air\air\PythonClient")
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "carla", "source")))
 import airsim
 import carla
 
