@@ -641,6 +641,16 @@ void URovMuJoCoBridge::ApplyControlForce()
         bPrevDepthKeyDown = bDepthKeyDown;
     }
 
+    // 出生自动锁定深度：避免浮力略小于重力时一路沉到海底，保证演示时停在水面附近
+    static bool bAutoDepthInit = false;
+    if (bEnableDepthHold && !bAutoDepthInit) {
+        bAutoDepthInit = true;
+        bDepthHoldActive = true;
+        DepthPID.Reset();
+        DepthHoldTargetZ = RovZ;
+        UE_LOG(LogRovBridge, Log, TEXT("[RovMuJoCoBridge][定深] 出生自动锁定 Z=%.3f m"), DepthHoldTargetZ);
+    }
+
     // 命令行自检：-RovDepthHoldTest 在 3 秒后自动锁定当前深度并打印误差，
     // 用来验证 PID 定深，不依赖键盘。
     static const bool bDepthHoldTest =
