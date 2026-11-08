@@ -306,6 +306,7 @@ void URovMuJoCoBridge::ApplyControlForce()
         ArmJointDamping = FloatParam(TEXT("RovArmDamping="), ArmJointDamping);
         ThrusterMaxRatio = FloatParam(TEXT("RovThrustRatio="), ThrusterMaxRatio);
         WaterSurfaceZ    = FloatParam(TEXT("RovWaterSurfaceZ="), WaterSurfaceZ);
+        if (FParse::Param(FCommandLine::Get(), TEXT("RovNoAttitude"))) { bEnableAttitudeHold = false; }
         UE_LOG(LogRovBridge, Log,
             TEXT("[RovMuJoCoBridge][调参] 排水体积=%.4f m³  浮力倍率=%.2f  推力比=%.2f  水面Z=%.2f m"),
             DisplacedVolume, BuoyancyScale, ThrusterMaxRatio, WaterSurfaceZ);
@@ -854,6 +855,7 @@ void URovMuJoCoBridge::ApplyControlForce()
     // MuJoCo 椭球流体模型的旋转阻力偏弱，真实 ROV 的导流罩/鳍会额外提供阻力。
     // Kd = AngularDampingCoeff × 平均主惯量，保持和之前"每秒衰减 1/s"的语义一致。
     double TorqueX = 0.0, TorqueY = 0.0, TorqueZ = 0.0;
+    double WorldTorqueX = 0.0, WorldTorqueY = 0.0, WorldTorqueZ = 0.0;
     if (AngularDampingCoeff > 0.0f && Model->body_jntnum[BodyId] >= 1) {
         const int32 DampJnt = Model->body_jntadr[BodyId];
         if (Model->jnt_type[DampJnt] == mjJNT_FREE) {
@@ -878,7 +880,8 @@ void URovMuJoCoBridge::ApplyControlForce()
     // 增益按惯量缩放（Kp = I·ω²、Kd = 2I·ζ·ω），换模型不用重调。
     // 积分项是必需的：机械臂挂在一侧产生恒定扰动力矩，
     // 纯 PD 只能把它平衡在某个固定倾角上，消不掉稳态误差。
-    if (bEnableAttitudeHold && Model->body_jntnum[BodyId] >= 1) {
+    // 旧的四元数三轴控制器存在符号/轴向问题，已停用；改用下方世界系解耦控制
+    if (false && bEnableAttitudeHold && Model->body_jntnum[BodyId] >= 1) {
         const int32 AttJnt = Model->body_jntadr[BodyId];
         if (Model->jnt_type[AttJnt] == mjJNT_FREE) {
             const int32 AttDof = Model->jnt_dofadr[AttJnt];
@@ -958,6 +961,22 @@ void URovMuJoCoBridge::ApplyControlForce()
                     Iaxis[0], Iaxis[1], Iaxis[2]);
             }
 
+            // 姿态诊断：每秒打印一次欧拉角、目标、误差、角速度和力矩
+            {
+                static int32 AttLogTick = -1;
+                const int32 TickNow = (int32)(GetWorld()->GetTimeSeconds());
+                if (TickNow != AttLogTick) {
+                    AttLogTick = TickNow;
+                    const double RollD  = FMath::RadiansToDegrees(FMath::Atan2(2.0*(Qw*Qx + Qy*Qz), 1.0 - 2.0*(Qx*Qx + Qy*Qy)));
+                    const double PitchD = FMath::RadiansToDegrees(FMath::Asin(FMath::Clamp(2.0*(Qw*Qy - Qz*Qx), -1.0, 1.0)));
+                    const double YawD   = FMath::RadiansToDegrees(FMath::Atan2(2.0*(Qw*Qz + Qx*Qy), 1.0 - 2.0*(Qy*Qy + Qz*Qz)));
+                    UE_LOG(LogRovBridge, Log,
+                        TEXT("[%s][姿态诊断] roll=%.1f pitch=%.1f yaw=%.1f targetYaw=%.1f |E|=(%.3f,%.3f,%.3f) omega=(%.2f,%.2f,%.2f)")
+                        , TEXT("RovMuJoCoBridge"), RollD, PitchD, YawD, TargetYawDeg, E[0], E[1], E[2],
+                        Data->qvel[AttDof+3], Data->qvel[AttDof+4], Data->qvel[AttDof+5]);
+                }
+            }
+
             for (int32 Axis = 0; Axis < 3; ++Axis) {
                 // 优先用复合惯量（含机械臂）；取不到时退回本体的等效惯量
                 const double I = (EffInertia[Axis] > 0.0) ? EffInertia[Axis] : Iaxis[Axis];
@@ -965,7 +984,8 @@ void URovMuJoCoBridge::ApplyControlForce()
                 const double Kd = 2.0 * I * Zeta * W;
                 const double Ki = I * W * W * W * KiF;
                 const double Omega = Data->qvel[AttDof + 3 + Axis];
-                const double T = Kp * E[Axis] + Ki * IntArr[Axis] - Kd * Omega;
+                double T = Kp * E[Axis] + Ki * IntArr[Axis] - Kd * Omega;
+                T = FMath::Clamp(T, -1500.0, 1500.0);   // 力矩限幅，防止饱和发散
                 if (Axis == 0) { TorqueX += T; }
                 else if (Axis == 1) { TorqueY += T; }
                 else { TorqueZ += T; }
@@ -973,6 +993,55 @@ void URovMuJoCoBridge::ApplyControlForce()
         }
     }
 
+    // 【10】级联姿态控制（按调研报告 C1-C4）
+    //   外环：姿态误差 -> 期望角速度（机体系）
+    //   内环：期望角速度 - 实测角速度（qvel[3:6] 即机体系）-> 力矩
+    //   力矩直接写 qfrc_applied 后三维（机体系），不再经 RotByQuat/mj_applyFT
+    if (bEnableAttitudeHold && Model->body_jntnum[BodyId] >= 1) {
+        const int32 NJ = Model->body_jntadr[BodyId];
+        if (Model->jnt_type[NJ] == mjJNT_FREE) {
+            const int32 ND = Model->jnt_dofadr[NJ];
+            const double* QQ = &Data->xquat[4 * BodyId];
+            const double qw = QQ[0], qx = QQ[1], qy = QQ[2], qz = QQ[3];
+
+            if (!bAttitudeInitialized) {
+                bAttitudeInitialized = true;
+                const double InitYaw = FMath::Atan2(2.0 * (qw * qz + qx * qy),
+                                                    1.0 - 2.0 * (qy * qy + qz * qz));
+                TargetYawDeg = FMath::RadiansToDegrees(InitYaw);
+                UE_LOG(LogRovBridge, Log,
+                    TEXT("[RovMuJoCoBridge][姿态] 级联控制启用，锁定航向 %.1f°"), TargetYawDeg);
+            }
+
+            const double HalfYaw = FMath::DegreesToRadians(TargetYawDeg) * 0.5;
+            const double Qtw = FMath::Cos(HalfYaw);
+            const double Qtz = FMath::Sin(HalfYaw);
+
+            // q_e = conj(q_c) ⊗ q_t （机体系），取短弧
+            const double aw = qw, ax = -qx, ay = -qy, az = -qz;
+            double Qew = aw * Qtw - ax * 0.0 - ay * 0.0 - az * Qtz;
+            double Qex = aw * 0.0 + ax * Qtw + ay * Qtz - az * 0.0;
+            double Qey = aw * 0.0 - ax * Qtz + ay * Qtw + az * 0.0;
+            double Qez = aw * Qtz + ax * 0.0 - ay * 0.0 + az * Qtw;
+            if (Qew < 0.0) { Qew = -Qew; Qex = -Qex; Qey = -Qey; Qez = -Qez; }
+
+            const double E3[3] = { 2.0 * Qex, 2.0 * Qey, 2.0 * Qez };
+            const double KpAtt[3] = { 1.5, 1.5, 1.0 };
+            const double Wmax[3]  = { 0.8, 0.8, 0.6 };
+            const double Wn = 5.0;
+
+            for (int32 Axis = 0; Axis < 3; ++Axis) {
+                const double I = (EffInertia[Axis] > 0.0) ? EffInertia[Axis]
+                                                          : Model->body_inertia[3 * BodyId + Axis];
+                const double Wsp = FMath::Clamp(KpAtt[Axis] * E3[Axis], -Wmax[Axis], Wmax[Axis]);
+                double T = I * Wn * (Wsp - Data->qvel[ND + 3 + Axis]);
+                T = FMath::Clamp(T, -1500.0, 1500.0);
+                if (Axis == 0) { TorqueX += T; }
+                else if (Axis == 1) { TorqueY += T; }
+                else { TorqueZ += T; }
+            }
+        }
+    }
     CachedBodyId.store(BodyId);
     CachedForceX.store(Fx);
     CachedForceY.store(Fy);
@@ -998,15 +1067,10 @@ void URovMuJoCoBridge::ApplyControlForce()
         }
     }
 
-    // 姿态控制器和角阻尼给出的力矩是**机体系**的，而 mj_applyFT 要世界系，
-    // 在这里统一转过去。之前直接把机体系力矩写进 qfrc_applied 后三维，
-    // 实测轴系对不上（给"轴 0"却主要绕 Y 转），这是本次重构要解决的根因。
-    double TWx = 0.0, TWy = 0.0, TWz = 0.0;
-    RotByQuat(Qw, Qx, Qy, Qz, TorqueX, TorqueY, TorqueZ, TWx, TWy, TWz);
-
-    CachedTorqueX.store(TWx);
-    CachedTorqueY.store(TWy);
-    CachedTorqueZ.store(TWz);
+    // 力矩就是机体系，直接缓存；ApplyCachedForce 里直写 qfrc_applied[3..5]
+    CachedTorqueX.store(TorqueX);
+    CachedTorqueY.store(TorqueY);
+    CachedTorqueZ.store(TorqueZ);
     CachedBuoyancy.store(Buoyancy);
 
     if (!bControlCallbackRegistered) {
@@ -1101,15 +1165,39 @@ void URovMuJoCoBridge::ApplyCachedForce(mjModel_* Model, mjData_* Data)
         mj_applyFT(Model, Data, F2, ZeroT, CBw, BodyId, Data->qfrc_applied);
     }
 
-    // 【3】姿态控制器 + 角阻尼：纯力矩，作用点取质心
-    const double Tx = CachedTorqueX.load();
-    const double Ty = CachedTorqueY.load();
-    const double Tz = CachedTorqueZ.load();
-    if (Tx != 0.0 || Ty != 0.0 || Tz != 0.0) {
-        mjtNum T3[3] = { (mjtNum)Tx, (mjtNum)Ty, (mjtNum)Tz };
-        mj_applyFT(Model, Data, ZeroF, T3, CG, BodyId, Data->qfrc_applied);
+    // 【3】姿态力矩：free joint 的 qfrc_applied[3..5] 就是机体系力矩，直接赋值
+    Data->qfrc_applied[DofAdr + 3] = (mjtNum)CachedTorqueX.load();
+    Data->qfrc_applied[DofAdr + 4] = (mjtNum)CachedTorqueY.load();
+    Data->qfrc_applied[DofAdr + 5] = (mjtNum)CachedTorqueZ.load();
+
+    // 【4】一次性初始化：implicit 积分器 + 转动 dof 阻尼
+    static bool bCtlInitDone = false;
+    if (!bCtlInitDone) {
+        bCtlInitDone = true;
+        Model->opt.integrator = mjINT_IMPLICIT;
+        const double Idamp = 0.5 * (Model->body_inertia[3 * BodyId + 0]
+                                  + Model->body_inertia[3 * BodyId + 1]
+                                  + Model->body_inertia[3 * BodyId + 2]) / 3.0;
+        Model->dof_damping[DofAdr + 3] = Idamp;
+        Model->dof_damping[DofAdr + 4] = Idamp;
+        Model->dof_damping[DofAdr + 5] = Idamp;
+        UE_LOG(LogRovBridge, Log, TEXT("[RovBridge][版本] mj_versionString=%s"), UTF8_TO_TCHAR(mj_versionString()));
+        UE_LOG(LogRovBridge, Log, TEXT("[RovBridge][控制] integrator=implicit  dof_damping=%.2f N.m.s/rad"), Idamp);
     }
 
+    // 【5】qfrc_applied 累加监测（每秒一次）
+    {
+        static double LastQfrcLogT = -1.0;
+        if (Data->time - LastQfrcLogT > 1.0) {
+            LastQfrcLogT = Data->time;
+            UE_LOG(LogRovBridge, Log,
+                TEXT("[RovBridge][qfrc] t=%.2f applied=(%.1f, %.1f, %.1f, %.1f, %.1f, %.1f)"),
+                Data->time,
+                Data->qfrc_applied[DofAdr + 0], Data->qfrc_applied[DofAdr + 1],
+                Data->qfrc_applied[DofAdr + 2], Data->qfrc_applied[DofAdr + 3],
+                Data->qfrc_applied[DofAdr + 4], Data->qfrc_applied[DofAdr + 5]);
+        }
+    }
     // 诊断
     static int32 ApplyLogCounter = 0;
     if (++ApplyLogCounter % 500 == 0) {
@@ -1118,7 +1206,7 @@ void URovMuJoCoBridge::ApplyCachedForce(mjModel_* Model, mjData_* Data)
                  "浮力=%.1f N  T=(%.1f,%.1f,%.1f) N·m  Z=%.3f"),
             DofAdr,
             Data->qfrc_applied[DofAdr + 0], Data->qfrc_applied[DofAdr + 1], Data->qfrc_applied[DofAdr + 2],
-            Buoy, Tx, Ty, Tz,
+            Buoy, Data->qfrc_applied[DofAdr + 3], Data->qfrc_applied[DofAdr + 4], Data->qfrc_applied[DofAdr + 5],
             Data->xpos[3 * BodyId + 2]);
     }
 }

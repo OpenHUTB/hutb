@@ -214,7 +214,7 @@ public:
 
     /** 姿态闭环带宽（rad/s）。增益按 I·ω² 自动缩放，换惯量不用重调。 */
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ROV|MuJoCo|Attitude")
-    float AttitudeBandwidth = 2.5f;
+    float AttitudeBandwidth = 1.0f;
 
     /** 阻尼比。1.0 = 临界阻尼，不超调。 */
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ROV|MuJoCo|Attitude")
@@ -222,7 +222,7 @@ public:
 
     /** 积分增益系数（相对 I·ω³）。用于消除恒定扰动造成的稳态误差。 */
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ROV|MuJoCo|Attitude")
-    float AttitudeIntegralFactor = 0.5f;
+    float AttitudeIntegralFactor = 0.0f;
 
     /** 目标航向（度）。启动时自动捕获当前航向。 */
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ROV|MuJoCo|Attitude")
@@ -231,6 +231,21 @@ public:
     /** 航向调整速率（度/秒）。按住 ← / → 连续改变目标航向。 */
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ROV|MuJoCo|Attitude")
     float YawRateDegPerSec = 60.0f;
+    /** 水平（roll/pitch）回调带宽 rad/s */
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ROV|MuJoCo|Attitude")
+    float LevelBandwidth = 1.5f;
+
+    /** 水平阻尼比 */
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ROV|MuJoCo|Attitude")
+    float LevelZeta = 0.8f;
+
+    /** 航向回调带宽 rad/s */
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ROV|MuJoCo|Attitude")
+    float YawBandwidth = 1.0f;
+
+    /** 航向阻尼比 */
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ROV|MuJoCo|Attitude")
+    float YawZeta = 1.0f;
 
     // ---------------------------- 洋流 ----------------------------
 
@@ -247,7 +262,7 @@ public:
      * 所以这里作为**独立受力项**补一个可调角阻尼，与流体模型叠加。
      */
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ROV|MuJoCo|Fluid")
-    float AngularDampingCoeff = 10.0f;
+    float AngularDampingCoeff = 0.0f;   // 改由 dof_damping 提供
 
     /**
      * 是否启用洋流（三层级联：Gauss-Markov + 分层 + 湍流）。
