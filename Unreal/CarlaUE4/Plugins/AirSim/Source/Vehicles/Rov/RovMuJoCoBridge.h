@@ -391,6 +391,16 @@ private:
 
     std::atomic<int32> CachedBodyId{-1};
 
+    /**
+     * 控制指令的时间戳（MuJoCo 仿真时间）。
+     *
+     * 控制力矩在**游戏线程**按帧算，物理在**独立线程**按 500 Hz 跑。
+     * 打包版启动时有一段长卡顿（着色器编译），游戏线程几秒不更新，
+     * 上一帧的力矩会被冻结着一直施加 —— 实测 ROV 在 5 秒内被甩到 159°。
+     * 物理线程据此判断指令是否过期，过期就把推力/力矩归零。
+     */
+    std::atomic<double> CachedControlTime{0.0};
+
     /** pre-step 回调只注册一次。 */
     bool bControlCallbackRegistered = false;
 

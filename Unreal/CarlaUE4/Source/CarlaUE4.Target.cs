@@ -40,8 +40,8 @@ public class CarlaUE4Target : TargetRules
 	  CppStandard = CppStandardVersion.Cpp17;
 
 	  // 排查打包版崩溃时曾临时打开（Shipping 默认不写日志）：
-	  //   bUseLoggingInShipping = true;
-	  // 打开后 Engine 模块需整体重编（约 700 个编译动作），诊断完已关闭。
-	  // 需要再抓打包版日志时把这行加回来即可。
+	  // 2026-11-08：打包版姿态与编辑器不一致，重新打开以便抓 tilt/mass/qfrc。
+	  // 打开后 Engine 模块需整体重编（约 700 个编译动作），出完包可以再关掉。
+	  bUseLoggingInShipping = true;
 	}
 }

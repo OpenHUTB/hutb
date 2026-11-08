@@ -393,44 +393,11 @@ void URovMuJoCoBridge::ApplyControlForce()
                 CompBodies);
         }
 
-        // 复合惯量：从自由关节的 6×6 质量阵取转动对角元。
-        // body_inertia 只有 ROV 本体，不含机械臂，用它算增益会严重偏小 ——
-        // 这正是消融实验里"纯刚体 + PD 也不收敛"的原因。
-        //
-        // 安全性：qM 只有在 mj_forward/mj_step 之后才有效。打包版首帧的时序
-        // 可能与编辑器不同，若此时 qM 未就绪会读到垃圾值 → 增益变 NaN →
-        // 力矩爆炸。所以这里校验：非空、有限、为正，否则退回 body_inertia。
-        {
-            const int32 Nv = Model->nv;
-            bool bOk = (Nv >= 6) && (Data->qM != nullptr);
-            if (bOk) {
-                TArray<mjtNum> M;
-                M.SetNumZeroed(Nv * Nv);
-                mj_fullM(Model, M.GetData(), Data->qM);
-                for (int32 a = 0; a < 3; ++a) {
-                    const double V = M[(3 + a) * Nv + (3 + a)];
-                    if (!FMath::IsFinite(V) || V <= 0.0) {
-                        bOk = false;
-                        break;
-                    }
-                    EffInertia[a] = V;
-                }
-            }
-            if (!bOk) {
-                for (int32 a = 0; a < 3; ++a) {
-                    EffInertia[a] = Model->body_inertia[3 * BodyId + a];
-                }
-                UE_LOG(LogRovBridge, Warning,
-                    TEXT("[RovMuJoCoBridge][复合惯量] qM 未就绪，回退到 body_inertia"));
-            }
-            UE_LOG(LogRovBridge, Log,
-                TEXT("[RovMuJoCoBridge][复合惯量] 转动对角元 = (%.3f, %.3f, %.3f) kg·m²  "
-                     "（body_inertia = %.3f/%.3f/%.3f，来源=%s）"),
-                EffInertia[0], EffInertia[1], EffInertia[2],
-                Model->body_inertia[3 * BodyId + 0],
-                Model->body_inertia[3 * BodyId + 1],
-                Model->body_inertia[3 * BodyId + 2],
-                bOk ? TEXT("6x6 质量阵") : TEXT("body_inertia 回退"));
+        // 复合惯量：先用本体惯量兜底，等仿真真正跑起来再换成 6×6 质量阵的值。
+        // （qM 只有在 mj_forward/mj_step 之后才有效，首帧读会拿到垃圾值；
+        //   打包版首帧时序和编辑器不同，曾读到极小值 → 控制器力矩≈0 → ROV 缓慢翻转。）
+        for (int32 a = 0; a < 3; ++a) {
+            EffInertia[a] = Model->body_inertia[3 * BodyId + a];
         }
 
         // 洋流模型初始化（三层级联）
@@ -489,6 +456,38 @@ void URovMuJoCoBridge::ApplyControlForce()
             TEXT("[RovMuJoCoBridge][受力] 重力=%.1f N  浮力=%.1f N  净力=%+.1f N（正=上浮，负=下沉）  "
                  "排水体积=%.4f m³  浮力倍率=%.2f"),
             Weight, Buoyancy, Buoyancy - Weight, DisplacedVolume, BuoyancyScale);
+    }
+
+    // 复合惯量延迟计算：qM 只有在 mj_forward/mj_step 之后才有效。
+    // 首帧就取会拿到垃圾值（打包版实测读到极小值 → 控制器力矩≈0 → 缓慢翻转），
+    // 所以等仿真时间过 0.2 s 再算一次，并且对量级做下限校验。
+    {
+        static bool bEffInertiaDone = false;
+        if (!bEffInertiaDone && Data->time > 0.2 && Data->qM) {
+            bEffInertiaDone = true;
+            const int32 Nv = Model->nv;
+            bool bOk = (Nv >= 6);
+            double Vals[3] = { 0.0, 0.0, 0.0 };
+            if (bOk) {
+                TArray<mjtNum> M;
+                M.SetNumZeroed(Nv * Nv);
+                mj_fullM(Model, M.GetData(), Data->qM);
+                for (int32 a = 0; a < 3; ++a) {
+                    const double V = M[(3 + a) * Nv + (3 + a)];
+                    // 这台 ROV 的转动惯量量级是几十 kg·m²，小于 1 一律视为无效
+                    if (!FMath::IsFinite(V) || V < 1.0) { bOk = false; break; }
+                    Vals[a] = V;
+                }
+            }
+            if (bOk) {
+                for (int32 a = 0; a < 3; ++a) { EffInertia[a] = Vals[a]; }
+            }
+            UE_LOG(LogRovBridge, Log,
+                TEXT("[RovMuJoCoBridge][复合惯量] 延迟计算 t=%.2f  "
+                     "EffInertia=(%.3f, %.3f, %.3f)  来源=%s"),
+                Data->time, EffInertia[0], EffInertia[1], EffInertia[2],
+                bOk ? TEXT("6x6 质量阵") : TEXT("body_inertia 回退"));
+        }
     }
 
     APlayerController* PC = GetWorld() ? GetWorld()->GetFirstPlayerController() : nullptr;
@@ -1068,6 +1067,20 @@ void URovMuJoCoBridge::ApplyControlForce()
             const double Wn = 5.0;
             static double AttInt[3] = { 0.0, 0.0, 0.0 };
 
+            // 积分步长必须用「距上次调用实际经过的仿真时间」，不能用固定 timestep：
+            // ApplyControlForce 是按渲染帧调用的，帧率不同积分速度就不同
+            // （Development 约 60 fps、Shipping 约 120+ fps）。用固定 timestep 会让
+            // 打包版的积分快一倍，恒力矩还没抵掉就先过冲，表现为缓慢翻转。
+            static double LastIntTime = -1.0;
+            double IntDt = 0.0;
+            {
+                const double NowT = (double)Data->time;
+                if (LastIntTime >= 0.0) {
+                    IntDt = FMath::Clamp(NowT - LastIntTime, 0.0, 0.05);
+                }
+                LastIntTime = NowT;
+            }
+
             // 航向前馈（见【航向调整】）：按住 ←/→ 时直接给期望角速度。
             // 上限也要一起放大，否则前馈会被 Wmax 截掉，目标航向又会跑飞。
             const double YawFF = FMath::DegreesToRadians(YawCmdRateDeg);
@@ -1081,8 +1094,7 @@ void URovMuJoCoBridge::ApplyControlForce()
                 const double Wlim = (Axis == 2) ? WmaxZ : Wmax[Axis];
                 // 积分项：抵消模型里无法消除的恒定力矩（质心/浮心不重合、
                 // 机械臂残余重量等），否则纯 P 会停在一个固定倾角上。
-                AttInt[Axis] = FMath::Clamp(
-                    AttInt[Axis] + E3[Axis] * (double)Model->opt.timestep, -2.0, 2.0);
+                AttInt[Axis] = FMath::Clamp(AttInt[Axis] + E3[Axis] * IntDt, -2.0, 2.0);
                 double Wsp = FMath::Clamp(KpAtt[Axis] * E3[Axis] + AttitudeIntegralGain * AttInt[Axis],
                                           -Wlim, Wlim);
                 if (Axis == 2 && YawFF != 0.0) {
@@ -1132,6 +1144,7 @@ void URovMuJoCoBridge::ApplyControlForce()
     }
 
     CachedBodyId.store(BodyId);
+    CachedControlTime.store((double)Data->time);
     CachedForceX.store(Fx);
     CachedForceY.store(Fy);
     CachedForceZ.store(Fz);
@@ -1222,6 +1235,13 @@ void URovMuJoCoBridge::ApplyCachedForce(mjModel_* Model, mjData_* Data)
         Data->qfrc_applied[DofAdr + k] = 0.0;
     }
 
+    // 指令新鲜度：控制量在游戏线程按帧算，物理线程按 500 Hz 跑。
+    // 游戏线程卡顿（打包版启动时的着色器编译最典型）时，旧指令会被冻结着
+    // 一直施加，等于给 ROV 灌几秒恒定力矩 —— 实测 5 秒内被甩到 159°。
+    // 这里按「距上次控制更新经过的仿真时间」做淡出：>0.1 s 开始衰减，>0.2 s 归零。
+    const double CmdAge = (double)Data->time - CachedControlTime.load();
+    const double Fresh = FMath::Clamp(1.0 - (CmdAge - 0.10) / 0.10, 0.0, 1.0);
+
     const mjtNum CG[3] = {
         Data->xipos[3 * BodyId + 0],
         Data->xipos[3 * BodyId + 1],
@@ -1232,9 +1252,9 @@ void URovMuJoCoBridge::ApplyCachedForce(mjModel_* Model, mjData_* Data)
 
     // 【1】推进器推力 + 洋流拖曳：作用在质心
     mjtNum F1[3] = {
-        (mjtNum)CachedForceX.load(),
-        (mjtNum)CachedForceY.load(),
-        (mjtNum)CachedForceZ.load()
+        (mjtNum)(CachedForceX.load() * Fresh),
+        (mjtNum)(CachedForceY.load() * Fresh),
+        (mjtNum)(CachedForceZ.load() * Fresh)
     };
     mj_applyFT(Model, Data, F1, ZeroT, CG, BodyId, Data->qfrc_applied);
 
@@ -1326,9 +1346,54 @@ void URovMuJoCoBridge::ApplyCachedForce(mjModel_* Model, mjData_* Data)
     }
 
     // 【3】姿态力矩：free joint 的 qfrc_applied[3..5] 就是机体系力矩，直接赋值
-    Data->qfrc_applied[DofAdr + 3] = (mjtNum)CachedTorqueX.load();
-    Data->qfrc_applied[DofAdr + 4] = (mjtNum)CachedTorqueY.load();
-    Data->qfrc_applied[DofAdr + 5] = (mjtNum)CachedTorqueZ.load();
+    double Tx = CachedTorqueX.load() * Fresh;
+    double Ty = CachedTorqueY.load() * Fresh;
+    double Tz = CachedTorqueZ.load() * Fresh;
+
+    // 【3b】物理线程兜底姿态控制
+    //
+    // 游戏线程卡顿时（打包版首帧编译着色器最典型，实测卡 10 秒），【10】里的
+    // 姿态控制器一次都跑不到，ROV 处于"无控"状态，几秒内就会被自身的不平衡
+    // 力矩甩翻（实测 t=10 s 倾角 170°）。这里在物理线程用同样的级联律补一份，
+    // 按 (1-Fresh) 权重接管，卡顿结束后无缝交回游戏线程。
+    if (Fresh < 1.0 && bEnableAttitudeHold && Model->body_jntnum[BodyId] >= 1) {
+        const int32 FJ = Model->body_jntadr[BodyId];
+        if (Model->jnt_type[FJ] == mjJNT_FREE) {
+            const int32 FD = Model->jnt_dofadr[FJ];
+            const double* q = &Data->xquat[4 * BodyId];
+            const double qw = q[0], qx = q[1], qy = q[2], qz = q[3];
+            const double HalfYaw = FMath::DegreesToRadians((double)TargetYawDeg) * 0.5;
+            const double Qtw = FMath::Cos(HalfYaw), Qtz = FMath::Sin(HalfYaw);
+
+            const double aw = qw, ax = -qx, ay = -qy, az = -qz;
+            double Qew = aw * Qtw - az * Qtz;
+            double Qex = ax * Qtw + ay * Qtz;
+            double Qey = -ax * Qtz + ay * Qtw;
+            double Qez = aw * Qtz + az * Qtw;
+            if (Qew < 0.0) { Qew = -Qew; Qex = -Qex; Qey = -Qey; Qez = -Qez; }
+
+            const double E3[3] = { 2.0 * Qex, 2.0 * Qey, 2.0 * Qez };
+            const double KpAtt[3] = { 1.5, 1.5, 1.0 };
+            const double Wmax[3]  = { 0.8, 0.8, 0.6 };
+            const double Wn = 5.0;
+            const double Takeover = 1.0 - Fresh;
+
+            for (int32 Axis = 0; Axis < 3; ++Axis) {
+                const double I = (EffInertia[Axis] > 0.0) ? EffInertia[Axis]
+                                                          : Model->body_inertia[3 * BodyId + Axis];
+                const double Wsp = FMath::Clamp(KpAtt[Axis] * E3[Axis], -Wmax[Axis], Wmax[Axis]);
+                double T = I * Wn * (Wsp - (double)Data->qvel[FD + 3 + Axis]) * Takeover;
+                T = FMath::Clamp(T, -1500.0, 1500.0);
+                if (Axis == 0) { Tx += T; }
+                else if (Axis == 1) { Ty += T; }
+                else { Tz += T; }
+            }
+        }
+    }
+
+    Data->qfrc_applied[DofAdr + 3] = (mjtNum)Tx;
+    Data->qfrc_applied[DofAdr + 4] = (mjtNum)Ty;
+    Data->qfrc_applied[DofAdr + 5] = (mjtNum)Tz;
 
     // 【4】一次性初始化：implicit 积分器 + 转动 dof 阻尼
     static bool bCtlInitDone = false;
