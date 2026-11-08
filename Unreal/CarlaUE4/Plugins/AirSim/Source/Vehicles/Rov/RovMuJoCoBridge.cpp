@@ -302,14 +302,18 @@ void URovMuJoCoBridge::ApplyControlForce()
         DisplacedVolume  = FloatParam(TEXT("RovDisplacedVolume="), DisplacedVolume);
         BuoyancyScale    = FloatParam(TEXT("RovBuoyancyScale="), BuoyancyScale);
         BuoyancyArm      = FloatParam(TEXT("RovBuoyancyArm="), BuoyancyArm);
+        ArmBuoyancyVolume = FloatParam(TEXT("RovArmBuoyVolume="), ArmBuoyancyVolume);
+        ArmBuoyancyScale  = FloatParam(TEXT("RovArmBuoyScale="), ArmBuoyancyScale);
         AngularDampingCoeff = FloatParam(TEXT("RovAngularDamping="), AngularDampingCoeff);
         ArmJointDamping = FloatParam(TEXT("RovArmDamping="), ArmJointDamping);
         ThrusterMaxRatio = FloatParam(TEXT("RovThrustRatio="), ThrusterMaxRatio);
         WaterSurfaceZ    = FloatParam(TEXT("RovWaterSurfaceZ="), WaterSurfaceZ);
         if (FParse::Param(FCommandLine::Get(), TEXT("RovNoAttitude"))) { bEnableAttitudeHold = false; }
         UE_LOG(LogRovBridge, Log,
-            TEXT("[RovMuJoCoBridge][调参] 排水体积=%.4f m³  浮力倍率=%.2f  推力比=%.2f  水面Z=%.2f m"),
-            DisplacedVolume, BuoyancyScale, ThrusterMaxRatio, WaterSurfaceZ);
+            TEXT("[RovMuJoCoBridge][调参] 排水体积=%.4f m³  浮力倍率=%.2f  臂排水=%.2f L×%.2f  "
+                 "推力比=%.2f  水面Z=%.2f m"),
+            DisplacedVolume, BuoyancyScale, ArmBuoyancyVolume, ArmBuoyancyScale,
+            ThrusterMaxRatio, WaterSurfaceZ);
 
         if (bUseNativeFluid) {
             Model->opt.density = FluidDensity;
@@ -1062,6 +1066,7 @@ void URovMuJoCoBridge::ApplyControlForce()
             const double KpAtt[3] = { 1.5, 1.5, 1.0 };
             const double Wmax[3]  = { 0.8, 0.8, 0.6 };
             const double Wn = 5.0;
+            static double AttInt[3] = { 0.0, 0.0, 0.0 };
 
             // 航向前馈（见【航向调整】）：按住 ←/→ 时直接给期望角速度。
             // 上限也要一起放大，否则前馈会被 Wmax 截掉，目标航向又会跑飞。
@@ -1074,7 +1079,12 @@ void URovMuJoCoBridge::ApplyControlForce()
                 const double I = (EffInertia[Axis] > 0.0) ? EffInertia[Axis]
                                                           : Model->body_inertia[3 * BodyId + Axis];
                 const double Wlim = (Axis == 2) ? WmaxZ : Wmax[Axis];
-                double Wsp = FMath::Clamp(KpAtt[Axis] * E3[Axis], -Wlim, Wlim);
+                // 积分项：抵消模型里无法消除的恒定力矩（质心/浮心不重合、
+                // 机械臂残余重量等），否则纯 P 会停在一个固定倾角上。
+                AttInt[Axis] = FMath::Clamp(
+                    AttInt[Axis] + E3[Axis] * (double)Model->opt.timestep, -2.0, 2.0);
+                double Wsp = FMath::Clamp(KpAtt[Axis] * E3[Axis] + AttitudeIntegralGain * AttInt[Axis],
+                                          -Wlim, Wlim);
                 if (Axis == 2 && YawFF != 0.0) {
                     Wsp = FMath::Clamp(Wsp + YawFF, -WmaxZ, WmaxZ);
                 }
@@ -1096,11 +1106,17 @@ void URovMuJoCoBridge::ApplyControlForce()
                     double YawErrDeg = (double)TargetYawDeg - CurYawDeg;
                     while (YawErrDeg >  180.0) { YawErrDeg -= 360.0; }
                     while (YawErrDeg < -180.0) { YawErrDeg += 360.0; }
+                    // 真实倾角：机体 Z 轴与世界 Z 的夹角，不受欧拉角约定影响
+                    const double UpZ = FMath::Clamp((double)Data->xmat[9 * BodyId + 8], -1.0, 1.0);
+                    const double TiltDeg = FMath::RadiansToDegrees(FMath::Acos(UpZ));
                     UE_LOG(LogRovBridge, Log,
-                        TEXT("[%s][航向诊断] t=%.1f 目标=%.1f° 实测=%.1f° 误差=%.1f° "
-                             "w_z=%.3f rad/s 前馈=%+.0f°/s"),
-                        TEXT("RovMuJoCoBridge"), Data->time, TargetYawDeg, CurYawDeg,
-                        YawErrDeg, Data->qvel[ND + 5], YawCmdRateDeg);
+                        TEXT("[%s][姿态诊断] t=%.1f 倾角=%.1f° 目标=%.1f° 实测=%.1f° 误差=%.1f° "
+                             "E3=(%.3f, %.3f, %.3f) w=(%.3f, %.3f, %.3f) 前馈=%+.0f°/s"),
+                        TEXT("RovMuJoCoBridge"), Data->time, TiltDeg,
+                        TargetYawDeg, CurYawDeg, YawErrDeg,
+                        E3[0], E3[1], E3[2],
+                        Data->qvel[ND + 3], Data->qvel[ND + 4], Data->qvel[ND + 5],
+                        YawCmdRateDeg);
                 }
             }
         }
@@ -1222,8 +1238,44 @@ void URovMuJoCoBridge::ApplyCachedForce(mjModel_* Model, mjData_* Data)
     };
     mj_applyFT(Model, Data, F1, ZeroT, CG, BodyId, Data->qfrc_applied);
 
-    // 【2】浮力：作用在**浮心**（质心 + R·(0,0,BG)），自动产生回复力矩
+    // 【2】浮力：作用在**整机浮心** = 整机合成质心 + R·(0,0,BG)
+    //
+    // 浮力必须加在「整机（艇体 + 机械臂）的合成质心」上，而不是艇体自身的质心：
+    // 排水体积属于整个载体，浮心跟着整机质量分布走。之前加在艇体质心上，
+    // 臂的 22 kg 把整机质心拉偏了约 18 mm，4518 N × 18 mm ≈ 81 N·m 的恒定力矩，
+    // 姿态控制器只能靠 28° 的倾斜去平衡（实测 roll = −27.9°）。
     const double Buoy = CachedBuoyancy.load();
+
+    double TotalMass = 0.0, Cx = 0.0, Cy = 0.0, Cz = 0.0;
+    for (int32 b = 0; b < Model->nbody; ++b) {
+        bool bInSubtree = (b == BodyId);
+        if (!bInSubtree) {
+            int32 p = Model->body_parentid[b];
+            while (p > 0) {
+                if (p == BodyId) { bInSubtree = true; break; }
+                p = Model->body_parentid[p];
+            }
+        }
+        if (!bInSubtree) { continue; }
+        const double m = Model->body_mass[b];
+        TotalMass += m;
+        Cx += m * Data->xipos[3 * b + 0];
+        Cy += m * Data->xipos[3 * b + 1];
+        Cz += m * Data->xipos[3 * b + 2];
+    }
+    if (TotalMass > 1e-6) {
+        Cx /= TotalMass; Cy /= TotalMass; Cz /= TotalMass;
+    } else {
+        Cx = CG[0]; Cy = CG[1]; Cz = CG[2];
+    }
+    // 用 MuJoCo 自己算的子树质心做校验：两者必须一致，否则说明重力力矩和浮力
+    // 作用点不重合，会留下一个恒定的姿态误差（曾经差 17 mm ≈ 78 N·m）。
+    if (Data->subtree_com) {
+        Cx = Data->subtree_com[3 * BodyId + 0];
+        Cy = Data->subtree_com[3 * BodyId + 1];
+        Cz = Data->subtree_com[3 * BodyId + 2];
+    }
+
     if (Buoy > 0.0) {
         double Rx = 0.0, Ry = 0.0, Rz = 0.0;
         RotByQuat(Data->xquat[4 * BodyId + 0], Data->xquat[4 * BodyId + 1],
@@ -1231,11 +1283,46 @@ void URovMuJoCoBridge::ApplyCachedForce(mjModel_* Model, mjData_* Data)
                   0.0, 0.0, (double)BuoyancyArm, Rx, Ry, Rz);
         mjtNum F2[3] = { 0.0, 0.0, (mjtNum)Buoy };
         mjtNum CBw[3] = {
-            CG[0] + (mjtNum)Rx,
-            CG[1] + (mjtNum)Ry,
-            CG[2] + (mjtNum)Rz
+            (mjtNum)(Cx + Rx),
+            (mjtNum)(Cy + Ry),
+            (mjtNum)(Cz + Rz)
         };
         mj_applyFT(Model, Data, F2, ZeroT, CBw, BodyId, Data->qfrc_applied);
+    }
+
+    // 【2b】机械臂浮力：按真实排水体积，在臂的合成质心处施加向上浮力
+    //
+    // 为什么必须给臂加浮力：UR5e 是空气中的工业臂，密度远大于水。
+    // 整条臂 22.0 kg、排水只有约 12 L，在水里净重约 98 N，挂在艇体前方 0.13 m 处，
+    // 会持续产生约 8 N·m 的俯仰力矩。真实 ROV 的做法就是给臂绑浮力块（泡沫/浮筒），
+    // 这里按「等排水体积」把它补上，而不是用常值力矩硬顶。
+    if (ArmBuoyancyVolume > 0.0f) {
+        double ArmMass = 0.0, Cx = 0.0, Cy = 0.0, Cz = 0.0;
+        for (int32 b = 0; b < Model->nbody; ++b) {
+            int32 p = Model->body_parentid[b];
+            bool bDescendant = false;
+            while (p > 0) {
+                if (p == BodyId) { bDescendant = true; break; }
+                p = Model->body_parentid[p];
+            }
+            if (!bDescendant) { continue; }
+            const double m = Model->body_mass[b];
+            ArmMass += m;
+            Cx += m * Data->xipos[3 * b + 0];
+            Cy += m * Data->xipos[3 * b + 1];
+            Cz += m * Data->xipos[3 * b + 2];
+        }
+        if (ArmMass > 1e-6) {
+            const double VolM3 = (double)ArmBuoyancyVolume * 0.001 * (double)ArmBuoyancyScale;
+            const double FArm = (double)FluidDensity * 9.81 * VolM3;
+            mjtNum F3[3] = { 0.0, 0.0, (mjtNum)FArm };
+            mjtNum CoB[3] = {
+                (mjtNum)(Cx / ArmMass),
+                (mjtNum)(Cy / ArmMass),
+                (mjtNum)(Cz / ArmMass)
+            };
+            mj_applyFT(Model, Data, F3, ZeroT, CoB, BodyId, Data->qfrc_applied);
+        }
     }
 
     // 【3】姿态力矩：free joint 的 qfrc_applied[3..5] 就是机体系力矩，直接赋值
@@ -1265,6 +1352,61 @@ void URovMuJoCoBridge::ApplyCachedForce(mjModel_* Model, mjData_* Data)
             Model->body_inertia[3 * BodyId + 2],
             EffInertia[0], EffInertia[1], EffInertia[2], Model->body_mass[BodyId]);
         UE_LOG(LogRovBridge, Log, TEXT("[RovBridge][控制] integrator=implicit  dof_damping=%.2f N.m.s/rad"), Idamp);
+
+        // 机械臂质量分布诊断：-RovArmDiag
+        // 目的：确认「臂子树 181 kg」是怎么来的（menagerie 原版 UR5e + 2F85 只有 ~21.9 kg），
+        //       顺便把每个连杆的质量/位置/碰撞体尺寸打出来，判断是不是整体被放大了。
+        static const bool bArmDiag = FParse::Param(FCommandLine::Get(), TEXT("RovArmDiag"));
+        if (bArmDiag) {
+            const double* RovCg = &Data->xipos[3 * BodyId];
+            double ArmMass = 0.0, Mx = 0.0, My = 0.0, Mz = 0.0;
+            UE_LOG(LogRovBridge, Log,
+                TEXT("[RovBridge][臂诊断] ROV body[%d]='%s' mass=%.3f subtree=%.3f  惯量=(%.3f, %.3f, %.3f)"),
+                BodyId, UTF8_TO_TCHAR(Model->names + Model->name_bodyadr[BodyId]),
+                Model->body_mass[BodyId], Model->body_subtreemass[BodyId],
+                Model->body_inertia[3 * BodyId + 0], Model->body_inertia[3 * BodyId + 1],
+                Model->body_inertia[3 * BodyId + 2]);
+            for (int32 b = 0; b < Model->nbody; ++b) {
+                int32 p = Model->body_parentid[b];
+                bool bDescendant = false;
+                while (p > 0) {
+                    if (p == BodyId) { bDescendant = true; break; }
+                    p = Model->body_parentid[p];
+                }
+                if (!bDescendant) { continue; }
+
+                const double m = Model->body_mass[b];
+                const double* x = &Data->xipos[3 * b];
+                const double rx = x[0] - RovCg[0], ry = x[1] - RovCg[1], rz = x[2] - RovCg[2];
+                ArmMass += m;
+                Mx += m * rx; My += m * ry; Mz += m * rz;
+                UE_LOG(LogRovBridge, Log,
+                    TEXT("  [臂] body[%d]='%s' mass=%.4f  相对ROV重心=(%.4f, %.4f, %.4f) m  惯量=(%.5f, %.5f, %.5f)"),
+                    b, UTF8_TO_TCHAR(Model->names + Model->name_bodyadr[b]), m, rx, ry, rz,
+                    Model->body_inertia[3 * b + 0], Model->body_inertia[3 * b + 1],
+                    Model->body_inertia[3 * b + 2]);
+
+                // 该 body 的碰撞几何尺寸，用来判断几何有没有被整体放大
+                for (int32 g = 0; g < Model->ngeom; ++g) {
+                    if (Model->geom_bodyid[g] != b) { continue; }
+                    UE_LOG(LogRovBridge, Log,
+                        TEXT("      [geom] '%s' type=%d size=(%.4f, %.4f, %.4f) mass=%.4f"),
+                        UTF8_TO_TCHAR(Model->names + Model->name_geomadr[g]),
+                        (int32)Model->geom_type[g],
+                        Model->geom_size[3 * g + 0], Model->geom_size[3 * g + 1],
+                        Model->geom_size[3 * g + 2], Model->body_mass[b]);
+                }
+            }
+            if (ArmMass > 1e-6) {
+                const double G = 9.81;
+                // 重力矩 = Σ r × (0,0,-mg) = (-g·Σm·ry, +g·Σm·rx, 0)
+                UE_LOG(LogRovBridge, Log,
+                    TEXT("[RovBridge][臂诊断] 合计 mass=%.3f  合成质心相对ROV=(%.4f, %.4f, %.4f) m  "
+                         "重力矩=(%.1f, %.1f, %.1f) N·m  重量=%.1f N"),
+                    ArmMass, Mx / ArmMass, My / ArmMass, Mz / ArmMass,
+                    -G * My, G * Mx, 0.0, ArmMass * G);
+            }
+        }
     }
 
     // 【5】qfrc_applied 累加监测（每秒一次）
@@ -1272,12 +1414,24 @@ void URovMuJoCoBridge::ApplyCachedForce(mjModel_* Model, mjData_* Data)
         static double LastQfrcLogT = -1.0;
         if (Data->time - LastQfrcLogT > 1.0) {
             LastQfrcLogT = Data->time;
+            const double* qq = &Data->xquat[4 * BodyId];
+            const double RollDeg = FMath::RadiansToDegrees(
+                FMath::Atan2(2.0 * (qq[0] * qq[1] + qq[2] * qq[3]),
+                             1.0 - 2.0 * (qq[1] * qq[1] + qq[2] * qq[2])));
+            const double PitchDeg = FMath::RadiansToDegrees(
+                FMath::Asin(FMath::Clamp(2.0 * (qq[0] * qq[2] - qq[3] * qq[1]), -1.0, 1.0)));
             UE_LOG(LogRovBridge, Log,
-                TEXT("[RovBridge][qfrc] t=%.2f applied=(%.1f, %.1f, %.1f, %.1f, %.1f, %.1f)"),
+                TEXT("[RovBridge][qfrc] t=%.2f applied=(%.1f, %.1f, %.1f, %.1f, %.1f, %.1f)  "
+                     "roll=%.1f° pitch=%.1f°  Z=%.3f  ncon=%d  bias=(%.1f, %.1f, %.1f)  "
+                     "constr=(%.1f, %.1f, %.1f)"),
                 Data->time,
                 Data->qfrc_applied[DofAdr + 0], Data->qfrc_applied[DofAdr + 1],
                 Data->qfrc_applied[DofAdr + 2], Data->qfrc_applied[DofAdr + 3],
-                Data->qfrc_applied[DofAdr + 4], Data->qfrc_applied[DofAdr + 5]);
+                Data->qfrc_applied[DofAdr + 4], Data->qfrc_applied[DofAdr + 5],
+                RollDeg, PitchDeg, Data->xpos[3 * BodyId + 2], (int32)Data->ncon,
+                Data->qfrc_bias[DofAdr + 3], Data->qfrc_bias[DofAdr + 4], Data->qfrc_bias[DofAdr + 5],
+                Data->qfrc_constraint[DofAdr + 3], Data->qfrc_constraint[DofAdr + 4],
+                Data->qfrc_constraint[DofAdr + 5]);
         }
     }
     // 诊断

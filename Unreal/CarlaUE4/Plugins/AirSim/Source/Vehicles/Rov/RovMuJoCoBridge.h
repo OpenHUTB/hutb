@@ -147,14 +147,28 @@ public:
     /**
      * 浮力倍率。1.0 = 严格按 ρ·g·V。
      *
-     * 当前默认 3.2 是为了补偿一个已知的质量归属 bug：XML 里 rov_body 的
-     * mass="150.0" 被导入器分到了 gripper_base_mount 上，导致 ROV 本体变成
-     * 438 kg、整机 612.9 kg，而排水体积只有 0.192 m³。
-     * 3.2 ≈ 612.9 / (1000 × 0.192)，配平到中性浮态。
-     * 质量 bug 修好后应改回 1.0。
+     * 历史：XML 里 rov_body 的 mass="150.0" 曾被导入器分到 gripper_base_mount 上
+     * （夹爪网格单位是 mm，被当成 cm，放大 10 倍 → 体积 ×1000 → 150 kg），
+     * 整机 612.9 kg，只能靠 3.19 的倍率硬配到中性。
+     * 2026-11-08 已修：夹爪网格按 cm 重导、并给 gripper_base_mount 写死 0.15 kg，
+     * 整机回到 460.5 kg。现在按 0.192 m³ 排水算，中性所需倍率 ≈ 2.34。
      */
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ROV|MuJoCo|Fluid")
-    float BuoyancyScale = 3.1923f;
+    float BuoyancyScale = 2.34f;
+
+    /**
+     * 机械臂排水体积（升）。
+     *
+     * UR5e 七个连杆的 OBJ 用散度定理实测合计 **11.73 L**，2F85 夹爪约 0.35 L，
+     * 取 12.1 L。浮力作用在臂的合成质心处，相当于给臂绑浮力块。
+     * 设为 0 可关闭，用来做对照实验。
+     */
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ROV|MuJoCo|Fluid")
+    float ArmBuoyancyVolume = 12.1f;
+
+    /** 机械臂浮力系数，1.0 = 完全按真实排水体积；0.9 表示臂仍有 10% 净重。 */
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ROV|MuJoCo|Fluid")
+    float ArmBuoyancyScale = 1.0f;
 
     /**
      * 浮心相对重心的高度（m），沿机体系 +Z。
@@ -219,6 +233,16 @@ public:
     /** 阻尼比。1.0 = 临界阻尼，不超调。 */
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ROV|MuJoCo|Attitude")
     float AttitudeZeta = 0.8f;
+
+    /**
+     * 姿态积分增益（rad/s per rad·s）。
+     *
+     * 纯 P 遇到恒定力矩（质心与浮心不重合、机械臂残余重量）会停在固定倾角上，
+     * 实测曾达到 roll −28°。积分项把它消掉，积分值限幅 ±2.0 rad/s。
+     * 设 0 可退回纯 P 做对照。
+     */
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ROV|MuJoCo|Attitude")
+    float AttitudeIntegralGain = 0.5f;
 
     /** 积分增益系数（相对 I·ω³）。用于消除恒定扰动造成的稳态误差。 */
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ROV|MuJoCo|Attitude")
