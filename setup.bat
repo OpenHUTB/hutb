@@ -1,4 +1,4 @@
-﻿@echo off
+@echo off
 :: resolve display issue in Chinese (add support for utf-8)
 chcp 65001 > nul
 setlocal EnableDelayedExpansion
@@ -215,8 +215,22 @@ if exist "%cd%\Build\dependencies\" (
     set UnrealRoboticsLab_FOLDER=%cd%\Unreal\CarlaUE4\Plugins\UnrealRoboticsLab\
     echo UnrealRoboticsLab_FOLDER: %UnrealRoboticsLab_FOLDER%
     echo "%UnrealRoboticsLab_FOLDER%third_party\install" folder...
+    rem MuJoCo 版本以 third_party/install/MuJoCo/include/mujoco/mujoco.h 的
+    rem mjVERSION_HEADER 为准：当前 3008001 = 3.8.1（历史压缩包名还叫 3.3.5，内容其实是 3.8.1）。
+    rem 这里按 3.8.1 -> 历史命名 3.3.5 -> 在线下载 的顺序找。
+    set "MUJOCO_ZIP=%cd%\Build\dependencies\Plugins\mujoco-3.8.1-windows-x86_64.zip"
+    if not exist "!MUJOCO_ZIP!" set "MUJOCO_ZIP=%cd%\Build\dependencies\Plugins\mujoco-3.3.5-windows-x86_64.zip"
+    if not exist "!MUJOCO_ZIP!" set "MUJOCO_ZIP=%cd%\Plugins\mujoco-3.8.1-windows-x86_64.zip"
+    if not exist "!MUJOCO_ZIP!" set "MUJOCO_ZIP=%cd%\Plugins\mujoco-3.3.5-windows-x86_64.zip"
+    if not exist "!MUJOCO_ZIP!" (
+        echo %FILE_N% Downloading MuJoCo 3.8.1 ...
+        if not exist "%cd%\Build\dependencies\Plugins" mkdir "%cd%\Build\dependencies\Plugins"
+        powershell -NoProfile -ExecutionPolicy Bypass -Command "Invoke-WebRequest -Uri 'https://github.com/google-deepmind/mujoco/releases/download/3.8.1/mujoco-3.8.1-windows-x86_64.zip' -OutFile '%cd%\Build\dependencies\Plugins\mujoco-3.8.1-windows-x86_64.zip'"
+        set "MUJOCO_ZIP=%cd%\Build\dependencies\Plugins\mujoco-3.8.1-windows-x86_64.zip"
+    )
+    echo MuJoCo archive: !MUJOCO_ZIP!
     if not exist "%cd%\Unreal\CarlaUE4\Plugins\UnrealRoboticsLab\third_party\install" (
-        "prerequisites\7zip\7z.exe" x "Plugins\mujoco-3.3.5-windows-x86_64.zip" -o"%cd%\Unreal\CarlaUE4\Plugins\UnrealRoboticsLab\third_party\install\MuJoCo" -y
+        "prerequisites\7zip\7z.exe" x "!MUJOCO_ZIP!" -o"%cd%\Unreal\CarlaUE4\Plugins\UnrealRoboticsLab\third_party\install\MuJoCo" -y
         "prerequisites\7zip\7z.exe" x "Plugins\CoACD.zip" -o"%cd%\Unreal\CarlaUE4\Plugins\UnrealRoboticsLab\third_party\install\" -y
         "prerequisites\7zip\7z.exe" x "Plugins\libzmq.zip" -o"%cd%\Unreal\CarlaUE4\Plugins\UnrealRoboticsLab\third_party\install\" -y
     ) else (

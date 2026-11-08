@@ -231,6 +231,21 @@ public:
     /** 航向调整速率（度/秒）。按住 ← / → 连续改变目标航向。 */
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ROV|MuJoCo|Attitude")
     float YawRateDegPerSec = 60.0f;
+
+    /**
+     * 机械臂静力矩配平（机体系，N·m）。**默认 0，实测常值前馈不成立**。
+     *
+     * 2026-11-08 实测：不加前馈时稳态 qfrc 俯仰约 −166 ~ −215 N·m（机械臂还在缓慢下沉，
+     * 数值本身在漂）；加 −215 N·m 前馈后反而变成 −241 N·m。原因是臂的重力力矩
+     * 随 ROV 俯仰角变化，常值前馈只会把平衡点挪到另一个俯仰角，抵不掉。
+     * 真正的配平要动物理：臂浮力块 / 压载 / 把臂收进重心。这里保留接口供以后试。
+     */
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ROV|MuJoCo|Attitude")
+    float TrimTorquePitch = 0.0f;
+
+    /** 横滚方向配平力矩（N·m），用法同 TrimTorquePitch。 */
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ROV|MuJoCo|Attitude")
+    float TrimTorqueRoll = 0.0f;
     /** 水平（roll/pitch）回调带宽 rad/s */
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ROV|MuJoCo|Attitude")
     float LevelBandwidth = 1.5f;
@@ -263,6 +278,16 @@ public:
      */
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ROV|MuJoCo|Fluid")
     float AngularDampingCoeff = 0.0f;   // 改由 dof_damping 提供
+
+    /**
+     * 转动自由度阻尼（N·m·s/rad），写进 MuJoCo 的 `dof_damping[3..5]`。
+     *
+     * 这是**水阻尼**里 MuJoCo 椭球模型低估的那部分（导流罩、推进器导管、
+     * 外挂设备的形式阻力）。数值由 `-RovSpinTest` 的 spin-down 实验辨识，
+     * 不是拍脑袋的占位值。<= 0 表示退回「0.5 × 平均惯量」的兜底值。
+     */
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ROV|MuJoCo|Fluid")
+    float AngularDofDamping = 13.0f;
 
     /**
      * 是否启用洋流（三层级联：Gauss-Markov + 分层 + 湍流）。
