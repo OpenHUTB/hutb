@@ -1,10 +1,10 @@
 // Copyright (c) OpenHUTB. All rights reserved.
 //
-// 从 E:\Projects\mujoco_plugin\mujoco_plugin\src\underwater 移植过来的水下物理模型：
-//   - FRovOceanCurrent       ← ocean_current.py 的 OceanCurrentCascade
-//   - FRovPIDDepthController ← depth_controller.py 的 PIDDepthController
+// ROV 水下物理模型：
+//   - FRovOceanCurrent       三层级联洋流
+//   - FRovPIDDepthController 定深 PID
 //
-// 头文件内联实现，不新增 .cpp，避免改动 AirSim 模块的构建文件。
+// 头文件内联实现，不新增 .cpp。
 
 #pragma once
 
@@ -46,11 +46,8 @@ struct FRovOceanCurrent
     float TurbIntegralScale = 1.0f;
 
     /**
-     * 洋流速度幅值上限（m/s）。
-     *
-     * 原版 config 里 mu=0，Gauss-Markov 是纯随机游走，没有均值回归，
-     * 速度幅值会随时间无界漂大（实测跑到几十 m/s，把 ROV 直接推飞）。
-     * 这里加一个物理上限：真实洋流很少超过 2 m/s。
+     * 洋流速度幅值上限（m/s）。Gauss-Markov 无均值回归时速度会无界增长，
+     * 这里加物理上限。
      */
     float MaxSpeed = 2.0f;
 

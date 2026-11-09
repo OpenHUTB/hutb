@@ -73,11 +73,8 @@ void RovPawnSimApi::updateRenderedState(float dt)
     const CollisionInfo& collision_info = getCollisionInfo();
     rov_physics_body_->setCollisionInfo(collision_info);
 
-    // OpenHUTB 修改（2026-11-05）：外部位姿源优先
-    // 见 docs/decisions/2026-11-05-ROV物理视觉统一改动方案.md
-    // 设置外部位姿源（MuJoCo）后，本类退化为纯跟随者，不再用 AirSim 自身物理体的状态，
-    // 从而消除「两个求解器同时拥有同一台 ROV 位姿」的双所有权问题。
-    // 坐标转换统一走基类的 toPoseFromUnreal()，这里不做任何手工换算。
+    // 设置外部位姿源后本类退化为纯跟随者，不再使用 AirSim 物理体的状态；
+    // 坐标转换统一走基类的 toPoseFromUnreal()。
     FVector ExternalPos;
     FQuat ExternalRot;
     bool bHasExternalPose = false;

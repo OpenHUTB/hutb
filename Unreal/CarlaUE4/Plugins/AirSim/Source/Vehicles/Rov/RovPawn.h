@@ -58,8 +58,7 @@ private: //variables
     UPROPERTY()
     class UStaticMeshComponent* body_mesh_;
 
-    // OpenHUTB 追加（2026-11-05）：MuJoCo 跟随者桥接组件
-    // 让本 Pawn 跟随 MuJoCo 的物理状态，而不是 AirSim 自身的 rov_physics_body_。
+    // MuJoCo 位姿跟随桥接组件
     UPROPERTY()
     class URovMuJoCoBridge* MuJoCoBridge_;
 

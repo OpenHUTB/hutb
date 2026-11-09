@@ -14,9 +14,7 @@ ARovPawn::ARovPawn()
 
     RootComponent = CreateDefaultSubobject<USceneComponent>(TEXT("RootComponent"));
 
-    // OpenHUTB 追加（2026-11-05）：MuJoCo 跟随者桥接
-    // 让本 Pawn 跟随 MuJoCo 模型而非 AirSim 自身物理，消除双所有权。
-    // 见 docs/decisions/2026-11-05-ROV物理视觉统一改动方案.md
+    // MuJoCo 位姿跟随桥接
     MuJoCoBridge_ = CreateDefaultSubobject<URovMuJoCoBridge>(TEXT("MuJoCoBridge"));
 
     body_mesh_ = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("BodyMesh"));

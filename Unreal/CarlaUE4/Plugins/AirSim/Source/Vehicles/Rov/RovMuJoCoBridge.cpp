@@ -241,19 +241,12 @@ FString URovMuJoCoBridge::GetResolvedBodyName() const
     return TargetBody.IsValid() ? TargetBody->GetName() : FString();
 }
 
-// =============================================================================
 // 键盘推进
-// =============================================================================
 //
-// 为什么走 xfrc_applied 而不是 AirSim 的 RC 通道：
-//   1. 桥接把 ARovPawn 的物理和碰撞全关了，AirSim 算出的推力没有物理体承接；
-//   2. MuJoCo 模型里 7 个 actuator 全是机械臂关节，推进器只是视觉几何体，
-//      没有对应的 <actuator>，没法用 ctrl 驱动。
-//
-// xfrc_applied 是 MuJoCo 给每个 body 预留的 6 维外力（力 xyz + 力矩 xyz），
-// mj_step 会把它叠加进动力学，且**不会自动清零**，所以每帧必须先清再写。
-//
-// 力的量级按质量缩放（力 = 质量 × 加速度），这样换一台不同质量的 ROV 手感一致。
+// 推力通过 MuJoCo 的 xfrc_applied 施加：桥接关闭了 ARovPawn 的物理与碰撞，
+// AirSim 的 RC 通道没有物理体承接；模型里的 actuator 只有机械臂关节。
+// xfrc_applied 不会被 mj_step 自动清零，每帧需先清再写。
+// 力的量级按质量缩放，换不同质量的 ROV 手感一致。
 
 void URovMuJoCoBridge::TickComponent(float DeltaTime, ELevelTick TickType,
                                      FActorComponentTickFunction* ThisTickFunction)
@@ -458,9 +451,8 @@ void URovMuJoCoBridge::ApplyControlForce()
             Weight, Buoyancy, Buoyancy - Weight, DisplacedVolume, BuoyancyScale);
     }
 
-    // 复合惯量延迟计算：qM 只有在 mj_forward/mj_step 之后才有效。
-    // 首帧就取会拿到垃圾值（打包版实测读到极小值 → 控制器力矩≈0 → 缓慢翻转），
-    // 所以等仿真时间过 0.2 s 再算一次，并且对量级做下限校验。
+    // 复合惯量延迟计算：qM 只在 mj_forward/mj_step 之后有效，
+    // 因此等仿真时间过 0.2 s 再取，并对量级做下限校验。
     {
         static bool bEffInertiaDone = false;
         if (!bEffInertiaDone && Data->time > 0.2 && Data->qM) {
@@ -610,14 +602,9 @@ void URovMuJoCoBridge::ApplyControlForce()
 
     // 【航向调整】← / → 连续改变目标航向（姿态保持开启时生效）
     //
-    // 方向定义：MuJoCo→UE 的坐标映射是 X→X、Y→-Y、Z→Z（MjUtils::MjToUERotation），
-    // 属于**镜像变换**，所以 MuJoCo 里的 +yaw 在画面上表现为 -yaw。这里按操作者
-    // 看到的画面定义按键方向：→ = 画面右转 = MuJoCo yaw 减小，← 反之。
-    //
-    // 为什么要给前馈：以前只把目标航向按 60°/s 往前推，而内环最大角速度只有
-    // 0.6 rad/s（34°/s），目标跑得比机身快，误差会一路累积；一旦超过 180°，
-    // 四元数短弧归一化会把误差翻号，机身就反着转 —— 表现就是"转满一圈后回弹"。
-    // 现在按住期间直接给期望角速度（前馈），误差只反映跟踪滞后，永远不会绕圈。
+    // 方向按画面定义：MuJoCo→UE 为镜像映射（Y 取反），MuJoCo 的 +yaw 在画面上是 -yaw，
+    // 因此 → = 画面右转 = MuJoCo yaw 减小。
+    // 按住期间同时给出角速度前馈，避免目标航向跑得比机身快导致误差累积过 180°。
     double YawCmdRateDeg = 0.0;   // 本帧航向角速度指令（deg/s，MuJoCo 符号）
     if (bEnableAttitudeHold && PC) {
         const bool bYawLeft  = PC->IsInputKeyDown(EKeys::Left);
@@ -887,17 +874,15 @@ void URovMuJoCoBridge::ApplyControlForce()
 
     // 【8】浮力的回复力矩由 mj_applyFT 在浮心处施加时自动产生，这里不再手算。
 
-    // 【9】附加角阻尼：以**力矩**形式施加（τ = -Kd·ω，机体系）。
-    // MuJoCo 椭球流体模型的旋转阻力偏弱，真实 ROV 的导流罩/鳍会额外提供阻力。
-    // Kd = AngularDampingCoeff × 平均主惯量，保持和之前"每秒衰减 1/s"的语义一致。
+    // 【9】附加角阻尼：τ = -Kd·ω（机体系），与流体模型叠加。
+    // Kd = AngularDampingCoeff × 平均主惯量。
     double TorqueX = 0.0, TorqueY = 0.0, TorqueZ = 0.0;
     double WorldTorqueX = 0.0, WorldTorqueY = 0.0, WorldTorqueZ = 0.0;
     if (AngularDampingCoeff > 0.0f && Model->body_jntnum[BodyId] >= 1) {
         const int32 DampJnt = Model->body_jntadr[BodyId];
         if (Model->jnt_type[DampJnt] == mjJNT_FREE) {
             const int32 DampDof = Model->jnt_dofadr[DampJnt];
-            // 同样要用**复合惯量**：body_inertia 只有本体，实测复合惯量约为其 4 倍，
-            // 按本体算会让角阻尼衰减率慢 4 倍（P7 退步的原因）。
+            // 用复合惯量：body_inertia 只含本体，不含机械臂。
             const double Iavg = (EffInertia[0] + EffInertia[1] + EffInertia[2]) / 3.0;
             const double Kd = (double)AngularDampingCoeff * Iavg;
             TorqueX += -Kd * Data->qvel[DampDof + 3];
@@ -906,17 +891,8 @@ void URovMuJoCoBridge::ApplyControlForce()
         }
     }
 
-    // 【10】姿态保持控制器（四元数 PD + 积分）
-    //
-    // 误差用四元数旋转矢量 e = 2·sign(qw)·qv，而不是欧拉角差：
-    //   - 无万向节死锁（ROV 做大俯仰时欧拉角会奇异）
-    //   - 小角度下 e 就是旋转矢量，|e| ≤ 2 天然限幅
-    //   - sign(qw) 取短弧，避免命令转 350° 而不是 10°
-    //
-    // 增益按惯量缩放（Kp = I·ω²、Kd = 2I·ζ·ω），换模型不用重调。
-    // 积分项是必需的：机械臂挂在一侧产生恒定扰动力矩，
-    // 纯 PD 只能把它平衡在某个固定倾角上，消不掉稳态误差。
-    // 旧的四元数三轴控制器存在符号/轴向问题，已停用；改用下方世界系解耦控制
+    // 旧的四元数 PD 姿态控制器（已停用，保留备查）。
+    // 误差 e = 2·sign(qw)·qv，增益按惯量缩放；由下方【10】级联控制器取代。
     if (false && bEnableAttitudeHold && Model->body_jntnum[BodyId] >= 1) {
         const int32 AttJnt = Model->body_jntadr[BodyId];
         if (Model->jnt_type[AttJnt] == mjJNT_FREE) {
@@ -1029,10 +1005,10 @@ void URovMuJoCoBridge::ApplyControlForce()
         }
     }
 
-    // 【10】级联姿态控制（按调研报告 C1-C4）
+    // 【10】级联姿态控制
     //   外环：姿态误差 -> 期望角速度（机体系）
-    //   内环：期望角速度 - 实测角速度（qvel[3:6] 即机体系）-> 力矩
-    //   力矩直接写 qfrc_applied 后三维（机体系），不再经 RotByQuat/mj_applyFT
+    //   内环：期望角速度 - 实测角速度（qvel[3:6] 为机体系）-> 力矩
+    //   力矩直接写 qfrc_applied[3:5]（机体系）
     if (bEnableAttitudeHold && !bSpinTest && Model->body_jntnum[BodyId] >= 1) {
         const int32 NJ = Model->body_jntadr[BodyId];
         if (Model->jnt_type[NJ] == mjJNT_FREE) {
@@ -1208,19 +1184,8 @@ void URovMuJoCoBridge::ApplyCachedForce(mjModel_* Model, mjData_* Data)
         return;
     }
 
-    // =========================================================================
-    // 通道：mj_applyFT 直接累加进 qfrc_applied。
-    //
-    // 为什么不用其它两种写法：
-    //   - xfrc_applied：元素顺序有两套说法（官方文档力在前，URLab 的
-    //     MjBind.h:574 注释写力矩在前），写反会让"向前"变成"俯仰"。
-    //   - 直接写 qfrc_applied 后三维：实测轴系对不上 —— 只给"轴 0"
-    //     100 N·m，结果 omega 主要绕 Y 转（-1.03 对 -0.24）。
-    //     姿态控制器的力矩因此打到了错误轴上，积分也在错误轴上卷。
-    //
-    // mj_applyFT 把 force / torque / point 分开传参、**全部世界系**，
-    // 自动补 r×F，没有布局和轴系歧义，还能让浮力正确地作用在浮心。
-    // =========================================================================
+    // 力与力矩统一用 mj_applyFT 施加：force / torque / point 分开传参、全部世界系，
+    // 自动补 r×F，避免 xfrc_applied 的元素顺序歧义，也能让浮力作用在浮心。
     if (Model->body_jntnum[BodyId] < 1) {
         return;
     }
@@ -1235,10 +1200,9 @@ void URovMuJoCoBridge::ApplyCachedForce(mjModel_* Model, mjData_* Data)
         Data->qfrc_applied[DofAdr + k] = 0.0;
     }
 
-    // 指令新鲜度：控制量在游戏线程按帧算，物理线程按 500 Hz 跑。
-    // 游戏线程卡顿（打包版启动时的着色器编译最典型）时，旧指令会被冻结着
-    // 一直施加，等于给 ROV 灌几秒恒定力矩 —— 实测 5 秒内被甩到 159°。
-    // 这里按「距上次控制更新经过的仿真时间」做淡出：>0.1 s 开始衰减，>0.2 s 归零。
+    // 指令新鲜度：控制量在游戏线程按帧更新，物理线程按 500 Hz 步进。
+    // 游戏线程卡顿时旧指令会被持续施加，这里按仿真时间做淡出：
+    // 超过 0.1 s 开始衰减，超过 0.2 s 归零。
     const double CmdAge = (double)Data->time - CachedControlTime.load();
     const double Fresh = FMath::Clamp(1.0 - (CmdAge - 0.10) / 0.10, 0.0, 1.0);
 
@@ -1258,12 +1222,8 @@ void URovMuJoCoBridge::ApplyCachedForce(mjModel_* Model, mjData_* Data)
     };
     mj_applyFT(Model, Data, F1, ZeroT, CG, BodyId, Data->qfrc_applied);
 
-    // 【2】浮力：作用在**整机浮心** = 整机合成质心 + R·(0,0,BG)
-    //
-    // 浮力必须加在「整机（艇体 + 机械臂）的合成质心」上，而不是艇体自身的质心：
-    // 排水体积属于整个载体，浮心跟着整机质量分布走。之前加在艇体质心上，
-    // 臂的 22 kg 把整机质心拉偏了约 18 mm，4518 N × 18 mm ≈ 81 N·m 的恒定力矩，
-    // 姿态控制器只能靠 28° 的倾斜去平衡（实测 roll = −27.9°）。
+    // 【2】浮力：作用在整机浮心 = 整机合成质心 + R·(0,0,BG)。
+    // 排水体积属于整个载体，浮心应跟随整机质量分布，而非艇体自身质心。
     const double Buoy = CachedBuoyancy.load();
 
     double TotalMass = 0.0, Cx = 0.0, Cy = 0.0, Cz = 0.0;
@@ -1288,8 +1248,7 @@ void URovMuJoCoBridge::ApplyCachedForce(mjModel_* Model, mjData_* Data)
     } else {
         Cx = CG[0]; Cy = CG[1]; Cz = CG[2];
     }
-    // 用 MuJoCo 自己算的子树质心做校验：两者必须一致，否则说明重力力矩和浮力
-    // 作用点不重合，会留下一个恒定的姿态误差（曾经差 17 mm ≈ 78 N·m）。
+    // 优先使用 MuJoCo 计算的子树质心，保证与重力作用点一致。
     if (Data->subtree_com) {
         Cx = Data->subtree_com[3 * BodyId + 0];
         Cy = Data->subtree_com[3 * BodyId + 1];
@@ -1310,12 +1269,8 @@ void URovMuJoCoBridge::ApplyCachedForce(mjModel_* Model, mjData_* Data)
         mj_applyFT(Model, Data, F2, ZeroT, CBw, BodyId, Data->qfrc_applied);
     }
 
-    // 【2b】机械臂浮力：按真实排水体积，在臂的合成质心处施加向上浮力
-    //
-    // 为什么必须给臂加浮力：UR5e 是空气中的工业臂，密度远大于水。
-    // 整条臂 22.0 kg、排水只有约 12 L，在水里净重约 98 N，挂在艇体前方 0.13 m 处，
-    // 会持续产生约 8 N·m 的俯仰力矩。真实 ROV 的做法就是给臂绑浮力块（泡沫/浮筒），
-    // 这里按「等排水体积」把它补上，而不是用常值力矩硬顶。
+    // 【2b】机械臂浮力：按排水体积在臂的合成质心处施加向上浮力，
+    // 等价于给机械臂绑浮力块。
     if (ArmBuoyancyVolume > 0.0f) {
         double ArmMass = 0.0, Cx = 0.0, Cy = 0.0, Cz = 0.0;
         for (int32 b = 0; b < Model->nbody; ++b) {
@@ -1351,11 +1306,8 @@ void URovMuJoCoBridge::ApplyCachedForce(mjModel_* Model, mjData_* Data)
     double Tz = CachedTorqueZ.load() * Fresh;
 
     // 【3b】物理线程兜底姿态控制
-    //
-    // 游戏线程卡顿时（打包版首帧编译着色器最典型，实测卡 10 秒），【10】里的
-    // 姿态控制器一次都跑不到，ROV 处于"无控"状态，几秒内就会被自身的不平衡
-    // 力矩甩翻（实测 t=10 s 倾角 170°）。这里在物理线程用同样的级联律补一份，
-    // 按 (1-Fresh) 权重接管，卡顿结束后无缝交回游戏线程。
+    // 游戏线程卡顿时【10】不会执行，ROV 处于无控状态。这里用同样的级联律
+    // 按 (1-Fresh) 权重接管，卡顿结束后交回游戏线程。
     if (Fresh < 1.0 && bEnableAttitudeHold && Model->body_jntnum[BodyId] >= 1) {
         const int32 FJ = Model->body_jntadr[BodyId];
         if (Model->jnt_type[FJ] == mjJNT_FREE) {

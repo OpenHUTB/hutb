@@ -1,28 +1,13 @@
 // Copyright (c) OpenHUTB. All rights reserved.
 //
-// 把 AirSim 的 ROV Pawn 改造成 MuJoCo 的「纯跟随者」。
+// ROV 位姿跟随桥接。
 //
-// 设计依据：docs/decisions/2026-11-05-ROV物理视觉统一改动方案.md
+// MuJoCo 是唯一的位姿真值源，本组件每帧把 ROV 根 body 的世界位姿提供给
+// RovPawnSimApi，后者据此驱动 Pawn。AirSim 自身的 ROV 物理与 UE 侧碰撞全部关闭，
+// 避免同一台 ROV 被两套物理重复积分。
 //
-// 背景
-// ----
-// 改造前，同一台 ROV 的位姿有两个写入者：
-//   - AirSim 的 rov_physics_body_（在 RovPawnSimApi 里积分）
-//   - MuJoCo 的 AMjArticulation（在 URLab 里积分）
-// 被调研的 16 个开源仿真系统里没有一个允许这种「双所有权」配置
-// （docs/research/开源仿真器物理与视觉统一架构调研.html §7 第 3 条）。
-//
-// 改造后
-// ------
-//   MuJoCo 是唯一真值源；本组件每帧把 ROV 根 body 的世界位姿提供给
-//   RovPawnSimApi，后者据此驱动 Pawn。AirSim 自身的 ROV 物理与 UE 侧碰撞
-//   全部关闭，避免「同一个力被算两次」（调研报告 §6 第 1 条）。
-//
-// 关于 Tick 顺序
-// --------------
-// 不需要 AddTickPrerequisiteComponent：UMjBody::GetWorldPosition() /
-// GetWorldRotation() 直接读 MuJoCo 的 m_BodyView.xpos / xquat 数组，
-// 不依赖组件自身的 TickComponent 是否已经跑过，所以拿到的永远是最新物理状态。
+// 位姿直接读 MuJoCo 的 xpos / xquat 数组，不依赖 UMjBody 的 Tick 顺序，
+// 因此不需要 AddTickPrerequisiteComponent。
 
 #pragma once
 
@@ -80,32 +65,19 @@ public:
 
     /**
      * 是否自动启动 MuJoCo 仿真。
-     *
-     * UMjPhysicsEngine 的 bIsPaused 默认是 true——URLab 的设计是让用户在
-     * MjSimulate 控件里手动点「播放」。但 AirSim 的 Pawn 一旦跟随 MuJoCo，
-     * 仿真不跑 Pawn 就不会动，所以桥接激活时默认自动取消暂停。
-     * 需要在编辑器里手动控制时把它关掉。
+     * UMjPhysicsEngine 默认暂停，仿真不跑 Pawn 就不会动，因此桥接激活时自动取消暂停。
      */
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ROV|MuJoCo")
     bool bAutoStartSimulation = true;
 
     /**
      * MuJoCo 世界坐标到 UE 世界坐标的平移偏移（cm）。
-     *
-     * MuJoCo 的模型是一个自包含的水下世界（自带 seafloor / reef / wellhead），
-     * 它的原点与 UE 地图没有关系。把 ROV 摆到城区的某个位置时，
-     * 不能靠挪编辑器里的 Actor——Pawn 的位姿每帧被 MuJoCo 覆盖，
-     * 必须在桥接这一层加偏移。
+     * Pawn 位姿每帧由 MuJoCo 覆盖，摆放位置需要通过该偏移调整。
      */
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ROV|MuJoCo")
     FVector WorldOffset = FVector::ZeroVector;
 
-    /**
-     * 键盘推进：W/S 前后、A/D 左右、Q/E 上浮下潜。
-     *
-     * 按受力分解设计：键盘只决定「推进器输出比例」，
-     * 真正的推力 = 比例 × ThrusterMaxForce，不直接改合力。
-     */
+    /** 键盘推进：W/S 前后、A/D 左右、Q/E 上浮下潜。键盘只给出推力比例。 */
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ROV|MuJoCo|Control")
     bool bEnableKeyboardControl = true;
 
@@ -114,15 +86,11 @@ public:
     float ThrusterMaxRatio = 0.5f;
 
     /**
-     * 水面高度，**单位是米（MuJoCo 模型单位）**。
-     *
-     * 已实测确认：MJCF 是米制（rov_body geom size=0.4/0.3/0.2，gravity=9.81，
-     * timestep=0.002），桥接输出到 UE 时才 ×100 转成厘米
-     * （MuJoCo xpos Z=3.00 → Pawn 世界 Z=300cm）。
-     * UE 场景水面在 Z=+800cm，对应这里 8.0。
+     * 水面高度（米，MuJoCo 模型单位）。
+     * MJCF 为米制，桥接输出到 UE 时 ×100 转厘米。
      */
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ROV|MuJoCo|Control")
-    float WaterSurfaceZ = -2.0f;   // 地图自带海面 Z = -200 cm（Town10 外围水体）
+    float WaterSurfaceZ = -2.0f;   // 地图海面 Z = -200 cm
 
     // ---------------------------- 流体 ----------------------------
 
@@ -145,23 +113,16 @@ public:
     float DisplacedVolume = 0.192f;
 
     /**
-     * 浮力倍率。1.0 = 严格按 ρ·g·V。
-     *
-     * 历史：XML 里 rov_body 的 mass="150.0" 曾被导入器分到 gripper_base_mount 上
-     * （夹爪网格单位是 mm，被当成 cm，放大 10 倍 → 体积 ×1000 → 150 kg），
-     * 整机 612.9 kg，只能靠 3.19 的倍率硬配到中性。
-     * 2026-11-08 已修：夹爪网格按 cm 重导、并给 gripper_base_mount 写死 0.15 kg，
-     * 整机回到 460.5 kg。现在按 0.192 m³ 排水算，中性所需倍率 ≈ 2.34。
+     * 浮力倍率，1.0 = 严格按 ρ·g·V。
+     * 按 0.192 m³ 排水、整机 460.5 kg 配平，中性约需 2.34。
      */
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ROV|MuJoCo|Fluid")
     float BuoyancyScale = 2.34f;
 
     /**
      * 机械臂排水体积（升）。
-     *
-     * UR5e 七个连杆的 OBJ 用散度定理实测合计 **11.73 L**，2F85 夹爪约 0.35 L，
-     * 取 12.1 L。浮力作用在臂的合成质心处，相当于给臂绑浮力块。
-     * 设为 0 可关闭，用来做对照实验。
+     * UR5e 连杆 11.73 L + 2F85 约 0.35 L，取 12.1 L；浮力作用在臂的合成质心。
+     * 设为 0 可关闭。
      */
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ROV|MuJoCo|Fluid")
     float ArmBuoyancyVolume = 12.1f;
@@ -172,44 +133,30 @@ public:
 
     /**
      * 浮心相对重心的高度（m），沿机体系 +Z。
-     *
-     * 真实 ROV 的浮心在重心之上，倾斜时浮力产生回复力矩 τ = r_CB × F_buoy，
-     * 这就是它「被撞歪后自己回正」的物理来源 —— 不需要任何控制器。
-     * 回复刚度 ≈ B × BG，BlueROV2 量级 BG = 0.01~0.05 m。
-     * 设为 0 则退化为「浮力加在质心」，无被动稳定。
+     * 倾斜时浮力产生回复力矩 τ = r_CB × F_buoy，回复刚度 ≈ B × BG。
+     * 设为 0 则浮力加在质心，无被动稳定。
      */
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ROV|MuJoCo|Fluid")
     float BuoyancyArm = 0.02f;
 
     /**
-     * 机械臂关节阻尼（N·m·s/rad），施加到所有非自由关节上。
-     *
-     * 模型的 7 个 UR5e 关节没有任何 ctrl 输入，会自由摆动；
-     * 它们的反作用力矩会把 ROV 本体晃得不停翻滚
-     * （实测：两个外部力矩全关、ω 仍能冲到 3.4 rad/s）。
-     * 加阻尼让机械臂稳定下垂，不再激励艇体。
+     * 机械臂关节阻尼（N·m·s/rad），施加到所有非自由关节。
+     * 关节无 ctrl 输入时会自由摆动，反作用力矩会持续激励艇体。
      */
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ROV|MuJoCo")
     float ArmJointDamping = 20000.0f;
 
     /**
-     * 机械臂关节刚度（N·m/rad），相当于在每个关节上装一个位置伺服弹簧，
-     * 把关节锁在 MJCF 的参考角度（qpos0）上。
-     *
-     * 只加阻尼不够：阻尼只抵抗运动，机械臂仍会在重力下缓慢下垂到一个
-     * 偏置姿态，那个偏置产生恒定扰动力矩，把 ROV 压在一个固定倾角上
-     * （实测约 17°，反推扰动约 130 N·m）。加刚度后机械臂被真正"锁住"，
-     * 扰动消失 —— 这也符合真实 ROV 的机械臂由伺服保持的实际情况。
+     * 机械臂关节刚度（N·m/rad），相当于在每个关节上加位置伺服弹簧，
+     * 把关节锁在 MJCF 的 qpos0 上。只加阻尼时机械臂仍会在重力下缓慢下垂，
+     * 偏置姿态产生恒定扰动力矩。
      */
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ROV|MuJoCo")
     float ArmJointStiffness = 0.0f;
 
     /**
      * 机械臂重力补偿：把机械臂各 body 的 gravcomp 设为 1.0，抵消其自重。
-     *
-     * 机械臂（约 22 kg）挂在 ROV 一侧，静重产生约 130 N·m 的恒定扰动力矩，
-     * 把艇体压在一个固定倾角上。真实 ROV 的机械臂靠伺服与配重平衡掉这部分，
-     * 仿真里用 MuJoCo 的 gravcomp 等效实现，同时保留惯量与碰撞。
+     * 保留惯量与碰撞。
      */
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ROV|MuJoCo")
     bool bArmGravityComp = false;
@@ -235,11 +182,8 @@ public:
     float AttitudeZeta = 0.8f;
 
     /**
-     * 姿态积分增益（rad/s per rad·s）。
-     *
-     * 纯 P 遇到恒定力矩（质心与浮心不重合、机械臂残余重量）会停在固定倾角上，
-     * 实测曾达到 roll −28°。积分项把它消掉，积分值限幅 ±2.0 rad/s。
-     * 设 0 可退回纯 P 做对照。
+     * 姿态积分增益（rad/s per rad·s）。消除恒定力矩造成的固定倾角，
+     * 积分值限幅 ±2.0 rad/s；设 0 退回纯 P。
      */
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ROV|MuJoCo|Attitude")
     float AttitudeIntegralGain = 0.5f;
@@ -257,12 +201,8 @@ public:
     float YawRateDegPerSec = 60.0f;
 
     /**
-     * 机械臂静力矩配平（机体系，N·m）。**默认 0，实测常值前馈不成立**。
-     *
-     * 2026-11-08 实测：不加前馈时稳态 qfrc 俯仰约 −166 ~ −215 N·m（机械臂还在缓慢下沉，
-     * 数值本身在漂）；加 −215 N·m 前馈后反而变成 −241 N·m。原因是臂的重力力矩
-     * 随 ROV 俯仰角变化，常值前馈只会把平衡点挪到另一个俯仰角，抵不掉。
-     * 真正的配平要动物理：臂浮力块 / 压载 / 把臂收进重心。这里保留接口供以后试。
+     * 机械臂静力矩配平（机体系，N·m），常值前馈。
+     * 臂的重力矩随俯仰角变化，常值前馈无法完全抵消，默认 0。
      */
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ROV|MuJoCo|Attitude")
     float TrimTorquePitch = 0.0f;
@@ -293,33 +233,20 @@ public:
     float CurrentDragCoeff = 10.0f;
 
     /**
-     * 附加角阻尼（1/s）。
-     *
-     * MuJoCo 椭球流体模型本身有旋转阻力，但实测偏弱：给 3 rad/s 三轴脉冲后
-     * 4 秒才衰减到 1.0 rad/s，撞一下管道仍然会明显打转。
-     * 真实 ROV 的导流罩、推进器导管、外挂设备都会提供额外的旋转阻力，
-     * 所以这里作为**独立受力项**补一个可调角阻尼，与流体模型叠加。
+     * 附加角阻尼（1/s），与流体模型叠加，作为独立受力项。
+     * 默认 0，旋转阻尼由 AngularDofDamping 提供。
      */
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ROV|MuJoCo|Fluid")
-    float AngularDampingCoeff = 0.0f;   // 改由 dof_damping 提供
+    float AngularDampingCoeff = 0.0f;
 
     /**
-     * 转动自由度阻尼（N·m·s/rad），写进 MuJoCo 的 `dof_damping[3..5]`。
-     *
-     * 这是**水阻尼**里 MuJoCo 椭球模型低估的那部分（导流罩、推进器导管、
-     * 外挂设备的形式阻力）。数值由 `-RovSpinTest` 的 spin-down 实验辨识，
-     * 不是拍脑袋的占位值。<= 0 表示退回「0.5 × 平均惯量」的兜底值。
+     * 转动自由度阻尼（N·m·s/rad），写入 MuJoCo 的 dof_damping[3..5]。
+     * 由 spin-down 实验辨识得到；<= 0 时退回「0.5 × 平均惯量」。
      */
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ROV|MuJoCo|Fluid")
     float AngularDofDamping = 13.0f;
 
-    /**
-     * 是否启用洋流（三层级联：Gauss-Markov + 分层 + 湍流）。
-     *
-     * 实测正常：V_current≈0.6~0.7 m/s，拖曳力≈6~7 N，
-     * ROV 缓慢加速到约 0.1 m/s 随流漂移 —— 这是期望的水下行为。
-     * （早前误判"被推飞"，是把日志里 ×100 的厘米值当成了米。）
-     */
+    /** 是否启用洋流（三层级联：Gauss-Markov + 分层 + 湍流）。 */
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ROV|MuJoCo|Current")
     bool bEnableOceanCurrent = true;
 
@@ -353,26 +280,22 @@ private:
     bool ProvidePose(FVector& OutPosition, FQuat& OutRotation) const;
 
     /**
-     * 找到 AMjArticulation 与目标 UMjBody。
-     *
-     * 声明为 const + mutable 成员：MuJoCo 模型通常在 Pawn 生成之后才编译完成，
-     * 所以 ProvidePose（const）需要在运行中惰性重试解析。
+     * 解析 AMjArticulation 与目标 UMjBody。
+     * 模型通常在 Pawn 生成之后才编译完成，因此声明为 const + mutable，
+     * 由 ProvidePose 在运行中惰性重试。
      */
     void ResolveTargets() const;
 
-    /** 关闭 Pawn 物理与碰撞，消除双计。 */
+    /** 关闭 Pawn 物理与碰撞，避免与 MuJoCo 重复计算。 */
     void DisablePawnPhysics();
 
-    /** 每帧把键盘输入换算成力，写进 mjData::xfrc_applied。 */
+    /** 每帧把键盘输入换算成推力与力矩，写入缓存。 */
     void ApplyControlForce();
 
     /**
-     * 物理线程内施力。
-     *
-     * 游戏线程直接写 xfrc_applied 会被物理线程的 mj_step 覆盖掉（两者不同线程、
-     * 不同频率），实测按上浮完全推不动。URLab 的 UMjPhysicsEngine 提供了
-     * PreStepCallbacks —— 在 mj_step 之前、同一把锁内执行，这是官方给的施力入口。
-     * 游戏线程只负责算力并存进 CachedForce*，物理线程在这里读出来写进 MuJoCo。
+     * 物理线程内施力：从缓存读出推力/力矩并写入 MuJoCo。
+     * 通过 UMjPhysicsEngine 的 PreStepCallbacks 在 mj_step 之前执行，
+     * 与物理步同锁，避免被 mj_step 覆盖。
      */
     void ApplyCachedForce(mjModel_* Model, mjData_* Data);
 
@@ -392,12 +315,9 @@ private:
     std::atomic<int32> CachedBodyId{-1};
 
     /**
-     * 控制指令的时间戳（MuJoCo 仿真时间）。
-     *
-     * 控制力矩在**游戏线程**按帧算，物理在**独立线程**按 500 Hz 跑。
-     * 打包版启动时有一段长卡顿（着色器编译），游戏线程几秒不更新，
-     * 上一帧的力矩会被冻结着一直施加 —— 实测 ROV 在 5 秒内被甩到 159°。
-     * 物理线程据此判断指令是否过期，过期就把推力/力矩归零。
+     * 控制指令时间戳（MuJoCo 仿真时间）。
+     * 指令在游戏线程按帧更新、物理在独立线程按 500 Hz 步进；
+     * 物理线程据此判断指令是否过期，过期时把推力与力矩归零。
      */
     std::atomic<double> CachedControlTime{0.0};
 
