@@ -31,6 +31,17 @@ void ASimModeWorldRov::BeginPlay()
         FActorSpawnParameters SpawnParams;
         SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
         ARovObstacleField* Field = GetWorld()->SpawnActor<ARovObstacleField>(ARovObstacleField::StaticClass(), FTransform::Identity, SpawnParams);
+        if (Field)
+        {
+            // 以 ROV 出生点为锚点，保证视觉代理与 MJCF 里的碰撞几何体位置一致
+            TArray<AActor*> Pawns;
+            getExistingVehiclePawns(Pawns);
+            if (Pawns.Num() > 0 && Pawns[0])
+            {
+                Field->AnchorActor = Pawns[0];
+                Field->Rebuild();
+            }
+        }
         UE_LOG(LogTemp, Log, TEXT("[RovScene] 障碍物场已生成：%s"), Field ? TEXT("成功") : TEXT("失败"));
     }
 

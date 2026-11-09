@@ -378,9 +378,16 @@ void UMjPhysicsEngine::RunMujocoAsync()
                     }
                 }
 
-                for (const FPhysicsCallback& Cb : PreStepCallbacks)
+                // 回调执行期间可能注册/清空回调，直接 ranged-for 会触发
+                // "Array has changed during ranged-for iteration"，这里先记下数量再按下标取。
+                const int32 NumPreStep = PreStepCallbacks.Num();
+                for (int32 i = 0; i < NumPreStep; ++i)
                 {
-                    Cb(m_model, m_data);
+                    if (!PreStepCallbacks.IsValidIndex(i))
+                    {
+                        break;
+                    }
+                    PreStepCallbacks[i](m_model, m_data);
                 }
 
                 for (AMjArticulation* Art : m_articulations)
@@ -396,9 +403,14 @@ void UMjPhysicsEngine::RunMujocoAsync()
                         mj_step(m_model, m_data);
                 }
 
-                for (const FPhysicsCallback& Cb : PostStepCallbacks)
+                const int32 NumPostStep = PostStepCallbacks.Num();
+                for (int32 i = 0; i < NumPostStep; ++i)
                 {
-                    Cb(m_model, m_data);
+                    if (!PostStepCallbacks.IsValidIndex(i))
+                    {
+                        break;
+                    }
+                    PostStepCallbacks[i](m_model, m_data);
                 }
 
                 if (OnPostStep)

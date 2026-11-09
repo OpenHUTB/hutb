@@ -18,30 +18,36 @@ void ARovObstacleField::BuildDefaults()
 {
     Obstacles.Reset();
 
-    // 管道：三段水平圆柱
-    const float PipeZ = -120.0f;
-    const FRotator PipeRot(0.0f, 0.0f, 90.0f);
-    Obstacles.Add({ ERovObstacleType::Pipe, FVector(400.0f, 0.0f, PipeZ), FVector(30.0f, 30.0f, 450.0f), PipeRot });
-    Obstacles.Add({ ERovObstacleType::Pipe, FVector(400.0f, 300.0f, PipeZ), FVector(25.0f, 25.0f, 300.0f), FRotator(0.0f, 45.0f, 90.0f) });
-    Obstacles.Add({ ERovObstacleType::Pipe, FVector(400.0f, -300.0f, PipeZ), FVector(25.0f, 25.0f, 300.0f), FRotator(0.0f, -45.0f, 90.0f) });
+    // 位置与 MJCF 里的障碍几何体一一对应（相对 ROV 出生点，单位 cm）。
+    // 换算：UE = 100 * (x, -y, z - z_rov)，z_rov 取出生高度 -1.0 m。
+    // 圆柱默认轴为 Z：轴向沿 X 用 Pitch=90，沿 Y 用 Pitch=90 + Yaw=90。
 
-    // 框架：四根立柱 + 两根横梁
-    for (int32 i = 0; i < 4; ++i)
-    {
-        const float SignX = (i & 1) ? 1.0f : -1.0f;
-        const float SignY = (i & 2) ? 1.0f : -1.0f;
-        Obstacles.Add({ ERovObstacleType::Frame, FVector(-300.0f + SignX * 120.0f, SignY * 120.0f, -100.0f),
-                        FVector(12.0f, 12.0f, 220.0f), FRotator::ZeroRotator });
-    }
-    Obstacles.Add({ ERovObstacleType::Frame, FVector(-300.0f, 0.0f, 100.0f), FVector(12.0f, 12.0f, 130.0f), FRotator(90.0f, 0.0f, 0.0f) });
-    Obstacles.Add({ ERovObstacleType::Frame, FVector(-300.0f, 0.0f, -320.0f), FVector(12.0f, 12.0f, 130.0f), FRotator(90.0f, 0.0f, 0.0f) });
+    // 1. 海底主干管道与分支管道
+    Obstacles.Add({ ERovObstacleType::Pipe, FVector(0.0f, -320.0f, -160.0f),
+                    FVector(25.0f, 25.0f, 450.0f), FRotator(90.0f, 0.0f, 0.0f) });
+    Obstacles.Add({ ERovObstacleType::Pipe, FVector(300.0f, -100.0f, -160.0f),
+                    FVector(20.0f, 20.0f, 300.0f), FRotator(90.0f, 90.0f, 0.0f) });
 
-    // 礁石：三块球体
-    Obstacles.Add({ ERovObstacleType::Reef, FVector(-500.0f, 500.0f, -260.0f), FVector(90.0f, 90.0f, 90.0f), FRotator::ZeroRotator });
-    Obstacles.Add({ ERovObstacleType::Reef, FVector(-650.0f, 380.0f, -300.0f), FVector(60.0f, 60.0f, 60.0f), FRotator::ZeroRotator });
-    Obstacles.Add({ ERovObstacleType::Reef, FVector(-420.0f, 620.0f, -310.0f), FVector(45.0f, 45.0f, 45.0f), FRotator::ZeroRotator });
+    // 2. 井口采油树（基座 + 立管）
+    Obstacles.Add({ ERovObstacleType::Frame, FVector(180.0f, 50.0f, -200.0f),
+                    FVector(60.0f, 60.0f, 50.0f), FRotator::ZeroRotator });
+    Obstacles.Add({ ERovObstacleType::Pipe, FVector(180.0f, 50.0f, -90.0f),
+                    FVector(22.0f, 22.0f, 60.0f), FRotator::ZeroRotator });
+
+    // 3. 导管架支撑桩（两根立柱 + 横梁）
+    Obstacles.Add({ ERovObstacleType::Pipe, FVector(-220.0f, -180.0f, -80.0f),
+                    FVector(22.0f, 22.0f, 180.0f), FRotator::ZeroRotator });
+    Obstacles.Add({ ERovObstacleType::Pipe, FVector(-220.0f, 180.0f, -80.0f),
+                    FVector(22.0f, 22.0f, 180.0f), FRotator::ZeroRotator });
+    Obstacles.Add({ ERovObstacleType::Pipe, FVector(-220.0f, 0.0f, -200.0f),
+                    FVector(12.0f, 12.0f, 180.0f), FRotator(90.0f, 90.0f, 0.0f) });
+
+    // 4. 检修结构体与礁石
+    Obstacles.Add({ ERovObstacleType::Frame, FVector(0.0f, 320.0f, -140.0f),
+                    FVector(50.0f, 80.0f, 60.0f), FRotator::ZeroRotator });
+    Obstacles.Add({ ERovObstacleType::Reef, FVector(-50.0f, -150.0f, -210.0f),
+                    FVector(40.0f, 40.0f, 40.0f), FRotator::ZeroRotator });
 }
-
 void ARovObstacleField::OnConstruction(const FTransform& Transform)
 {
     Super::OnConstruction(Transform);

@@ -51,7 +51,7 @@ public:
 
     /** 力箭头比例（cm / N）。 */
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ROV|HUD")
-    float ForceArrowScale = 1.5f;
+    float ForceArrowScale = 0.5f;
 
     /** 速度箭头比例（cm / (m/s)）。 */
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ROV|HUD")
@@ -59,7 +59,7 @@ public:
 
     /** 箭头最长长度（cm），避免超出视野。 */
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ROV|HUD")
-    float MaxArrowLength = 400.0f;
+    float MaxArrowLength = 300.0f;
 
 private:
     void DrawStatusPanel();
