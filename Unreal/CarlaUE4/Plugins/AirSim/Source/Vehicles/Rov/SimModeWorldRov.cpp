@@ -6,6 +6,8 @@
 #include "Logging/MessageLog.h"
 #include "Engine/World.h"
 #include "GameFramework/PlayerController.h"
+#include "Vehicles/Rov/RovObstacleField.h"
+#include "Vehicles/Rov/RovStatusHUD.h"
 
 #include "AirBlueprintLib.h"
 #include "vehicles/rov/api/RovApiBase.hpp"
@@ -22,6 +24,25 @@ void ASimModeWorldRov::BeginPlay()
 
     //let base class setup physics world
     initializeForPlay();
+
+    // 障碍物场景（7.3.2）：管道 / 框架 / 礁石，可被关卡里手动摆放的实例替代
+    if (bSpawnObstacleField && GetWorld())
+    {
+        FActorSpawnParameters SpawnParams;
+        SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+        ARovObstacleField* Field = GetWorld()->SpawnActor<ARovObstacleField>(ARovObstacleField::StaticClass(), FTransform::Identity, SpawnParams);
+        UE_LOG(LogTemp, Log, TEXT("[RovScene] 障碍物场已生成：%s"), Field ? TEXT("成功") : TEXT("失败"));
+    }
+
+    // 实时状态面板 + 力/速度向量（3.4 / 7.3.1）
+    if (bSpawnStatusHUD && GetWorld())
+    {
+        if (APlayerController* PC = GetWorld()->GetFirstPlayerController())
+        {
+            PC->ClientSetHUD(ARovStatusHUD::StaticClass());
+            UE_LOG(LogTemp, Log, TEXT("[RovScene] 实时状态面板已启用"));
+        }
+    }
 }
 
 void ASimModeWorldRov::EndPlay(const EEndPlayReason::Type EndPlayReason)

@@ -14,11 +14,32 @@
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
 #include "Vehicles/Rov/RovUnderwaterPhysics.h"
+#include "Vehicles/Rov/RovFluidParams.h"
 #include <atomic>
 #include "RovMuJoCoBridge.generated.h"
 
 class AMjArticulation;
 class UMjBody;
+
+/** 实时状态快照，供 HUD 与外部读取。 */
+USTRUCT(BlueprintType)
+struct FRovStatusSnapshot
+{
+    GENERATED_BODY()
+
+    UPROPERTY(BlueprintReadOnly, Category = "ROV|Status") float RollDeg = 0.0f;
+    UPROPERTY(BlueprintReadOnly, Category = "ROV|Status") float PitchDeg = 0.0f;
+    UPROPERTY(BlueprintReadOnly, Category = "ROV|Status") float YawDeg = 0.0f;
+    UPROPERTY(BlueprintReadOnly, Category = "ROV|Status") float DepthM = 0.0f;
+    UPROPERTY(BlueprintReadOnly, Category = "ROV|Status") float ThrustN = 0.0f;
+    UPROPERTY(BlueprintReadOnly, Category = "ROV|Status") float ContactForceN = 0.0f;
+    UPROPERTY(BlueprintReadOnly, Category = "ROV|Status") float CurrentSpeedMps = 0.0f;
+    UPROPERTY(BlueprintReadOnly, Category = "ROV|Status") FVector VelocityMps = FVector::ZeroVector;
+    UPROPERTY(BlueprintReadOnly, Category = "ROV|Status") FVector ContactPoint = FVector::ZeroVector;
+    UPROPERTY(BlueprintReadOnly, Category = "ROV|Status") FVector ContactForceDir = FVector::ZeroVector;
+    UPROPERTY(BlueprintReadOnly, Category = "ROV|Status") FVector FlowVelocityMps = FVector::ZeroVector;
+    UPROPERTY(BlueprintReadOnly, Category = "ROV|Status") bool bValid = false;
+};
 
 // MuJoCo 的 mjModel / mjData 是 struct mjModel_ / struct mjData_ 的 typedef。
 // 这里只前向声明，避免把 mujoco.h 拉进 AirSim 的公共头。
@@ -260,6 +281,78 @@ public:
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ROV|MuJoCo|Depth")
     bool bEnableDepthHold = true;
 
+    // ---------------------------- 配置文件 ----------------------------
+
+    /**
+     * 是否从配置文件加载参数。
+     * 默认读取 <Project>/Config/RovParams.json，可用 -RovConfig=<路径> 指定其他文件。
+     * 优先级：命令行 > 配置文件 > 类默认值。
+     */
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ROV|MuJoCo|Config")
+    bool bLoadConfigFile = true;
+
+    /** 生效的配置文件绝对路径（加载后回填，便于日志核对）。 */
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "ROV|MuJoCo|Config")
+    FString LoadedConfigPath;
+
+    // ---------------------------- 接触日志 ----------------------------
+
+    /** 是否把逐接触点数据写入 CSV。 */
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ROV|MuJoCo|Log")
+    bool bLogContacts = false;
+
+    /** 接触日志路径。留空则写入 <Project>/Saved/RovContactLog.csv。 */
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ROV|MuJoCo|Log")
+    FString ContactLogPath;
+
+    /** 接触日志降采样间隔（物理步数）。10 = 500 Hz 步长下 50 Hz。 */
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ROV|MuJoCo|Log", meta = (ClampMin = "1"))
+    int32 ContactLogInterval = 10;
+
+    // ---------------------------- 显式阻力与附加质量 ----------------------------
+
+    /**
+     * 是否叠加显式二次阻力 F = 0.5·ρ·Cd·A·v²（沿机体系三轴）。
+     * 与 MuJoCo 原生椭球模型并联，用于补偿椭球近似对大钝体/细长体的偏差。
+     */
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ROV|MuJoCo|Fluid")
+    bool bUseExplicitDrag = false;
+
+    /** 机体系三轴阻力系数 Cd。 */
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ROV|MuJoCo|Fluid")
+    FVector DragCoeff = FVector(0.82f, 1.15f, 1.05f);
+
+    /** 机体系三轴迎流参考面积（m²）。 */
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ROV|MuJoCo|Fluid")
+    FVector DragRefArea = FVector(0.24f, 0.32f, 0.48f);
+
+    /**
+     * 是否叠加附加质量力 F = -m_A·a（沿机体系三轴）。
+     * MuJoCo 椭球模型内部已含附加质量，本项用于在不改模型的前提下单独调整。
+     */
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ROV|MuJoCo|Fluid")
+    bool bUseAddedMass = false;
+
+    /** 机体系三轴附加质量（kg）。 */
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ROV|MuJoCo|Fluid")
+    FVector AddedMass = FVector(0.0f, 0.0f, 0.0f);
+
+    /** 按外形自动估算并覆盖 DragCoeff / DragRefArea / AddedMass。 */
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ROV|MuJoCo|Fluid")
+    bool bAutoEstimateFluidParams = false;
+
+    /** 自动估算用的外形。 */
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ROV|MuJoCo|Fluid")
+    ERovHullShape HullShape = ERovHullShape::Box;
+
+    /** 自动估算用的外形半尺寸（m）。含义见 URovFluidLibrary::EstimateFluidParams。 */
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ROV|MuJoCo|Fluid")
+    FVector HullDims = FVector(0.4f, 0.3f, 0.2f);
+
+    /** 读取实时状态快照（姿态、深度、推力、接触力、洋流）。 */
+    UFUNCTION(BlueprintCallable, Category = "ROV|MuJoCo")
+    void GetStatusSnapshot(FRovStatusSnapshot& Out) const;
+
     /** 桥接是否已生效。 */
     UFUNCTION(BlueprintCallable, BlueprintPure, Category = "ROV|MuJoCo")
     bool IsBridgeActive() const { return bBridgeActive; }
@@ -288,6 +381,18 @@ private:
 
     /** 关闭 Pawn 物理与碰撞，避免与 MuJoCo 重复计算。 */
     void DisablePawnPhysics();
+
+    /** 读取配置文件并覆盖对应参数（命令行稍后覆盖，优先级最低）。 */
+    void ApplyConfigFile();
+
+    /**
+     * 级联姿态控制（物理线程，500 Hz）。
+     * 输出机体系力矩；积分步长取物理步长，因此与渲染帧率无关。
+     */
+    void ComputeAttitudeTorque(mjModel_* Model, mjData_* Data, int32 BodyId, double Dt, double OutTorque[3]);
+
+    /** 逐接触点写 CSV（4.2.4）。 */
+    void LogContacts(mjModel_* Model, mjData_* Data);
 
     /** 每帧把键盘输入换算成推力与力矩，写入缓存。 */
     void ApplyControlForce();
@@ -342,6 +447,12 @@ private:
     /** 姿态控制器积分项（机体系，rad·s）。 */
     FVector AttitudeIntegral = FVector::ZeroVector;
 
+    /** 物理线程姿态环的积分状态（与帧率无关）。 */
+    double AttIntState[3] = { 0.0, 0.0, 0.0 };
+
+    /** 航向角速度前馈（rad/s，机体系），游戏线程写、物理线程读。 */
+    std::atomic<double> CachedYawFFRadPerSec{ 0.0 };
+
     /** 姿态控制器是否已初始化（首次捕获目标航向）。 */
     bool bAttitudeInitialized = false;
 
@@ -357,5 +468,33 @@ private:
     /** 只在第一次解析失败时打印候选列表，避免每帧刷屏。 */
     mutable bool bResolveWarned = false;
 
+    /** 接触日志文件句柄（EndPlay 时关闭）。 */
+    FArchive* ContactLogArchive = nullptr;
+    int64 ContactLogStep = 0;
+    bool bContactLogHeaderWritten = false;
+
+    /** 实时状态缓存，物理线程写、游戏线程读。 */
+    std::atomic<double> CachedContactForce{ 0.0 };
+    std::atomic<double> CachedContactPointX{ 0.0 };
+    std::atomic<double> CachedContactPointY{ 0.0 };
+    std::atomic<double> CachedContactPointZ{ 0.0 };
+    std::atomic<double> CachedContactDirX{ 0.0 };
+    std::atomic<double> CachedContactDirY{ 0.0 };
+    std::atomic<double> CachedContactDirZ{ 0.0 };
+    std::atomic<double> CachedVelocityX{ 0.0 };
+    std::atomic<double> CachedVelocityY{ 0.0 };
+    std::atomic<double> CachedVelocityZ{ 0.0 };
+    std::atomic<double> CachedFlowX{ 0.0 };
+    std::atomic<double> CachedFlowY{ 0.0 };
+    std::atomic<double> CachedFlowZ{ 0.0 };
+    std::atomic<double> CachedRollDeg{ 0.0 };
+    std::atomic<double> CachedPitchDeg{ 0.0 };
+    std::atomic<double> CachedYawDeg{ 0.0 };
+    std::atomic<double> CachedDepthM{ 0.0 };
+    std::atomic<double> CachedThrustN{ 0.0 };
+
     bool bBridgeActive = false;
+
+    /** 调试用：-RovContactTest 时施加的额外下压力（N），把 ROV 压到海床以产生接触。 */
+    double ContactTestForce = 0.0;
 };

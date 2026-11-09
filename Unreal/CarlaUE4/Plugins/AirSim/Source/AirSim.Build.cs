@@ -86,6 +86,9 @@ public class AirSim : ModuleRules
         PublicDependencyModuleNames.Add("URLab");
         PrivateDependencyModuleNames.AddRange(new string[] { "UMG", "Slate", "SlateCore", "Foliage" });
 
+        // OpenHUTB 追加：ROV 配置文件（RovParams.json）解析需要 Json 模块。
+        PrivateDependencyModuleNames.Add("Json");
+
         string ProjectDir = Target.ProjectFile != null ? Path.GetDirectoryName(Target.ProjectFile.FullName) : "";
         string CarlaPluginInProject = Path.Combine(ProjectDir, "Plugins", "Carla");
         string CarlaPluginSibling = Path.Combine(AirSimPluginPath, "..", "Carla");

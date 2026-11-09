@@ -9,6 +9,9 @@
 #include "Components/PrimitiveComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "InputCoreTypes.h"
+#include "HAL/FileManager.h"
+#include "Misc/FileHelper.h"
+#include "Misc/Paths.h"
 
 // URLab：MuJoCo 物理
 #include "MuJoCo/Core/AMjManager.h"
@@ -87,6 +90,12 @@ void URovMuJoCoBridge::BeginPlay()
 
 void URovMuJoCoBridge::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
+    if (ContactLogArchive)
+    {
+        ContactLogArchive->Close();
+        delete ContactLogArchive;
+        ContactLogArchive = nullptr;
+    }
     if (bBridgeActive) {
         ExternalPoseProvider = nullptr;
         bBridgeActive = false;
@@ -258,6 +267,189 @@ void URovMuJoCoBridge::TickComponent(float DeltaTime, ELevelTick TickType,
     }
 }
 
+void URovMuJoCoBridge::ApplyConfigFile()
+{
+    if (!bLoadConfigFile)
+    {
+        UE_LOG(LogRovBridge, Log, TEXT("[配置] bLoadConfigFile=false，跳过配置文件"));
+        return;
+    }
+
+    FString Path;
+    if (!FParse::Value(FCommandLine::Get(), TEXT("RovConfig="), Path))
+    {
+        Path = FPaths::Combine(FPaths::ProjectConfigDir(), TEXT("RovParams.json"));
+    }
+    Path = FPaths::ConvertRelativePathToFull(Path);
+    if (!FPaths::FileExists(Path))
+    {
+        UE_LOG(LogRovBridge, Warning, TEXT("[配置] 未找到配置文件 %s，使用类默认值 + 命令行覆盖"), *Path);
+        return;
+    }
+
+    TMap<FString, float> Kv;
+    FString Err;
+    if (!RovConfig::LoadKeyValues(Path, Kv, Err))
+    {
+        UE_LOG(LogRovBridge, Warning, TEXT("[配置] %s"), *Err);
+        return;
+    }
+
+    auto ApplyF = [&Kv](const TCHAR* Key, float& Target)
+    {
+        if (const float* V = Kv.Find(Key)) { Target = *V; }
+    };
+    auto ApplyB = [&Kv](const TCHAR* Key, bool& Target)
+    {
+        if (const float* V = Kv.Find(Key)) { Target = (*V) != 0.0f; }
+    };
+    auto ApplyV = [&Kv](const TCHAR* Prefix, FVector& Target)
+    {
+        const FString P(Prefix);
+        if (const float* X = Kv.Find(P + TEXT("X"))) { Target.X = *X; }
+        if (const float* Y = Kv.Find(P + TEXT("Y"))) { Target.Y = *Y; }
+        if (const float* Z = Kv.Find(P + TEXT("Z"))) { Target.Z = *Z; }
+    };
+
+    ApplyF(TEXT("FluidDensity"), FluidDensity);
+    ApplyF(TEXT("FluidViscosity"), FluidViscosity);
+    ApplyF(TEXT("DisplacedVolume"), DisplacedVolume);
+    ApplyF(TEXT("BuoyancyScale"), BuoyancyScale);
+    ApplyF(TEXT("BuoyancyArm"), BuoyancyArm);
+    ApplyF(TEXT("ArmBuoyancyVolume"), ArmBuoyancyVolume);
+    ApplyF(TEXT("ArmBuoyancyScale"), ArmBuoyancyScale);
+    ApplyF(TEXT("ArmJointDamping"), ArmJointDamping);
+    ApplyF(TEXT("ArmJointStiffness"), ArmJointStiffness);
+    ApplyB(TEXT("ArmGravityComp"), bArmGravityComp);
+    ApplyF(TEXT("ThrusterMaxRatio"), ThrusterMaxRatio);
+    ApplyF(TEXT("WaterSurfaceZ"), WaterSurfaceZ);
+    ApplyF(TEXT("AngularDofDamping"), AngularDofDamping);
+    ApplyF(TEXT("AngularDampingCoeff"), AngularDampingCoeff);
+    ApplyF(TEXT("AttitudeBandwidth"), AttitudeBandwidth);
+    ApplyF(TEXT("AttitudeZeta"), AttitudeZeta);
+    ApplyF(TEXT("AttitudeIntegralGain"), AttitudeIntegralGain);
+    ApplyF(TEXT("LevelBandwidth"), LevelBandwidth);
+    ApplyF(TEXT("LevelZeta"), LevelZeta);
+    ApplyF(TEXT("YawBandwidth"), YawBandwidth);
+    ApplyF(TEXT("YawZeta"), YawZeta);
+    ApplyF(TEXT("YawRateDegPerSec"), YawRateDegPerSec);
+    ApplyF(TEXT("CurrentDragCoeff"), CurrentDragCoeff);
+    ApplyF(TEXT("OceanCurrentMeanSpeed"), OceanCurrentMeanSpeed);
+    ApplyB(TEXT("EnableAttitudeHold"), bEnableAttitudeHold);
+    ApplyB(TEXT("EnableDepthHold"), bEnableDepthHold);
+    ApplyB(TEXT("EnableOceanCurrent"), bEnableOceanCurrent);
+    ApplyB(TEXT("UseNativeFluid"), bUseNativeFluid);
+
+    ApplyB(TEXT("UseExplicitDrag"), bUseExplicitDrag);
+    ApplyV(TEXT("DragCoeff"), DragCoeff);
+    ApplyV(TEXT("DragRefArea"), DragRefArea);
+    ApplyB(TEXT("UseAddedMass"), bUseAddedMass);
+    ApplyV(TEXT("AddedMass"), AddedMass);
+
+    ApplyB(TEXT("AutoEstimateFluidParams"), bAutoEstimateFluidParams);
+    ApplyV(TEXT("HullDims"), HullDims);
+    if (const float* S = Kv.Find(TEXT("HullShape")))
+    {
+        HullShape = static_cast<ERovHullShape>(FMath::Clamp(FMath::RoundToInt(*S), 0, 3));
+    }
+    if (bAutoEstimateFluidParams)
+    {
+        const FRovFluidEstimate E = URovFluidLibrary::EstimateFluidParams(HullShape, HullDims, FluidDensity);
+        DragCoeff = FVector(E.Cd, E.Cd, E.Cd);
+        DragRefArea = FVector(E.RefArea, E.RefArea, E.RefArea);
+        AddedMass = FVector(E.AddedMass, E.AddedMass, E.AddedMass);
+        bUseExplicitDrag = true;
+        bUseAddedMass = true;
+        UE_LOG(LogRovBridge, Log,
+            TEXT("[配置] 外形估算：Cd=%.2f  迎流面积=%.4f m²  附加质量=%.1f kg  排水体积=%.4f m³"),
+            E.Cd, E.RefArea, E.AddedMass, E.Volume);
+    }
+
+    ApplyB(TEXT("LogContacts"), bLogContacts);
+    if (const float* V = Kv.Find(TEXT("ContactLogInterval")))
+    {
+        ContactLogInterval = FMath::Max(1, FMath::RoundToInt(*V));
+    }
+
+    LoadedConfigPath = Path;
+    UE_LOG(LogRovBridge, Log, TEXT("[配置] 已加载 %s，共 %d 个数值项"), *Path, Kv.Num());
+}
+
+void URovMuJoCoBridge::LogContacts(mjModel_* Model, mjData_* Data)
+{
+    if (!bLogContacts || !Model || !Data)
+    {
+        return;
+    }
+    if (++ContactLogStep % FMath::Max(1, ContactLogInterval) != 0)
+    {
+        return;
+    }
+
+    if (!ContactLogArchive)
+    {
+        FString Path = ContactLogPath.IsEmpty()
+            ? FPaths::Combine(FPaths::ProjectSavedDir(), TEXT("RovContactLog.csv"))
+            : ContactLogPath;
+        Path = FPaths::ConvertRelativePathToFull(Path);
+        ContactLogArchive = IFileManager::Get().CreateFileWriter(*Path, FILEWRITE_Append);
+        if (!ContactLogArchive)
+        {
+            UE_LOG(LogRovBridge, Warning, TEXT("[接触日志] 无法写入 %s"), *Path);
+            bLogContacts = false;
+            return;
+        }
+        UE_LOG(LogRovBridge, Log, TEXT("[接触日志] 写入 %s（每 %d 个物理步一条）"), *Path, ContactLogInterval);
+    }
+
+    auto WriteLine = [this](const FString& Line)
+    {
+        FTCHARToUTF8 Utf8(*Line);
+        ContactLogArchive->Serialize(static_cast<void*>(const_cast<ANSICHAR*>(Utf8.Get())), Utf8.Length());
+    };
+
+    if (!bContactLogHeaderWritten)
+    {
+        WriteLine(TEXT("time_s,body1,body2,normal_N,pos_x,pos_y,pos_z\n"));
+        bContactLogHeaderWritten = true;
+    }
+
+    for (int32 i = 0; i < Data->ncon; ++i)
+    {
+        const mjContact& C = Data->contact[i];
+        mjtNum F6[6] = { 0, 0, 0, 0, 0, 0 };
+        mj_contactForce(Model, Data, i, F6);
+
+        const int32 B1 = Model->geom_bodyid[C.geom1];
+        const int32 B2 = Model->geom_bodyid[C.geom2];
+        const FString N1 = (B1 >= 0 && Model->name_bodyadr[B1] >= 0)
+            ? FString(UTF8_TO_TCHAR(Model->names + Model->name_bodyadr[B1])) : FString(TEXT("world"));
+        const FString N2 = (B2 >= 0 && Model->name_bodyadr[B2] >= 0)
+            ? FString(UTF8_TO_TCHAR(Model->names + Model->name_bodyadr[B2])) : FString(TEXT("world"));
+
+        WriteLine(FString::Printf(TEXT("%.5f,%s,%s,%.4f,%.5f,%.5f,%.5f\n"),
+            Data->time, *N1, *N2, F6[0], C.pos[0], C.pos[1], C.pos[2]));
+    }
+
+    // 立即落盘，避免进程被强杀时缓冲区内容丢失
+    ContactLogArchive->Flush();
+}
+
+void URovMuJoCoBridge::GetStatusSnapshot(FRovStatusSnapshot& Out) const
+{
+    Out.RollDeg = (float)CachedRollDeg.load();
+    Out.PitchDeg = (float)CachedPitchDeg.load();
+    Out.YawDeg = (float)CachedYawDeg.load();
+    Out.DepthM = (float)CachedDepthM.load();
+    Out.ThrustN = (float)CachedThrustN.load();
+    Out.ContactForceN = (float)CachedContactForce.load();
+    Out.VelocityMps = FVector((float)CachedVelocityX.load(), (float)CachedVelocityY.load(), (float)CachedVelocityZ.load());
+    Out.ContactPoint = FVector((float)CachedContactPointX.load(), (float)CachedContactPointY.load(), (float)CachedContactPointZ.load());
+    Out.ContactForceDir = FVector((float)CachedContactDirX.load(), (float)CachedContactDirY.load(), (float)CachedContactDirZ.load());
+    Out.FlowVelocityMps = FVector((float)CachedFlowX.load(), (float)CachedFlowY.load(), (float)CachedFlowZ.load());
+    Out.bValid = bBridgeActive && TargetBody.IsValid();
+}
+
 void URovMuJoCoBridge::ApplyControlForce()
 {
     if (!TargetBody.IsValid() || !TargetBody->IsBound()) {
@@ -292,6 +484,8 @@ void URovMuJoCoBridge::ApplyControlForce()
             float V = Default;
             return FParse::Value(FCommandLine::Get(), Key, V) ? V : Default;
         };
+        // 配置文件先加载，命令行随后覆盖，保证「命令行 > 配置文件 > 默认值」
+        ApplyConfigFile();
         DisplacedVolume  = FloatParam(TEXT("RovDisplacedVolume="), DisplacedVolume);
         BuoyancyScale    = FloatParam(TEXT("RovBuoyancyScale="), BuoyancyScale);
         BuoyancyArm      = FloatParam(TEXT("RovBuoyancyArm="), BuoyancyArm);
@@ -302,6 +496,13 @@ void URovMuJoCoBridge::ApplyControlForce()
         ThrusterMaxRatio = FloatParam(TEXT("RovThrustRatio="), ThrusterMaxRatio);
         WaterSurfaceZ    = FloatParam(TEXT("RovWaterSurfaceZ="), WaterSurfaceZ);
         if (FParse::Param(FCommandLine::Get(), TEXT("RovNoAttitude"))) { bEnableAttitudeHold = false; }
+        if (FParse::Param(FCommandLine::Get(), TEXT("RovContactTest")))
+        {
+            ContactTestForce = 900.0;
+            bLogContacts = true;
+            bEnableDepthHold = false;
+            UE_LOG(LogRovBridge, Log, TEXT("[接触试验] 施加 %.0f N 下压力，用于产生海床接触"), ContactTestForce);
+        }
         UE_LOG(LogRovBridge, Log,
             TEXT("[RovMuJoCoBridge][调参] 排水体积=%.4f m³  浮力倍率=%.2f  臂排水=%.2f L×%.2f  "
                  "推力比=%.2f  水面Z=%.2f m"),
@@ -636,6 +837,9 @@ void URovMuJoCoBridge::ApplyControlForce()
                 TargetYawDeg, YawCmdRateDeg);
         }
     }
+
+    // 航向角速度前馈交给物理线程的姿态环
+    CachedYawFFRadPerSec.store(FMath::DegreesToRadians(YawCmdRateDeg));
 
     // 【2】洋流：三层级联求当前流速
     const FVector VCurrent = OceanCurrent.GetVelocity(RovPos, (float)FrameDt);
@@ -1005,11 +1209,12 @@ void URovMuJoCoBridge::ApplyControlForce()
         }
     }
 
-    // 【10】级联姿态控制
+    // 【10】级联姿态控制（已迁移到物理线程，见 ComputeAttitudeTorque）
+    //   保留本块仅作参考：它按渲染帧调用，帧率低于约 25 fps 时会与积分项形成
+    //   慢振荡直至翻转，因此改为在物理线程按 500 Hz 运行。
     //   外环：姿态误差 -> 期望角速度（机体系）
     //   内环：期望角速度 - 实测角速度（qvel[3:6] 为机体系）-> 力矩
-    //   力矩直接写 qfrc_applied[3:5]（机体系）
-    if (bEnableAttitudeHold && !bSpinTest && Model->body_jntnum[BodyId] >= 1) {
+    if (false && bEnableAttitudeHold && !bSpinTest && Model->body_jntnum[BodyId] >= 1) {
         const int32 NJ = Model->body_jntadr[BodyId];
         if (Model->jnt_type[NJ] == mjJNT_FREE) {
             const int32 ND = Model->jnt_dofadr[NJ];
@@ -1177,6 +1382,116 @@ void URovMuJoCoBridge::ApplyControlForce()
     }
 }
 
+void URovMuJoCoBridge::ComputeAttitudeTorque(mjModel_* Model, mjData_* Data, int32 BodyId, double Dt, double OutTorque[3])
+{
+    OutTorque[0] = 0.0;
+    OutTorque[1] = 0.0;
+    OutTorque[2] = 0.0;
+
+    if (!bEnableAttitudeHold || !Model || !Data || BodyId < 0 || BodyId >= Model->nbody)
+    {
+        return;
+    }
+    if (Model->body_jntnum[BodyId] < 1)
+    {
+        return;
+    }
+    const int32 J = Model->body_jntadr[BodyId];
+    if (Model->jnt_type[J] != mjJNT_FREE)
+    {
+        return;
+    }
+    const int32 D = Model->jnt_dofadr[J];
+
+    const double* QQ = &Data->xquat[4 * BodyId];
+    const double qw = QQ[0], qx = QQ[1], qy = QQ[2], qz = QQ[3];
+
+    if (!bAttitudeInitialized)
+    {
+        bAttitudeInitialized = true;
+        const double InitYaw = FMath::Atan2(2.0 * (qw * qz + qx * qy),
+                                            1.0 - 2.0 * (qy * qy + qz * qz));
+        TargetYawDeg = (float)FMath::RadiansToDegrees(InitYaw);
+        UE_LOG(LogRovBridge, Log,
+            TEXT("[RovBridge][姿态] 物理线程级联控制启用（%.0f Hz），锁定航向 %.1f°"),
+            1.0 / FMath::Max(Dt, 1e-6), TargetYawDeg);
+    }
+
+    const double HalfYaw = FMath::DegreesToRadians((double)TargetYawDeg) * 0.5;
+    const double Qtw = FMath::Cos(HalfYaw), Qtz = FMath::Sin(HalfYaw);
+
+    // q_e = conj(q_c) ⊗ q_t（机体系），取短弧
+    const double aw = qw, ax = -qx, ay = -qy, az = -qz;
+    double Qew = aw * Qtw - az * Qtz;
+    double Qex = ax * Qtw + ay * Qtz;
+    double Qey = -ax * Qtz + ay * Qtw;
+    double Qez = aw * Qtz + az * Qtw;
+    if (Qew < 0.0) { Qew = -Qew; Qex = -Qex; Qey = -Qey; Qez = -Qez; }
+
+    const double E3[3] = { 2.0 * Qex, 2.0 * Qey, 2.0 * Qez };
+    const double KpAtt[3] = { 1.5, 1.5, 1.0 };
+    const double Wmax[3] = { 0.8, 0.8, 0.6 };
+    const double Wn = 5.0;
+
+    const double YawFF = CachedYawFFRadPerSec.load();
+    const double WmaxZ = (YawFF != 0.0) ? FMath::Max(Wmax[2], FMath::Abs(YawFF) + 0.2) : Wmax[2];
+
+    for (int32 Axis = 0; Axis < 3; ++Axis)
+    {
+        const double I = (EffInertia[Axis] > 0.0) ? EffInertia[Axis]
+                                                  : Model->body_inertia[3 * BodyId + Axis];
+        const double Wlim = (Axis == 2) ? WmaxZ : Wmax[Axis];
+
+        // 大角度时临时抬高角速度上限，给回正留出力矩余量。
+        // 稳态扰动力矩约 86 N·m；若上限恒为 0.8 rad/s，最大回正力矩只有约 86 N·m，
+        // 一旦翻过 90° 就会停在「控制器力矩 = 重力矩」的平衡点上，再也回不来。
+        const double Boost = FMath::Clamp((FMath::Abs(E3[Axis]) - 0.30) * 1.5, 0.0, 2.0);
+        const double WlimEff = Wlim + Boost;
+
+        // 积分限幅 + 抗饱和：角速度大时不再累积，并按时间常数快速泄放。
+        // 只按角速度判据：若再叠加「误差小才积分」，稳态大倾角就永远消不掉
+        // （实测会停在 28° 下不来）。
+        const double Omega = (double)Data->qvel[D + 3 + Axis];
+        if (FMath::Abs(Omega) < 0.30)
+        {
+            AttIntState[Axis] = FMath::Clamp(AttIntState[Axis] + E3[Axis] * Dt, -2.0, 2.0);
+        }
+        else
+        {
+            AttIntState[Axis] *= FMath::Max(0.0, 1.0 - 3.0 * Dt);
+        }
+
+        double Wsp = FMath::Clamp(KpAtt[Axis] * E3[Axis]
+                                      + (double)AttitudeIntegralGain * AttIntState[Axis],
+                                  -WlimEff, WlimEff);
+        if (Axis == 2 && YawFF != 0.0)
+        {
+            Wsp = FMath::Clamp(Wsp + YawFF, -WlimEff, WlimEff);
+        }
+        double T = I * Wn * (Wsp - Omega);
+        OutTorque[Axis] = FMath::Clamp(T, -1500.0, 1500.0);
+    }
+
+    // 1 Hz 诊断：倾角、误差、角速度、力矩、积分量
+    {
+        static double LastLogT = -1.0;
+        if (Data->time - LastLogT > 1.0)
+        {
+            LastLogT = Data->time;
+            const double UpZ = FMath::Clamp((double)Data->xmat[9 * BodyId + 8], -1.0, 1.0);
+            const double TiltDeg = FMath::RadiansToDegrees(FMath::Acos(UpZ));
+            UE_LOG(LogRovBridge, Log,
+                TEXT("[RovBridge][姿态环] t=%.1f 倾角=%.2f E3=(%+.3f,%+.3f,%+.3f) "
+                     "w=(%+.3f,%+.3f,%+.3f) T=(%+.1f,%+.1f,%+.1f) 积分=(%+.2f,%+.2f,%+.2f)"),
+                Data->time, TiltDeg,
+                E3[0], E3[1], E3[2],
+                Data->qvel[D + 3], Data->qvel[D + 4], Data->qvel[D + 5],
+                OutTorque[0], OutTorque[1], OutTorque[2],
+                AttIntState[0], AttIntState[1], AttIntState[2]);
+        }
+    }
+}
+
 void URovMuJoCoBridge::ApplyCachedForce(mjModel_* Model, mjData_* Data)
 {
     const int32 BodyId = CachedBodyId.load();
@@ -1195,6 +1510,9 @@ void URovMuJoCoBridge::ApplyCachedForce(mjModel_* Model, mjData_* Data)
     }
     const int32 DofAdr = Model->jnt_dofadr[JntId];
 
+    // 逐接触点日志（4.2.4）：此处读到的是上一步求解出的接触
+    LogContacts(Model, Data);
+
     // mj_applyFT 是累加语义，先清零本 body 的 6 维广义力
     for (int32 k = 0; k < 6; ++k) {
         Data->qfrc_applied[DofAdr + k] = 0.0;
@@ -1202,9 +1520,11 @@ void URovMuJoCoBridge::ApplyCachedForce(mjModel_* Model, mjData_* Data)
 
     // 指令新鲜度：控制量在游戏线程按帧更新，物理线程按 500 Hz 步进。
     // 游戏线程卡顿时旧指令会被持续施加，这里按仿真时间做淡出：
-    // 超过 0.1 s 开始衰减，超过 0.2 s 归零。
+    // 超过 0.04 s 开始衰减，超过 0.08 s 完全交给物理线程的兜底控制器。
+    // 阈值取得比 0.1 s 更紧，是因为帧率低于约 25 fps 时游戏线程的姿态环
+    // 已经跟不上（每帧只更新一次），会与积分项形成慢振荡直至翻转。
     const double CmdAge = (double)Data->time - CachedControlTime.load();
-    const double Fresh = FMath::Clamp(1.0 - (CmdAge - 0.10) / 0.10, 0.0, 1.0);
+    const double Fresh = FMath::Clamp(1.0 - (CmdAge - 0.04) / 0.04, 0.0, 1.0);
 
     const mjtNum CG[3] = {
         Data->xipos[3 * BodyId + 0],
@@ -1218,9 +1538,52 @@ void URovMuJoCoBridge::ApplyCachedForce(mjModel_* Model, mjData_* Data)
     mjtNum F1[3] = {
         (mjtNum)(CachedForceX.load() * Fresh),
         (mjtNum)(CachedForceY.load() * Fresh),
-        (mjtNum)(CachedForceZ.load() * Fresh)
+        (mjtNum)(CachedForceZ.load() * Fresh - ContactTestForce)
     };
     mj_applyFT(Model, Data, F1, ZeroT, CG, BodyId, Data->qfrc_applied);
+
+    // 【1b】显式二次阻力：沿机体系三轴 F = -0.5·ρ·Cd·A·|v|·v。
+    // 用于补偿椭球近似对大钝体 / 细长体的偏差，默认关闭。
+    if (bUseExplicitDrag)
+    {
+        const double QW = Data->xquat[4 * BodyId + 0];
+        const double QX = Data->xquat[4 * BodyId + 1];
+        const double QY = Data->xquat[4 * BodyId + 2];
+        const double QZ = Data->xquat[4 * BodyId + 3];
+        double Bx = 0.0, By = 0.0, Bz = 0.0;
+        RotByQuat(QW, -QX, -QY, -QZ,
+                  Data->qvel[DofAdr + 0], Data->qvel[DofAdr + 1], Data->qvel[DofAdr + 2],
+                  Bx, By, Bz);
+        const double Half = 0.5 * (double)FluidDensity;
+        const double Fbx = -Half * (double)DragCoeff.X * (double)DragRefArea.X * FMath::Abs(Bx) * Bx;
+        const double Fby = -Half * (double)DragCoeff.Y * (double)DragRefArea.Y * FMath::Abs(By) * By;
+        const double Fbz = -Half * (double)DragCoeff.Z * (double)DragRefArea.Z * FMath::Abs(Bz) * Bz;
+        double Fwx = 0.0, Fwy = 0.0, Fwz = 0.0;
+        RotByQuat(QW, QX, QY, QZ, Fbx, Fby, Fbz, Fwx, Fwy, Fwz);
+        mjtNum F1b[3] = { (mjtNum)Fwx, (mjtNum)Fwy, (mjtNum)Fwz };
+        mj_applyFT(Model, Data, F1b, ZeroT, CG, BodyId, Data->qfrc_applied);
+    }
+
+    // 【1c】附加质量：F = -m_A·a（机体系三轴），默认关闭。
+    // 椭球模型内部已含附加质量，本项用于单独调节而不改模型。
+    if (bUseAddedMass)
+    {
+        const double QW = Data->xquat[4 * BodyId + 0];
+        const double QX = Data->xquat[4 * BodyId + 1];
+        const double QY = Data->xquat[4 * BodyId + 2];
+        const double QZ = Data->xquat[4 * BodyId + 3];
+        double Ax = 0.0, Ay = 0.0, Az = 0.0;
+        RotByQuat(QW, -QX, -QY, -QZ,
+                  Data->qacc[DofAdr + 0], Data->qacc[DofAdr + 1], Data->qacc[DofAdr + 2],
+                  Ax, Ay, Az);
+        const double Fbx = -(double)AddedMass.X * Ax;
+        const double Fby = -(double)AddedMass.Y * Ay;
+        const double Fbz = -(double)AddedMass.Z * Az;
+        double Fwx = 0.0, Fwy = 0.0, Fwz = 0.0;
+        RotByQuat(QW, QX, QY, QZ, Fbx, Fby, Fbz, Fwx, Fwy, Fwz);
+        mjtNum F1c[3] = { (mjtNum)Fwx, (mjtNum)Fwy, (mjtNum)Fwz };
+        mj_applyFT(Model, Data, F1c, ZeroT, CG, BodyId, Data->qfrc_applied);
+    }
 
     // 【2】浮力：作用在整机浮心 = 整机合成质心 + R·(0,0,BG)。
     // 排水体积属于整个载体，浮心应跟随整机质量分布，而非艇体自身质心。
@@ -1300,48 +1663,25 @@ void URovMuJoCoBridge::ApplyCachedForce(mjModel_* Model, mjData_* Data)
         }
     }
 
-    // 【3】姿态力矩：free joint 的 qfrc_applied[3..5] 就是机体系力矩，直接赋值
+    // 【3】姿态力矩：free joint 的 qfrc_applied[3..5] 就是机体系力矩，直接赋值。
+    // 姿态环已移到物理线程（ComputeAttitudeTorque，500 Hz），这里只叠加
+    // 游戏线程给的配平力矩与角阻尼，按 Fresh 淡出。
     double Tx = CachedTorqueX.load() * Fresh;
     double Ty = CachedTorqueY.load() * Fresh;
     double Tz = CachedTorqueZ.load() * Fresh;
 
-    // 【3b】物理线程兜底姿态控制
-    // 游戏线程卡顿时【10】不会执行，ROV 处于无控状态。这里用同样的级联律
-    // 按 (1-Fresh) 权重接管，卡顿结束后交回游戏线程。
-    if (Fresh < 1.0 && bEnableAttitudeHold && Model->body_jntnum[BodyId] >= 1) {
-        const int32 FJ = Model->body_jntadr[BodyId];
-        if (Model->jnt_type[FJ] == mjJNT_FREE) {
-            const int32 FD = Model->jnt_dofadr[FJ];
-            const double* q = &Data->xquat[4 * BodyId];
-            const double qw = q[0], qx = q[1], qy = q[2], qz = q[3];
-            const double HalfYaw = FMath::DegreesToRadians((double)TargetYawDeg) * 0.5;
-            const double Qtw = FMath::Cos(HalfYaw), Qtz = FMath::Sin(HalfYaw);
+    double AttT[3] = { 0.0, 0.0, 0.0 };
+    ComputeAttitudeTorque(Model, Data, BodyId, (double)Model->opt.timestep, AttT);
 
-            const double aw = qw, ax = -qx, ay = -qy, az = -qz;
-            double Qew = aw * Qtw - az * Qtz;
-            double Qex = ax * Qtw + ay * Qtz;
-            double Qey = -ax * Qtz + ay * Qtw;
-            double Qez = aw * Qtz + az * Qtw;
-            if (Qew < 0.0) { Qew = -Qew; Qex = -Qex; Qey = -Qey; Qez = -Qez; }
-
-            const double E3[3] = { 2.0 * Qex, 2.0 * Qey, 2.0 * Qez };
-            const double KpAtt[3] = { 1.5, 1.5, 1.0 };
-            const double Wmax[3]  = { 0.8, 0.8, 0.6 };
-            const double Wn = 5.0;
-            const double Takeover = 1.0 - Fresh;
-
-            for (int32 Axis = 0; Axis < 3; ++Axis) {
-                const double I = (EffInertia[Axis] > 0.0) ? EffInertia[Axis]
-                                                          : Model->body_inertia[3 * BodyId + Axis];
-                const double Wsp = FMath::Clamp(KpAtt[Axis] * E3[Axis], -Wmax[Axis], Wmax[Axis]);
-                double T = I * Wn * (Wsp - (double)Data->qvel[FD + 3 + Axis]) * Takeover;
-                T = FMath::Clamp(T, -1500.0, 1500.0);
-                if (Axis == 0) { Tx += T; }
-                else if (Axis == 1) { Ty += T; }
-                else { Tz += T; }
-            }
-        }
+    // 自检：-RovFlipTest 在 6~6.8 s 施加 500 N·m 横滚力矩把机身掀翻，用于验证回正能力
+    static const bool bFlipTest = FParse::Param(FCommandLine::Get(), TEXT("RovFlipTest"));
+    if (bFlipTest && Data->time > 6.0 && Data->time < 6.8)
+    {
+        AttT[0] += 500.0;
     }
+    Tx += AttT[0];
+    Ty += AttT[1];
+    Tz += AttT[2];
 
     Data->qfrc_applied[DofAdr + 3] = (mjtNum)Tx;
     Data->qfrc_applied[DofAdr + 4] = (mjtNum)Ty;
@@ -1451,15 +1791,89 @@ void URovMuJoCoBridge::ApplyCachedForce(mjModel_* Model, mjData_* Data)
                 Data->qfrc_constraint[DofAdr + 5]);
         }
     }
-    // 诊断
-    static int32 ApplyLogCounter = 0;
-    if (++ApplyLogCounter % 500 == 0) {
-        UE_LOG(LogRovBridge, Log,
-            TEXT("[RovMuJoCoBridge][通道] mj_applyFT dof=%d  F=(%.1f,%.1f,%.1f) N  "
-                 "浮力=%.1f N  T=(%.1f,%.1f,%.1f) N·m  Z=%.3f"),
-            DofAdr,
-            Data->qfrc_applied[DofAdr + 0], Data->qfrc_applied[DofAdr + 1], Data->qfrc_applied[DofAdr + 2],
-            Buoy, Data->qfrc_applied[DofAdr + 3], Data->qfrc_applied[DofAdr + 4], Data->qfrc_applied[DofAdr + 5],
-            Data->xpos[3 * BodyId + 2]);
+    // 【6】实时状态缓存：供 HUD 与外部读取（3.4 / 7.3.1）
+    {
+        const double* qq = &Data->xquat[4 * BodyId];
+        CachedRollDeg.store(FMath::RadiansToDegrees(
+            FMath::Atan2(2.0 * (qq[0] * qq[1] + qq[2] * qq[3]),
+                         1.0 - 2.0 * (qq[1] * qq[1] + qq[2] * qq[2]))));
+        CachedPitchDeg.store(FMath::RadiansToDegrees(
+            FMath::Asin(FMath::Clamp(2.0 * (qq[0] * qq[2] - qq[3] * qq[1]), -1.0, 1.0))));
+        CachedYawDeg.store(FMath::RadiansToDegrees(
+            FMath::Atan2(2.0 * (qq[0] * qq[3] + qq[1] * qq[2]),
+                         1.0 - 2.0 * (qq[2] * qq[2] + qq[3] * qq[3]))));
+        CachedDepthM.store((double)WaterSurfaceZ - Data->xpos[3 * BodyId + 2]);
+        CachedVelocityX.store(Data->qvel[DofAdr + 0]);
+        CachedVelocityY.store(Data->qvel[DofAdr + 1]);
+        CachedVelocityZ.store(Data->qvel[DofAdr + 2]);
+        const double Fx = CachedForceX.load() * Fresh;
+        const double Fy = CachedForceY.load() * Fresh;
+        const double Fz = CachedForceZ.load() * Fresh;
+        CachedThrustN.store(FMath::Sqrt(Fx * Fx + Fy * Fy + Fz * Fz));
+
+        // 接触力：只统计涉及本体的接触，并累加法向力方向
+        double ContactSum = 0.0, Px = 0.0, Py = 0.0, Pz = 0.0;
+        double Dx = 0.0, Dy = 0.0, Dz = 0.0;
+        mjtNum F6[6] = { 0, 0, 0, 0, 0, 0 };
+        for (int32 i = 0; i < Data->ncon; ++i)
+        {
+            const mjContact& C = Data->contact[i];
+            const int32 B1 = Model->geom_bodyid[C.geom1];
+            const int32 B2 = Model->geom_bodyid[C.geom2];
+            bool bTouchesBody = false;
+            bool bBody1IsRov = false;
+            for (int32 b : { B1, B2 })
+            {
+                bool bInSubtree = false;
+                int32 p = b;
+                while (p > 0)
+                {
+                    if (p == BodyId) { bInSubtree = true; break; }
+                    p = Model->body_parentid[p];
+                }
+                if (b == BodyId) { bInSubtree = true; }
+                if (bInSubtree)
+                {
+                    bTouchesBody = true;
+                    if (b == B1) { bBody1IsRov = true; }
+                    break;
+                }
+            }
+            if (!bTouchesBody) { continue; }
+            mj_contactForce(Model, Data, i, F6);
+            ContactSum += FMath::Abs((double)F6[0]);
+            // frame[0..2] 是从 geom1 指向 geom2 的法向；作用在本体上的方向取反
+            const double Sign = bBody1IsRov ? -1.0 : 1.0;
+            Dx += Sign * C.frame[0] * F6[0];
+            Dy += Sign * C.frame[1] * F6[0];
+            Dz += Sign * C.frame[2] * F6[0];
+            Px = C.pos[0]; Py = C.pos[1]; Pz = C.pos[2];
+        }
+        CachedContactForce.store(ContactSum);
+        // 接触点存成「相对机体、UE 轴、厘米」的偏移：HUD 直接用
+        // 机体 UE 位置 + 该偏移即可，避免 MuJoCo/UE 两套坐标混用。
+        const double BX = Data->xpos[3 * BodyId + 0];
+        const double BY = Data->xpos[3 * BodyId + 1];
+        const double BZ = Data->xpos[3 * BodyId + 2];
+        CachedContactPointX.store((Px - BX) * 100.0);
+        CachedContactPointY.store(-(Py - BY) * 100.0);
+        CachedContactPointZ.store((Pz - BZ) * 100.0);
+        const double DNorm = FMath::Sqrt(Dx * Dx + Dy * Dy + Dz * Dz);
+        if (DNorm > 1e-9)
+        {
+            // 法向同样做 Y 镜像，得到 UE 世界系方向
+            CachedContactDirX.store(Dx / DNorm);
+            CachedContactDirY.store(-Dy / DNorm);
+            CachedContactDirZ.store(Dz / DNorm);
+        }
+        else
+        {
+            CachedContactDirX.store(0.0);
+            CachedContactDirY.store(0.0);
+            CachedContactDirZ.store(0.0);
+        }
+        CachedFlowX.store(OceanCurrent.LastVelocity.X);
+        CachedFlowY.store(-OceanCurrent.LastVelocity.Y);
+        CachedFlowZ.store(OceanCurrent.LastVelocity.Z);
     }
 }

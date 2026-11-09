@@ -59,6 +59,9 @@ struct FRovOceanCurrent
     float CurHoriz = 0.0f;
     float CurVert = 0.0f;
 
+    /** 最近一次 GetVelocity 的结果（MuJoCo 世界系，m/s），供状态显示读取。 */
+    FVector LastVelocity = FVector::ZeroVector;
+
     FVector LastPos = FVector::ZeroVector;
     bool bHasLastPos = false;
 
@@ -162,7 +165,8 @@ struct FRovOceanCurrent
         const FVector VGM = UpdateGaussMarkov(Dt);
         const FVector VStrat = StratifiedAt(-Pos.Z);   // z 向上 → 深度取反
         const FVector VTurb = TurbulentAt(Pos);
-        return VGM + VStrat + VTurb;
+        LastVelocity = VGM + VStrat + VTurb;
+        return LastVelocity;
     }
 };
 
