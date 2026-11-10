@@ -21,6 +21,7 @@ param(
     [ValidateRange(1,60)][int]$ScreenshotHz = 20,
     [switch]$AsyncScreenshot,
     [ValidateRange(0,500)][int]$EyeThreadHz = 0,
+    [switch]$HandPose,
     [switch]$PerfDowngrade,
     [string]$PerfCvars,
     [int]$ProfileFrames = 0,
@@ -209,6 +210,10 @@ try {
     if ($EyeThreadHz -gt 0) {
         $gameArgs += "-DReyeVREyeThreadHz=$EyeThreadHz"
         Write-Host "Eye tracking: $EyeThreadHz Hz background sampling (independent of frame rate)"
+    }
+    if ($HandPose) {
+        $gameArgs += '-DReyeVRHandPose'
+        Write-Host 'Hand pose: both controller poses recorded in tracking space (metres)'
     }
     $execCmds = @()
     if ($PerfDowngrade) {
