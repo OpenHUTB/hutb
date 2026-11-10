@@ -27,18 +27,30 @@ struct FRovStatusSnapshot
 {
     GENERATED_BODY()
 
-    UPROPERTY(BlueprintReadOnly, Category = "ROV|Status") float RollDeg = 0.0f;
-    UPROPERTY(BlueprintReadOnly, Category = "ROV|Status") float PitchDeg = 0.0f;
-    UPROPERTY(BlueprintReadOnly, Category = "ROV|Status") float YawDeg = 0.0f;
-    UPROPERTY(BlueprintReadOnly, Category = "ROV|Status") float DepthM = 0.0f;
-    UPROPERTY(BlueprintReadOnly, Category = "ROV|Status") float ThrustN = 0.0f;
-    UPROPERTY(BlueprintReadOnly, Category = "ROV|Status") float ContactForceN = 0.0f;
-    UPROPERTY(BlueprintReadOnly, Category = "ROV|Status") float CurrentSpeedMps = 0.0f;
-    UPROPERTY(BlueprintReadOnly, Category = "ROV|Status") FVector VelocityMps = FVector::ZeroVector;
-    UPROPERTY(BlueprintReadOnly, Category = "ROV|Status") FVector ContactPoint = FVector::ZeroVector;
-    UPROPERTY(BlueprintReadOnly, Category = "ROV|Status") FVector ContactForceDir = FVector::ZeroVector;
-    UPROPERTY(BlueprintReadOnly, Category = "ROV|Status") FVector FlowVelocityMps = FVector::ZeroVector;
-    UPROPERTY(BlueprintReadOnly, Category = "ROV|Status") bool bValid = false;
+    UPROPERTY(BlueprintReadOnly, Category = "ROV|Status")
+    float RollDeg = 0.0f;
+    UPROPERTY(BlueprintReadOnly, Category = "ROV|Status")
+    float PitchDeg = 0.0f;
+    UPROPERTY(BlueprintReadOnly, Category = "ROV|Status")
+    float YawDeg = 0.0f;
+    UPROPERTY(BlueprintReadOnly, Category = "ROV|Status")
+    float DepthM = 0.0f;
+    UPROPERTY(BlueprintReadOnly, Category = "ROV|Status")
+    float ThrustN = 0.0f;
+    UPROPERTY(BlueprintReadOnly, Category = "ROV|Status")
+    float ContactForceN = 0.0f;
+    UPROPERTY(BlueprintReadOnly, Category = "ROV|Status")
+    float CurrentSpeedMps = 0.0f;
+    UPROPERTY(BlueprintReadOnly, Category = "ROV|Status")
+    FVector VelocityMps = FVector::ZeroVector;
+    UPROPERTY(BlueprintReadOnly, Category = "ROV|Status")
+    FVector ContactPoint = FVector::ZeroVector;
+    UPROPERTY(BlueprintReadOnly, Category = "ROV|Status")
+    FVector ContactForceDir = FVector::ZeroVector;
+    UPROPERTY(BlueprintReadOnly, Category = "ROV|Status")
+    FVector FlowVelocityMps = FVector::ZeroVector;
+    UPROPERTY(BlueprintReadOnly, Category = "ROV|Status")
+    bool bValid = false;
 };
 
 // MuJoCo 的 mjModel / mjData 是 struct mjModel_ / struct mjData_ 的 typedef。
@@ -111,7 +123,7 @@ public:
      * MJCF 为米制，桥接输出到 UE 时 ×100 转厘米。
      */
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ROV|MuJoCo|Control")
-    float WaterSurfaceZ = -2.0f;   // 地图海面 Z = -200 cm
+    float WaterSurfaceZ = -2.0f; // 地图海面 Z = -200 cm
 
     // ---------------------------- 流体 ----------------------------
 
@@ -405,26 +417,26 @@ private:
     void ApplyCachedForce(mjModel_* Model, mjData_* Data);
 
     /** 期望推力（N），游戏线程写、物理线程读。 */
-    std::atomic<double> CachedForceX{0.0};
-    std::atomic<double> CachedForceY{0.0};
-    std::atomic<double> CachedForceZ{0.0};
+    std::atomic<double> CachedForceX{ 0.0 };
+    std::atomic<double> CachedForceY{ 0.0 };
+    std::atomic<double> CachedForceZ{ 0.0 };
 
     /** 期望力矩（N·m），**世界系**（mj_applyFT 的入参就是世界系）。 */
-    std::atomic<double> CachedTorqueX{0.0};
-    std::atomic<double> CachedTorqueY{0.0};
-    std::atomic<double> CachedTorqueZ{0.0};
+    std::atomic<double> CachedTorqueX{ 0.0 };
+    std::atomic<double> CachedTorqueY{ 0.0 };
+    std::atomic<double> CachedTorqueZ{ 0.0 };
 
     /** 浮力大小（N）。单独存，因为要作用在浮心而不是质心。 */
-    std::atomic<double> CachedBuoyancy{0.0};
+    std::atomic<double> CachedBuoyancy{ 0.0 };
 
-    std::atomic<int32> CachedBodyId{-1};
+    std::atomic<int32> CachedBodyId{ -1 };
 
     /**
      * 控制指令时间戳（MuJoCo 仿真时间）。
      * 指令在游戏线程按帧更新、物理在独立线程按 500 Hz 步进；
      * 物理线程据此判断指令是否过期，过期时把推力与力矩归零。
      */
-    std::atomic<double> CachedControlTime{0.0};
+    std::atomic<double> CachedControlTime{ 0.0 };
 
     /** pre-step 回调只注册一次。 */
     bool bControlCallbackRegistered = false;

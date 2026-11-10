@@ -21,7 +21,8 @@
 
 DEFINE_LOG_CATEGORY_STATIC(LogRovBridge, Log, All);
 
-namespace {
+namespace
+{
 /** 用 MuJoCo 四元数 (w,x,y,z) 旋转向量：v' = v + 2*(w*c + q×c)，c = q×v */
 void RotByQuat(double qw, double qx, double qy, double qz,
                double vx, double vy, double vz,
@@ -53,8 +54,7 @@ void URovMuJoCoBridge::BeginPlay()
     Super::BeginPlay();
 
     if (!bEnableBridge) {
-        UE_LOG(LogRovBridge, Log,
-            TEXT("[RovMuJoCoBridge] 已禁用（bEnableBridge=false），AirSim 保持原生物理"));
+        UE_LOG(LogRovBridge, Log, TEXT("[RovMuJoCoBridge] 已禁用（bEnableBridge=false），AirSim 保持原生物理"));
         return;
     }
 
@@ -75,23 +75,18 @@ void URovMuJoCoBridge::BeginPlay()
     bBridgeActive = true;
 
     if (TargetBody.IsValid()) {
-        UE_LOG(LogRovBridge, Log,
-            TEXT("[RovMuJoCoBridge] ✅ 桥接已启用，跟随 body '%s'（Articulation='%s'）"),
-            *GetResolvedBodyName(),
-            Articulation.IsValid() ? *Articulation->GetName() : TEXT("<invalid>"));
+        UE_LOG(LogRovBridge, Log, TEXT("[RovMuJoCoBridge] ✅ 桥接已启用，跟随 body '%s'（Articulation='%s'）"), *GetResolvedBodyName(), Articulation.IsValid() ? *Articulation->GetName() : TEXT("<invalid>"));
     }
     else {
-        UE_LOG(LogRovBridge, Log,
-            TEXT("[RovMuJoCoBridge] 位姿源已注册，但 MuJoCo 模型尚未就绪"
-                 "（body 后缀 '%s'）——将在运行中自动重试"),
-            *TargetBodyNameSuffix);
+        UE_LOG(LogRovBridge, Log, TEXT("[RovMuJoCoBridge] 位姿源已注册，但 MuJoCo 模型尚未就绪"
+                                       "（body 后缀 '%s'）——将在运行中自动重试"),
+               *TargetBodyNameSuffix);
     }
 }
 
 void URovMuJoCoBridge::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
-    if (ContactLogArchive)
-    {
+    if (ContactLogArchive) {
         ContactLogArchive->Close();
         delete ContactLogArchive;
         ContactLogArchive = nullptr;
@@ -123,9 +118,7 @@ void URovMuJoCoBridge::ResolveTargets() const
         const FString Name = Body->GetName();
         if (Name.EndsWith(TargetBodyNameSuffix, ESearchCase::IgnoreCase)) {
             TargetBody = Body;
-            UE_LOG(LogRovBridge, Log,
-                TEXT("[RovMuJoCoBridge] 匹配到 body: '%s'（后缀 '%s'）"),
-                *Name, *TargetBodyNameSuffix);
+            UE_LOG(LogRovBridge, Log, TEXT("[RovMuJoCoBridge] 匹配到 body: '%s'（后缀 '%s'）"), *Name, *TargetBodyNameSuffix);
             return;
         }
     }
@@ -133,9 +126,7 @@ void URovMuJoCoBridge::ResolveTargets() const
     // 有 articulation 但没匹配到 body：只在第一次打印候选，避免刷屏
     if (!bResolveWarned && Bodies.Num() > 0) {
         bResolveWarned = true;
-        UE_LOG(LogRovBridge, Warning,
-            TEXT("[RovMuJoCoBridge] 没有 body 以 '%s' 结尾。候选（%d 个）："),
-            *TargetBodyNameSuffix, Bodies.Num());
+        UE_LOG(LogRovBridge, Warning, TEXT("[RovMuJoCoBridge] 没有 body 以 '%s' 结尾。候选（%d 个）："), *TargetBodyNameSuffix, Bodies.Num());
         for (UMjBody* Body : Bodies) {
             if (Body) {
                 UE_LOG(LogRovBridge, Warning, TEXT("    %s"), *Body->GetName());
@@ -174,25 +165,23 @@ bool URovMuJoCoBridge::ProvidePose(FVector& OutPosition, FQuat& OutRotation) con
         bLoggedPhysicsDiag = true;
         if (AAMjManager* Mgr = AAMjManager::GetManager()) {
             const double Timestep = (Mgr->PhysicsEngine && Mgr->PhysicsEngine->m_model)
-                ? Mgr->PhysicsEngine->m_model->opt.timestep
-                : -1.0;
+                                        ? Mgr->PhysicsEngine->m_model->opt.timestep
+                                        : -1.0;
 
             // UMjPhysicsEngine 的 bIsPaused 默认是 true（URLab 让用户在
             // MjSimulate 控件里手动点播放）。Pawn 要跟随就必须让仿真跑起来。
             if (bAutoStartSimulation && !Mgr->IsRunning()) {
                 Mgr->SetPaused(false);
-                UE_LOG(LogRovBridge, Log,
-                    TEXT("[RovMuJoCoBridge] MuJoCo 仿真原本处于暂停状态，已自动启动"));
+                UE_LOG(LogRovBridge, Log, TEXT("[RovMuJoCoBridge] MuJoCo 仿真原本处于暂停状态，已自动启动"));
             }
 
-            UE_LOG(LogRovBridge, Log,
-                TEXT("[RovMuJoCoBridge] 物理诊断: IsRunning=%d  IsInitialized=%d  "
-                     "SimTime=%.4fs  timestep=%.4fs  SimSpeed=%.0f%%"),
-                Mgr->IsRunning() ? 1 : 0,
-                Mgr->IsInitialized() ? 1 : 0,
-                Mgr->GetSimTime(),
-                Timestep,
-                Mgr->PhysicsEngine ? Mgr->PhysicsEngine->SimSpeedPercent : -1.0f);
+            UE_LOG(LogRovBridge, Log, TEXT("[RovMuJoCoBridge] 物理诊断: IsRunning=%d  IsInitialized=%d  "
+                                           "SimTime=%.4fs  timestep=%.4fs  SimSpeed=%.0f%%"),
+                   Mgr->IsRunning() ? 1 : 0,
+                   Mgr->IsInitialized() ? 1 : 0,
+                   Mgr->GetSimTime(),
+                   Timestep,
+                   Mgr->PhysicsEngine ? Mgr->PhysicsEngine->SimSpeedPercent : -1.0f);
         }
     }
 
@@ -204,13 +193,7 @@ bool URovMuJoCoBridge::ProvidePose(FVector& OutPosition, FQuat& OutRotation) con
         const FVector PawnPos = Owner ? Owner->GetActorLocation() : FVector::ZeroVector;
         AAMjManager* Mgr = AAMjManager::GetManager();
         const float SimTime = Mgr ? Mgr->GetSimTime() : -1.0f;
-        UE_LOG(LogRovBridge, Log,
-            TEXT("[RovMuJoCoBridge] 跟随中 #%d  仿真时间=%.3fs  MuJoCo=(%s)  Pawn=(%s)  差值=%.2f cm"),
-            CallCounter,
-            SimTime,
-            *OutPosition.ToString(),
-            *PawnPos.ToString(),
-            FVector::Dist(OutPosition, PawnPos));
+        UE_LOG(LogRovBridge, Log, TEXT("[RovMuJoCoBridge] 跟随中 #%d  仿真时间=%.3fs  MuJoCo=(%s)  Pawn=(%s)  差值=%.2f cm"), CallCounter, SimTime, *OutPosition.ToString(), *PawnPos.ToString(), FVector::Dist(OutPosition, PawnPos));
     }
 
     return true;
@@ -239,10 +222,10 @@ void URovMuJoCoBridge::DisablePawnPhysics()
         }
     }
 
-    UE_LOG(LogRovBridge, Log,
-        TEXT("[RovMuJoCoBridge] 已关闭 Pawn '%s' 的物理与碰撞（%d 个图元），"
-             "避免与 MuJoCo 双计"),
-        *Owner->GetName(), DisabledPrimitives);
+    UE_LOG(LogRovBridge, Log, TEXT("[RovMuJoCoBridge] 已关闭 Pawn '%s' 的物理与碰撞（%d 个图元），"
+                                   "避免与 MuJoCo 双计"),
+           *Owner->GetName(),
+           DisabledPrimitives);
 }
 
 FString URovMuJoCoBridge::GetResolvedBodyName() const
@@ -269,46 +252,49 @@ void URovMuJoCoBridge::TickComponent(float DeltaTime, ELevelTick TickType,
 
 void URovMuJoCoBridge::ApplyConfigFile()
 {
-    if (!bLoadConfigFile)
-    {
+    if (!bLoadConfigFile) {
         UE_LOG(LogRovBridge, Log, TEXT("[配置] bLoadConfigFile=false，跳过配置文件"));
         return;
     }
 
     FString Path;
-    if (!FParse::Value(FCommandLine::Get(), TEXT("RovConfig="), Path))
-    {
+    if (!FParse::Value(FCommandLine::Get(), TEXT("RovConfig="), Path)) {
         Path = FPaths::Combine(FPaths::ProjectConfigDir(), TEXT("RovParams.json"));
     }
     Path = FPaths::ConvertRelativePathToFull(Path);
-    if (!FPaths::FileExists(Path))
-    {
+    if (!FPaths::FileExists(Path)) {
         UE_LOG(LogRovBridge, Warning, TEXT("[配置] 未找到配置文件 %s，使用类默认值 + 命令行覆盖"), *Path);
         return;
     }
 
     TMap<FString, float> Kv;
     FString Err;
-    if (!RovConfig::LoadKeyValues(Path, Kv, Err))
-    {
+    if (!RovConfig::LoadKeyValues(Path, Kv, Err)) {
         UE_LOG(LogRovBridge, Warning, TEXT("[配置] %s"), *Err);
         return;
     }
 
-    auto ApplyF = [&Kv](const TCHAR* Key, float& Target)
-    {
-        if (const float* V = Kv.Find(Key)) { Target = *V; }
+    auto ApplyF = [&Kv](const TCHAR* Key, float& Target) {
+        if (const float* V = Kv.Find(Key)) {
+            Target = *V;
+        }
     };
-    auto ApplyB = [&Kv](const TCHAR* Key, bool& Target)
-    {
-        if (const float* V = Kv.Find(Key)) { Target = (*V) != 0.0f; }
+    auto ApplyB = [&Kv](const TCHAR* Key, bool& Target) {
+        if (const float* V = Kv.Find(Key)) {
+            Target = (*V) != 0.0f;
+        }
     };
-    auto ApplyV = [&Kv](const TCHAR* Prefix, FVector& Target)
-    {
+    auto ApplyV = [&Kv](const TCHAR* Prefix, FVector& Target) {
         const FString P(Prefix);
-        if (const float* X = Kv.Find(P + TEXT("X"))) { Target.X = *X; }
-        if (const float* Y = Kv.Find(P + TEXT("Y"))) { Target.Y = *Y; }
-        if (const float* Z = Kv.Find(P + TEXT("Z"))) { Target.Z = *Z; }
+        if (const float* X = Kv.Find(P + TEXT("X"))) {
+            Target.X = *X;
+        }
+        if (const float* Y = Kv.Find(P + TEXT("Y"))) {
+            Target.Y = *Y;
+        }
+        if (const float* Z = Kv.Find(P + TEXT("Z"))) {
+            Target.Z = *Z;
+        }
     };
 
     ApplyF(TEXT("FluidDensity"), FluidDensity);
@@ -348,26 +334,21 @@ void URovMuJoCoBridge::ApplyConfigFile()
 
     ApplyB(TEXT("AutoEstimateFluidParams"), bAutoEstimateFluidParams);
     ApplyV(TEXT("HullDims"), HullDims);
-    if (const float* S = Kv.Find(TEXT("HullShape")))
-    {
+    if (const float* S = Kv.Find(TEXT("HullShape"))) {
         HullShape = static_cast<ERovHullShape>(FMath::Clamp(FMath::RoundToInt(*S), 0, 3));
     }
-    if (bAutoEstimateFluidParams)
-    {
+    if (bAutoEstimateFluidParams) {
         const FRovFluidEstimate E = URovFluidLibrary::EstimateFluidParams(HullShape, HullDims, FluidDensity);
         DragCoeff = FVector(E.Cd, E.Cd, E.Cd);
         DragRefArea = FVector(E.RefArea, E.RefArea, E.RefArea);
         AddedMass = FVector(E.AddedMass, E.AddedMass, E.AddedMass);
         bUseExplicitDrag = true;
         bUseAddedMass = true;
-        UE_LOG(LogRovBridge, Log,
-            TEXT("[配置] 外形估算：Cd=%.2f  迎流面积=%.4f m²  附加质量=%.1f kg  排水体积=%.4f m³"),
-            E.Cd, E.RefArea, E.AddedMass, E.Volume);
+        UE_LOG(LogRovBridge, Log, TEXT("[配置] 外形估算：Cd=%.2f  迎流面积=%.4f m²  附加质量=%.1f kg  排水体积=%.4f m³"), E.Cd, E.RefArea, E.AddedMass, E.Volume);
     }
 
     ApplyB(TEXT("LogContacts"), bLogContacts);
-    if (const float* V = Kv.Find(TEXT("ContactLogInterval")))
-    {
+    if (const float* V = Kv.Find(TEXT("ContactLogInterval"))) {
         ContactLogInterval = FMath::Max(1, FMath::RoundToInt(*V));
     }
 
@@ -377,24 +358,20 @@ void URovMuJoCoBridge::ApplyConfigFile()
 
 void URovMuJoCoBridge::LogContacts(mjModel_* Model, mjData_* Data)
 {
-    if (!bLogContacts || !Model || !Data)
-    {
+    if (!bLogContacts || !Model || !Data) {
         return;
     }
-    if (++ContactLogStep % FMath::Max(1, ContactLogInterval) != 0)
-    {
+    if (++ContactLogStep % FMath::Max(1, ContactLogInterval) != 0) {
         return;
     }
 
-    if (!ContactLogArchive)
-    {
+    if (!ContactLogArchive) {
         FString Path = ContactLogPath.IsEmpty()
-            ? FPaths::Combine(FPaths::ProjectSavedDir(), TEXT("RovContactLog.csv"))
-            : ContactLogPath;
+                           ? FPaths::Combine(FPaths::ProjectSavedDir(), TEXT("RovContactLog.csv"))
+                           : ContactLogPath;
         Path = FPaths::ConvertRelativePathToFull(Path);
         ContactLogArchive = IFileManager::Get().CreateFileWriter(*Path, FILEWRITE_Append);
-        if (!ContactLogArchive)
-        {
+        if (!ContactLogArchive) {
             UE_LOG(LogRovBridge, Warning, TEXT("[接触日志] 无法写入 %s"), *Path);
             bLogContacts = false;
             return;
@@ -402,20 +379,17 @@ void URovMuJoCoBridge::LogContacts(mjModel_* Model, mjData_* Data)
         UE_LOG(LogRovBridge, Log, TEXT("[接触日志] 写入 %s（每 %d 个物理步一条）"), *Path, ContactLogInterval);
     }
 
-    auto WriteLine = [this](const FString& Line)
-    {
+    auto WriteLine = [this](const FString& Line) {
         FTCHARToUTF8 Utf8(*Line);
         ContactLogArchive->Serialize(static_cast<void*>(const_cast<ANSICHAR*>(Utf8.Get())), Utf8.Length());
     };
 
-    if (!bContactLogHeaderWritten)
-    {
+    if (!bContactLogHeaderWritten) {
         WriteLine(TEXT("time_s,body1,body2,normal_N,pos_x,pos_y,pos_z\n"));
         bContactLogHeaderWritten = true;
     }
 
-    for (int32 i = 0; i < Data->ncon; ++i)
-    {
+    for (int32 i = 0; i < Data->ncon; ++i) {
         const mjContact& C = Data->contact[i];
         mjtNum F6[6] = { 0, 0, 0, 0, 0, 0 };
         mj_contactForce(Model, Data, i, F6);
@@ -423,12 +397,20 @@ void URovMuJoCoBridge::LogContacts(mjModel_* Model, mjData_* Data)
         const int32 B1 = Model->geom_bodyid[C.geom1];
         const int32 B2 = Model->geom_bodyid[C.geom2];
         const FString N1 = (B1 >= 0 && Model->name_bodyadr[B1] >= 0)
-            ? FString(UTF8_TO_TCHAR(Model->names + Model->name_bodyadr[B1])) : FString(TEXT("world"));
+                               ? FString(UTF8_TO_TCHAR(Model->names + Model->name_bodyadr[B1]))
+                               : FString(TEXT("world"));
         const FString N2 = (B2 >= 0 && Model->name_bodyadr[B2] >= 0)
-            ? FString(UTF8_TO_TCHAR(Model->names + Model->name_bodyadr[B2])) : FString(TEXT("world"));
+                               ? FString(UTF8_TO_TCHAR(Model->names + Model->name_bodyadr[B2]))
+                               : FString(TEXT("world"));
 
         WriteLine(FString::Printf(TEXT("%.5f,%s,%s,%.4f,%.5f,%.5f,%.5f\n"),
-            Data->time, *N1, *N2, F6[0], C.pos[0], C.pos[1], C.pos[2]));
+                                  Data->time,
+                                  *N1,
+                                  *N2,
+                                  F6[0],
+                                  C.pos[0],
+                                  C.pos[1],
+                                  C.pos[2]));
     }
 
     // 立即落盘，避免进程被强杀时缓冲区内容丢失
@@ -486,35 +468,37 @@ void URovMuJoCoBridge::ApplyControlForce()
         };
         // 配置文件先加载，命令行随后覆盖，保证「命令行 > 配置文件 > 默认值」
         ApplyConfigFile();
-        DisplacedVolume  = FloatParam(TEXT("RovDisplacedVolume="), DisplacedVolume);
-        BuoyancyScale    = FloatParam(TEXT("RovBuoyancyScale="), BuoyancyScale);
-        BuoyancyArm      = FloatParam(TEXT("RovBuoyancyArm="), BuoyancyArm);
+        DisplacedVolume = FloatParam(TEXT("RovDisplacedVolume="), DisplacedVolume);
+        BuoyancyScale = FloatParam(TEXT("RovBuoyancyScale="), BuoyancyScale);
+        BuoyancyArm = FloatParam(TEXT("RovBuoyancyArm="), BuoyancyArm);
         ArmBuoyancyVolume = FloatParam(TEXT("RovArmBuoyVolume="), ArmBuoyancyVolume);
-        ArmBuoyancyScale  = FloatParam(TEXT("RovArmBuoyScale="), ArmBuoyancyScale);
+        ArmBuoyancyScale = FloatParam(TEXT("RovArmBuoyScale="), ArmBuoyancyScale);
         AngularDampingCoeff = FloatParam(TEXT("RovAngularDamping="), AngularDampingCoeff);
         ArmJointDamping = FloatParam(TEXT("RovArmDamping="), ArmJointDamping);
         ThrusterMaxRatio = FloatParam(TEXT("RovThrustRatio="), ThrusterMaxRatio);
-        WaterSurfaceZ    = FloatParam(TEXT("RovWaterSurfaceZ="), WaterSurfaceZ);
-        if (FParse::Param(FCommandLine::Get(), TEXT("RovNoAttitude"))) { bEnableAttitudeHold = false; }
-        if (FParse::Param(FCommandLine::Get(), TEXT("RovContactTest")))
-        {
+        WaterSurfaceZ = FloatParam(TEXT("RovWaterSurfaceZ="), WaterSurfaceZ);
+        if (FParse::Param(FCommandLine::Get(), TEXT("RovNoAttitude"))) {
+            bEnableAttitudeHold = false;
+        }
+        if (FParse::Param(FCommandLine::Get(), TEXT("RovContactTest"))) {
             ContactTestForce = 900.0;
             bLogContacts = true;
             bEnableDepthHold = false;
             UE_LOG(LogRovBridge, Log, TEXT("[接触试验] 施加 %.0f N 下压力，用于产生海床接触"), ContactTestForce);
         }
-        UE_LOG(LogRovBridge, Log,
-            TEXT("[RovMuJoCoBridge][调参] 排水体积=%.4f m³  浮力倍率=%.2f  臂排水=%.2f L×%.2f  "
-                 "推力比=%.2f  水面Z=%.2f m"),
-            DisplacedVolume, BuoyancyScale, ArmBuoyancyVolume, ArmBuoyancyScale,
-            ThrusterMaxRatio, WaterSurfaceZ);
+        UE_LOG(LogRovBridge, Log, TEXT("[RovMuJoCoBridge][调参] 排水体积=%.4f m³  浮力倍率=%.2f  臂排水=%.2f L×%.2f  "
+                                       "推力比=%.2f  水面Z=%.2f m"),
+               DisplacedVolume,
+               BuoyancyScale,
+               ArmBuoyancyVolume,
+               ArmBuoyancyScale,
+               ThrusterMaxRatio,
+               WaterSurfaceZ);
 
         if (bUseNativeFluid) {
             Model->opt.density = FluidDensity;
             Model->opt.viscosity = FluidViscosity;
-            UE_LOG(LogRovBridge, Log,
-                TEXT("[RovMuJoCoBridge][流体] 已启用 MuJoCo 椭球流体模型  density=%.1f kg/m³  viscosity=%.6f Pa·s"),
-                Model->opt.density, Model->opt.viscosity);
+            UE_LOG(LogRovBridge, Log, TEXT("[RovMuJoCoBridge][流体] 已启用 MuJoCo 椭球流体模型  density=%.1f kg/m³  viscosity=%.6f Pa·s"), Model->opt.density, Model->opt.viscosity);
         }
         else {
             Model->opt.density = 0.0;
@@ -524,27 +508,21 @@ void URovMuJoCoBridge::ApplyControlForce()
 
         // 质量诊断：确认 UE 里这个模型到底多重
         const double TotalMass = Model->body_subtreemass[BodyId];
-        UE_LOG(LogRovBridge, Log,
-            TEXT("[RovMuJoCoBridge][质量] 目标 body id=%d  body_mass=%.3f kg  body_subtreemass=%.3f kg  nbody=%d"),
-            BodyId, Model->body_mass[BodyId], TotalMass, Model->nbody);
-        UE_LOG(LogRovBridge, Log,
-            TEXT("[RovMuJoCoBridge][惯量] body_inertia=(%.5f, %.5f, %.5f) kg·m²  "
-                 "（角阻尼 Kd = %.1f × 平均惯量 %.5f = %.3f N·m·s/rad）"),
-            Model->body_inertia[3 * BodyId + 0],
-            Model->body_inertia[3 * BodyId + 1],
-            Model->body_inertia[3 * BodyId + 2],
-            AngularDampingCoeff,
-            (Model->body_inertia[3 * BodyId + 0] + Model->body_inertia[3 * BodyId + 1]
-             + Model->body_inertia[3 * BodyId + 2]) / 3.0,
-            AngularDampingCoeff * (Model->body_inertia[3 * BodyId + 0] + Model->body_inertia[3 * BodyId + 1]
-             + Model->body_inertia[3 * BodyId + 2]) / 3.0);
+        UE_LOG(LogRovBridge, Log, TEXT("[RovMuJoCoBridge][质量] 目标 body id=%d  body_mass=%.3f kg  body_subtreemass=%.3f kg  nbody=%d"), BodyId, Model->body_mass[BodyId], TotalMass, Model->nbody);
+        UE_LOG(LogRovBridge, Log, TEXT("[RovMuJoCoBridge][惯量] body_inertia=(%.5f, %.5f, %.5f) kg·m²  "
+                                       "（角阻尼 Kd = %.1f × 平均惯量 %.5f = %.3f N·m·s/rad）"),
+               Model->body_inertia[3 * BodyId + 0],
+               Model->body_inertia[3 * BodyId + 1],
+               Model->body_inertia[3 * BodyId + 2],
+               AngularDampingCoeff,
+               (Model->body_inertia[3 * BodyId + 0] + Model->body_inertia[3 * BodyId + 1] + Model->body_inertia[3 * BodyId + 2]) / 3.0,
+               AngularDampingCoeff * (Model->body_inertia[3 * BodyId + 0] + Model->body_inertia[3 * BodyId + 1] + Model->body_inertia[3 * BodyId + 2]) / 3.0);
         for (int32 i = 1; i < Model->nbody; ++i) {
             if (Model->body_mass[i] > 0.5) {
                 const char* Name = (Model->names && Model->name_bodyadr[i] >= 0)
-                    ? (Model->names + Model->name_bodyadr[i]) : "?";
-                UE_LOG(LogRovBridge, Log,
-                    TEXT("[RovMuJoCoBridge][质量]   body[%2d] %-24s mass=%.3f  subtreemass=%.3f"),
-                    i, ANSI_TO_TCHAR(Name), Model->body_mass[i], Model->body_subtreemass[i]);
+                                       ? (Model->names + Model->name_bodyadr[i])
+                                       : "?";
+                UE_LOG(LogRovBridge, Log, TEXT("[RovMuJoCoBridge][质量]   body[%2d] %-24s mass=%.3f  subtreemass=%.3f"), i, ANSI_TO_TCHAR(Name), Model->body_mass[i], Model->body_subtreemass[i]);
             }
         }
 
@@ -567,9 +545,7 @@ void URovMuJoCoBridge::ApplyControlForce()
                 Model->jnt_stiffness[j] = (mjtNum)ArmJointStiffness;
                 ++StiffJoints;
             }
-            UE_LOG(LogRovBridge, Log,
-                TEXT("[RovMuJoCoBridge][机械臂] %d 个关节：阻尼 %.1f N·m·s/rad、刚度 %.1f N·m/rad（%d 个自由度）"),
-                StiffJoints, ArmJointDamping, ArmJointStiffness, DampedDofs);
+            UE_LOG(LogRovBridge, Log, TEXT("[RovMuJoCoBridge][机械臂] %d 个关节：阻尼 %.1f N·m·s/rad、刚度 %.1f N·m/rad（%d 个自由度）"), StiffJoints, ArmJointDamping, ArmJointStiffness, DampedDofs);
         }
 
         // 机械臂重力补偿：抵消其自重，消除对艇体的恒定倾覆力矩
@@ -577,14 +553,12 @@ void URovMuJoCoBridge::ApplyControlForce()
             int32 CompBodies = 0;
             for (int32 b = 1; b < Model->nbody; ++b) {
                 if (b == BodyId) {
-                    continue;   // ROV 本体不补偿
+                    continue; // ROV 本体不补偿
                 }
                 Model->body_gravcomp[b] = 1.0;
                 ++CompBodies;
             }
-            UE_LOG(LogRovBridge, Log,
-                TEXT("[RovMuJoCoBridge][机械臂] 已对 %d 个 body 做重力补偿（gravcomp=1.0）"),
-                CompBodies);
+            UE_LOG(LogRovBridge, Log, TEXT("[RovMuJoCoBridge][机械臂] 已对 %d 个 body 做重力补偿（gravcomp=1.0）"), CompBodies);
         }
 
         // 复合惯量：先用本体惯量兜底，等仿真真正跑起来再换成 6×6 质量阵的值。
@@ -596,60 +570,66 @@ void URovMuJoCoBridge::ApplyControlForce()
 
         // 洋流模型初始化（三层级联）
         if (FParse::Param(FCommandLine::Get(), TEXT("RovOceanCurrent"))) {
-            bEnableOceanCurrent = true;   // 命令行强制开启，便于测试
+            bEnableOceanCurrent = true; // 命令行强制开启，便于测试
         }
         if (FParse::Param(FCommandLine::Get(), TEXT("RovNoAttitude"))) {
-            bEnableAttitudeHold = false;  // 自检时关掉姿态控制器，避免干扰
+            bEnableAttitudeHold = false; // 自检时关掉姿态控制器，避免干扰
         }
         OceanCurrent.bEnabled = bEnableOceanCurrent;
         OceanCurrent.MeanSpeed = OceanCurrentMeanSpeed;
         OceanCurrent.Seed = 42;
         OceanCurrent.Initialize();
-        UE_LOG(LogRovBridge, Log,
-            TEXT("[RovMuJoCoBridge][洋流] %s  平均流速=%.2f m/s  分层=%d 层  湍流强度=%.2f"),
-            bEnableOceanCurrent ? TEXT("已启用") : TEXT("已关闭"),
-            OceanCurrentMeanSpeed, OceanCurrent.Layers.Num(), OceanCurrent.TurbIntensity);
+        UE_LOG(LogRovBridge, Log, TEXT("[RovMuJoCoBridge][洋流] %s  平均流速=%.2f m/s  分层=%d 层  湍流强度=%.2f"), bEnableOceanCurrent ? TEXT("已启用") : TEXT("已关闭"), OceanCurrentMeanSpeed, OceanCurrent.Layers.Num(), OceanCurrent.TurbIntensity);
 
         // 单位诊断：确认 MuJoCo 模型到底是米还是厘米
         {
             int32 RovGeomId = -1;
             for (int32 g = 0; g < Model->ngeom; ++g) {
                 const char* GName = (Model->names && Model->name_geomadr[g] >= 0)
-                    ? (Model->names + Model->name_geomadr[g]) : "";
+                                        ? (Model->names + Model->name_geomadr[g])
+                                        : "";
                 if (FString(ANSI_TO_TCHAR(GName)).EndsWith(TEXT("rov_body"))) {
                     RovGeomId = g;
                     break;
                 }
             }
-            UE_LOG(LogRovBridge, Log,
-                TEXT("[RovMuJoCoBridge][单位] gravity=%.3f  timestep=%.5f  stat.extent=%.3f  "
-                     "模型包围盒中心=(%.2f,%.2f,%.2f)"),
-                Model->opt.gravity[2], Model->opt.timestep, Model->stat.extent,
-                Model->stat.center[0], Model->stat.center[1], Model->stat.center[2]);
+            UE_LOG(LogRovBridge, Log, TEXT("[RovMuJoCoBridge][单位] gravity=%.3f  timestep=%.5f  stat.extent=%.3f  "
+                                           "模型包围盒中心=(%.2f,%.2f,%.2f)"),
+                   Model->opt.gravity[2],
+                   Model->opt.timestep,
+                   Model->stat.extent,
+                   Model->stat.center[0],
+                   Model->stat.center[1],
+                   Model->stat.center[2]);
             if (RovGeomId >= 0) {
-                UE_LOG(LogRovBridge, Log,
-                    TEXT("[RovMuJoCoBridge][单位] rov_body geom size=(%.4f, %.4f, %.4f)  "
-                         "（若≈0.4/0.3/0.2 则模型是米；若≈40/30/20 则是厘米）"),
-                    Model->geom_size[3 * RovGeomId + 0],
-                    Model->geom_size[3 * RovGeomId + 1],
-                    Model->geom_size[3 * RovGeomId + 2]);
+                UE_LOG(LogRovBridge, Log, TEXT("[RovMuJoCoBridge][单位] rov_body geom size=(%.4f, %.4f, %.4f)  "
+                                               "（若≈0.4/0.3/0.2 则模型是米；若≈40/30/20 则是厘米）"),
+                       Model->geom_size[3 * RovGeomId + 0],
+                       Model->geom_size[3 * RovGeomId + 1],
+                       Model->geom_size[3 * RovGeomId + 2]);
             }
             if (AActor* Owner = GetOwner()) {
-                UE_LOG(LogRovBridge, Log,
-                    TEXT("[RovMuJoCoBridge][单位] Pawn 世界坐标=(%.2f, %.2f, %.2f) cm  "
-                         "MuJoCo xpos=(%.2f, %.2f, %.2f)"),
-                    Owner->GetActorLocation().X, Owner->GetActorLocation().Y, Owner->GetActorLocation().Z,
-                    Data->xpos[3 * BodyId + 0], Data->xpos[3 * BodyId + 1], Data->xpos[3 * BodyId + 2]);
+                UE_LOG(LogRovBridge, Log, TEXT("[RovMuJoCoBridge][单位] Pawn 世界坐标=(%.2f, %.2f, %.2f) cm  "
+                                               "MuJoCo xpos=(%.2f, %.2f, %.2f)"),
+                       Owner->GetActorLocation().X,
+                       Owner->GetActorLocation().Y,
+                       Owner->GetActorLocation().Z,
+                       Data->xpos[3 * BodyId + 0],
+                       Data->xpos[3 * BodyId + 1],
+                       Data->xpos[3 * BodyId + 2]);
             }
         }
 
         // 受力诊断：三个数摆出来，一眼能看出浮沉
         const double Weight = TotalMass * Gravity;
         const double Buoyancy = FluidDensity * Gravity * DisplacedVolume * BuoyancyScale;
-        UE_LOG(LogRovBridge, Log,
-            TEXT("[RovMuJoCoBridge][受力] 重力=%.1f N  浮力=%.1f N  净力=%+.1f N（正=上浮，负=下沉）  "
-                 "排水体积=%.4f m³  浮力倍率=%.2f"),
-            Weight, Buoyancy, Buoyancy - Weight, DisplacedVolume, BuoyancyScale);
+        UE_LOG(LogRovBridge, Log, TEXT("[RovMuJoCoBridge][受力] 重力=%.1f N  浮力=%.1f N  净力=%+.1f N（正=上浮，负=下沉）  "
+                                       "排水体积=%.4f m³  浮力倍率=%.2f"),
+               Weight,
+               Buoyancy,
+               Buoyancy - Weight,
+               DisplacedVolume,
+               BuoyancyScale);
     }
 
     // 复合惯量延迟计算：qM 只在 mj_forward/mj_step 之后有效，
@@ -668,18 +648,25 @@ void URovMuJoCoBridge::ApplyControlForce()
                 for (int32 a = 0; a < 3; ++a) {
                     const double V = M[(3 + a) * Nv + (3 + a)];
                     // 这台 ROV 的转动惯量量级是几十 kg·m²，小于 1 一律视为无效
-                    if (!FMath::IsFinite(V) || V < 1.0) { bOk = false; break; }
+                    if (!FMath::IsFinite(V) || V < 1.0) {
+                        bOk = false;
+                        break;
+                    }
                     Vals[a] = V;
                 }
             }
             if (bOk) {
-                for (int32 a = 0; a < 3; ++a) { EffInertia[a] = Vals[a]; }
+                for (int32 a = 0; a < 3; ++a) {
+                    EffInertia[a] = Vals[a];
+                }
             }
-            UE_LOG(LogRovBridge, Log,
-                TEXT("[RovMuJoCoBridge][复合惯量] 延迟计算 t=%.2f  "
-                     "EffInertia=(%.3f, %.3f, %.3f)  来源=%s"),
-                Data->time, EffInertia[0], EffInertia[1], EffInertia[2],
-                bOk ? TEXT("6x6 质量阵") : TEXT("body_inertia 回退"));
+            UE_LOG(LogRovBridge, Log, TEXT("[RovMuJoCoBridge][复合惯量] 延迟计算 t=%.2f  "
+                                           "EffInertia=(%.3f, %.3f, %.3f)  来源=%s"),
+                   Data->time,
+                   EffInertia[0],
+                   EffInertia[1],
+                   EffInertia[2],
+                   bOk ? TEXT("6x6 质量阵") : TEXT("body_inertia 回退"));
         }
     }
 
@@ -692,12 +679,24 @@ void URovMuJoCoBridge::ApplyControlForce()
     // 注意：A/D 的符号和直觉相反——这个模型的 Y 轴朝左，所以 A 用 +1、D 用 -1。
     // 垂直用 Q/E（PageUp/PageDown 在笔记本上常常没有，保留作别名）。
     double LocalX = 0.0, LocalY = 0.0, LocalZ = 0.0;
-    if (PC->IsInputKeyDown(EKeys::W)) { LocalX += 1.0; }
-    if (PC->IsInputKeyDown(EKeys::S)) { LocalX -= 1.0; }
-    if (PC->IsInputKeyDown(EKeys::A)) { LocalY += 1.0; }
-    if (PC->IsInputKeyDown(EKeys::D)) { LocalY -= 1.0; }
-    if (PC->IsInputKeyDown(EKeys::Q) || PC->IsInputKeyDown(EKeys::PageUp)) { LocalZ += 1.0; }
-    if (PC->IsInputKeyDown(EKeys::E) || PC->IsInputKeyDown(EKeys::PageDown)) { LocalZ -= 1.0; }
+    if (PC->IsInputKeyDown(EKeys::W)) {
+        LocalX += 1.0;
+    }
+    if (PC->IsInputKeyDown(EKeys::S)) {
+        LocalX -= 1.0;
+    }
+    if (PC->IsInputKeyDown(EKeys::A)) {
+        LocalY += 1.0;
+    }
+    if (PC->IsInputKeyDown(EKeys::D)) {
+        LocalY -= 1.0;
+    }
+    if (PC->IsInputKeyDown(EKeys::Q) || PC->IsInputKeyDown(EKeys::PageUp)) {
+        LocalZ += 1.0;
+    }
+    if (PC->IsInputKeyDown(EKeys::E) || PC->IsInputKeyDown(EKeys::PageDown)) {
+        LocalZ -= 1.0;
+    }
 
     // 按键诊断：状态一变就记一条（不节流），用来确认输入到底有没有进到游戏
     {
@@ -721,9 +720,7 @@ void URovMuJoCoBridge::ApplyControlForce()
             (IsDown(EKeys::E) ? 32 : 0) |
             (IsDown(EKeys::Z) ? 64 : 0);
         if (KeyMask != PrevKeyMask) {
-            UE_LOG(LogRovBridge, Log,
-                TEXT("[RovMuJoCoBridge][按键] 状态 %d -> %d  (W=1 S=2 A=4 D=8 Q=16 E=32 Z=64)"),
-                PrevKeyMask, KeyMask);
+            UE_LOG(LogRovBridge, Log, TEXT("[RovMuJoCoBridge][按键] 状态 %d -> %d  (W=1 S=2 A=4 D=8 Q=16 E=32 Z=64)"), PrevKeyMask, KeyMask);
             PrevKeyMask = KeyMask;
         }
 
@@ -733,14 +730,13 @@ void URovMuJoCoBridge::ApplyControlForce()
         const int32 CurTick = (int32)NowSec;
         if (CurTick != FocusLogTick) {
             FocusLogTick = CurTick;
-            UE_LOG(LogRovBridge, Log,
-                TEXT("[RovMuJoCoBridge][焦点] IsLocalController=%d  PlayerInput=%s  "
-                     "bShowMouseCursor=%d  bIgnoreInput=%d  按键掩码=%d"),
-                PC->IsLocalController() ? 1 : 0,
-                PC->PlayerInput ? TEXT("valid") : TEXT("NULL"),
-                PC->bShowMouseCursor ? 1 : 0,
-                PC->IsInputKeyDown(EKeys::LeftMouseButton) ? 1 : 0,
-                KeyMask);
+            UE_LOG(LogRovBridge, Log, TEXT("[RovMuJoCoBridge][焦点] IsLocalController=%d  PlayerInput=%s  "
+                                           "bShowMouseCursor=%d  bIgnoreInput=%d  按键掩码=%d"),
+                   PC->IsLocalController() ? 1 : 0,
+                   PC->PlayerInput ? TEXT("valid") : TEXT("NULL"),
+                   PC->bShowMouseCursor ? 1 : 0,
+                   PC->IsInputKeyDown(EKeys::LeftMouseButton) ? 1 : 0,
+                   KeyMask);
         }
     }
 
@@ -754,8 +750,7 @@ void URovMuJoCoBridge::ApplyControlForce()
         const double Now = W ? W->GetTimeSeconds() : 0.0;
         if (AutoTestStartTime < 0.0) {
             AutoTestStartTime = Now;
-            UE_LOG(LogRovBridge, Log,
-                TEXT("[RovMuJoCoBridge][自检] 开始：上浮 2 秒，起始 Z=%.3f"), Data->xpos[3 * BodyId + 2]);
+            UE_LOG(LogRovBridge, Log, TEXT("[RovMuJoCoBridge][自检] 开始：上浮 2 秒，起始 Z=%.3f"), Data->xpos[3 * BodyId + 2]);
         }
         if (Now - AutoTestStartTime < 10.0) {
             LocalZ = 1.0;
@@ -763,10 +758,7 @@ void URovMuJoCoBridge::ApplyControlForce()
         const int32 Tick = (int32)((Now - AutoTestStartTime) * 2.0);
         if (Tick != AutoTestLastTick) {
             AutoTestLastTick = Tick;
-            UE_LOG(LogRovBridge, Log,
-                TEXT("[RovMuJoCoBridge][自检] t=%.1fs  Z=%.3f  总Fz=%.1f N  vz=%.3f"),
-                Now - AutoTestStartTime, Data->xpos[3 * BodyId + 2],
-                CachedForceZ.load(), Data->cvel[6 * BodyId + 5]);
+            UE_LOG(LogRovBridge, Log, TEXT("[RovMuJoCoBridge][自检] t=%.1fs  Z=%.3f  总Fz=%.1f N  vz=%.3f"), Now - AutoTestStartTime, Data->xpos[3 * BodyId + 2], CachedForceZ.load(), Data->cvel[6 * BodyId + 5]);
         }
     }
 
@@ -775,7 +767,7 @@ void URovMuJoCoBridge::ApplyControlForce()
         return;
     }
 
-    const mjtNum* Q = &Data->xquat[4 * BodyId];   // (w, x, y, z)
+    const mjtNum* Q = &Data->xquat[4 * BodyId]; // (w, x, y, z)
     const double Qw = Q[0], Qx = Q[1], Qy = Q[2], Qz = Q[3];
 
     // 只取偏航角，忽略俯仰和横滚 —— 否则 ROV 一翻滚推力方向就乱
@@ -806,9 +798,9 @@ void URovMuJoCoBridge::ApplyControlForce()
     // 方向按画面定义：MuJoCo→UE 为镜像映射（Y 取反），MuJoCo 的 +yaw 在画面上是 -yaw，
     // 因此 → = 画面右转 = MuJoCo yaw 减小。
     // 按住期间同时给出角速度前馈，避免目标航向跑得比机身快导致误差累积过 180°。
-    double YawCmdRateDeg = 0.0;   // 本帧航向角速度指令（deg/s，MuJoCo 符号）
+    double YawCmdRateDeg = 0.0; // 本帧航向角速度指令（deg/s，MuJoCo 符号）
     if (bEnableAttitudeHold && PC) {
-        const bool bYawLeft  = PC->IsInputKeyDown(EKeys::Left);
+        const bool bYawLeft = PC->IsInputKeyDown(EKeys::Left);
         const bool bYawRight = PC->IsInputKeyDown(EKeys::Right);
         if (bYawLeft != bYawRight) {
             YawCmdRateDeg = bYawLeft ? +(double)YawRateDegPerSec
@@ -828,13 +820,15 @@ void URovMuJoCoBridge::ApplyControlForce()
 
     if (YawCmdRateDeg != 0.0) {
         TargetYawDeg += (float)(YawCmdRateDeg * FrameDt);
-        while (TargetYawDeg >  180.0f) { TargetYawDeg -= 360.0f; }
-        while (TargetYawDeg < -180.0f) { TargetYawDeg += 360.0f; }
+        while (TargetYawDeg > 180.0f) {
+            TargetYawDeg -= 360.0f;
+        }
+        while (TargetYawDeg < -180.0f) {
+            TargetYawDeg += 360.0f;
+        }
         static int32 YawLogCounter = 0;
         if ((++YawLogCounter % 30) == 0) {
-            UE_LOG(LogRovBridge, Log,
-                TEXT("[RovMuJoCoBridge][航向] 目标航向 = %.1f°  指令角速度 = %+.0f°/s（←/→）"),
-                TargetYawDeg, YawCmdRateDeg);
+            UE_LOG(LogRovBridge, Log, TEXT("[RovMuJoCoBridge][航向] 目标航向 = %.1f°  指令角速度 = %+.0f°/s（←/→）"), TargetYawDeg, YawCmdRateDeg);
         }
     }
 
@@ -853,9 +847,7 @@ void URovMuJoCoBridge::ApplyControlForce()
             if (bDepthHoldActive) {
                 DepthHoldTargetZ = RovZ;
             }
-            UE_LOG(LogRovBridge, Log,
-                TEXT("[RovMuJoCoBridge][定深] %s（目标 Z=%.3f m）"),
-                bDepthHoldActive ? TEXT("已锁定") : TEXT("已解除"), DepthHoldTargetZ);
+            UE_LOG(LogRovBridge, Log, TEXT("[RovMuJoCoBridge][定深] %s（目标 Z=%.3f m）"), bDepthHoldActive ? TEXT("已锁定") : TEXT("已解除"), DepthHoldTargetZ);
         }
         bPrevDepthKeyDown = bDepthKeyDown;
     }
@@ -881,8 +873,7 @@ void URovMuJoCoBridge::ApplyControlForce()
             bDepthHoldActive = true;
             DepthPID.Reset();
             DepthHoldTargetZ = RovZ;
-            UE_LOG(LogRovBridge, Log,
-                TEXT("[RovMuJoCoBridge][定深自检] 锁定 Z=%.3f m"), DepthHoldTargetZ);
+            UE_LOG(LogRovBridge, Log, TEXT("[RovMuJoCoBridge][定深自检] 锁定 Z=%.3f m"), DepthHoldTargetZ);
         }
     }
 
@@ -904,7 +895,7 @@ void URovMuJoCoBridge::ApplyControlForce()
                 Data->qpos[QPosAdr + 0] = 0.0;
                 Data->qpos[QPosAdr + 1] = 0.0;
                 Data->qpos[QPosAdr + 2] = -5.0;
-                Data->qpos[QPosAdr + 3] = 1.0;   // quat w
+                Data->qpos[QPosAdr + 3] = 1.0; // quat w
                 Data->qpos[QPosAdr + 4] = 0.0;
                 Data->qpos[QPosAdr + 5] = 0.0;
                 Data->qpos[QPosAdr + 6] = 0.0;
@@ -914,15 +905,14 @@ void URovMuJoCoBridge::ApplyControlForce()
                 Data->qvel[SpinDof + 3] = 3.0;
                 Data->qvel[SpinDof + 4] = 3.0;
                 Data->qvel[SpinDof + 5] = 3.0;
-                DepthHoldTargetZ = -5.0;   // 定深跟着走，别把 ROV 拉回出生高度
+                DepthHoldTargetZ = -5.0; // 定深跟着走，别把 ROV 拉回出生高度
                 // 关掉浮心高度：BG≠0 会形成"单摆"回复力矩，角速度会来回摆，
                 // 没法拟合成指数衰减。自检只要纯阻尼，浮力大小不变（仍然中性附近）。
                 BuoyancyArm = 0.0f;
                 bDepthHoldActive = false;
-                UE_LOG(LogRovBridge, Log,
-                    TEXT("[RovMuJoCoBridge][旋转自检] 移至水中 Z=-5m，施加 3 rad/s 三轴角速度脉冲"
-                         "（dof_damping=%.2f）"),
-                    (double)Model->dof_damping[SpinDof + 3]);
+                UE_LOG(LogRovBridge, Log, TEXT("[RovMuJoCoBridge][旋转自检] 移至水中 Z=-5m，施加 3 rad/s 三轴角速度脉冲"
+                                               "（dof_damping=%.2f）"),
+                       (double)Model->dof_damping[SpinDof + 3]);
             }
             if (bSpinApplied) {
                 const int32 Tick = (int32)(Now * 4.0);
@@ -931,10 +921,7 @@ void URovMuJoCoBridge::ApplyControlForce()
                     const double Wx = Data->qvel[SpinDof + 3];
                     const double Wy = Data->qvel[SpinDof + 4];
                     const double Wz = Data->qvel[SpinDof + 5];
-                    UE_LOG(LogRovBridge, Log,
-                        TEXT("[RovMuJoCoBridge][旋转自检] t=%.2fs  wx=%.4f wy=%.4f wz=%.4f  |w|=%.4f rad/s"),
-                        Now - 2.0, Wx, Wy, Wz,
-                        FMath::Sqrt(Wx * Wx + Wy * Wy + Wz * Wz));
+                    UE_LOG(LogRovBridge, Log, TEXT("[RovMuJoCoBridge][旋转自检] t=%.2fs  wx=%.4f wy=%.4f wz=%.4f  |w|=%.4f rad/s"), Now - 2.0, Wx, Wy, Wz, FMath::Sqrt(Wx * Wx + Wy * Wy + Wz * Wz));
                 }
             }
         }
@@ -954,8 +941,8 @@ void URovMuJoCoBridge::ApplyControlForce()
 
             if (!bTiltApplied && Now > 2.0) {
                 bTiltApplied = true;
-                const double HalfAngle = 10.0 * PI / 180.0;   // 20° 的一半
-                Data->qpos[TQPos + 2] = 4.0;                  // 抬到水中，避免接触干扰
+                const double HalfAngle = 10.0 * PI / 180.0; // 20° 的一半
+                Data->qpos[TQPos + 2] = 4.0; // 抬到水中，避免接触干扰
                 Data->qpos[TQPos + 3] = FMath::Cos(HalfAngle); // w
                 Data->qpos[TQPos + 4] = FMath::Sin(HalfAngle); // x（绕 X 轴倾斜）
                 Data->qpos[TQPos + 5] = 0.0;
@@ -963,8 +950,7 @@ void URovMuJoCoBridge::ApplyControlForce()
                 for (int32 k = 0; k < 6; ++k) {
                     Data->qvel[TDof + k] = 0.0;
                 }
-                UE_LOG(LogRovBridge, Log,
-                    TEXT("[RovMuJoCoBridge][倾斜自检] 已倾斜 20° 并释放（BG=%.3f m）"), BuoyancyArm);
+                UE_LOG(LogRovBridge, Log, TEXT("[RovMuJoCoBridge][倾斜自检] 已倾斜 20° 并释放（BG=%.3f m）"), BuoyancyArm);
             }
 
             if (bTiltApplied) {
@@ -980,9 +966,7 @@ void URovMuJoCoBridge::ApplyControlForce()
                     const double UpZ = 1.0 - 2.0 * (Qx2 * Qx2 + Qy2 * Qy2);
                     const double TiltDeg = FMath::RadiansToDegrees(
                         FMath::Acos(FMath::Clamp(UpZ, -1.0, 1.0)));
-                    UE_LOG(LogRovBridge, Log,
-                        TEXT("[RovMuJoCoBridge][倾斜自检] t=%.2fs  倾角=%.2f°  ω=%.4f rad/s"),
-                        Now - 2.0, TiltDeg, Data->qvel[TDof + 4]);
+                    UE_LOG(LogRovBridge, Log, TEXT("[RovMuJoCoBridge][倾斜自检] t=%.2fs  倾角=%.2f°  ω=%.4f rad/s"), Now - 2.0, TiltDeg, Data->qvel[TDof + 4]);
                 }
             }
         }
@@ -996,11 +980,11 @@ void URovMuJoCoBridge::ApplyControlForce()
         int32 V = 0;
         if (FParse::Value(FCommandLine::Get(), TEXT("RovTorqueAxis="), V)) {
             TorqueTestAxis = V;
-        } else {
+        }
+        else {
             TorqueTestAxis = 0;
         }
-        UE_LOG(LogRovBridge, Log,
-            TEXT("[RovMuJoCoBridge][力矩轴自检] 将只给轴 %d 施加 100 N·m"), TorqueTestAxis);
+        UE_LOG(LogRovBridge, Log, TEXT("[RovMuJoCoBridge][力矩轴自检] 将只给轴 %d 施加 100 N·m"), TorqueTestAxis);
     }
 
     if (bDepthHoldActive) {
@@ -1015,10 +999,14 @@ void URovMuJoCoBridge::ApplyControlForce()
             const int32 Tick = (int32)(Now * 2.0);
             if (Tick != DepthTestLastTick) {
                 DepthTestLastTick = Tick;
-                UE_LOG(LogRovBridge, Log,
-                    TEXT("[RovMuJoCoBridge][定深自检] t=%.1fs  目标=%.3f  当前=%.3f  误差=%+.3f m  "
-                         "PID推力=%.1f N  洋流Vz=%.3f m/s"),
-                    Now, DepthHoldTargetZ, RovZ, DepthHoldTargetZ - RovZ, ThrusterZ, VCurrent.Z);
+                UE_LOG(LogRovBridge, Log, TEXT("[RovMuJoCoBridge][定深自检] t=%.1fs  目标=%.3f  当前=%.3f  误差=%+.3f m  "
+                                               "PID推力=%.1f N  洋流Vz=%.3f m/s"),
+                       Now,
+                       DepthHoldTargetZ,
+                       RovZ,
+                       DepthHoldTargetZ - RovZ,
+                       ThrusterZ,
+                       VCurrent.Z);
             }
         }
     }
@@ -1060,12 +1048,19 @@ void URovMuJoCoBridge::ApplyControlForce()
             const int32 Tick = (int32)(GetWorld() ? GetWorld()->GetTimeSeconds() : 0.0);
             if (Tick != OceanLogTick) {
                 OceanLogTick = Tick;
-                UE_LOG(LogRovBridge, Log,
-                    TEXT("[RovMuJoCoBridge][洋流诊断] V_current=(%.4f,%.4f,%.4f) |Vc|=%.4f  "
-                         "V_robot=(%.4f,%.4f,%.4f) |Vr|=%.4f  F=(%.1f,%.1f,%.1f) N"),
-                    VCurrent.X, VCurrent.Y, VCurrent.Z, VCurrent.Size(),
-                    Vrx, Vry, Vrz, FMath::Sqrt(Vrx * Vrx + Vry * Vry + Vrz * Vrz),
-                    CurrentX, CurrentY, CurrentZ);
+                UE_LOG(LogRovBridge, Log, TEXT("[RovMuJoCoBridge][洋流诊断] V_current=(%.4f,%.4f,%.4f) |Vc|=%.4f  "
+                                               "V_robot=(%.4f,%.4f,%.4f) |Vr|=%.4f  F=(%.1f,%.1f,%.1f) N"),
+                       VCurrent.X,
+                       VCurrent.Y,
+                       VCurrent.Z,
+                       VCurrent.Size(),
+                       Vrx,
+                       Vry,
+                       Vrz,
+                       FMath::Sqrt(Vrx * Vrx + Vry * Vry + Vrz * Vrz),
+                       CurrentX,
+                       CurrentY,
+                       CurrentZ);
             }
         }
     }
@@ -1074,7 +1069,7 @@ void URovMuJoCoBridge::ApplyControlForce()
 
     const double Fx = ThrusterX + CurrentX;
     const double Fy = ThrusterY + CurrentY;
-    const double Fz = ThrusterZ + CurrentZ;   // 浮力单独走 mj_applyFT（作用在浮心）
+    const double Fz = ThrusterZ + CurrentZ; // 浮力单独走 mj_applyFT（作用在浮心）
 
     // 【8】浮力的回复力矩由 mj_applyFT 在浮心处施加时自动产生，这里不再手算。
 
@@ -1108,9 +1103,7 @@ void URovMuJoCoBridge::ApplyControlForce()
                 const double InitYaw = FMath::Atan2(2.0 * (Qw * Qz + Qx * Qy),
                                                     1.0 - 2.0 * (Qy * Qy + Qz * Qz));
                 TargetYawDeg = FMath::RadiansToDegrees(InitYaw);
-                UE_LOG(LogRovBridge, Log,
-                    TEXT("[RovMuJoCoBridge][姿态] 已锁定目标航向 %.1f°，带宽 %.2f rad/s，阻尼比 %.2f"),
-                    TargetYawDeg, AttitudeBandwidth, AttitudeZeta);
+                UE_LOG(LogRovBridge, Log, TEXT("[RovMuJoCoBridge][姿态] 已锁定目标航向 %.1f°，带宽 %.2f rad/s，阻尼比 %.2f"), TargetYawDeg, AttitudeBandwidth, AttitudeZeta);
             }
 
             const double HalfYaw = FMath::DegreesToRadians(TargetYawDeg) * 0.5;
@@ -1118,9 +1111,7 @@ void URovMuJoCoBridge::ApplyControlForce()
             const double Qtz = FMath::Sin(HalfYaw);
 
             // q_e = conj(q_c) ⊗ q_t  （机体系误差）
-            auto QMul = [](double aw, double ax, double ay, double az,
-                           double bw, double bx, double by, double bz,
-                           double& ow, double& ox, double& oy, double& oz) {
+            auto QMul = [](double aw, double ax, double ay, double az, double bw, double bx, double by, double bz, double& ow, double& ox, double& oy, double& oz) {
                 ow = aw * bw - ax * bx - ay * by - az * bz;
                 ox = aw * bx + ax * bw + ay * bz - az * by;
                 oy = aw * by - ax * bz + ay * bw + az * bx;
@@ -1128,8 +1119,11 @@ void URovMuJoCoBridge::ApplyControlForce()
             };
             double Qew = 0.0, Qex = 0.0, Qey = 0.0, Qez = 0.0;
             QMul(Qw, -Qx, -Qy, -Qz, Qtw, 0.0, 0.0, Qtz, Qew, Qex, Qey, Qez);
-            if (Qew < 0.0) {          // 取短弧
-                Qew = -Qew; Qex = -Qex; Qey = -Qey; Qez = -Qez;
+            if (Qew < 0.0) { // 取短弧
+                Qew = -Qew;
+                Qex = -Qex;
+                Qey = -Qey;
+                Qez = -Qez;
             }
 
             const double E[3] = { 2.0 * Qex, 2.0 * Qey, 2.0 * Qez };
@@ -1159,22 +1153,24 @@ void URovMuJoCoBridge::ApplyControlForce()
                 double vz = (a == 2) ? 1.0 : 0.0;
                 double px = 0.0, py = 0.0, pz = 0.0;
                 RotByQuat(IQ[0], -IQ[1], -IQ[2], -IQ[3], vx, vy, vz, px, py, pz);
-                Iaxis[a] = Model->body_inertia[3 * BodyId + 0] * px * px
-                         + Model->body_inertia[3 * BodyId + 1] * py * py
-                         + Model->body_inertia[3 * BodyId + 2] * pz * pz;
+                Iaxis[a] = Model->body_inertia[3 * BodyId + 0] * px * px + Model->body_inertia[3 * BodyId + 1] * py * py + Model->body_inertia[3 * BodyId + 2] * pz * pz;
             }
 
             static bool bLoggedIquat = false;
             if (!bLoggedIquat) {
                 bLoggedIquat = true;
-                UE_LOG(LogRovBridge, Log,
-                    TEXT("[RovMuJoCoBridge][惯量诊断] body_iquat=(%.4f, %.4f, %.4f, %.4f)  "
-                         "主轴主值=(%.3f, %.3f, %.3f)  机体轴等效惯量=(%.3f, %.3f, %.3f)"),
-                    IQ[0], IQ[1], IQ[2], IQ[3],
-                    Model->body_inertia[3 * BodyId + 0],
-                    Model->body_inertia[3 * BodyId + 1],
-                    Model->body_inertia[3 * BodyId + 2],
-                    Iaxis[0], Iaxis[1], Iaxis[2]);
+                UE_LOG(LogRovBridge, Log, TEXT("[RovMuJoCoBridge][惯量诊断] body_iquat=(%.4f, %.4f, %.4f, %.4f)  "
+                                               "主轴主值=(%.3f, %.3f, %.3f)  机体轴等效惯量=(%.3f, %.3f, %.3f)"),
+                       IQ[0],
+                       IQ[1],
+                       IQ[2],
+                       IQ[3],
+                       Model->body_inertia[3 * BodyId + 0],
+                       Model->body_inertia[3 * BodyId + 1],
+                       Model->body_inertia[3 * BodyId + 2],
+                       Iaxis[0],
+                       Iaxis[1],
+                       Iaxis[2]);
             }
 
             // 姿态诊断：每秒打印一次欧拉角、目标、误差、角速度和力矩
@@ -1183,13 +1179,10 @@ void URovMuJoCoBridge::ApplyControlForce()
                 const int32 TickNow = (int32)(GetWorld()->GetTimeSeconds());
                 if (TickNow != AttLogTick) {
                     AttLogTick = TickNow;
-                    const double RollD  = FMath::RadiansToDegrees(FMath::Atan2(2.0*(Qw*Qx + Qy*Qz), 1.0 - 2.0*(Qx*Qx + Qy*Qy)));
-                    const double PitchD = FMath::RadiansToDegrees(FMath::Asin(FMath::Clamp(2.0*(Qw*Qy - Qz*Qx), -1.0, 1.0)));
-                    const double YawD   = FMath::RadiansToDegrees(FMath::Atan2(2.0*(Qw*Qz + Qx*Qy), 1.0 - 2.0*(Qy*Qy + Qz*Qz)));
-                    UE_LOG(LogRovBridge, Log,
-                        TEXT("[%s][姿态诊断] roll=%.1f pitch=%.1f yaw=%.1f targetYaw=%.1f |E|=(%.3f,%.3f,%.3f) omega=(%.2f,%.2f,%.2f)")
-                        , TEXT("RovMuJoCoBridge"), RollD, PitchD, YawD, TargetYawDeg, E[0], E[1], E[2],
-                        Data->qvel[AttDof+3], Data->qvel[AttDof+4], Data->qvel[AttDof+5]);
+                    const double RollD = FMath::RadiansToDegrees(FMath::Atan2(2.0 * (Qw * Qx + Qy * Qz), 1.0 - 2.0 * (Qx * Qx + Qy * Qy)));
+                    const double PitchD = FMath::RadiansToDegrees(FMath::Asin(FMath::Clamp(2.0 * (Qw * Qy - Qz * Qx), -1.0, 1.0)));
+                    const double YawD = FMath::RadiansToDegrees(FMath::Atan2(2.0 * (Qw * Qz + Qx * Qy), 1.0 - 2.0 * (Qy * Qy + Qz * Qz)));
+                    UE_LOG(LogRovBridge, Log, TEXT("[%s][姿态诊断] roll=%.1f pitch=%.1f yaw=%.1f targetYaw=%.1f |E|=(%.3f,%.3f,%.3f) omega=(%.2f,%.2f,%.2f)"), TEXT("RovMuJoCoBridge"), RollD, PitchD, YawD, TargetYawDeg, E[0], E[1], E[2], Data->qvel[AttDof + 3], Data->qvel[AttDof + 4], Data->qvel[AttDof + 5]);
                 }
             }
 
@@ -1201,10 +1194,16 @@ void URovMuJoCoBridge::ApplyControlForce()
                 const double Ki = I * W * W * W * KiF;
                 const double Omega = Data->qvel[AttDof + 3 + Axis];
                 double T = Kp * E[Axis] + Ki * IntArr[Axis] - Kd * Omega;
-                T = FMath::Clamp(T, -1500.0, 1500.0);   // 力矩限幅，防止饱和发散
-                if (Axis == 0) { TorqueX += T; }
-                else if (Axis == 1) { TorqueY += T; }
-                else { TorqueZ += T; }
+                T = FMath::Clamp(T, -1500.0, 1500.0); // 力矩限幅，防止饱和发散
+                if (Axis == 0) {
+                    TorqueX += T;
+                }
+                else if (Axis == 1) {
+                    TorqueY += T;
+                }
+                else {
+                    TorqueZ += T;
+                }
             }
         }
     }
@@ -1226,8 +1225,7 @@ void URovMuJoCoBridge::ApplyControlForce()
                 const double InitYaw = FMath::Atan2(2.0 * (qw * qz + qx * qy),
                                                     1.0 - 2.0 * (qy * qy + qz * qz));
                 TargetYawDeg = FMath::RadiansToDegrees(InitYaw);
-                UE_LOG(LogRovBridge, Log,
-                    TEXT("[RovMuJoCoBridge][姿态] 级联控制启用，锁定航向 %.1f°"), TargetYawDeg);
+                UE_LOG(LogRovBridge, Log, TEXT("[RovMuJoCoBridge][姿态] 级联控制启用，锁定航向 %.1f°"), TargetYawDeg);
             }
 
             const double HalfYaw = FMath::DegreesToRadians(TargetYawDeg) * 0.5;
@@ -1240,11 +1238,16 @@ void URovMuJoCoBridge::ApplyControlForce()
             double Qex = aw * 0.0 + ax * Qtw + ay * Qtz - az * 0.0;
             double Qey = aw * 0.0 - ax * Qtz + ay * Qtw + az * 0.0;
             double Qez = aw * Qtz + ax * 0.0 - ay * 0.0 + az * Qtw;
-            if (Qew < 0.0) { Qew = -Qew; Qex = -Qex; Qey = -Qey; Qez = -Qez; }
+            if (Qew < 0.0) {
+                Qew = -Qew;
+                Qex = -Qex;
+                Qey = -Qey;
+                Qez = -Qez;
+            }
 
             const double E3[3] = { 2.0 * Qex, 2.0 * Qey, 2.0 * Qez };
             const double KpAtt[3] = { 1.5, 1.5, 1.0 };
-            const double Wmax[3]  = { 0.8, 0.8, 0.6 };
+            const double Wmax[3] = { 0.8, 0.8, 0.6 };
             const double Wn = 5.0;
             static double AttInt[3] = { 0.0, 0.0, 0.0 };
 
@@ -1266,8 +1269,8 @@ void URovMuJoCoBridge::ApplyControlForce()
             // 上限也要一起放大，否则前馈会被 Wmax 截掉，目标航向又会跑飞。
             const double YawFF = FMath::DegreesToRadians(YawCmdRateDeg);
             const double WmaxZ = (YawFF != 0.0)
-                ? FMath::Max(Wmax[2], FMath::Abs(YawFF) + 0.2)
-                : Wmax[2];
+                                     ? FMath::Max(Wmax[2], FMath::Abs(YawFF) + 0.2)
+                                     : Wmax[2];
 
             for (int32 Axis = 0; Axis < 3; ++Axis) {
                 const double I = (EffInertia[Axis] > 0.0) ? EffInertia[Axis]
@@ -1277,15 +1280,22 @@ void URovMuJoCoBridge::ApplyControlForce()
                 // 机械臂残余重量等），否则纯 P 会停在一个固定倾角上。
                 AttInt[Axis] = FMath::Clamp(AttInt[Axis] + E3[Axis] * IntDt, -2.0, 2.0);
                 double Wsp = FMath::Clamp(KpAtt[Axis] * E3[Axis] + AttitudeIntegralGain * AttInt[Axis],
-                                          -Wlim, Wlim);
+                                          -Wlim,
+                                          Wlim);
                 if (Axis == 2 && YawFF != 0.0) {
                     Wsp = FMath::Clamp(Wsp + YawFF, -WmaxZ, WmaxZ);
                 }
                 double T = I * Wn * (Wsp - Data->qvel[ND + 3 + Axis]);
                 T = FMath::Clamp(T, -1500.0, 1500.0);
-                if (Axis == 0) { TorqueX += T; }
-                else if (Axis == 1) { TorqueY += T; }
-                else { TorqueZ += T; }
+                if (Axis == 0) {
+                    TorqueX += T;
+                }
+                else if (Axis == 1) {
+                    TorqueY += T;
+                }
+                else {
+                    TorqueZ += T;
+                }
             }
 
             // 航向诊断（每秒一次）：目标 / 实测 / 误差 / 机体 Z 角速度 / 前馈
@@ -1297,19 +1307,30 @@ void URovMuJoCoBridge::ApplyControlForce()
                         FMath::Atan2(2.0 * (qw * qz + qx * qy),
                                      1.0 - 2.0 * (qy * qy + qz * qz)));
                     double YawErrDeg = (double)TargetYawDeg - CurYawDeg;
-                    while (YawErrDeg >  180.0) { YawErrDeg -= 360.0; }
-                    while (YawErrDeg < -180.0) { YawErrDeg += 360.0; }
+                    while (YawErrDeg > 180.0) {
+                        YawErrDeg -= 360.0;
+                    }
+                    while (YawErrDeg < -180.0) {
+                        YawErrDeg += 360.0;
+                    }
                     // 真实倾角：机体 Z 轴与世界 Z 的夹角，不受欧拉角约定影响
                     const double UpZ = FMath::Clamp((double)Data->xmat[9 * BodyId + 8], -1.0, 1.0);
                     const double TiltDeg = FMath::RadiansToDegrees(FMath::Acos(UpZ));
-                    UE_LOG(LogRovBridge, Log,
-                        TEXT("[%s][姿态诊断] t=%.1f 倾角=%.1f° 目标=%.1f° 实测=%.1f° 误差=%.1f° "
-                             "E3=(%.3f, %.3f, %.3f) w=(%.3f, %.3f, %.3f) 前馈=%+.0f°/s"),
-                        TEXT("RovMuJoCoBridge"), Data->time, TiltDeg,
-                        TargetYawDeg, CurYawDeg, YawErrDeg,
-                        E3[0], E3[1], E3[2],
-                        Data->qvel[ND + 3], Data->qvel[ND + 4], Data->qvel[ND + 5],
-                        YawCmdRateDeg);
+                    UE_LOG(LogRovBridge, Log, TEXT("[%s][姿态诊断] t=%.1f 倾角=%.1f° 目标=%.1f° 实测=%.1f° 误差=%.1f° "
+                                                   "E3=(%.3f, %.3f, %.3f) w=(%.3f, %.3f, %.3f) 前馈=%+.0f°/s"),
+                           TEXT("RovMuJoCoBridge"),
+                           Data->time,
+                           TiltDeg,
+                           TargetYawDeg,
+                           CurYawDeg,
+                           YawErrDeg,
+                           E3[0],
+                           E3[1],
+                           E3[2],
+                           Data->qvel[ND + 3],
+                           Data->qvel[ND + 4],
+                           Data->qvel[ND + 5],
+                           YawCmdRateDeg);
                 }
             }
         }
@@ -1317,7 +1338,7 @@ void URovMuJoCoBridge::ApplyControlForce()
     // 【11】机械臂静力矩配平：常值前馈，把控制器硬扛的那部分稳态力矩抵掉
     if (bEnableAttitudeHold && !bSpinTest) {
         float TrimPitch = TrimTorquePitch;
-        float TrimRoll  = TrimTorqueRoll;
+        float TrimRoll = TrimTorqueRoll;
         FParse::Value(FCommandLine::Get(), TEXT("RovTrimPitch="), TrimPitch);
         FParse::Value(FCommandLine::Get(), TEXT("RovTrimRoll="), TrimRoll);
         TorqueX += TrimRoll;
@@ -1343,9 +1364,7 @@ void URovMuJoCoBridge::ApplyControlForce()
             const int32 J = Model->body_jntadr[BodyId];
             if (Model->jnt_type[J] == mjJNT_FREE) {
                 const int32 D = Model->jnt_dofadr[J];
-                UE_LOG(LogRovBridge, Log,
-                    TEXT("[RovMuJoCoBridge][力矩轴自检] 给轴%d 100N·m  ->  omega=(%.4f, %.4f, %.4f)"),
-                    TorqueTestAxis, Data->qvel[D + 3], Data->qvel[D + 4], Data->qvel[D + 5]);
+                UE_LOG(LogRovBridge, Log, TEXT("[RovMuJoCoBridge][力矩轴自检] 给轴%d 100N·m  ->  omega=(%.4f, %.4f, %.4f)"), TorqueTestAxis, Data->qvel[D + 3], Data->qvel[D + 4], Data->qvel[D + 5]);
             }
         }
     }
@@ -1365,20 +1384,31 @@ void URovMuJoCoBridge::ApplyControlForce()
                 }
             });
         bControlCallbackRegistered = true;
-        UE_LOG(LogRovBridge, Log,
-            TEXT("[RovMuJoCoBridge] 已注册物理线程施力回调（PreStepCallbacks）"));
+        UE_LOG(LogRovBridge, Log, TEXT("[RovMuJoCoBridge] 已注册物理线程施力回调（PreStepCallbacks）"));
     }
 
     // 节流日志
     static int32 CtrlLogCounter = 0;
     if ((LocalX != 0.0 || LocalY != 0.0 || LocalZ != 0.0) && (++CtrlLogCounter % 30 == 0)) {
-        UE_LOG(LogRovBridge, Log,
-            TEXT("[RovMuJoCoBridge][受力] 输入=(%.0f,%.0f,%.0f)  推力=(%.1f,%.1f,%.1f) N  "
-                 "浮力=%.1f N  洋流拖曳=(%.1f,%.1f,%.1f) N  合计Fz=%.1f N  "
-                 "洋流=(%.2f,%.2f,%.2f) m/s  定深=%d  Z=%.3f"),
-            LocalX, LocalY, LocalZ, ThrusterX, ThrusterY, ThrusterZ,
-            Buoyancy, CurrentX, CurrentY, CurrentZ, Fz,
-            VCurrent.X, VCurrent.Y, VCurrent.Z, bDepthHoldActive ? 1 : 0, RovZ);
+        UE_LOG(LogRovBridge, Log, TEXT("[RovMuJoCoBridge][受力] 输入=(%.0f,%.0f,%.0f)  推力=(%.1f,%.1f,%.1f) N  "
+                                       "浮力=%.1f N  洋流拖曳=(%.1f,%.1f,%.1f) N  合计Fz=%.1f N  "
+                                       "洋流=(%.2f,%.2f,%.2f) m/s  定深=%d  Z=%.3f"),
+               LocalX,
+               LocalY,
+               LocalZ,
+               ThrusterX,
+               ThrusterY,
+               ThrusterZ,
+               Buoyancy,
+               CurrentX,
+               CurrentY,
+               CurrentZ,
+               Fz,
+               VCurrent.X,
+               VCurrent.Y,
+               VCurrent.Z,
+               bDepthHoldActive ? 1 : 0,
+               RovZ);
     }
 }
 
@@ -1388,17 +1418,14 @@ void URovMuJoCoBridge::ComputeAttitudeTorque(mjModel_* Model, mjData_* Data, int
     OutTorque[1] = 0.0;
     OutTorque[2] = 0.0;
 
-    if (!bEnableAttitudeHold || !Model || !Data || BodyId < 0 || BodyId >= Model->nbody)
-    {
+    if (!bEnableAttitudeHold || !Model || !Data || BodyId < 0 || BodyId >= Model->nbody) {
         return;
     }
-    if (Model->body_jntnum[BodyId] < 1)
-    {
+    if (Model->body_jntnum[BodyId] < 1) {
         return;
     }
     const int32 J = Model->body_jntadr[BodyId];
-    if (Model->jnt_type[J] != mjJNT_FREE)
-    {
+    if (Model->jnt_type[J] != mjJNT_FREE) {
         return;
     }
     const int32 D = Model->jnt_dofadr[J];
@@ -1406,15 +1433,12 @@ void URovMuJoCoBridge::ComputeAttitudeTorque(mjModel_* Model, mjData_* Data, int
     const double* QQ = &Data->xquat[4 * BodyId];
     const double qw = QQ[0], qx = QQ[1], qy = QQ[2], qz = QQ[3];
 
-    if (!bAttitudeInitialized)
-    {
+    if (!bAttitudeInitialized) {
         bAttitudeInitialized = true;
         const double InitYaw = FMath::Atan2(2.0 * (qw * qz + qx * qy),
                                             1.0 - 2.0 * (qy * qy + qz * qz));
         TargetYawDeg = (float)FMath::RadiansToDegrees(InitYaw);
-        UE_LOG(LogRovBridge, Log,
-            TEXT("[RovBridge][姿态] 物理线程级联控制启用（%.0f Hz），锁定航向 %.1f°"),
-            1.0 / FMath::Max(Dt, 1e-6), TargetYawDeg);
+        UE_LOG(LogRovBridge, Log, TEXT("[RovBridge][姿态] 物理线程级联控制启用（%.0f Hz），锁定航向 %.1f°"), 1.0 / FMath::Max(Dt, 1e-6), TargetYawDeg);
     }
 
     const double HalfYaw = FMath::DegreesToRadians((double)TargetYawDeg) * 0.5;
@@ -1426,7 +1450,12 @@ void URovMuJoCoBridge::ComputeAttitudeTorque(mjModel_* Model, mjData_* Data, int
     double Qex = ax * Qtw + ay * Qtz;
     double Qey = -ax * Qtz + ay * Qtw;
     double Qez = aw * Qtz + az * Qtw;
-    if (Qew < 0.0) { Qew = -Qew; Qex = -Qex; Qey = -Qey; Qez = -Qez; }
+    if (Qew < 0.0) {
+        Qew = -Qew;
+        Qex = -Qex;
+        Qey = -Qey;
+        Qez = -Qez;
+    }
 
     const double E3[3] = { 2.0 * Qex, 2.0 * Qey, 2.0 * Qez };
     const double KpAtt[3] = { 1.5, 1.5, 1.0 };
@@ -1436,8 +1465,7 @@ void URovMuJoCoBridge::ComputeAttitudeTorque(mjModel_* Model, mjData_* Data, int
     const double YawFF = CachedYawFFRadPerSec.load();
     const double WmaxZ = (YawFF != 0.0) ? FMath::Max(Wmax[2], FMath::Abs(YawFF) + 0.2) : Wmax[2];
 
-    for (int32 Axis = 0; Axis < 3; ++Axis)
-    {
+    for (int32 Axis = 0; Axis < 3; ++Axis) {
         const double I = (EffInertia[Axis] > 0.0) ? EffInertia[Axis]
                                                   : Model->body_inertia[3 * BodyId + Axis];
         const double Wlim = (Axis == 2) ? WmaxZ : Wmax[Axis];
@@ -1452,20 +1480,17 @@ void URovMuJoCoBridge::ComputeAttitudeTorque(mjModel_* Model, mjData_* Data, int
         // 只按角速度判据：若再叠加「误差小才积分」，稳态大倾角就永远消不掉
         // （实测会停在 28° 下不来）。
         const double Omega = (double)Data->qvel[D + 3 + Axis];
-        if (FMath::Abs(Omega) < 0.30)
-        {
+        if (FMath::Abs(Omega) < 0.30) {
             AttIntState[Axis] = FMath::Clamp(AttIntState[Axis] + E3[Axis] * Dt, -2.0, 2.0);
         }
-        else
-        {
+        else {
             AttIntState[Axis] *= FMath::Max(0.0, 1.0 - 3.0 * Dt);
         }
 
-        double Wsp = FMath::Clamp(KpAtt[Axis] * E3[Axis]
-                                      + (double)AttitudeIntegralGain * AttIntState[Axis],
-                                  -WlimEff, WlimEff);
-        if (Axis == 2 && YawFF != 0.0)
-        {
+        double Wsp = FMath::Clamp(KpAtt[Axis] * E3[Axis] + (double)AttitudeIntegralGain * AttIntState[Axis],
+                                  -WlimEff,
+                                  WlimEff);
+        if (Axis == 2 && YawFF != 0.0) {
             Wsp = FMath::Clamp(Wsp + YawFF, -WlimEff, WlimEff);
         }
         double T = I * Wn * (Wsp - Omega);
@@ -1475,19 +1500,26 @@ void URovMuJoCoBridge::ComputeAttitudeTorque(mjModel_* Model, mjData_* Data, int
     // 1 Hz 诊断：倾角、误差、角速度、力矩、积分量
     {
         static double LastLogT = -1.0;
-        if (Data->time - LastLogT > 1.0)
-        {
+        if (Data->time - LastLogT > 1.0) {
             LastLogT = Data->time;
             const double UpZ = FMath::Clamp((double)Data->xmat[9 * BodyId + 8], -1.0, 1.0);
             const double TiltDeg = FMath::RadiansToDegrees(FMath::Acos(UpZ));
-            UE_LOG(LogRovBridge, Log,
-                TEXT("[RovBridge][姿态环] t=%.1f 倾角=%.2f E3=(%+.3f,%+.3f,%+.3f) "
-                     "w=(%+.3f,%+.3f,%+.3f) T=(%+.1f,%+.1f,%+.1f) 积分=(%+.2f,%+.2f,%+.2f)"),
-                Data->time, TiltDeg,
-                E3[0], E3[1], E3[2],
-                Data->qvel[D + 3], Data->qvel[D + 4], Data->qvel[D + 5],
-                OutTorque[0], OutTorque[1], OutTorque[2],
-                AttIntState[0], AttIntState[1], AttIntState[2]);
+            UE_LOG(LogRovBridge, Log, TEXT("[RovBridge][姿态环] t=%.1f 倾角=%.2f E3=(%+.3f,%+.3f,%+.3f) "
+                                           "w=(%+.3f,%+.3f,%+.3f) T=(%+.1f,%+.1f,%+.1f) 积分=(%+.2f,%+.2f,%+.2f)"),
+                   Data->time,
+                   TiltDeg,
+                   E3[0],
+                   E3[1],
+                   E3[2],
+                   Data->qvel[D + 3],
+                   Data->qvel[D + 4],
+                   Data->qvel[D + 5],
+                   OutTorque[0],
+                   OutTorque[1],
+                   OutTorque[2],
+                   AttIntState[0],
+                   AttIntState[1],
+                   AttIntState[2]);
         }
     }
 }
@@ -1544,16 +1576,13 @@ void URovMuJoCoBridge::ApplyCachedForce(mjModel_* Model, mjData_* Data)
 
     // 【1b】显式二次阻力：沿机体系三轴 F = -0.5·ρ·Cd·A·|v|·v。
     // 用于补偿椭球近似对大钝体 / 细长体的偏差，默认关闭。
-    if (bUseExplicitDrag)
-    {
+    if (bUseExplicitDrag) {
         const double QW = Data->xquat[4 * BodyId + 0];
         const double QX = Data->xquat[4 * BodyId + 1];
         const double QY = Data->xquat[4 * BodyId + 2];
         const double QZ = Data->xquat[4 * BodyId + 3];
         double Bx = 0.0, By = 0.0, Bz = 0.0;
-        RotByQuat(QW, -QX, -QY, -QZ,
-                  Data->qvel[DofAdr + 0], Data->qvel[DofAdr + 1], Data->qvel[DofAdr + 2],
-                  Bx, By, Bz);
+        RotByQuat(QW, -QX, -QY, -QZ, Data->qvel[DofAdr + 0], Data->qvel[DofAdr + 1], Data->qvel[DofAdr + 2], Bx, By, Bz);
         const double Half = 0.5 * (double)FluidDensity;
         const double Fbx = -Half * (double)DragCoeff.X * (double)DragRefArea.X * FMath::Abs(Bx) * Bx;
         const double Fby = -Half * (double)DragCoeff.Y * (double)DragRefArea.Y * FMath::Abs(By) * By;
@@ -1566,16 +1595,13 @@ void URovMuJoCoBridge::ApplyCachedForce(mjModel_* Model, mjData_* Data)
 
     // 【1c】附加质量：F = -m_A·a（机体系三轴），默认关闭。
     // 椭球模型内部已含附加质量，本项用于单独调节而不改模型。
-    if (bUseAddedMass)
-    {
+    if (bUseAddedMass) {
         const double QW = Data->xquat[4 * BodyId + 0];
         const double QX = Data->xquat[4 * BodyId + 1];
         const double QY = Data->xquat[4 * BodyId + 2];
         const double QZ = Data->xquat[4 * BodyId + 3];
         double Ax = 0.0, Ay = 0.0, Az = 0.0;
-        RotByQuat(QW, -QX, -QY, -QZ,
-                  Data->qacc[DofAdr + 0], Data->qacc[DofAdr + 1], Data->qacc[DofAdr + 2],
-                  Ax, Ay, Az);
+        RotByQuat(QW, -QX, -QY, -QZ, Data->qacc[DofAdr + 0], Data->qacc[DofAdr + 1], Data->qacc[DofAdr + 2], Ax, Ay, Az);
         const double Fbx = -(double)AddedMass.X * Ax;
         const double Fby = -(double)AddedMass.Y * Ay;
         const double Fbz = -(double)AddedMass.Z * Az;
@@ -1595,11 +1621,16 @@ void URovMuJoCoBridge::ApplyCachedForce(mjModel_* Model, mjData_* Data)
         if (!bInSubtree) {
             int32 p = Model->body_parentid[b];
             while (p > 0) {
-                if (p == BodyId) { bInSubtree = true; break; }
+                if (p == BodyId) {
+                    bInSubtree = true;
+                    break;
+                }
                 p = Model->body_parentid[p];
             }
         }
-        if (!bInSubtree) { continue; }
+        if (!bInSubtree) {
+            continue;
+        }
         const double m = Model->body_mass[b];
         TotalMass += m;
         Cx += m * Data->xipos[3 * b + 0];
@@ -1607,9 +1638,14 @@ void URovMuJoCoBridge::ApplyCachedForce(mjModel_* Model, mjData_* Data)
         Cz += m * Data->xipos[3 * b + 2];
     }
     if (TotalMass > 1e-6) {
-        Cx /= TotalMass; Cy /= TotalMass; Cz /= TotalMass;
-    } else {
-        Cx = CG[0]; Cy = CG[1]; Cz = CG[2];
+        Cx /= TotalMass;
+        Cy /= TotalMass;
+        Cz /= TotalMass;
+    }
+    else {
+        Cx = CG[0];
+        Cy = CG[1];
+        Cz = CG[2];
     }
     // 优先使用 MuJoCo 计算的子树质心，保证与重力作用点一致。
     if (Data->subtree_com) {
@@ -1620,9 +1656,7 @@ void URovMuJoCoBridge::ApplyCachedForce(mjModel_* Model, mjData_* Data)
 
     if (Buoy > 0.0) {
         double Rx = 0.0, Ry = 0.0, Rz = 0.0;
-        RotByQuat(Data->xquat[4 * BodyId + 0], Data->xquat[4 * BodyId + 1],
-                  Data->xquat[4 * BodyId + 2], Data->xquat[4 * BodyId + 3],
-                  0.0, 0.0, (double)BuoyancyArm, Rx, Ry, Rz);
+        RotByQuat(Data->xquat[4 * BodyId + 0], Data->xquat[4 * BodyId + 1], Data->xquat[4 * BodyId + 2], Data->xquat[4 * BodyId + 3], 0.0, 0.0, (double)BuoyancyArm, Rx, Ry, Rz);
         mjtNum F2[3] = { 0.0, 0.0, (mjtNum)Buoy };
         mjtNum CBw[3] = {
             (mjtNum)(Cx + Rx),
@@ -1640,10 +1674,15 @@ void URovMuJoCoBridge::ApplyCachedForce(mjModel_* Model, mjData_* Data)
             int32 p = Model->body_parentid[b];
             bool bDescendant = false;
             while (p > 0) {
-                if (p == BodyId) { bDescendant = true; break; }
+                if (p == BodyId) {
+                    bDescendant = true;
+                    break;
+                }
                 p = Model->body_parentid[p];
             }
-            if (!bDescendant) { continue; }
+            if (!bDescendant) {
+                continue;
+            }
             const double m = Model->body_mass[b];
             ArmMass += m;
             Cx += m * Data->xipos[3 * b + 0];
@@ -1675,8 +1714,7 @@ void URovMuJoCoBridge::ApplyCachedForce(mjModel_* Model, mjData_* Data)
 
     // 自检：-RovFlipTest 在 6~6.8 s 施加 500 N·m 横滚力矩把机身掀翻，用于验证回正能力
     static const bool bFlipTest = FParse::Param(FCommandLine::Get(), TEXT("RovFlipTest"));
-    if (bFlipTest && Data->time > 6.0 && Data->time < 6.8)
-    {
+    if (bFlipTest && Data->time > 6.0 && Data->time < 6.8) {
         AttT[0] += 500.0;
     }
     Tx += AttT[0];
@@ -1692,22 +1730,18 @@ void URovMuJoCoBridge::ApplyCachedForce(mjModel_* Model, mjData_* Data)
     if (!bCtlInitDone) {
         bCtlInitDone = true;
         Model->opt.integrator = mjINT_IMPLICIT;
-        const double Iavg = 0.5 * (Model->body_inertia[3 * BodyId + 0]
-                                 + Model->body_inertia[3 * BodyId + 1]
-                                 + Model->body_inertia[3 * BodyId + 2]) / 3.0;
+        const double Iavg = 0.5 * (Model->body_inertia[3 * BodyId + 0] + Model->body_inertia[3 * BodyId + 1] + Model->body_inertia[3 * BodyId + 2]) / 3.0;
         // 阻尼取值优先级：命令行清零（做流体基线对照）> 属性 > 0.5×平均惯量兜底
         static const bool bNoDofDamp = FParse::Param(FCommandLine::Get(), TEXT("RovNoDofDamp"));
         double Idamp = (AngularDofDamping > 0.0f) ? (double)AngularDofDamping : Iavg;
-        if (bNoDofDamp) { Idamp = 0.0; }
+        if (bNoDofDamp) {
+            Idamp = 0.0;
+        }
         Model->dof_damping[DofAdr + 3] = Idamp;
         Model->dof_damping[DofAdr + 4] = Idamp;
         Model->dof_damping[DofAdr + 5] = Idamp;
         UE_LOG(LogRovBridge, Log, TEXT("[RovBridge][版本] mj_versionString=%s"), UTF8_TO_TCHAR(mj_versionString()));
-        UE_LOG(LogRovBridge, Log,
-            TEXT("[RovBridge][惯量] body_inertia=(%.3f, %.3f, %.3f)  EffInertia=(%.3f, %.3f, %.3f)  body_mass=%.3f"),
-            Model->body_inertia[3 * BodyId + 0], Model->body_inertia[3 * BodyId + 1],
-            Model->body_inertia[3 * BodyId + 2],
-            EffInertia[0], EffInertia[1], EffInertia[2], Model->body_mass[BodyId]);
+        UE_LOG(LogRovBridge, Log, TEXT("[RovBridge][惯量] body_inertia=(%.3f, %.3f, %.3f)  EffInertia=(%.3f, %.3f, %.3f)  body_mass=%.3f"), Model->body_inertia[3 * BodyId + 0], Model->body_inertia[3 * BodyId + 1], Model->body_inertia[3 * BodyId + 2], EffInertia[0], EffInertia[1], EffInertia[2], Model->body_mass[BodyId]);
         UE_LOG(LogRovBridge, Log, TEXT("[RovBridge][控制] integrator=implicit  dof_damping=%.2f N.m.s/rad"), Idamp);
 
         // 机械臂质量分布诊断：-RovArmDiag
@@ -1717,51 +1751,51 @@ void URovMuJoCoBridge::ApplyCachedForce(mjModel_* Model, mjData_* Data)
         if (bArmDiag) {
             const double* RovCg = &Data->xipos[3 * BodyId];
             double ArmMass = 0.0, Mx = 0.0, My = 0.0, Mz = 0.0;
-            UE_LOG(LogRovBridge, Log,
-                TEXT("[RovBridge][臂诊断] ROV body[%d]='%s' mass=%.3f subtree=%.3f  惯量=(%.3f, %.3f, %.3f)"),
-                BodyId, UTF8_TO_TCHAR(Model->names + Model->name_bodyadr[BodyId]),
-                Model->body_mass[BodyId], Model->body_subtreemass[BodyId],
-                Model->body_inertia[3 * BodyId + 0], Model->body_inertia[3 * BodyId + 1],
-                Model->body_inertia[3 * BodyId + 2]);
+            UE_LOG(LogRovBridge, Log, TEXT("[RovBridge][臂诊断] ROV body[%d]='%s' mass=%.3f subtree=%.3f  惯量=(%.3f, %.3f, %.3f)"), BodyId, UTF8_TO_TCHAR(Model->names + Model->name_bodyadr[BodyId]), Model->body_mass[BodyId], Model->body_subtreemass[BodyId], Model->body_inertia[3 * BodyId + 0], Model->body_inertia[3 * BodyId + 1], Model->body_inertia[3 * BodyId + 2]);
             for (int32 b = 0; b < Model->nbody; ++b) {
                 int32 p = Model->body_parentid[b];
                 bool bDescendant = false;
                 while (p > 0) {
-                    if (p == BodyId) { bDescendant = true; break; }
+                    if (p == BodyId) {
+                        bDescendant = true;
+                        break;
+                    }
                     p = Model->body_parentid[p];
                 }
-                if (!bDescendant) { continue; }
+                if (!bDescendant) {
+                    continue;
+                }
 
                 const double m = Model->body_mass[b];
                 const double* x = &Data->xipos[3 * b];
                 const double rx = x[0] - RovCg[0], ry = x[1] - RovCg[1], rz = x[2] - RovCg[2];
                 ArmMass += m;
-                Mx += m * rx; My += m * ry; Mz += m * rz;
-                UE_LOG(LogRovBridge, Log,
-                    TEXT("  [臂] body[%d]='%s' mass=%.4f  相对ROV重心=(%.4f, %.4f, %.4f) m  惯量=(%.5f, %.5f, %.5f)"),
-                    b, UTF8_TO_TCHAR(Model->names + Model->name_bodyadr[b]), m, rx, ry, rz,
-                    Model->body_inertia[3 * b + 0], Model->body_inertia[3 * b + 1],
-                    Model->body_inertia[3 * b + 2]);
+                Mx += m * rx;
+                My += m * ry;
+                Mz += m * rz;
+                UE_LOG(LogRovBridge, Log, TEXT("  [臂] body[%d]='%s' mass=%.4f  相对ROV重心=(%.4f, %.4f, %.4f) m  惯量=(%.5f, %.5f, %.5f)"), b, UTF8_TO_TCHAR(Model->names + Model->name_bodyadr[b]), m, rx, ry, rz, Model->body_inertia[3 * b + 0], Model->body_inertia[3 * b + 1], Model->body_inertia[3 * b + 2]);
 
                 // 该 body 的碰撞几何尺寸，用来判断几何有没有被整体放大
                 for (int32 g = 0; g < Model->ngeom; ++g) {
-                    if (Model->geom_bodyid[g] != b) { continue; }
-                    UE_LOG(LogRovBridge, Log,
-                        TEXT("      [geom] '%s' type=%d size=(%.4f, %.4f, %.4f) mass=%.4f"),
-                        UTF8_TO_TCHAR(Model->names + Model->name_geomadr[g]),
-                        (int32)Model->geom_type[g],
-                        Model->geom_size[3 * g + 0], Model->geom_size[3 * g + 1],
-                        Model->geom_size[3 * g + 2], Model->body_mass[b]);
+                    if (Model->geom_bodyid[g] != b) {
+                        continue;
+                    }
+                    UE_LOG(LogRovBridge, Log, TEXT("      [geom] '%s' type=%d size=(%.4f, %.4f, %.4f) mass=%.4f"), UTF8_TO_TCHAR(Model->names + Model->name_geomadr[g]), (int32)Model->geom_type[g], Model->geom_size[3 * g + 0], Model->geom_size[3 * g + 1], Model->geom_size[3 * g + 2], Model->body_mass[b]);
                 }
             }
             if (ArmMass > 1e-6) {
                 const double G = 9.81;
                 // 重力矩 = Σ r × (0,0,-mg) = (-g·Σm·ry, +g·Σm·rx, 0)
-                UE_LOG(LogRovBridge, Log,
-                    TEXT("[RovBridge][臂诊断] 合计 mass=%.3f  合成质心相对ROV=(%.4f, %.4f, %.4f) m  "
-                         "重力矩=(%.1f, %.1f, %.1f) N·m  重量=%.1f N"),
-                    ArmMass, Mx / ArmMass, My / ArmMass, Mz / ArmMass,
-                    -G * My, G * Mx, 0.0, ArmMass * G);
+                UE_LOG(LogRovBridge, Log, TEXT("[RovBridge][臂诊断] 合计 mass=%.3f  合成质心相对ROV=(%.4f, %.4f, %.4f) m  "
+                                               "重力矩=(%.1f, %.1f, %.1f) N·m  重量=%.1f N"),
+                       ArmMass,
+                       Mx / ArmMass,
+                       My / ArmMass,
+                       Mz / ArmMass,
+                       -G * My,
+                       G * Mx,
+                       0.0,
+                       ArmMass * G);
             }
         }
     }
@@ -1777,18 +1811,26 @@ void URovMuJoCoBridge::ApplyCachedForce(mjModel_* Model, mjData_* Data)
                              1.0 - 2.0 * (qq[1] * qq[1] + qq[2] * qq[2])));
             const double PitchDeg = FMath::RadiansToDegrees(
                 FMath::Asin(FMath::Clamp(2.0 * (qq[0] * qq[2] - qq[3] * qq[1]), -1.0, 1.0)));
-            UE_LOG(LogRovBridge, Log,
-                TEXT("[RovBridge][qfrc] t=%.2f applied=(%.1f, %.1f, %.1f, %.1f, %.1f, %.1f)  "
-                     "roll=%.1f° pitch=%.1f°  Z=%.3f  ncon=%d  bias=(%.1f, %.1f, %.1f)  "
-                     "constr=(%.1f, %.1f, %.1f)"),
-                Data->time,
-                Data->qfrc_applied[DofAdr + 0], Data->qfrc_applied[DofAdr + 1],
-                Data->qfrc_applied[DofAdr + 2], Data->qfrc_applied[DofAdr + 3],
-                Data->qfrc_applied[DofAdr + 4], Data->qfrc_applied[DofAdr + 5],
-                RollDeg, PitchDeg, Data->xpos[3 * BodyId + 2], (int32)Data->ncon,
-                Data->qfrc_bias[DofAdr + 3], Data->qfrc_bias[DofAdr + 4], Data->qfrc_bias[DofAdr + 5],
-                Data->qfrc_constraint[DofAdr + 3], Data->qfrc_constraint[DofAdr + 4],
-                Data->qfrc_constraint[DofAdr + 5]);
+            UE_LOG(LogRovBridge, Log, TEXT("[RovBridge][qfrc] t=%.2f applied=(%.1f, %.1f, %.1f, %.1f, %.1f, %.1f)  "
+                                           "roll=%.1f° pitch=%.1f°  Z=%.3f  ncon=%d  bias=(%.1f, %.1f, %.1f)  "
+                                           "constr=(%.1f, %.1f, %.1f)"),
+                   Data->time,
+                   Data->qfrc_applied[DofAdr + 0],
+                   Data->qfrc_applied[DofAdr + 1],
+                   Data->qfrc_applied[DofAdr + 2],
+                   Data->qfrc_applied[DofAdr + 3],
+                   Data->qfrc_applied[DofAdr + 4],
+                   Data->qfrc_applied[DofAdr + 5],
+                   RollDeg,
+                   PitchDeg,
+                   Data->xpos[3 * BodyId + 2],
+                   (int32)Data->ncon,
+                   Data->qfrc_bias[DofAdr + 3],
+                   Data->qfrc_bias[DofAdr + 4],
+                   Data->qfrc_bias[DofAdr + 5],
+                   Data->qfrc_constraint[DofAdr + 3],
+                   Data->qfrc_constraint[DofAdr + 4],
+                   Data->qfrc_constraint[DofAdr + 5]);
         }
     }
     // 【6】实时状态缓存：供 HUD 与外部读取（3.4 / 7.3.1）
@@ -1815,31 +1857,36 @@ void URovMuJoCoBridge::ApplyCachedForce(mjModel_* Model, mjData_* Data)
         double ContactSum = 0.0, Px = 0.0, Py = 0.0, Pz = 0.0;
         double Dx = 0.0, Dy = 0.0, Dz = 0.0;
         mjtNum F6[6] = { 0, 0, 0, 0, 0, 0 };
-        for (int32 i = 0; i < Data->ncon; ++i)
-        {
+        for (int32 i = 0; i < Data->ncon; ++i) {
             const mjContact& C = Data->contact[i];
             const int32 B1 = Model->geom_bodyid[C.geom1];
             const int32 B2 = Model->geom_bodyid[C.geom2];
             bool bTouchesBody = false;
             bool bBody1IsRov = false;
-            for (int32 b : { B1, B2 })
-            {
+            for (int32 b : { B1, B2 }) {
                 bool bInSubtree = false;
                 int32 p = b;
-                while (p > 0)
-                {
-                    if (p == BodyId) { bInSubtree = true; break; }
+                while (p > 0) {
+                    if (p == BodyId) {
+                        bInSubtree = true;
+                        break;
+                    }
                     p = Model->body_parentid[p];
                 }
-                if (b == BodyId) { bInSubtree = true; }
-                if (bInSubtree)
-                {
+                if (b == BodyId) {
+                    bInSubtree = true;
+                }
+                if (bInSubtree) {
                     bTouchesBody = true;
-                    if (b == B1) { bBody1IsRov = true; }
+                    if (b == B1) {
+                        bBody1IsRov = true;
+                    }
                     break;
                 }
             }
-            if (!bTouchesBody) { continue; }
+            if (!bTouchesBody) {
+                continue;
+            }
             mj_contactForce(Model, Data, i, F6);
             ContactSum += FMath::Abs((double)F6[0]);
             // frame[0..2] 是从 geom1 指向 geom2 的法向；作用在本体上的方向取反
@@ -1847,7 +1894,9 @@ void URovMuJoCoBridge::ApplyCachedForce(mjModel_* Model, mjData_* Data)
             Dx += Sign * C.frame[0] * F6[0];
             Dy += Sign * C.frame[1] * F6[0];
             Dz += Sign * C.frame[2] * F6[0];
-            Px = C.pos[0]; Py = C.pos[1]; Pz = C.pos[2];
+            Px = C.pos[0];
+            Py = C.pos[1];
+            Pz = C.pos[2];
         }
         CachedContactForce.store(ContactSum);
         // 接触点存成「相对机体、UE 轴、厘米」的偏移：HUD 直接用
@@ -1859,15 +1908,13 @@ void URovMuJoCoBridge::ApplyCachedForce(mjModel_* Model, mjData_* Data)
         CachedContactPointY.store(-(Py - BY) * 100.0);
         CachedContactPointZ.store((Pz - BZ) * 100.0);
         const double DNorm = FMath::Sqrt(Dx * Dx + Dy * Dy + Dz * Dz);
-        if (DNorm > 1e-9)
-        {
+        if (DNorm > 1e-9) {
             // 法向同样做 Y 镜像，得到 UE 世界系方向
             CachedContactDirX.store(Dx / DNorm);
             CachedContactDirY.store(-Dy / DNorm);
             CachedContactDirZ.store(Dz / DNorm);
         }
-        else
-        {
+        else {
             CachedContactDirX.store(0.0);
             CachedContactDirY.store(0.0);
             CachedContactDirZ.store(0.0);

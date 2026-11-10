@@ -10,23 +10,27 @@
 
 namespace
 {
-    struct FShapeParams
-    {
-        float Cd;
-        float AddedMassCoeff; // 相对 ρ·V 的附加质量系数
-    };
+struct FShapeParams
+{
+    float Cd;
+    float AddedMassCoeff; // 相对 ρ·V 的附加质量系数
+};
 
-    FShapeParams ShapeTable(ERovHullShape Shape)
-    {
-        switch (Shape)
-        {
-        case ERovHullShape::Sphere:      return { 0.47f, 0.50f };
-        case ERovHullShape::Box:         return { 1.05f, 0.70f };
-        case ERovHullShape::Cylinder:    return { 0.82f, 0.60f };
-        case ERovHullShape::Streamlined: return { 0.08f, 0.10f };
-        default:                         return { 0.50f, 0.50f };
-        }
+FShapeParams ShapeTable(ERovHullShape Shape)
+{
+    switch (Shape) {
+    case ERovHullShape::Sphere:
+        return { 0.47f, 0.50f };
+    case ERovHullShape::Box:
+        return { 1.05f, 0.70f };
+    case ERovHullShape::Cylinder:
+        return { 0.82f, 0.60f };
+    case ERovHullShape::Streamlined:
+        return { 0.08f, 0.10f };
+    default:
+        return { 0.50f, 0.50f };
     }
+}
 }
 
 FRovFluidEstimate URovFluidLibrary::EstimateFluidParams(ERovHullShape Shape, FVector Dims, float Density)
@@ -39,8 +43,7 @@ FRovFluidEstimate URovFluidLibrary::EstimateFluidParams(ERovHullShape Shape, FVe
     const float Y = FMath::Max(Dims.Y, KINDA_SMALL_NUMBER);
     const float Z = FMath::Max(Dims.Z, KINDA_SMALL_NUMBER);
 
-    switch (Shape)
-    {
+    switch (Shape) {
     case ERovHullShape::Sphere:
         Out.Volume = 4.0f / 3.0f * PI * X * X * X;
         Out.RefArea = PI * X * X;
@@ -75,24 +78,20 @@ bool RovConfig::LoadKeyValues(const FString& Path, TMap<FString, float>& OutValu
 {
     OutValues.Reset();
     FString Raw;
-    if (!FFileHelper::LoadFileToString(Raw, *Path))
-    {
+    if (!FFileHelper::LoadFileToString(Raw, *Path)) {
         OutError = FString::Printf(TEXT("读取失败：%s"), *Path);
         return false;
     }
 
     TSharedPtr<FJsonObject> Root;
     const TSharedRef<TJsonReader<>> Reader = TJsonReaderFactory<>::Create(Raw);
-    if (!FJsonSerializer::Deserialize(Reader, Root) || !Root.IsValid())
-    {
+    if (!FJsonSerializer::Deserialize(Reader, Root) || !Root.IsValid()) {
         OutError = FString::Printf(TEXT("JSON 解析失败：%s"), *Path);
         return false;
     }
 
-    for (const TPair<FString, TSharedPtr<FJsonValue>>& Pair : Root->Values)
-    {
-        if (!Pair.Value.IsValid() || Pair.Value->Type != EJson::Number)
-        {
+    for (const TPair<FString, TSharedPtr<FJsonValue>>& Pair : Root->Values) {
+        if (!Pair.Value.IsValid() || Pair.Value->Type != EJson::Number) {
             continue;
         }
         OutValues.Add(Pair.Key, static_cast<float>(Pair.Value->AsNumber()));
@@ -104,30 +103,25 @@ bool RovConfig::LoadNumberArray(const FString& Path, const FString& Field, TArra
 {
     OutValues.Reset();
     FString Raw;
-    if (!FFileHelper::LoadFileToString(Raw, *Path))
-    {
+    if (!FFileHelper::LoadFileToString(Raw, *Path)) {
         OutError = FString::Printf(TEXT("读取失败：%s"), *Path);
         return false;
     }
 
     TSharedPtr<FJsonObject> Root;
     const TSharedRef<TJsonReader<>> Reader = TJsonReaderFactory<>::Create(Raw);
-    if (!FJsonSerializer::Deserialize(Reader, Root) || !Root.IsValid())
-    {
+    if (!FJsonSerializer::Deserialize(Reader, Root) || !Root.IsValid()) {
         OutError = FString::Printf(TEXT("JSON 解析失败：%s"), *Path);
         return false;
     }
 
     const TArray<TSharedPtr<FJsonValue>>* Arr = nullptr;
-    if (!Root->TryGetArrayField(Field, Arr) || !Arr)
-    {
+    if (!Root->TryGetArrayField(Field, Arr) || !Arr) {
         OutError = FString::Printf(TEXT("缺少数组字段 %s"), *Field);
         return false;
     }
-    for (const TSharedPtr<FJsonValue>& V : *Arr)
-    {
-        if (V.IsValid() && V->Type == EJson::Number)
-        {
+    for (const TSharedPtr<FJsonValue>& V : *Arr) {
+        if (V.IsValid() && V->Type == EJson::Number) {
             OutValues.Add(static_cast<float>(V->AsNumber()));
         }
     }

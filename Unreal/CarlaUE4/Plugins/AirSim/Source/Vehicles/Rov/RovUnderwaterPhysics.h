@@ -21,15 +21,15 @@ struct FRovOceanCurrent
     /** 分层剖面的一层 */
     struct FLayer
     {
-        float DepthM = 0.0f;        // 深度（负值表示水下）
-        float Speed = 0.0f;         // 流速幅值 m/s
-        float HorizAngle = 0.0f;    // 水平角 rad
-        float VertAngle = 0.0f;     // 垂直角 rad（正 = 向下）
+        float DepthM = 0.0f; // 深度（负值表示水下）
+        float Speed = 0.0f; // 流速幅值 m/s
+        float HorizAngle = 0.0f; // 水平角 rad
+        float VertAngle = 0.0f; // 垂直角 rad（正 = 向下）
     };
 
     // ---------------------------- 配置 ----------------------------
 
-    bool  bEnabled = true;
+    bool bEnabled = true;
 
     // Gauss-Markov
     float MeanSpeed = 0.5f;
@@ -72,9 +72,9 @@ struct FRovOceanCurrent
         Rng.Initialize(Seed);
         if (Layers.Num() == 0) {
             // 与 config.json 的 stratified_layers 一致
-            Layers.Add({    0.0f, 0.0f, 0.0f, 0.0f });
-            Layers.Add({  -10.0f, 0.5f, 0.3f, 0.0f });
-            Layers.Add({  -50.0f, 1.0f, 0.5f, 0.1f });
+            Layers.Add({ 0.0f, 0.0f, 0.0f, 0.0f });
+            Layers.Add({ -10.0f, 0.5f, 0.3f, 0.0f });
+            Layers.Add({ -50.0f, 1.0f, 0.5f, 0.1f });
         }
         // 按深度升序（最深在前）
         Layers.Sort([](const FLayer& A, const FLayer& B) { return A.DepthM < B.DepthM; });
@@ -95,21 +95,19 @@ struct FRovOceanCurrent
     {
         const float SqrtDt = FMath::Sqrt(FMath::Max(Dt, 1e-6f));
 
-        CurSpeed += Mu * (MeanSpeed - CurSpeed) * Dt
-                  + NoiseAmp * SqrtDt * Rng.GetFraction() * 2.0f - NoiseAmp * SqrtDt;
+        CurSpeed += Mu * (MeanSpeed - CurSpeed) * Dt + NoiseAmp * SqrtDt * Rng.GetFraction() * 2.0f - NoiseAmp * SqrtDt;
         CurSpeed = FMath::Clamp(CurSpeed, 0.0f, MaxSpeed);
 
-        CurHoriz += (Mu * (MeanHorizAngle - CurHoriz)
-                   + NoiseAmp * SqrtDt * (Rng.GetFraction() * 2.0f - 1.0f)) * Dt;
-        CurVert += (Mu * (MeanVertAngle - CurVert)
-                   + NoiseAmp * SqrtDt * (Rng.GetFraction() * 2.0f - 1.0f)) * Dt;
+        CurHoriz += (Mu * (MeanHorizAngle - CurHoriz) + NoiseAmp * SqrtDt * (Rng.GetFraction() * 2.0f - 1.0f)) * Dt;
+        CurVert += (Mu * (MeanVertAngle - CurVert) + NoiseAmp * SqrtDt * (Rng.GetFraction() * 2.0f - 1.0f)) * Dt;
 
         const float CosV = FMath::Cos(CurVert);
         // NED(Z 向下) → MuJoCo(Z 向上)：vz 取反
         return FVector(
             CurSpeed * CosV * FMath::Cos(CurHoriz),
             CurSpeed * CosV * FMath::Sin(CurHoriz),
-            -CurSpeed * FMath::Sin(CurVert));    }
+            -CurSpeed * FMath::Sin(CurVert));
+    }
 
     /** 分层层：按深度线性插值 */
     FVector StratifiedAt(float DepthM) const
@@ -131,7 +129,8 @@ struct FRovOceanCurrent
             if (DepthM >= Layers[i].DepthM && DepthM <= Layers[i + 1].DepthM) {
                 const float Span = Layers[i + 1].DepthM - Layers[i].DepthM;
                 const float T = (Span > KINDA_SMALL_NUMBER)
-                    ? (DepthM - Layers[i].DepthM) / Span : 0.0f;
+                                    ? (DepthM - Layers[i].DepthM) / Span
+                                    : 0.0f;
                 return FMath::Lerp(LayerVec(Layers[i]), LayerVec(Layers[i + 1]), T);
             }
         }
@@ -163,7 +162,7 @@ struct FRovOceanCurrent
         if (!bEnabled) return FVector::ZeroVector;
 
         const FVector VGM = UpdateGaussMarkov(Dt);
-        const FVector VStrat = StratifiedAt(-Pos.Z);   // z 向上 → 深度取反
+        const FVector VStrat = StratifiedAt(-Pos.Z); // z 向上 → 深度取反
         const FVector VTurb = TurbulentAt(Pos);
         LastVelocity = VGM + VStrat + VTurb;
         return LastVelocity;
@@ -207,7 +206,7 @@ struct FRovPIDDepthController
         const float Error = TargetZ - CurrentZ;
 
         IntegralError += Error * Dt;
-        IntegralError = FMath::Clamp(IntegralError, -100.0f, 100.0f);   // anti-windup
+        IntegralError = FMath::Clamp(IntegralError, -100.0f, 100.0f); // anti-windup
 
         const float Derivative = (Dt > KINDA_SMALL_NUMBER) ? (Error - PrevError) / Dt : 0.0f;
 

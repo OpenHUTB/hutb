@@ -12,10 +12,10 @@
 UENUM(BlueprintType)
 enum class ERovHullShape : uint8
 {
-    Sphere        UMETA(DisplayName = "球体"),
-    Box           UMETA(DisplayName = "立方体/长方体"),
-    Cylinder      UMETA(DisplayName = "圆柱"),
-    Streamlined   UMETA(DisplayName = "流线型"),
+    Sphere UMETA(DisplayName = "球体"),
+    Box UMETA(DisplayName = "立方体/长方体"),
+    Cylinder UMETA(DisplayName = "圆柱"),
+    Streamlined UMETA(DisplayName = "流线型"),
 };
 
 /** 由外形估算出的流体受力参数。 */
@@ -68,12 +68,12 @@ public:
 /** 配置文件读取。 */
 namespace RovConfig
 {
-    /**
+/**
      * 读取扁平 JSON 配置文件（键为字符串，值为数值）。
      * 数组与嵌套对象会被忽略，由调用方单独解析。
      */
-    bool LoadKeyValues(const FString& Path, TMap<FString, float>& OutValues, FString& OutError);
+bool LoadKeyValues(const FString& Path, TMap<FString, float>& OutValues, FString& OutError);
 
-    /** 读取配置文件里的数值数组字段（如 "Obstacles" 之外的一维数组）。 */
-    bool LoadNumberArray(const FString& Path, const FString& Field, TArray<float>& OutValues, FString& OutError);
+/** 读取配置文件里的数值数组字段（如 "Obstacles" 之外的一维数组）。 */
+bool LoadNumberArray(const FString& Path, const FString& Field, TArray<float>& OutValues, FString& OutError);
 }

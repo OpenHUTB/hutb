@@ -14,9 +14,9 @@ class UStaticMeshComponent;
 UENUM(BlueprintType)
 enum class ERovObstacleType : uint8
 {
-    Pipe   UMETA(DisplayName = "管道"),
-    Frame  UMETA(DisplayName = "框架"),
-    Reef   UMETA(DisplayName = "礁石"),
+    Pipe UMETA(DisplayName = "管道"),
+    Frame UMETA(DisplayName = "框架"),
+    Reef UMETA(DisplayName = "礁石"),
 };
 
 /** 单个障碍定义。位置相对锚点（通常是 ROV 出生点），单位 cm。 */

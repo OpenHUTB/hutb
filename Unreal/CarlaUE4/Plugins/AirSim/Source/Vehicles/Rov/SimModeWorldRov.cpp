@@ -26,18 +26,15 @@ void ASimModeWorldRov::BeginPlay()
     initializeForPlay();
 
     // 障碍物场景（7.3.2）：管道 / 框架 / 礁石，可被关卡里手动摆放的实例替代
-    if (bSpawnObstacleField && GetWorld())
-    {
+    if (bSpawnObstacleField && GetWorld()) {
         FActorSpawnParameters SpawnParams;
         SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
         ARovObstacleField* Field = GetWorld()->SpawnActor<ARovObstacleField>(ARovObstacleField::StaticClass(), FTransform::Identity, SpawnParams);
-        if (Field)
-        {
+        if (Field) {
             // 以 ROV 出生点为锚点，保证视觉代理与 MJCF 里的碰撞几何体位置一致
             TArray<AActor*> Pawns;
             getExistingVehiclePawns(Pawns);
-            if (Pawns.Num() > 0 && Pawns[0])
-            {
+            if (Pawns.Num() > 0 && Pawns[0]) {
                 Field->AnchorActor = Pawns[0];
                 Field->Rebuild();
             }
@@ -46,10 +43,8 @@ void ASimModeWorldRov::BeginPlay()
     }
 
     // 实时状态面板 + 力/速度向量（3.4 / 7.3.1）
-    if (bSpawnStatusHUD && GetWorld())
-    {
-        if (APlayerController* PC = GetWorld()->GetFirstPlayerController())
-        {
+    if (bSpawnStatusHUD && GetWorld()) {
+        if (APlayerController* PC = GetWorld()->GetFirstPlayerController()) {
             PC->ClientSetHUD(ARovStatusHUD::StaticClass());
             UE_LOG(LogTemp, Log, TEXT("[RovScene] 实时状态面板已启用"));
         }

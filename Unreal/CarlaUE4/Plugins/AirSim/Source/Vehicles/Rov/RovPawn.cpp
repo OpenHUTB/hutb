@@ -188,10 +188,13 @@ void ARovPawn::Tick(float DeltaSeconds)
 
     if (bHasInput) {
         std::vector<float> pwms(8, 0.0f);
-        pwms[0] = vert; pwms[1] = vert; pwms[2] = vert; pwms[3] = vert;
-        pwms[4] += fwd * 1.0f  + lat * -1.0f + yaw * 1.0f;
-        pwms[5] += fwd * 1.0f  + lat * 1.0f  + yaw * -1.0f;
-        pwms[6] += fwd * -1.0f + lat * 1.0f  + yaw * -1.0f;
+        pwms[0] = vert;
+        pwms[1] = vert;
+        pwms[2] = vert;
+        pwms[3] = vert;
+        pwms[4] += fwd * 1.0f + lat * -1.0f + yaw * 1.0f;
+        pwms[5] += fwd * 1.0f + lat * 1.0f + yaw * -1.0f;
+        pwms[6] += fwd * -1.0f + lat * 1.0f + yaw * -1.0f;
         pwms[7] += fwd * -1.0f + lat * -1.0f + yaw * 1.0f;
 
         for (int i = 0; i < 8; ++i) {
