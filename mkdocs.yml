@@ -33,6 +33,7 @@ nav:
   - 'Python API': 'python_api.md'
   - 'Catalogue': 'catalogue.md'  
   - 'C++ reference': 'ref_cpp.md'
+  - 'Console commands': 'ref_console_commands.md'
   - 'Blueprint library': 'bp_library.md'  
   - 'Tutorials': 'tutorials.md'
   - 'Extended documentation': 'ext_docs.md'
