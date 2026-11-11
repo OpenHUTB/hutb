@@ -170,12 +170,14 @@ if %DO_PACKAGE%==true (
         -WaitMutex^
         -FromMsBuild^
         "%ROOT_PATH%Unreal/CarlaUE4/CarlaUE4.uproject"
+    rem 限制并发编译进程数，避免低内存机器编译引擎时出现 C1076/C3859（编译器 OOM）
     call "%UE4_ROOT%\Engine\Build\BatchFiles\Build.bat"^
         CarlaUE4Editor^
         Win64^
         Development^
         -WaitMutex^
         -FromMsBuild^
+        -MaxParallelActions=8^
         "%ROOT_PATH%Unreal/CarlaUE4/CarlaUE4.uproject"
 
     if errorlevel 1 goto error_build_editor
@@ -194,6 +196,7 @@ if %DO_PACKAGE%==true (
         %PACKAGE_CONFIG%^
         -WaitMutex^
         -FromMsBuild^
+        -MaxParallelActions=8^
         "%ROOT_PATH%Unreal/CarlaUE4/CarlaUE4.uproject"
 
     if errorlevel 1 goto error_build
