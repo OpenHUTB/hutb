@@ -1148,7 +1148,7 @@
 <li>Script filename: <code>bounding_boxes.py</code></li>
 <li>Example usage: <code>python3 bounding_boxes.py -d 100</code> </li>
 </ul>
-<p>This script demonstrates how to derive 3D and 2D bounding boxes through the Python API and visualize them projected into a camera viewplane. The script also has the facitlity to record both 3D and 2D bounding boxes in JSON format alongside camera frames in PNG. The bounding boxes are visualized in a Pygame window. The visualization can be switched between the 3D and 2D bounding boxes using the <em>2</em> and <em>3</em> number keys. A distance threshold can be set as a command line argument, bounding boxes beyond this threshold will not be visualized or recorded.</p>
+<p>This script demonstrates how to derive 3D and 2D bounding boxes through the Python API and visualize them projected into a camera viewplane. The script also has the facitlity to record both 3D and 2D bounding boxes in JSON format alongside camera frames in PNG. The bounding boxes are visualized in a Pygame window. The visualization can be switched between the 3D and 2D bounding boxes using the <em>2</em> and <em>3</em> number keys. A distance threshold can be set as a command line argument, bounding boxes beyond this threshold will not be visualized or recorded. Actors that are completely occluded by other objects (no pixel of the actor is visible in the instance segmentation image) are not visualized or recorded either, unless <code>--show-occluded</code> is passed. Partially occluded actors are kept.</p>
 <ul>
 <li>
 <p><strong>3D bounding boxes</strong>: The 3D bounding box coordinates are given in the vehicle's local coordinate system, centered on the center of the vehicle's bounding box. For visualization the 3D bounding boxes are projected into the camera plane using the camera's intrinsic parameters. They are derived from each actor's <code>bounding_box</code> attribute.</p>
@@ -1218,6 +1218,12 @@
 <td></td>
 <td>1280x720</td>
 <td>Pixel resolution of the camera sensor (including the instance segmentation camera)</td>
+</tr>
+<tr>
+<td>--show-occluded</td>
+<td></td>
+<td>Not active</td>
+<td>Also visualize and record completely occluded actors (their 2D bounding box is <code>null</code> in the JSON)</td>
 </tr>
 </tbody>
 </table>
