@@ -1,7 +1,19 @@
 chcp 65001
 
-rem unset http_proxy
-rem unset https_proxy
+rem ============================================================================
+rem -- Proxy: enable the local proxy only when it is reachable -----------------
+rem ============================================================================
+set "HUTB_PROXY_URL=http://127.0.0.1:8668"
+powershell -NoProfile -Command "$c = New-Object Net.Sockets.TcpClient; try { $c.Connect('127.0.0.1', 8668); exit 0 } catch { exit 1 } finally { $c.Dispose() }" >nul 2>&1
+if errorlevel 1 (
+    echo [setEnv64] proxy 127.0.0.1:8668 not available, http_proxy/https_proxy cleared
+    set "http_proxy="
+    set "https_proxy="
+) else (
+    echo [setEnv64] proxy 127.0.0.1:8668 detected
+    if not defined http_proxy set "http_proxy=%HUTB_PROXY_URL%"
+    if not defined https_proxy set "https_proxy=%HUTB_PROXY_URL%"
+)
 
 :: python.exe
 set PATH=C:\software\anaconda3;%PATH%
