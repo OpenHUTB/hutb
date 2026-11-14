@@ -177,11 +177,12 @@
 <li>To record a trial, check <strong>Record driving data</strong>. The default target rate is <strong>120 Hz</strong> (set to <strong>20 Hz</strong> for lightweight classroom sessions) and enter or select a participant ID and output directory. Optional switches:</li>
 <li><strong>Record viewport screenshots</strong> (default <strong>20 Hz</strong>, 640x480 JPEG; optionally check <strong>Async screenshots</strong> so GPU readback and JPEG encoding do not block the game thread).</li>
 <li><strong>120 Hz eye-tracking thread</strong> (polls the eye tracker on a dedicated background thread and runs the online I-VT saccade detector at 120 Hz).</li>
+<li><strong>Record controller poses</strong> (opt-in; appends 18 hand-pose columns for both controllers, used by the upper-limb musculoskeletal replay below).</li>
 <li><strong>Render quality downgrade</strong> (explicitly sets <code>sg.ShadowQuality 0</code>, <code>sg.EffectsQuality 0</code>, <code>sg.PostProcessQuality 0</code>; off by default so normal launches preserve existing scalability settings).</li>
 <li>Click <strong>Check Settings</strong>, then click <strong>Start VR</strong> once preflight succeeds. The launcher starts Pimax Play, SteamVR, and the simulator in order.</li>
 <li>When driving with a racing wheel, press and release the throttle and brake pedals once before starting the trial to calibrate pedal travel. After exiting the simulator, click <strong>Open Data Directory</strong> to inspect the generated CSV files.</li>
 </ol>
-<p>Recording is off by default. Each recorded run creates a new <code>&lt;session&gt;.csv</code> (71 columns) and <code>&lt;session&gt;_gaze.csv</code> (18 columns) without overwriting previous sessions. The default output root is <code>Unreal/CarlaUE4/Saved/DrivingStudy/</code> in a source build or <code>CarlaUE4/Saved/DrivingStudy/</code> in a packaged build; when a valid participant name is provided and recording or screenshots are enabled, files are placed under <code>&lt;OutputDir&gt;/&lt;Participant&gt;/</code>. Reloading the map or respawning the ego vehicle starts a new session file.</p>
+<p>Recording is off by default. Each recorded run creates a new <code>&lt;session&gt;.csv</code> (71 columns, or 89 with hand pose enabled) and <code>&lt;session&gt;_gaze.csv</code> (18 columns) without overwriting previous sessions. The default output root is <code>Unreal/CarlaUE4/Saved/DrivingStudy/</code> in a source build or <code>CarlaUE4/Saved/DrivingStudy/</code> in a packaged build; when a valid participant name is provided and recording or screenshots are enabled, files are placed under <code>&lt;OutputDir&gt;/&lt;Participant&gt;/</code>. Reloading the map or respawning the ego vehicle starts a new session file.</p>
 <p>When the racing wheel input mode is selected, VR controllers and the keyboard no longer drive steering, throttle, brake, gear shift, or turn signals (controllers still adjust camera/seat pose). When the controller input mode is selected, racing wheel driving axes are ignored and standard keyboard shortcuts remain available. If the racing wheel disconnects or read fails during wheel mode, full brake is applied and reconnection is retried every 2 seconds.</p>
 <p>If the wheel does not respond, inspect <code>Unreal/CarlaUE4/Saved/Logs/CarlaUE4.log</code>:
 - <code>Logitech SDK initialize: success</code> indicates the DirectInput/Logitech SDK initialized.
@@ -193,11 +194,11 @@
 <ul>
 <li>Use <code>-InputDevice controller</code> for VR controller mode; omit <code>-RecordDriving</code> when recording is not needed.</li>
 <li>Pass <code>-RecordHz 20</code> for lightweight 20 Hz logging, or <code>-RecordDirectory &lt;local absolute path&gt;</code> to customize the output directory.</li>
-<li>Optional flags: <code>-ScreenshotDriving -ScreenshotHz 20</code> (also honors <code>-RecordDirectory</code> when used standalone), <code>-AsyncScreenshot</code>, <code>-EyeThreadHz 120</code>, and <code>-PerfDowngrade</code>.</li>
+<li>Optional flags: <code>-ScreenshotDriving -ScreenshotHz 20</code> (also honors <code>-RecordDirectory</code> when used standalone), <code>-AsyncScreenshot</code>, <code>-EyeThreadHz 120</code>, <code>-HandPose</code>, and <code>-PerfDowngrade</code>.</li>
 </ul>
 <p>Building from source requires <code>LogitechWheelPlugin</code> and <code>SteamVR</code> enabled in <code>CarlaUE4.uproject</code>.</p>
 <h2 id="csv-schema">CSV Schema</h2>
-<h3 id="1-primary-driving-table-sessioncsv-71-columns">1. Primary Driving Table <code>&lt;session&gt;.csv</code> (71 Columns)</h3>
+<h3 id="1-primary-driving-table-sessioncsv-71-columns-89-with-hand-pose">1. Primary Driving Table <code>&lt;session&gt;.csv</code> (71 Columns, 89 with Hand Pose)</h3>
 <p>Each row represents one game-thread sample combining current eye-tracking state, focus raycast hit, head pose, online saccade metrics, vehicle kinematics, control inputs, OpenDRIVE road location, and affecting traffic light state.</p>
 <table>
 <thead>
@@ -209,7 +210,7 @@
 <tbody>
 <tr>
 <td><code>schema_version</code></td>
-<td>CSV schema version (<code>2</code>)</td>
+<td>CSV schema version (<code>3</code>; was <code>2</code> before the hand-pose columns existed)</td>
 </tr>
 <tr>
 <td><code>ue_frame</code>, <code>sim_time_s</code>, <code>host_elapsed_s</code></td>
@@ -305,6 +306,45 @@
 </tr>
 </tbody>
 </table>
+<h4 id="optional-hand-pose-columns-18-handpose-record-controller-poses">Optional Hand-Pose Columns (18, <code>-HandPose</code> / <strong>Record controller poses</strong>)</h4>
+<p>Inserted before <code>sample_dt_ms</code> and filled only when <code>-DReyeVRHandPose</code> reaches the engine (launcher: <code>-HandPose</code>, GUI: <strong>记录手柄位姿</strong>). With the option off the 18 columns are still present but empty, so the column count never changes at read time; the number of <em>filled</em> columns does.</p>
+<table>
+<thead>
+<tr>
+<th>Column</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>hand_l_valid</code>, <code>hand_r_valid</code></td>
+<td><code>1</code> when the runtime reported a valid tracked pose for that controller this frame, otherwise <code>0</code></td>
+</tr>
+<tr>
+<td><code>hand_l_x_m</code>, <code>hand_l_y_m</code>, <code>hand_l_z_m</code>, <code>hand_r_x_m</code>, <code>hand_r_y_m</code>, <code>hand_r_z_m</code></td>
+<td>Controller (grip) frame origin, <strong>OpenVR standing tracking space, metres</strong></td>
+</tr>
+<tr>
+<td><code>hand_l_pitch_deg</code>, <code>hand_l_yaw_deg</code>, <code>hand_l_roll_deg</code>, <code>hand_r_pitch_deg</code>, <code>hand_r_yaw_deg</code>, <code>hand_r_roll_deg</code></td>
+<td>Controller orientation decomposed directly from the right-handed OpenVR column-basis matrix as intrinsic <code>Y(yaw)-X(pitch)-Z(roll)</code> Euler angles (deg)</td>
+</tr>
+<tr>
+<td><code>hand_l_trigger</code>, <code>hand_r_trigger</code></td>
+<td>Trigger axis from the legacy OpenVR <code>rAxis[0]</code>, nominally <code>0..1</code></td>
+</tr>
+<tr>
+<td><code>hand_l_grip</code>, <code>hand_r_grip</code></td>
+<td>Grip/squeeze axis from <code>rAxis[1]</code>, nominally <code>0..1</code></td>
+</tr>
+</tbody>
+</table>
+<p>Honest limits, read before analysing:</p>
+<ul>
+<li>Poses are in the <strong>OpenVR standing tracking space in metres</strong>, not UE/CARLA world space. They are not comparable with <code>head_*_m</code>, <code>vehicle_*_m</code>, or any <code>focus_*_m</code> column without an explicit transform; the same trial re-centred in SteamVR (or a different play-space) yields different numbers for identical hand motion.</li>
+<li><code>trigger</code>/<code>grip</code> come from the legacy OpenVR axis array (<code>rAxis[0]</code>, <code>rAxis[1]</code>). On Pimax Dream Air under SteamVR they currently read <code>0.000</code>, while unpopulated axes (&lt; <code>-0.5</code>) are written empty; verify axis variation before treating <code>0.000</code> as "not pressed".</li>
+<li><strong>No finger joints are recorded.</strong> A controller only exposes a rigid 6-DoF pose plus two scalar axes; there is no per-finger curl. Finger posture must be assumed (see the replay notes below).</li>
+<li>Columns stay empty when <code>hand_*_valid=0</code>, when the option is off, or outside VR.</li>
+</ul>
 <h3 id="2-high-frequency-gaze-stream-session_gazecsv-18-columns">2. High-Frequency Gaze Stream <code>&lt;session&gt;_gaze.csv</code> (18 Columns)</h3>
 <p>Recorded on the eye tracker's native sample grid with closed-event saccade verdicts:</p>
 <table>
@@ -337,7 +377,9 @@
 </tr>
 </tbody>
 </table>
-<p>Coordinates use the UE/CARLA left-handed coordinate system (X forward, Y right, Z up) with large-map origin offset support. When <code>gaze_valid=0</code>, vehicle and road columns are still written while gaze and focus coordinates remain empty.</p>
+<p>Coordinates use the UE/CARLA left-handed coordinate system (X forward, Y right, Z up) with large-map origin offset support. The only exception is the optional <code>hand_*</code> block, which is raw OpenVR tracking space in metres. When <code>gaze_valid=0</code>, vehicle and road columns are still written while gaze and focus coordinates remain empty.</p>
+<h2 id="musculoskeletal-replay">Musculoskeletal Replay</h2>
+<p>A recorded <code>hand_*</code> block can drive an upper-limb digital human offline: <code>Util/HandPose/record_hands.py</code> captures controller + HMD poses directly (no simulator needed) and <code>Util/HandPose/replay_arms.py</code> replays a CSV through MuJoCo's MS-Human-700 model with coupled anatomical IK, steering-wheel geometry/rotation (<code>steer_input</code>), controller-housing rim offset compensation, and inverse-dynamics muscle activation coloring, writing an MP4 plus first/mid/last stills. Both the live VR pawn (<code>ADReyeVRPawn</code>) and <code>replay_arms.py</code> share a one-shot auto-calibrator (<code>FDReyeVRAutoCalibrator</code>: <code>&gt;= 5 s</code> continuous head stillness within <code>5 cm / 6 deg</code> followed by steering wheel rotation <code>&gt;= 0.015</code>, ~<code>6.8 deg</code> on a <code>900 deg</code> wheel) so drivers do not need to trigger manual VR recentering or hand calibration. Set-up, exact commands (<code>--start</code>, <code>--fit</code>, <code>--raw-hands</code>, <code>--no-muscle</code>), and honest limits (static pre-curled fingers, static seated legs, model-inferred muscle activations rather than EMG, controller-shell offset compensation vs <code>--raw-hands</code>, and reach-sphere clamping) are in <a href="../Util/HandPose/README.md"><code>Util/HandPose/README.md</code></a>.</p>
 <h2 id="example-filter-queries">Example Filter Queries</h2>
 <ul>
 <li><strong>Gaze allocation during turns:</strong> filter <code>in_junction=1</code>, <code>motion</code> in <code>left</code>/<code>right</code>, and <code>gaze_valid=1</code>, then compare <code>steer_input</code>, <code>gaze_local_*</code>, <code>head_yaw_deg</code>, and <code>focus_*</code>.</li>
