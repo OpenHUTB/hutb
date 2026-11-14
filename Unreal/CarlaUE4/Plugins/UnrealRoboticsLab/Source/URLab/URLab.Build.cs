@@ -74,6 +74,11 @@ public class URLab : ModuleRules
 			// Add dynamically loaded modules here
 		});
 
+		// 显式声明公共头目录。部分引擎构建（CI 使用的 Build\engine）默认关闭
+		// legacy public include paths，依赖模块（如 AirSim 的 RovMuJoCoBridge.cpp）
+		// 会找不到 MuJoCo/Core/*.h。
+		PublicIncludePaths.Add(Path.Combine(ModuleDirectory, "Public"));
+
 		if (Target.Platform == UnrealTargetPlatform.Win64)
 		{
 			PublicSystemLibraries.AddRange(new string[]
