@@ -3,6 +3,7 @@
 #include "Camera/CameraComponent.h" // UCameraComponent
 #include "Engine/Scene.h"           // FPostProcessSettings
 #include "GameFramework/Pawn.h"     // CreatePlayerInputComponent
+#include "HandPose.h"               // FDReyeVRAutoCalibrator
 
 #ifndef _WIN32
 // can only use LogitechWheel plugin on Windows! :(
@@ -145,6 +146,9 @@ class ADReyeVRPawn : public APawn
     bool bShifterReverseLast = false;
     int32 WheelProbeCount = 0;
     bool bIsHMDConnected = false;  // checks for HMD connection on BeginPlay
+    float LatestWheelNormalized = 0.f;
+    FDReyeVRAutoCalibrator AutoCalibrator;
+    void TickAutoCalibrateVR(float DeltaTime);
     // default logi plugin behaviour is to set things to 0.5 for some reason
     // "Pedals will output a value of 0.5 until the wheel/pedals receive any kind of input."
     // https://github.com/HARPLab/LogitechWheelPlugin

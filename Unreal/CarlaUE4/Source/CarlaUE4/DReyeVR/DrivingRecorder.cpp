@@ -2,6 +2,7 @@
 #include "DrivingStudy.h"
 #include "EgoVehicle.h"
 #include "DReyeVRPawn.h"
+#include "HandPose.h"
 #include "CarlaUE4.h"
 #include "Carla/Game/CarlaStatics.h"
 #include "Carla/Traffic/TrafficLightBase.h"
@@ -107,6 +108,10 @@ void FDrivingRecorder::Start()
     // UTF-8 BOM allows Excel to open non-English map/actor names correctly.
     uint8 Bom[] = {0xef, 0xbb, 0xbf};
     File->Serialize(Bom, sizeof(Bom));
+    // Opt-in: the 18 hand columns are always in the header, but are only sampled when the
+    // flag is present. Without the flag they stay empty and the row width is unchanged.
+    bRecordHandPose = FParse::Param(FCommandLine::Get(), TEXT("DReyeVRHandPose"));
+    if (bRecordHandPose) LOG("Driving study: hand pose columns ON (tracking space, metres)");
     const FString Header =
         TEXT("schema_version,ue_frame,sim_time_s,host_elapsed_s,eye_device_timestamp_ms,input_mode,wheel_connected,")
         TEXT("autopilot,map,vehicle_id,road_id,lane_id,road_s_m,junction_id,in_junction,motion,yaw_rate_deg_s,")
@@ -121,6 +126,11 @@ void FDrivingRecorder::Start()
         TEXT("gaze_h_deg,gaze_v_deg,")
         TEXT("focus_actor_yaw_deg,focus_actor_pitch_deg,focus_actor_roll_deg,")
         TEXT("gaze_velocity_deg_s,saccade_state,saccade_onset_s,saccade_amplitude_deg,saccade_peak_velocity_deg_s,")
+        // --- schema v3: hand pose (empty unless -DReyeVRHandPose), kept before the timing column ---
+        TEXT("hand_l_valid,hand_l_x_m,hand_l_y_m,hand_l_z_m,hand_l_pitch_deg,hand_l_yaw_deg,hand_l_roll_deg,")
+        TEXT("hand_l_trigger,hand_l_grip,")
+        TEXT("hand_r_valid,hand_r_x_m,hand_r_y_m,hand_r_z_m,hand_r_pitch_deg,hand_r_yaw_deg,hand_r_roll_deg,")
+        TEXT("hand_r_trigger,hand_r_grip,")
         TEXT("sample_dt_ms\r\n");
     CsvFieldCount = CountFields(Header);
     Write(Header);
@@ -404,7 +414,7 @@ void FDrivingRecorder::Record(AEgoVehicle &Vehicle, const DReyeVR::AggregateData
     auto *Light = Controller && IsValid(Controller->GetTrafficLight()) ? Controller->GetTrafficLight() : nullptr;
     const FString State = LightState(Light);
     const auto *Pawn = Vehicle.GetDrivingPawn();
-    TArray<FString> Row = {TEXT("2"), LexToString(GFrameCounter), Number(Time),
+    TArray<FString> Row = {TEXT("3"), LexToString(GFrameCounter), Number(Time),
         Number(FPlatformTime::Seconds() - StartHost), LexToString(Data.GetTimestampDevice()), DrivingStudy::InputMode(),
         Pawn && Pawn->GetIsLogiConnected() ? TEXT("1") : TEXT("0"), Vehicle.GetAutopilotStatus() ? TEXT("1") : TEXT("0"),
         DrivingStudy::Csv(Episode ? Episode->GetMapName() : World->GetMapName()), ActorId(Episode, &Vehicle)};
@@ -548,6 +558,18 @@ void FDrivingRecorder::Record(AEgoVehicle &Vehicle, const DReyeVR::AggregateData
     {
         LastGazeLocal = GazeLocal;
         bHasLastGaze = true;
+    }
+
+    // --- schema v3: hand pose (opt-in, 18 columns) ---
+    if (bRecordHandPose)
+    {
+        FDReyeVRHandPosePair Poses;
+        SampleHandPoses(Poses); // clears the pair and leaves the fields empty when there is no session
+        AppendHandPoseColumns(Row, Poses);
+    }
+    else
+    {
+        for (int32 Field = 0; Field < 18; ++Field) Row.Add(TEXT(""));
     }
 
     // --- schema v2: timing quality ---

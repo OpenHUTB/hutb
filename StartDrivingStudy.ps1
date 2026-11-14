@@ -119,6 +119,14 @@ $asyncShot=New-Object Windows.Forms.CheckBox
 $asyncShot.Text='异步截图（实验）'
 $asyncShot.Location=New-Object Drawing.Point(516,296); $asyncShot.Size=New-Object Drawing.Size(132,28)
 $form.Controls.Add($asyncShot)
+# Opt-in hand pose: the engine appends 18 columns (both controller poses + trigger/grip)
+# to the driving CSV. Default OFF, so the column count stays 71 unless asked for. It sits in
+# the free 23 px band between the eye-tracking row (ends y=324) and the data-root row
+# (starts y=347); the -ValidateOnly geometry guard asserts it overlaps nothing.
+$hands=New-Object Windows.Forms.CheckBox
+$hands.Text='记录手柄位姿（双手 6DoF + 扳机/握把，上肢数字人用）'
+$hands.Location=New-Object Drawing.Point(18,325); $hands.Size=New-Object Drawing.Size(490,21)
+$form.Controls.Add($hands)
 Label '数据根目录' 351
 $outputDir=TextBox (Join-Path $projectDir 'Saved\DrivingStudy') 347
 Label '被试' 391
@@ -238,6 +246,7 @@ function Get-LaunchArgs([bool]$OnlyCheck) {
     if ($eyeHz.Checked) {
         $values+=@('-EyeThreadHz','120')
     }
+    if ($hands.Checked) { $values+='-HandPose' }
     if ($perf.Checked) { $values+='-PerfDowngrade' }
     $cvars=$perfCvars.Text.Trim()
     if ($cvars) { $values+=@('-PerfCvars',$cvars) }
@@ -292,7 +301,7 @@ if ($CheckOnly) {
     if ($script:child.ExitCode -ne 0) { throw $script:stderr.Result }
     $script:child.Dispose(); $script:child=$null
 } elseif ($ValidateOnly) {
-    if ($form.Controls.Count -lt 25 -or $rate.Value -ne 120 -or $record.Checked -or $screenshot.Checked -or $screenshotRate.Value -ne 20 -or $perf.Checked -or $eyeHz.Checked -or $asyncShot.Checked) { throw 'Invalid UI defaults' }
+    if ($form.Controls.Count -lt 26 -or $rate.Value -ne 120 -or $record.Checked -or $screenshot.Checked -or $screenshotRate.Value -ne 20 -or $perf.Checked -or $eyeHz.Checked -or $asyncShot.Checked -or $hands.Checked) { throw 'Invalid UI defaults' }
     if (-not $perfCvars.Enabled -or $perfCvars.Text) { throw 'Extra render arguments must start empty but editable.' }
     if ($participant.DropDownStyle -ne 'DropDown') { throw 'Participant box must allow typing a new name.' }
     if ((Valid-ParticipantName 'S01') -ne $true) { throw 'A legal participant name was rejected.' }
@@ -348,6 +357,12 @@ if ($CheckOnly) {
     $eyeIndex=[Array]::IndexOf($eyeArgs,'-EyeThreadHz')
     if ($eyeIndex -lt 0 -or $eyeArgs[$eyeIndex+1] -ne '120') { throw 'Eye 120 Hz mode is not passed to the launcher.' }
     $eyeHz.Checked=$false
+    # Hand pose is opt-in and must reach the child launcher only while it is checked.
+    if (@(Get-LaunchArgs $true) -contains '-HandPose') { throw 'Hand pose leaks into the command line while unchecked.' }
+    $hands.Checked=$true
+    if (@(Get-LaunchArgs $true) -notcontains '-HandPose') { throw 'Hand pose is not passed to the launcher.' }
+    $hands.Checked=$false
+    if (@(Get-LaunchArgs $true) -contains '-HandPose') { throw 'Unticking hand pose must drop -HandPose.' }
     # Async screenshots are opt-in, ride along with the screenshot option, and must reach the launcher.
     $participant.Text='S01'
     if ((Get-LaunchArgs $true) -contains '-AsyncScreenshot') { throw 'Async screenshots leak into the command line while unchecked.' }
@@ -369,6 +384,6 @@ if ($CheckOnly) {
             if ($boxes[$i].IntersectsWith($boxes[$j])) { throw "Controls overlap: $($names[$i]) and $($names[$j])." }
         }
     }
-    Write-Output 'PASS: launcher UI constructs; recording defaults OFF; 120 Hz; screenshots OFF; 20 Hz; render downgrade OFF; extra render args empty; eye 120 Hz thread OFF; async screenshots OFF; controller default; per-participant subfolder; map+vehicle discovery; layout clean.'
+    Write-Output 'PASS: launcher UI constructs; recording defaults OFF; 120 Hz; screenshots OFF; 20 Hz; render downgrade OFF; extra render args empty; eye 120 Hz thread OFF; async screenshots OFF; hand pose OFF; controller default; per-participant subfolder; map+vehicle discovery; layout clean.'
 } else { [void]$form.ShowDialog() }
 $timer.Dispose(); $form.Dispose()

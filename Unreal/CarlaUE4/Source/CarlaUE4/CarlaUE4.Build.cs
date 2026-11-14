@@ -46,6 +46,13 @@ public class CarlaUE4 : ModuleRules
         // Add module for SteamVR support with UE4
         PublicDependencyModuleNames.AddRange(new string[] { "HeadMountedDisplay" });
 
+        // SteamVR controller poses (DReyeVR hand-pose CSV columns) live in the engine's
+        // OpenVR third-party module, which only ships Win64 libs for this project.
+        if (Target.Platform == UnrealTargetPlatform.Win64)
+        {
+            PublicDependencyModuleNames.AddRange(new string[] { "OpenVR" });
+        }
+
         if (IsWindows(Target))
         {
             bEnableExceptions = true; // enable unwind semantics for C++-style exceptions
