@@ -170,12 +170,14 @@ if %DO_PACKAGE%==true (
         -WaitMutex^
         -FromMsBuild^
         "%ROOT_PATH%Unreal/CarlaUE4/CarlaUE4.uproject"
+    rem 限制并发编译进程数，避免低内存机器编译引擎时出现 C1076/C3859（编译器 OOM）
     call "%UE4_ROOT%\Engine\Build\BatchFiles\Build.bat"^
         CarlaUE4Editor^
         Win64^
         Development^
         -WaitMutex^
         -FromMsBuild^
+        -MaxParallelActions=8^
         "%ROOT_PATH%Unreal/CarlaUE4/CarlaUE4.uproject"
 
     if errorlevel 1 goto error_build_editor
@@ -194,6 +196,7 @@ if %DO_PACKAGE%==true (
         %PACKAGE_CONFIG%^
         -WaitMutex^
         -FromMsBuild^
+        -MaxParallelActions=8^
         "%ROOT_PATH%Unreal/CarlaUE4/CarlaUE4.uproject"
 
     if errorlevel 1 goto error_build
@@ -289,16 +292,20 @@ if %DO_COPY_FILES%==true (
     echo f | xcopy /y "!XCOPY_FROM!Unreal\CarlaUE4\Content\Carla\HDMaps\*.pcd"      "!XCOPY_TO!HDMaps\"
     echo f | xcopy /y "!XCOPY_FROM!Unreal\CarlaUE4\Content\Carla\HDMaps\Readme.md"  "!XCOPY_TO!HDMaps\README"
     :: 无人机配置文件
-    echo f | xcopy /y "!XCOPY_FROM!Build\AirSim\Unreal\Environments\Blocks\settings.json"    "!XCOPY_TO!settings.json"
-    if exist "!XCOPY_FROM!Plugins" (
-        echo d | xcopy /y /s "!XCOPY_FROM!Plugins"                                  "!XCOPY_TO!Plugins"
-    )
+    echo f | xcopy /y "!XCOPY_FROM!Unreal\CarlaUE4\settings.json"    "!XCOPY_TO!settings.json"
+    echo f | xcopy /y "!XCOPY_FROM!Unreal\CarlaUE4\settings_drone.json" "!XCOPY_TO!settings_drone.json"
+    :: 水下机器人载具配置文件
+    echo f | xcopy /y "!XCOPY_FROM!Unreal\CarlaUE4\settings_rov.json"    "!XCOPY_TO!settings_rov.json"
+    :: AirSim 联合仿真示例与测试套件
+    echo d | xcopy /y /s "!XCOPY_FROM!PythonAPI\examples\air"                     "!XCOPY_TO!PythonAPI\examples\air"
     
     :: 下载 Mujoco
-    set Mujoco_FILE_NAME=mujoco-3.3.5-windows-x86_64.zip
+    :: 版本以 third_party/install/MuJoCo/include/mujoco/mujoco.h 的 mjVERSION_HEADER 为准，
+    :: 当前为 3008001（= 3.8.1）。历史上这里写的是 3.3.5，和实际链接的 DLL 不一致，已统一。
+    set Mujoco_FILE_NAME=mujoco-3.8.1-windows-x86_64.zip
     :: !! 为延迟变量，执行时才扩展，需要 setlocal enabledelayedexpansion
     set Mujoco_TEMP_FILE_DIR="!XCOPY_FROM!Build\dependencies\Plugins\!Mujoco_FILE_NAME!"
-    set Mujoco_REPO=https://github.com/google-deepmind/mujoco/releases/download/3.3.5/%Mujoco_FILE_NAME%
+    set Mujoco_REPO=https://github.com/google-deepmind/mujoco/releases/download/3.8.1/%Mujoco_FILE_NAME%
 
     if exist "!Mujoco_TEMP_FILE_DIR!" (
         echo "%ProgramW6432%/7-Zip/7z.exe" x "!Mujoco_TEMP_FILE_DIR!" -o"!XCOPY_FROM!Build\dependencies\Plugins\mujoco" -y

@@ -34,5 +34,9 @@ public class URLabEditor : ModuleRules
 			"DesktopPlatform",
 			"Kismet"
 		});
+
+		// UE4.26 的 Blutility 模块把 BlutilityMenuExtensions.h 放在 Private/ 下，
+		// 需要手动补充私有 include 路径。
+		PrivateIncludePaths.Add(Path.Combine(EngineDirectory, "Source", "Editor", "Blutility", "Private"));
 	}
 }

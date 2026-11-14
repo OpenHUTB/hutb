@@ -129,6 +129,12 @@ public:
 
     // --- Runtime World-State Accessors (BlueprintCallable) ---
 
+    // 注：绑定状态用基类 UMjComponent::IsBound() 即可
+    // （实现为 m_Model && m_Data && m_ID >= 0）。
+    // 曾尝试在此处重定义 IsBound()，UHT 报错：
+    //   "Override of UFUNCTION in parent class (MjComponent) cannot have a UFUNCTION() declaration above it"
+    // 因此不再重复声明。
+
     /** @brief Gets this body's world position in Unreal Engine coordinates (cm). */
     UFUNCTION(BlueprintCallable, Category = "MuJoCo|Runtime")
     FVector GetWorldPosition() const;

@@ -1,0 +1,12 @@
+<!-- Include fragment pulled in from INSIDE the parent's <worldbody>. Contains a
+     bare <body> chain (no <worldbody> wrapper), the standard MJCF pattern for a
+     sub-assembly. Joint range is in radians (see deps_inc.xml). -->
+<mujocoinclude>
+    <body name="arm" pos="-0.4 0.5 0">
+        <joint name="arm/joint1" type="hinge" axis="0 0 1" limited="true" range="-3.14158 3.14158"/>
+        <geom type="capsule" fromto="0 0 0 0 0 0.3" size="0.02" name="arm/upper"/>
+        <body name="arm/link" pos="0 0 0.3">
+            <geom type="box" size="0.05 0.05 0.05" name="arm/link_geom"/>
+        </body>
+    </body>
+</mujocoinclude>

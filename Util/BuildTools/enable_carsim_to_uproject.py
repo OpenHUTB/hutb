@@ -29,7 +29,7 @@ def main():
     args = argparser.parse_args()
 
     # Read uproject (json) file
-    uproject_file = open(args.file, 'r')
+    uproject_file = open(args.file, 'r', encoding='utf-8-sig')
     uproject_json = json.load(uproject_file)
     uproject_file.close()
 
@@ -56,7 +56,7 @@ def main():
 
     # Save file if there are changes to do
     if should_do_changes:
-        uproject_file = open(args.file, 'w')
+        uproject_file = open(args.file, 'w', encoding='utf-8')
         uproject_file.write(json.dumps(uproject_json, indent = 4, sort_keys=True))
         uproject_file.close()
 

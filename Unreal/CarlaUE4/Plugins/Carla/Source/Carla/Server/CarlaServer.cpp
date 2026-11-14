@@ -3803,7 +3803,27 @@ FCarlaServer::~FCarlaServer() {
 
 FDataMultiStream FCarlaServer::Start(uint16_t RPCPort, uint16_t StreamingPort, uint16_t SecondaryPort)
 {
-  Pimpl = MakeUnique<FPimpl>(RPCPort, StreamingPort, SecondaryPort);
+  // OpenHUTB 修改（2026-11-06）：端口被占用时降级，不再崩整个进程。
+  //
+  // 实测：本机已有另一个 Carla 实例（编辑器或另一个打包版）占着
+  // 2000/2001/2002 时，打包版会在启动 40~70 秒后直接 Fatal 退出。
+  // 对纯演示/离线场景来说 Carla 的 Python API 并非必需，
+  // 所以这里记录错误并继续，让场景照常能看。
+  try
+  {
+    Pimpl = MakeUnique<FPimpl>(RPCPort, StreamingPort, SecondaryPort);
+  }
+  catch (const std::exception &e)
+  {
+    UE_LOG(LogCarla, Error,
+        TEXT("CarlaServer 启动失败（端口 rpc=%d / streaming=%d / secondary=%d 可能被占用）：%s"),
+        RPCPort, StreamingPort, SecondaryPort, UTF8_TO_TCHAR(e.what()));
+    UE_LOG(LogCarla, Warning,
+        TEXT("已降级为「不启动 Carla 服务器」继续运行 —— 场景可正常查看，但外部 Python API 不可用。"
+             "如需 API，请先关闭本机其它 Carla 实例再启动。"));
+    return FDataMultiStream();
+  }
+
   StreamingPort = Pimpl->StreamingServer.GetLocalEndpoint().port();
   SecondaryPort = Pimpl->SecondaryServer->GetLocalEndpoint().port();
 
@@ -3819,20 +3839,20 @@ FDataMultiStream FCarlaServer::Start(uint16_t RPCPort, uint16_t StreamingPort, u
 
 void FCarlaServer::NotifyBeginEpisode(UCarlaEpisode &Episode)
 {
-  check(Pimpl != nullptr);
+  if (Pimpl == nullptr) return;  // OpenHUTB：端口绑定失败后的降级路径
   UE_LOG(LogCarlaServer, Log, TEXT("New episode '%s' started"), *Episode.GetMapName());
   Pimpl->Episode = &Episode;
 }
 
 void FCarlaServer::NotifyEndEpisode()
 {
-  check(Pimpl != nullptr);
+  if (Pimpl == nullptr) return;  // OpenHUTB：降级路径
   Pimpl->NotifyEndEpisode();
 }
 
 void FCarlaServer::AsyncRun(uint32 NumberOfWorkerThreads)
 {
-  check(Pimpl != nullptr);
+  if (Pimpl == nullptr) return;  // OpenHUTB：降级路径
   /// @todo Define better the number of threads each server gets.
   int ThreadsPerServer = std::max(2u, NumberOfWorkerThreads / 3u);
   int32_t RPCThreads;
@@ -3864,6 +3884,7 @@ void FCarlaServer::AsyncRun(uint32 NumberOfWorkerThreads)
 
 void FCarlaServer::RunSome(uint32 Milliseconds)
 {
+  if (Pimpl == nullptr) return;  // OpenHUTB：降级路径
   TRACE_CPUPROFILER_EVENT_SCOPE_STR(__FUNCTION__);
   Pimpl->Server.SyncRunFor(carla::time_duration::milliseconds(Milliseconds));
 }
@@ -3891,6 +3912,7 @@ double FCarlaServer::GetTickDeltaSeconds() {
 
 void FCarlaServer::Tick()
 {
+  if (Pimpl == nullptr) return;  // OpenHUTB：降级路径
   (void)Pimpl->call_tick(Pimpl->SynchronizationClientId(), 
                          Pimpl->ServerSynchronizationParticipantId,
                          carla::rpc::SynchronizationTickMode::TICK_ONLY_IF_SYNC_ENABLED);
@@ -3912,7 +3934,7 @@ void FCarlaServer::Stop()
 
 FDataStream FCarlaServer::OpenStream() const
 {
-  check(Pimpl != nullptr);
+  if (Pimpl == nullptr) return FDataStream();  // OpenHUTB：降级路径
   return Pimpl->StreamingServer.MakeStream();
 }
 

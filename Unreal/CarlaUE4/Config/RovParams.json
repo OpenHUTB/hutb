@@ -1,0 +1,62 @@
+{
+  "_comment": "ROV 运行参数。优先级：命令行 > 本文件 > 类默认值。用 -RovConfig=<路径> 可指定其他文件。",
+
+  "FluidDensity": 1000.0,
+  "FluidViscosity": 0.00089,
+  "UseNativeFluid": 1,
+
+  "DisplacedVolume": 0.192,
+  "BuoyancyScale": 2.34,
+  "BuoyancyArm": 0.02,
+  "ArmBuoyancyVolume": 12.1,
+  "ArmBuoyancyScale": 1.0,
+
+  "ThrusterMaxRatio": 0.5,
+  "WaterSurfaceZ": -2.0,
+
+  "ArmJointDamping": 20000.0,
+  "ArmJointStiffness": 0.0,
+  "ArmGravityComp": 0,
+
+  "AngularDofDamping": 13.0,
+  "AngularDampingCoeff": 0.0,
+
+  "EnableAttitudeHold": 1,
+  "AttitudeBandwidth": 1.0,
+  "AttitudeZeta": 0.8,
+  "AttitudeIntegralGain": 0.5,
+  "LevelBandwidth": 1.5,
+  "LevelZeta": 0.8,
+  "YawBandwidth": 1.0,
+  "YawZeta": 1.0,
+  "YawRateDegPerSec": 60.0,
+
+  "EnableOceanCurrent": 1,
+  "OceanCurrentMeanSpeed": 0.15,
+  "CurrentDragCoeff": 10.0,
+  "EnableDepthHold": 1,
+
+  "_comment_fluid": "显式阻力与附加质量：默认关闭，保持与既有验收一致。开启后沿机体系三轴叠加。",
+  "UseExplicitDrag": 0,
+  "DragCoeffX": 0.82,
+  "DragCoeffY": 1.15,
+  "DragCoeffZ": 1.05,
+  "DragRefAreaX": 0.24,
+  "DragRefAreaY": 0.32,
+  "DragRefAreaZ": 0.48,
+  "UseAddedMass": 0,
+  "AddedMassX": 0,
+  "AddedMassY": 0,
+  "AddedMassZ": 0,
+
+  "_comment_shape": "按外形自动估算流体参数：HullShape 0=球体 1=立方体 2=圆柱 3=流线型；HullDims 为半尺寸（m）。",
+  "AutoEstimateFluidParams": 0,
+  "HullShape": 1,
+  "HullDimsX": 0.4,
+  "HullDimsY": 0.3,
+  "HullDimsZ": 0.2,
+
+  "_comment_log": "接触日志：LogContacts=1 时逐接触点写 Saved/RovContactLog.csv。",
+  "LogContacts": 0,
+  "ContactLogInterval": 10
+}
