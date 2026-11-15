@@ -3,8 +3,8 @@
 ## Quick Start
 
 1. Connect the headset, enable eye tracking in Pimax Play, and complete calibration. When using a Logitech G29 / G920 / G923 racing wheel, confirm that Logitech G HUB detects the wheel and that steering and pedal axes respond in Windows `joy.cpl`, then close the test dialog.
-2. Double-click `StartDrivingStudy.cmd` in the repository or package root.
-3. Choose **Pimax Controller** or **Logitech Racing Wheel**. On a source checkout, enter the UE4 engine root directory; installed maps and ego vehicle profiles are discovered automatically from the project.
+2. Double-click `StartDrivingStudy.cmd` in the repository root (for source checkouts built via `setup.bat -l`, `Build\engine` and sibling engine folders are auto-detected even if `UE4_ROOT` is unset or stale) or in the `setup.bat -p` package root (`WindowsNoEditor`).
+3. Choose **Pimax Controller** or **Logitech Racing Wheel**. On a source checkout, verify or adjust the **UE4 engine directory** (auto-populated when `setup.bat -l` or a sibling engine exists; not needed in packaged builds); installed maps and ego vehicle profiles are discovered automatically from the project.
 4. To record a trial, check **Record driving data**. The default target rate is **120 Hz** (set to **20 Hz** for lightweight classroom sessions) and enter or select a participant ID and output directory. Optional switches:
    - **Record viewport screenshots** (default **20 Hz**, 640x480 JPEG; optionally check **Async screenshots** so GPU readback and JPEG encoding do not block the game thread).
    - **120 Hz eye-tracking thread** (polls the eye tracker on a dedicated background thread and runs the online I-VT saccade detector at 120 Hz).
@@ -102,7 +102,7 @@ Coordinates use the UE/CARLA left-handed coordinate system (X forward, Y right, 
 
 ## Musculoskeletal Replay
 
-A recorded `hand_*` block can drive an upper-limb digital human offline: `Util/HandPose/record_hands.py` captures controller + HMD poses directly (no simulator needed) and `Util/HandPose/replay_arms.py` replays a CSV through MuJoCo's MS-Human-700 model with coupled anatomical IK, steering-wheel geometry/rotation (`steer_input`), controller-housing rim offset compensation, and inverse-dynamics muscle activation coloring, writing an MP4 plus first/mid/last stills. Both the live VR pawn (`ADReyeVRPawn`) and `replay_arms.py` share a one-shot auto-calibrator (`FDReyeVRAutoCalibrator`: `>= 5 s` continuous head stillness within `5 cm / 6 deg` followed by steering wheel rotation `>= 0.015`, ~`6.8 deg` on a `900 deg` wheel) so drivers do not need to trigger manual VR recentering or hand calibration. Set-up, exact commands (`--start`, `--fit`, `--raw-hands`, `--no-muscle`), and honest limits (static pre-curled fingers, static seated legs, model-inferred muscle activations rather than EMG, controller-shell offset compensation vs `--raw-hands`, and reach-sphere clamping) are in [`Util/HandPose/README.md`](../Util/HandPose/README.md).
+A recorded `hand_*` block can drive an upper-limb digital human offline: `Util/HandPose/record_hands.py` captures controller + HMD poses directly (no simulator needed) and `Util/HandPose/replay_arms.py` replays a CSV through MuJoCo's MS-Human-700 model with coupled anatomical IK, steering-wheel geometry/rotation (`steer_input`), controller-housing rim offset compensation, and inverse-dynamics muscle activation coloring, writing an MP4 plus first/mid/last stills (`setup.bat -p` packages also include `Util/HandPose/`). Both the live VR pawn (`ADReyeVRPawn`) and `replay_arms.py` share a one-shot auto-calibrator (`FDReyeVRAutoCalibrator`: `>= 5 s` continuous head stillness within `5 cm / 6 deg` followed by steering wheel rotation `>= 0.015`, ~`6.8 deg` on a `900 deg` wheel) so drivers do not need to trigger manual VR recentering or hand calibration. Set-up, exact commands (`--start`, `--fit`, `--raw-hands`, `--no-muscle`), and honest limits (static pre-curled fingers, static seated legs, model-inferred muscle activations rather than EMG, controller-shell offset compensation vs `--raw-hands`, and reach-sphere clamping) are in [`Util/HandPose/README.md`](../Util/HandPose/README.md).
 
 ## Example Filter Queries
 
@@ -114,10 +114,12 @@ A recorded `hand_*` block can drive an upper-limb digital human offline: `Util/H
 - `<session>.csv` defaults to **120 Hz** target sampling (at most once per rendered frame; no synthetic interpolation on low-FPS frames; configurable down to **20 Hz**). When `-EyeThreadHz 120` is enabled, `<session>_gaze.csv` polls the tracker on a dedicated 120 Hz background thread and runs the calibrated I-VT detector (onset 120 deg/s, offset 60 deg/s, minimum duration 20 ms). No samples are written while the simulation is paused.
 - CSV writers use buffered I/O flushed once per second and on session close. If a disk write fails, recording stops and logs `Driving study: write failed`.
 
-Developer test commands (run from the repository root):
+Developer test commands (run from the repository root; `-UE4Root` is optional when `Build\engine` from `setup.bat -l` or a valid `UE4_ROOT` exists):
 
 ```powershell
-powershell -NoProfile -ExecutionPolicy Bypass -File .\Util\Tests\RunPimaxTests.ps1 -UE4Root '<UE4 source engine root>'
+powershell -NoProfile -ExecutionPolicy Bypass -File .\Util\Tests\RunPimaxTests.ps1
 powershell -NoProfile -ExecutionPolicy Bypass -File .\Util\Tests\TestPimaxLauncher.ps1
 powershell -NoProfile -STA -ExecutionPolicy Bypass -File .\StartDrivingStudy.ps1 -ValidateOnly
 ```
+
+On Windows, `make check.vr` (`Util\BuildTools\Check.bat --vr`) also runs the preflight suite, source and packaged `-ValidateOnly` UI checks, `Util\HandPose\*.py` bytecode checks, and `RunPimaxTests.ps1`.

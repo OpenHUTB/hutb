@@ -2,14 +2,30 @@
 [CmdletBinding()]
 param(
     [string]$UE4Root = $env:UE4_ROOT,
-    [string]$ReportPath
+    [string]$ReportPath,
+    [string]$ProjectPath
 )
 $ErrorActionPreference = 'Stop'
 try {
     $repo = [IO.Path]::GetFullPath((Join-Path $PSScriptRoot '..\..'))
+    if (-not $PSBoundParameters.ContainsKey('UE4Root') -and
+        (-not $UE4Root -or -not (Test-Path -LiteralPath (Join-Path $UE4Root 'Engine\Binaries\Win64\UE4Editor-Cmd.exe') -PathType Leaf))) {
+        $localEngine = Join-Path $repo 'Build\engine'
+        if (Test-Path -LiteralPath (Join-Path $localEngine 'Engine\Binaries\Win64\UE4Editor-Cmd.exe') -PathType Leaf) {
+            $UE4Root = $localEngine
+        } else {
+            $parent = Split-Path $repo
+            foreach ($dir in @(Get-ChildItem -LiteralPath $parent -Directory -ErrorAction SilentlyContinue)) {
+                if (Test-Path -LiteralPath (Join-Path $dir.FullName 'Engine\Binaries\Win64\UE4Editor-Cmd.exe') -PathType Leaf) {
+                    $UE4Root = $dir.FullName; break
+                }
+            }
+        }
+    }
     if (-not $UE4Root) { throw 'Specify -UE4Root or set UE4_ROOT.' }
     $editor = Join-Path $UE4Root 'Engine\Binaries\Win64\UE4Editor-Cmd.exe'
-    $project = Join-Path $repo 'Unreal\CarlaUE4\CarlaUE4.uproject'
+    $project = if ($ProjectPath) { [IO.Path]::GetFullPath($ProjectPath) } else { Join-Path $repo 'Unreal\CarlaUE4\CarlaUE4.uproject' }
+    if (-not (Test-Path -LiteralPath $project -PathType Leaf)) { throw "Missing $project." }
     if (-not (Test-Path -LiteralPath $editor)) { throw "Missing $editor; build the Windows editor first." }
     if (-not $ReportPath) {
         $ReportPath = Join-Path $repo ('Unreal\CarlaUE4\Saved\Automation\Pimax-' + (Get-Date -Format 'yyyyMMdd-HHmmss-fff'))

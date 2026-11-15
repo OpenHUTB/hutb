@@ -64,13 +64,18 @@ $map.Text=$defaultMap
 $form.Controls.Add($map)
 Label 'UE4 引擎目录' 106
 $engine=TextBox $env:UE4_ROOT 102
-if (-not $engine.Text -or -not (Test-Path (Join-Path $engine.Text 'Engine\Binaries\Win64\UE4Editor.exe'))) {
-    # Fall back to any sibling folder that really is an engine, rather than a fixed folder name:
-    # the repo's parent directory differs per machine and per checkout.
-    $parent = Split-Path $PSScriptRoot
-    foreach ($dir in @(Get-ChildItem -LiteralPath $parent -Directory -ErrorAction SilentlyContinue)) {
-        if (Test-Path -LiteralPath (Join-Path $dir.FullName 'Engine\Binaries\Win64\UE4Editor.exe')) {
-            $engine.Text = $dir.FullName; break
+if (-not $packaged -and (-not $engine.Text -or -not (Test-Path -LiteralPath (Join-Path $engine.Text 'Engine\Binaries\Win64\UE4Editor.exe')))) {
+    # setup.bat -l places the engine at <repo>\Build\engine; otherwise fall back to any sibling folder
+    # that really is an engine (the repo's parent directory differs per machine and per checkout).
+    $localEngine = Join-Path $PSScriptRoot 'Build\engine'
+    if (Test-Path -LiteralPath (Join-Path $localEngine 'Engine\Binaries\Win64\UE4Editor.exe')) {
+        $engine.Text = $localEngine
+    } else {
+        $parent = Split-Path $PSScriptRoot
+        foreach ($dir in @(Get-ChildItem -LiteralPath $parent -Directory -ErrorAction SilentlyContinue)) {
+            if (Test-Path -LiteralPath (Join-Path $dir.FullName 'Engine\Binaries\Win64\UE4Editor.exe')) {
+                $engine.Text = $dir.FullName; break
+            }
         }
     }
 }
@@ -328,10 +333,17 @@ if ($CheckOnly) {
     # Map and vehicle choices are discovered from the project, not hardcoded.
     if (@($map.Items | Where-Object { $_ -notmatch '^/Game/[A-Za-z0-9_/]+$' }).Count) { throw 'Map list contains an invalid asset path.' }
     if (-not $map.Text) { throw 'No map selected.' }
-    if (Test-Path -LiteralPath (Join-Path $projectDir 'Content\Carla\Maps') -PathType Container) {
-        if ($map.Items.Count -lt 1) { throw 'Maps are installed but none are listed.' }
-        if ($map.Items -notcontains '/Game/Carla/Maps/Town02') { throw 'Flat map Town02 is missing from the list.' }
-        if ($map.Items -notcontains '/Game/Carla/Maps/Town12/Town12') { throw 'Nested large maps are not listed.' }
+    $mapsRoot = Join-Path $projectDir 'Content\Carla\Maps'
+    if (Test-Path -LiteralPath $mapsRoot -PathType Container) {
+        $hasTownMaps = @(Get-ChildItem -LiteralPath $mapsRoot -Filter 'Town*.umap' -File).Count -gt 0 -or
+            @(Get-ChildItem -LiteralPath $mapsRoot -Directory -Filter 'Town*' | Where-Object { Test-Path -LiteralPath (Join-Path $_.FullName ($_.Name + '.umap')) -PathType Leaf }).Count -gt 0
+        if ($hasTownMaps -and $map.Items.Count -lt 1) { throw 'Maps are installed but none are listed.' }
+        if ((Test-Path -LiteralPath (Join-Path $mapsRoot 'Town02.umap') -PathType Leaf) -and $map.Items -notcontains '/Game/Carla/Maps/Town02') {
+            throw 'Flat map Town02 is missing from the list.'
+        }
+        if ((Test-Path -LiteralPath (Join-Path $mapsRoot 'Town12\Town12.umap') -PathType Leaf) -and $map.Items -notcontains '/Game/Carla/Maps/Town12/Town12') {
+            throw 'Nested large maps are not listed.'
+        }
     }
     if ($vehicle.Items.Count -lt 1) { throw 'No ego vehicle definitions found.' }
     if ($vehicle.Items -notcontains $vehicle.Text) { throw 'Selected vehicle is not one of the definitions.' }
