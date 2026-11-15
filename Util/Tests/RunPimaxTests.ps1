@@ -35,7 +35,8 @@ try {
         'HUTB.Pimax.Runtime.DiscoveryPaths', 'HUTB.Pimax.Driving.Csv', 'HUTB.Pimax.Driving.Motion',
         'HUTB.Pimax.Driving.InputMode',
         'HUTB.DReyeVR.Gaze.SaccadeDetector', 'HUTB.DReyeVR.Gaze.SaccadeStamping',
-        'HUTB.DReyeVR.LiveCapture.AsyncQueue')
+        'HUTB.DReyeVR.LiveCapture.AsyncQueue', 'HUTB.DReyeVR.HandPose.Columns',
+        'HUTB.DReyeVR.HandPose.AutoCalibrator')
     foreach ($name in $expected) {
         if (-not @($report.tests | Where-Object { $_.fullTestPath -eq $name -and $_.state -eq 'Success' }).Count) {
             throw "Missing or failed test: $name. See $ReportPath"

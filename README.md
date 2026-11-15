@@ -34,6 +34,19 @@
   📖 <a href="https://openhutb.github.io/"><b>中文文档</b></a>
 </p>
 
+## 相对 CARLA 的增强功能
+
+本分支基于 [CARLA 模拟器](https://github.com/carla-simulator/carla) ，并针对国产化场景和教学演示做了以下增强：
+
+| 功能 | 说明 | 入口 |
+|:-----|:-----|:-----|
+| VR 驾驶舱模式 | 支持 VR 头显下的驾驶舱视角，可使用罗技方向盘或键盘 `W`、`A`、`S`、`D` 控制，`Z` 为倒档 | `python PythonAPI/util/config.py --map Town10HD?GAME=VR` |
+| 鱼眼相机 | 提供鱼眼相机的手动驾驶示例，用于验证广角感知算法 | `python PythonAPI/examples/manual_control_fisheye.py` |
+| 一键编译并启动编辑器 | 一条命令完成依赖下载、编译并直接打开带插件的虚幻编辑器 | `setup.bat -l`（Windows）、`./setup.sh -l`（Ubuntu） |
+| 中文文档 | 全站中文文档，包含构建、场景制作和各模块说明 | <https://openhutb.github.io/> |
+
+各功能的详细说明见 [中文文档](https://openhutb.github.io/) 。
+
 
 ## 使用示例
 1. 在终端运行下面命令下载模拟器：

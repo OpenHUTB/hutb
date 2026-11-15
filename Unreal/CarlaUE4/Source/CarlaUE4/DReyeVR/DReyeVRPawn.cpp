@@ -132,6 +132,9 @@ void ADReyeVRPawn::Tick(float DeltaTime)
     // Tick the logitech wheel
     TickLogiWheel();
 
+    // One-shot VR view auto-calibration (5 s head stillness + steering wheel start)
+    TickAutoCalibrateVR(DeltaTime);
+
     // Tick spectator screen
     TickSpectatorScreen(DeltaTime);
 }
@@ -170,6 +173,29 @@ void ADReyeVRPawn::TickSteamVR()
     {
         // try reinitializing steamvr if the headset is connected but not active
         InitSteamVR();
+    }
+}
+
+void ADReyeVRPawn::TickAutoCalibrateVR(float DeltaTime)
+{
+    if (!bIsHMDConnected || AutoCalibrator.HasCalibrated() || !FirstPersonCam || !FirstPersonCam->bLockToHmd)
+        return;
+
+    FRotator HmdRot = FRotator::ZeroRotator;
+    FVector HmdPosCm = FVector::ZeroVector;
+    UHeadMountedDisplayFunctionLibrary::GetOrientationAndPosition(HmdRot, HmdPosCm);
+    // Skip unacquired HMD poses before SteamVR reports live tracking.
+    if (HmdPosCm.IsNearlyZero(1e-4f) && HmdRot.IsNearlyZero(1e-4f))
+        return;
+
+    const float Steer = bIsLogiConnected ? LatestWheelNormalized
+                                         : (EgoVehicle ? EgoVehicle->GetVehicleInputs().Steering : 0.f);
+    if (AutoCalibrator.Tick(DeltaTime, HmdPosCm, HmdRot, Steer))
+    {
+        UHeadMountedDisplayFunctionLibrary::ResetOrientationAndPosition(
+            0.f, EOrientPositionSelector::OrientationAndPosition);
+        LOG("Auto-calibrated VR view after %.2f s of head stillness on wheel rotation (steer=%.3f)",
+            AutoCalibrator.GetStillSeconds(), Steer);
     }
 }
 
@@ -550,6 +576,7 @@ void ADReyeVRPawn::LogitechWheelUpdate()
     /// NOTE: obtained these from LogitechWheelInputDevice.cpp:~111
     // -32768 to 32767. -32768 = all the way to the left. 32767 = all the way to the right.
     const float WheelRotation = FMath::Clamp(float(WheelState->lX), -32767.0f, 32767.0f) / 32767.0f; // (-1, 1)
+    LatestWheelNormalized = WheelRotation;
     // -32768 to 32767. 32767 = pedal not pressed. -32768 = pedal fully pressed.
     const float AccelerationPedal = fabs(((WheelState->lY - 32767.0f) / (65535.0f))); // (0, 1)
     // -32768 to 32767. Higher value = less pressure on brake pedal

@@ -12,6 +12,7 @@ if (-not $Case) {
         recordLaunch = 'PASS: mocked launch order and arguments'
         screenshotLaunch = 'PASS: mocked launch order and arguments'
         perfLaunch = 'PASS: mocked launch order and arguments'
+        handPoseLaunch = 'PASS: mocked launch order and arguments'
         relativeDll = 'PvrDllPath must be a local absolute path'
         missingDll = 'Explicit PVR DLL does not exist'
         disabledPlugin = 'SteamVR is disabled'
@@ -24,7 +25,7 @@ if (-not $Case) {
         $output = & "$PSHOME\powershell.exe" -NoProfile -ExecutionPolicy Bypass -File $PSCommandPath -Case $name 2>&1
         $code = $LASTEXITCODE
         $ErrorActionPreference = 'Stop'
-        $expectedCode = if ($name -in @('preflight','launch','wheelLaunch','recordLaunch','screenshotLaunch','perfLaunch')) { 0 } else { 1 }
+        $expectedCode = if ($name -in @('preflight','launch','wheelLaunch','recordLaunch','screenshotLaunch','perfLaunch','handPoseLaunch')) { 0 } else { 1 }
         if ($code -ne $expectedCode -or ($output -join "`n") -notlike ('*' + $cases[$name] + '*')) {
             throw "FAIL: $name (exit $code). $output"
         }
@@ -93,13 +94,15 @@ VehicleType=TeslaM3
             if ($Case -eq 'screenshotLaunch' -and ($ArgumentList -notcontains '-DReyeVRScreenshot' -or
                 $ArgumentList -notcontains '-DReyeVRScreenshotHz=20' -or
                 $ArgumentList -notcontains ('"-DReyeVRRecordDir=' + (Join-Path $fixture 'trial data') + '"'))) { throw 'Incorrect standalone screenshot arguments' }
+            if ($Case -eq 'handPoseLaunch' -and $ArgumentList -notcontains '-DReyeVRHandPose') { throw 'Missing hand pose flag' }
+            if ($Case -ne 'handPoseLaunch' -and $ArgumentList -contains '-DReyeVRHandPose') { throw 'Hand pose flag must be opt-in only' }
         }
     }
     $oldDll = $env:PIMAX_PVR_DLL
     $global:LASTEXITCODE = 0
     $inputDevice = if ($Case -like 'wheel*') { 'wheel' } else { 'controller' }
-    $isLaunch = $Case -in @('launch','wheelLaunch','recordLaunch','screenshotLaunch','perfLaunch')
-    & $launcher -PackageRoot $fixture -PimaxRoot (Join-Path $fixture 'Pimax') -PvrDllPath $dll -SteamVRRoot (Join-Path $fixture 'SteamVR') -InputDevice $inputDevice -RecordDriving:($Case -eq 'recordLaunch') -RecordHz 20 -ScreenshotDriving:($Case -eq 'screenshotLaunch') -ScreenshotHz 20 -PerfDowngrade:($Case -eq 'perfLaunch') -RecordDirectory (Join-Path $fixture 'trial data') -CheckOnly:(-not $isLaunch)
+    $isLaunch = $Case -in @('launch','wheelLaunch','recordLaunch','screenshotLaunch','perfLaunch','handPoseLaunch')
+    & $launcher -PackageRoot $fixture -PimaxRoot (Join-Path $fixture 'Pimax') -PvrDllPath $dll -SteamVRRoot (Join-Path $fixture 'SteamVR') -InputDevice $inputDevice -RecordDriving:($Case -eq 'recordLaunch') -RecordHz 20 -ScreenshotDriving:($Case -eq 'screenshotLaunch') -ScreenshotHz 20 -PerfDowngrade:($Case -eq 'perfLaunch') -HandPose:($Case -eq 'handPoseLaunch') -RecordDirectory (Join-Path $fixture 'trial data') -CheckOnly:(-not $isLaunch)
     if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
     if ($isLaunch) {
         if (($global:pimaxTestCalls -join ',') -ne 'PimaxClient.exe,vrmonitor.exe,CarlaUE4.exe' -or $env:PIMAX_PVR_DLL -ne $oldDll) {
