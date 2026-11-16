@@ -32,6 +32,9 @@ class Octree
         static UWorld* World;
         static TDiscardableKeyValueCache<FString,float> materials;
 
+        /** OpenHUTB 追加：为 true 时 initOctree 跳过命令行解析，直接使用 setEnvironmentBounds 设置的值 */
+        static bool bExplicitBounds;
+
         static FVector EnvCenter;
 
         static void loadJson(gason::JsonValue& json, TArray<Octree*>& parent, float size);
@@ -54,6 +57,16 @@ class Octree
         static float OctreeRoot;
         static float OctreeMax;
         static float OctreeMin;
+
+        /**
+         * 直接指定环境包围盒（UE 厘米单位），跳过命令行参数。
+         * 必须在 initOctree 之前调用。
+         *
+         * OpenHUTB 追加：HoloOcean 原本只支持通过 -EnvMinX= / -EnvMaxX= 等命令行
+         * 参数指定环境范围（单位米），与 Carla 集成时没有传参渠道。
+         * 提供此接口后，可由 UnderwaterSensorSubsystem 按场景实际包围盒设置。
+         */
+        static void setEnvironmentBounds(const FVector& InMin, const FVector& InMax);
 
         Octree(){};
 		Octree(FVector loc, float size, FString file="") : size(size), loc(loc), file(file) {};

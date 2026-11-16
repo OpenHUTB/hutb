@@ -631,10 +631,30 @@ UMaterialInstanceConstant* UMujocoGenerationAction::CreateMaterialInstance(
     FAssetRegistryModule::AssetCreated(MaterialInstance);
 
     FString PackageFileName = FPackageName::LongPackageNameToFilename(PackageName, FPackageName::GetAssetPackageExtension());
-    FSavePackageArgs SaveArgs;
-    SaveArgs.TopLevelFlags = RF_Public | RF_Standalone;
-    SaveArgs.SaveFlags = SAVE_NoError;
-    // UPackage::SavePackage(Package, MaterialInstance, *PackageFileName, SaveArgs);
+
+    // OpenHUTB 修改（2026-11-05）：原来这行被注释掉了，导致材质实例只在内存里创建、
+    // 注册进资产注册表，但从不写盘。编辑器一关就丢，蓝图里的引用变成悬空，
+    // 模型渲染成灰白（日志报 "Failed to load .../MI_xxx: Can't find file"）。
+    //
+    // 注意 UE4.26 的 UPackage::SavePackage 签名是逐个参数，没有 FSavePackageArgs 重载：
+    //   SavePackage(InOuter, InAsset, TopLevelFlags, Filename, Error, ConcurrencyObject,
+    //               bForceByteSwapping, bWarnOfLongFilename, SaveFlags, ...)
+    const bool bSaved = UPackage::SavePackage(
+        Package,
+        MaterialInstance,
+        RF_Public | RF_Standalone,
+        *PackageFileName,
+        GError,
+        nullptr,
+        false,
+        true,
+        SAVE_NoError);
+
+    if (!bSaved)
+    {
+        UE_LOG(LogURLabEditor, Error,
+            TEXT("Failed to save material instance to disk: %s"), *PackageFileName);
+    }
 
     UE_LOG(LogURLabEditor, Log, TEXT("Successfully created material instance: %s"), *InstanceName);
     return MaterialInstance;

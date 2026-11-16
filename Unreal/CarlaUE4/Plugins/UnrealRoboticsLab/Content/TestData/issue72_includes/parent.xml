@@ -1,0 +1,18 @@
+<!-- Regression fixture for issue #72: MJCF split across <include> fragments.
+     Mirrors gym-aloha bimanual_viperx: top-level includes that carry their own
+     <worldbody>/<asset>/<compiler>, plus an include INSIDE <worldbody>. All
+     fragments are rooted in <mujocoinclude>. Must import without the duplicate-
+     worldbody crash and with the included <asset>/<compiler> honoured. -->
+<mujoco>
+    <include file="scene_inc.xml"/>
+    <include file="deps_inc.xml"/>
+
+    <worldbody>
+        <include file="arm_inc.xml"/>
+
+        <body name="box" pos="0.2 0.5 0.1">
+            <joint name="box_joint" type="free"/>
+            <geom type="box" size="0.02 0.02 0.02" name="box_geom"/>
+        </body>
+    </worldbody>
+</mujoco>

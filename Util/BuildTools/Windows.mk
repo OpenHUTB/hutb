@@ -94,6 +94,9 @@ check.air:
 check.vr:
 	@"${CARLA_BUILD_TOOLS_FOLDER}/Check.bat" --vr $(ARGS)
 
+check.water:
+	@"${CARLA_BUILD_TOOLS_FOLDER}/Check.bat" --water $(ARGS)
+
 check.python:
 	@"${CARLA_BUILD_TOOLS_FOLDER}/Check.bat" --python $(ARGS)
 

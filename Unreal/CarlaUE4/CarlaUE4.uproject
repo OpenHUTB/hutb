@@ -185,6 +185,10 @@
 			]
 		},
 		{
+			"Name": "RoadRunnerMaterials",
+			"Enabled": true
+		},
+		{
 			"Name": "RoadRunnerCarlaContent",
 			"Enabled": true
 		},
@@ -214,6 +218,14 @@
 		},
 		{
 			"Name": "LogitechWheelPlugin",
+			"Enabled": true
+		},
+		{
+			"Name": "OceanPlugin",
+			"Enabled": true
+		},
+		{
+			"Name": "UnderwaterScene",
 			"Enabled": true
 		}
 	]

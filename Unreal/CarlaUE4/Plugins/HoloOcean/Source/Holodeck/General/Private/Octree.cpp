@@ -32,6 +32,18 @@ FVector Octree::EnvCenter;
 UWorld* Octree::World;
 TDiscardableKeyValueCache<FString, float> Octree::materials;
 
+// OpenHUTB 追加
+bool Octree::bExplicitBounds = false;
+
+void Octree::setEnvironmentBounds(const FVector& InMin, const FVector& InMax){
+    // 传入即为 UE 厘米单位，无需再做 ClientToUE 换算
+    EnvMin = InMin;
+    EnvMax = InMax;
+    bExplicitBounds = true;
+    UE_LOG(LogHolodeck, Log, TEXT("Octree:: setEnvironmentBounds min=%s max=%s"),
+        *EnvMin.ToString(), *EnvMax.ToString());
+}
+
 float sign(float val){
     bool s = signbit(val);
     if(s) return -1.0;
@@ -42,15 +54,18 @@ void Octree::initOctree(UWorld* w){
     World = w;
 
     // Load environment size
-    if (!FParse::Value(FCommandLine::Get(), TEXT("EnvMinX="), EnvMin.X)) EnvMin.X = -10;
-    if (!FParse::Value(FCommandLine::Get(), TEXT("EnvMinY="), EnvMin.Y)) EnvMin.Y = -10;
-    if (!FParse::Value(FCommandLine::Get(), TEXT("EnvMinZ="), EnvMin.Z)) EnvMin.Z = -10;
-    if (!FParse::Value(FCommandLine::Get(), TEXT("EnvMaxX="), EnvMax.X)) EnvMax.X = 10;
-    if (!FParse::Value(FCommandLine::Get(), TEXT("EnvMaxY="), EnvMax.Y)) EnvMax.Y = 10;
-    if (!FParse::Value(FCommandLine::Get(), TEXT("EnvMaxZ="), EnvMax.Z)) EnvMax.Z = 10;
-    // Clean environment size
-    EnvMin = ConvertLinearVector(EnvMin, ClientToUE);
-    EnvMax = ConvertLinearVector(EnvMax, ClientToUE);
+    // OpenHUTB 追加：若已通过 setEnvironmentBounds 显式指定，则跳过命令行解析与单位换算
+    if (!bExplicitBounds) {
+        if (!FParse::Value(FCommandLine::Get(), TEXT("EnvMinX="), EnvMin.X)) EnvMin.X = -10;
+        if (!FParse::Value(FCommandLine::Get(), TEXT("EnvMinY="), EnvMin.Y)) EnvMin.Y = -10;
+        if (!FParse::Value(FCommandLine::Get(), TEXT("EnvMinZ="), EnvMin.Z)) EnvMin.Z = -10;
+        if (!FParse::Value(FCommandLine::Get(), TEXT("EnvMaxX="), EnvMax.X)) EnvMax.X = 10;
+        if (!FParse::Value(FCommandLine::Get(), TEXT("EnvMaxY="), EnvMax.Y)) EnvMax.Y = 10;
+        if (!FParse::Value(FCommandLine::Get(), TEXT("EnvMaxZ="), EnvMax.Z)) EnvMax.Z = 10;
+        // Clean environment size
+        EnvMin = ConvertLinearVector(EnvMin, ClientToUE);
+        EnvMax = ConvertLinearVector(EnvMax, ClientToUE);
+    }
     FVector min = FVector((int)FGenericPlatformMath::Min(EnvMin.X, EnvMax.X), (int)FGenericPlatformMath::Min(EnvMin.Y, EnvMax.Y), (int)FGenericPlatformMath::Min(EnvMin.Z, EnvMax.Z));
     FVector max = FVector((int)FGenericPlatformMath::Max(EnvMin.X, EnvMax.X), (int)FGenericPlatformMath::Max(EnvMin.Y, EnvMax.Y), (int)FGenericPlatformMath::Max(EnvMin.Z, EnvMax.Z));
     EnvMin = min;

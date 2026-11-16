@@ -79,9 +79,20 @@ void UMjPerturbation::BeginPlay()
 
             if (bRunning)
             {
-                // Zero xfrc on every body: otherwise the last force stays
-                // latched after release and the body drifts indefinitely.
-                mju_zero(d->xfrc_applied, 6 * m->nbody);
+                // OpenHUTB 修改（2026-11-06）：
+                // 原来无条件 mju_zero(d->xfrc_applied, 6 * m->nbody)，把所有 body
+                // 的外力每步清空。这对"只用鼠标拖拽"的场景是对的（否则松手后力
+                // 会一直留着），但 xfrc_applied 是 MuJoCo 唯一的外力公共入口，
+                // 无条件清空会抹掉其他系统施加的浮力/推进器推力/洋流拖曳，
+                // 使这些力完全失效。
+                //
+                // 改成只在**真正拖拽时**才清，而且只清它自己拖的那个 body。
+                // 拖拽行为不变；不拖的时候完全不动 xfrc_applied，
+                // 让其他系统（浮力/推进器/洋流）施加的外力得以保留。
+                if (Perturb.active && Perturb.select > 0 && Perturb.select < m->nbody)
+                {
+                    mju_zero(d->xfrc_applied + 6 * Perturb.select, 6);
+                }
                 mjv_applyPerturbPose(m, d, &Perturb, 0);
                 mjv_applyPerturbForce(m, d, &Perturb);
             }

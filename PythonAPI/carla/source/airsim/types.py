@@ -578,3 +578,25 @@ class MeshPositionVertexBuffersResponse(MsgpackMixin):
     vertices = 0.0
     indices = 0.0
     name = ''
+
+class RotorTiltableParameters(MsgpackMixin):
+    thrust = 0.0
+    torque_scaler = 0.0
+    speed = 0.0
+    angle = 0.0
+
+class RotorTiltableStates(MsgpackMixin):
+    timestamp = np.uint64(0)
+    rotors = []
+
+class RovState(MsgpackMixin):
+    collision = CollisionInfo()
+    kinematics_estimated = KinematicsState()
+    kinematics_true = KinematicsState()
+    gps_location = GeoPoint()
+    timestamp = np.uint64(0)
+    landed_state = LandedState.Landed
+    rc_data = RCData()
+    ready = False
+    ready_message = ""
+    can_arm = False

@@ -1127,6 +1127,20 @@ void UMujocoGenerationAction::ParseAssetsRecursive(const FXmlNode* Node, const F
     {
         FString TexName = Node->GetAttribute(TEXT("name"));
         FString TexFile = Node->GetAttribute(TEXT("file"));
+
+        // OpenHUTB 追加（2026-11-04）：
+        // MuJoCo 支持 builtin 纹理（如 builtin="checker"），这类纹理由引擎程序化生成，
+        // 磁盘上没有对应文件。若照常当作文件加载会报
+        //   "Failed to load texture file: .../tex_seafloor"
+        // 并让自动化测试整体判为失败。这里直接跳过。
+        FString TexBuiltin = Node->GetAttribute(TEXT("builtin"));
+        if (!TexBuiltin.IsEmpty())
+        {
+            UE_LOG(LogURLabEditor, Log,
+                TEXT("Skipping builtin texture '%s' (builtin=%s)"), *TexName, *TexBuiltin);
+            return;
+        }
+
         if (TexFile.IsEmpty()) TexFile = TexName;
 
         if (!TexFile.IsEmpty())
