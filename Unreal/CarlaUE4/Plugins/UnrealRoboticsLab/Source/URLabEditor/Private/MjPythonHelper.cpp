@@ -68,7 +68,7 @@ FString FMjPythonHelper::GetStoredPythonOverride()
     FString FileContent;
     if (!FFileHelper::LoadFileToString(FileContent, *IniPath)) return FString();
 
-    // Parse simple INI: look for PythonPath= line
+    // 解析简单的 INI 文件：查找 PythonPath= 行
     TArray<FString> Lines;
     FileContent.ParseIntoArrayLines(Lines);
     for (const FString& Line : Lines)
@@ -101,21 +101,21 @@ void FMjPythonHelper::StorePythonOverride(const FString& PythonPath)
 
 FString FMjPythonHelper::ResolvePythonPath()
 {
-    // 1. Check user override
+    // 1. 检查用户覆盖设置
     FString Override = GetStoredPythonOverride();
     if (!Override.IsEmpty() && FPaths::FileExists(Override))
     {
         return Override;
     }
 
-    // 2. Fall back to UE's bundled Python
+    // 2. 回退到 UE 内置的 Python
     FString Bundled = GetUEBundledPythonPath();
     if (FPaths::FileExists(Bundled))
     {
         return Bundled;
     }
 
-    // 3. Try system PATH as last resort
+    // 3. 尝试使用 PATH 系统作为最后手段
     return TEXT("python");
 }
 
@@ -179,36 +179,37 @@ bool FMjPythonHelper::InstallPythonPackages(const FString& PythonPath, FString& 
 FString FMjPythonHelper::EnsurePythonReady(bool& bOutCancelled)
 {
     bOutCancelled = false;
+    // 这台机器上还没有保存过 Python 解释器路径配置
     bool bNeedsFirstTimeSetup = GetStoredPythonOverride().IsEmpty();
 
     FString PythonPath = ResolvePythonPath();
     bool bIsUEBundled = (PythonPath == GetUEBundledPythonPath());
 
-    // Validate the resolved Python
+    // 验证已解析的 Python
     if (!ValidatePythonBinary(PythonPath))
     {
-        FText Title = FText::FromString(TEXT("Python Interpreter Not Found"));
+        FText Title = FText::FromString(TEXT("未找到 Python 解释器"));
         FText Message = FText::FromString(FString::Printf(
-            TEXT("URLab uses Python to preprocess mesh files during MJCF import.\n\n")
-            TEXT("This is needed because Unreal Engine does not natively support all mesh formats ")
-            TEXT("used by MuJoCo (e.g. STL, OBJ with certain features). The preprocessing step ")
-            TEXT("converts meshes to a compatible format and resolves asset conflicts.\n\n")
-            TEXT("Could not find a valid Python interpreter at:\n%s\n\n")
-            TEXT("Click 'Yes' to browse for your Python interpreter, or 'Cancel' to cancel the import."),
+            TEXT("URLab 在 MJCF 导入过程中使用 Python 对网格文件进行预处理。\n\n")
+            TEXT("这是因为 Unreal Engine 原生不支持 MuJoCo 使用的所有网格格式")
+            TEXT("（例如 STL、某些带特殊特性的 OBJ）。预处理步骤会把网格转换为")
+            TEXT("兼容格式，并解决资产命名冲突。\n\n")
+            TEXT("在以下路径未找到有效的 Python 解释器：\n%s\n\n")
+            TEXT("点击“是”浏览选择 Python 解释器，或点击“取消”取消本次导入。"),
             *PythonPath));
 
-        // EAppReturnType::Type Result = FMessageDialog::Open(EAppMsgType::YesNoCancel, Message, Title);
-        // if (Result == EAppReturnType::Cancel)
-        // {
-        //     bOutCancelled = true;
-        //     return FString();
-        // }
-        // if (Result == EAppReturnType::No)
-        // {
-        //     return FString(); // Skip preprocessing
-        // }
+        EAppReturnType::Type Result = FMessageDialog::Open(EAppMsgType::YesNoCancel, Message, &Title);
+        if (Result == EAppReturnType::Cancel)
+        {
+            bOutCancelled = true;
+            return FString();
+        }
+        if (Result == EAppReturnType::No)
+        {
+            return FString(); // 跳过预处理
+        }
 
-        // Browse for Python
+        // 浏览 Python
         PythonPath = BrowseForPython();
         if (PythonPath.IsEmpty())
         {
@@ -218,113 +219,116 @@ FString FMjPythonHelper::EnsurePythonReady(bool& bOutCancelled)
         bIsUEBundled = false;
     }
 
-    // Show package dialog if packages are missing or first-time setup
+    // 如果缺少软件包或首次设置，显示软件包对话框
     if (!CheckPythonPackages(PythonPath) || bNeedsFirstTimeSetup)
     {
         FString EnvLabel = bIsUEBundled
-            ? TEXT("Unreal Engine's bundled Python")
-            : FString::Printf(TEXT("your selected Python at:\n%s"), *PythonPath);
+            ? TEXT("Unreal Engine 自带的 Python 环境")
+            : FString::Printf(TEXT("你选择的 Python：\n%s"), *PythonPath);
 
         bool bPackagesPresent = CheckPythonPackages(PythonPath);
 
         FText Title = FText::FromString(bPackagesPresent
-            ? TEXT("Python Setup")
-            : TEXT("Python Packages Required"));
+            ? TEXT("Python 环境设置")
+            : TEXT("需要安装 Python 软件包"));
 
         // Button mapping: Yes = proceed, No = browse for different Python, Cancel = abort import
         FString MessageStr;
         if (bPackagesPresent)
         {
             MessageStr = FString::Printf(
-                TEXT("URLab uses Python to preprocess mesh files during MJCF import.\n\n")
-                TEXT("Required packages are already installed in %s.\n\n")
-                TEXT("Click 'Yes' to use this Python, 'No' to choose a different interpreter, ")
-                TEXT("or 'Cancel' to cancel the import."),
+                TEXT("URLab 在 MJCF 导入过程中使用 Python 对网格文件进行预处理。\n\n")
+                TEXT("所需软件包已在 %s 中安装。\n\n")
+                TEXT("点击“是”使用此 Python，点击“否”选择其他解释器，")
+                TEXT("或点击“取消”取消导入。"),
                 *EnvLabel);
         }
         else
         {
             MessageStr = FString::Printf(
-                TEXT("URLab needs the 'trimesh', 'numpy', and 'scipy' Python packages to preprocess mesh files.\n\n")
-                TEXT("Unreal Engine does not natively support all mesh formats used by MuJoCo, ")
-                TEXT("so these packages are used to convert and prepare meshes for import.\n\n")
-                TEXT("These will be installed to %s.\n\n")
-                TEXT("Install now?\n\n")
-                TEXT("Note: The editor will be unresponsive during installation. ")
-                TEXT("This may take a minute.\n\n")
-                TEXT("Alternatively, you can install these manually in your preferred Python environment:\n")
+                TEXT("URLab 需要 'trimesh'、'numpy'、'scipy' 这些 Python 软件包来预处理网格文件。\n\n")
+                TEXT("Unreal Engine 原生不支持 MuJoCo 使用的所有网格格式，")
+                TEXT("因此需要这些软件包来转换并准备要导入的网格。\n\n")
+                TEXT("这些软件包将安装到：%s\n\n")
+                TEXT("现在安装吗？\n\n")
+                TEXT("注意：安装期间编辑器会暂时无响应，")
+                TEXT("可能需要几分钟左右。\n\n")
+                TEXT("你也可以在自己的 Python 环境中手动安装：\n")
                 TEXT("  <your-python> -m pip install trimesh numpy scipy\n")
-                TEXT("Then set the path in Config/LocalUnrealRoboticsLab.ini in the plugin directory.\n\n")
-                TEXT("Click 'Yes' to install, 'No' to choose a different interpreter, ")
-                TEXT("or 'Cancel' to cancel the import."),
+                TEXT("然后在插件目录的 Config/LocalUnrealRoboticsLab.ini 中设置解释器路径。\n\n")
+                TEXT("点击“是”开始安装，点击“否”选择其他解释器，")
+                TEXT("或点击“取消”取消导入。"),
                 *EnvLabel);
         }
 
-        // EAppReturnType::Type Result; // = FMessageDialog::Open(EAppMsgType::YesNoCancel,
-        //    FText::FromString(MessageStr), Title);
+        EAppReturnType::Type Result = FMessageDialog::Open(EAppMsgType::YesNoCancel,
+           FText::FromString(MessageStr), &Title);
 
-        // if (Result == EAppReturnType::Cancel)
-        // {
-        //     bOutCancelled = true;
-        //     return FString();
-        // }
-        // else if (Result == EAppReturnType::No)
-        // {
-        //     PythonPath = BrowseForPython();
-        //     if (PythonPath.IsEmpty())
-        //     {
-        //         bOutCancelled = true;
-        //         return FString();
-        //     }
-// 
-        //     // Re-check packages with new Python
-        //     if (CheckPythonPackages(PythonPath))
-        //     {
-        //         UE_LOG(LogURLabEditor, Log, TEXT("[Python] Packages already available in selected Python."));
-        //         StorePythonOverride(PythonPath);
-        //         return PythonPath;
-        //     }
-// 
-        //     bPackagesPresent = false;
-// 
-        //     // Ask to install for the new Python
-        //     FText InstallMsg = FText::FromString(FString::Printf(
-        //         TEXT("Install 'trimesh', 'numpy', and 'scipy' to:\n%s?\n\n")
-        //         TEXT("The editor will be unresponsive during installation.\n\n")
-        //         TEXT("Click 'Cancel' to cancel the import."), *PythonPath));
-        //     // if (FMessageDialog::Open(EAppMsgType::OkCancel, InstallMsg, Title) == EAppReturnType::Cancel)
-        //     // {
-        //     //     bOutCancelled = true;
-        //     //     return FString();
-        //     // }
-        // }
+        if (Result == EAppReturnType::Cancel)
+        {
+            bOutCancelled = true;
+            return FString();
+        }
+        else if (Result == EAppReturnType::No)
+        {
+            PythonPath = BrowseForPython();
+            if (PythonPath.IsEmpty())
+            {
+                bOutCancelled = true;
+                return FString();
+            }
 
-        // Install packages if not already present
+            // Re-check packages with new Python
+            if (CheckPythonPackages(PythonPath))
+            {
+                UE_LOG(LogURLabEditor, Log, TEXT("[Python] Packages already available in selected Python."));
+                StorePythonOverride(PythonPath);
+                return PythonPath;
+            }
+
+            bPackagesPresent = false;
+
+            // Ask to install for the new Python
+            FText InstallMsg = FText::FromString(FString::Printf(
+                TEXT("将 'trimesh'、'numpy'、'scipy' 安装到：\n%s？\n\n")
+                TEXT("安装期间编辑器会暂时无响应。\n\n")
+                TEXT("点击“取消”将取消本次导入。"), *PythonPath));
+            if (FMessageDialog::Open(EAppMsgType::OkCancel, InstallMsg, &Title) == EAppReturnType::Cancel)
+            {
+                bOutCancelled = true;
+                return FString();
+            }
+        }
+
+        // 如果尚未安装，请安装相关软件包
         if (!bPackagesPresent)
         {
             FString InstallLog;
+            const FText FailureTitle = FText::FromString(TEXT("软件包安装失败"));
             if (!InstallPythonPackages(PythonPath, InstallLog))
             {
-                // FMessageDialog::Open(EAppMsgType::Ok,
-                //     FText::FromString(FString::Printf(
-                //         TEXT("Failed to install packages. You can install them manually by running:\n\n")
-                //         TEXT("%s -m pip install trimesh numpy scipy\n\n")
-                //         TEXT("Error log:\n%s"),
-                //         *PythonPath, *InstallLog)),
-                //     FText::FromString(TEXT("Package Install Failed")));
+                FMessageDialog::Open(EAppMsgType::Ok,
+                    FText::FromString(FString::Printf(
+                        TEXT("软件包安装失败。你可以手动运行以下命令安装：\n\n")
+                        TEXT("%s -m pip install trimesh numpy scipy\n\n")
+                        TEXT("错误日志：\n%s"),
+                        *PythonPath, *InstallLog)),
+                    &FailureTitle);
                 return FString();
             }
 
             if (!CheckPythonPackages(PythonPath))
             {
-                // FMessageDialog::Open(EAppMsgType::Ok,
-                //     FText::FromString(TEXT("Packages were installed but still cannot be imported. Check your Python environment.")),
-                //     FText::FromString(TEXT("Package Verification Failed")));
+                const FText VerifyTitle = FText::FromString(TEXT("软件包验证失败"));
+                FMessageDialog::Open(EAppMsgType::Ok,
+                    FText::FromString(TEXT("软件包已安装，但仍然无法导入。请检查你的 Python 环境。")),
+                    &VerifyTitle);
                 return FString();
             }
         }
     }
 
+    // 把当前选定的 Python 解释器绝对路径保存成本机配置，供下次导入直接复用。
     StorePythonOverride(PythonPath);
     UE_LOG(LogURLabEditor, Log, TEXT("[Python] Ready: %s"), *PythonPath);
     return PythonPath;
@@ -338,13 +342,13 @@ FString FMjPythonHelper::BrowseForPython()
     {
         DesktopPlatform->OpenFileDialog(
             FSlateApplication::Get().FindBestParentWindowHandleForDialogs(nullptr),
-            TEXT("Select Python Interpreter"),
+            TEXT("选择 Python 解释器"),
             TEXT(""),
             TEXT(""),
 #if PLATFORM_WINDOWS
-            TEXT("Python Executable (*.exe)|*.exe"),
+            TEXT("Python 可执行文件 (*.exe)|*.exe"),
 #else
-            TEXT("All Files (*)|*"),
+            TEXT("所有文件 (*)|*"),
 #endif
             0, OutFiles);
     }
@@ -354,9 +358,10 @@ FString FMjPythonHelper::BrowseForPython()
     FString PythonPath = OutFiles[0];
     if (!ValidatePythonBinary(PythonPath))
     {
-        // FMessageDialog::Open(EAppMsgType::Ok,
-        //     FText::FromString(FString::Printf(TEXT("'%s' is not a valid Python interpreter."), *PythonPath)),
-        //     FText::FromString(TEXT("Invalid Python")));
+        const FText Title = FText::FromString(TEXT("无效的 Python"));
+        FMessageDialog::Open(EAppMsgType::Ok,
+            FText::FromString(FString::Printf(TEXT("“%s”不是有效的 Python 解释器。"), *PythonPath)),
+            &Title);
         return FString();
     }
 
