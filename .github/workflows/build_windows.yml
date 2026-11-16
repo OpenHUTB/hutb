@@ -46,14 +46,16 @@ jobs:
           make package ARGS="--chrono"
         shell: cmd
 
+      # cmd 只把最后一条命令的退出码作为该步骤的结果，
+      # 所以每个 make check.* 失败时都要立即退出，否则前面测试的失败会被忽略。
       - name: test
         run: |
           call setEnv64.bat
-          make check.PythonAPI
-          make check.smoke
-          make check.air
-          make check.vr
-          make check.python
+          make check.PythonAPI || exit /b 1
+          make check.smoke || exit /b 1
+          make check.air || exit /b 1
+          make check.vr || exit /b 1
+          make check.python || exit /b 1
         shell: cmd
 
 

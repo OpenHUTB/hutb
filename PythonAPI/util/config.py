@@ -23,6 +23,12 @@ import datetime
 import re
 import socket
 import textwrap
+from urllib.error import HTTPError
+from urllib.request import Request, urlopen
+
+
+# Same as the default query timeout of the Overpass API.
+OSM_DOWNLOAD_TIMEOUT = 180.0  # in seconds
 
 
 def get_ip(host):
@@ -36,6 +42,56 @@ def get_ip(host):
         finally:
             sock.close()
     return host
+
+
+def is_url(path):
+    return path.lower().startswith(('http://', 'https://'))
+
+
+def download_osm_data(url):
+    print('download OpenStreetMap data from %r.' % url)
+    # The Overpass API rejects the default Python-urllib User-Agent (HTTP 406).
+    request = Request(url, headers={'User-Agent': 'OpenHUTB-config.py'})
+    try:
+        with urlopen(request, timeout=OSM_DOWNLOAD_TIMEOUT) as response:
+            return response.read().decode('utf-8')
+    except HTTPError as error:
+        # The server explains the failure (e.g. it is busy) in the response body.
+        details = error.read().decode('utf-8', 'replace').strip()
+        sys.exit('OpenStreetMap data could not be downloaded: %s\n%s' % (error, details))
+    except (OSError, ValueError) as error:
+        sys.exit('OpenStreetMap data could not be downloaded: %s' % error)
+
+
+def read_osm_data(osm_path):
+    if is_url(osm_path):
+        return download_osm_data(osm_path)
+    if not os.path.exists(osm_path):
+        sys.exit('file not found.')
+    with open(osm_path, encoding='utf-8') as od_file:
+        try:
+            return od_file.read()
+        except OSError:
+            sys.exit('file could not be readed.')
+
+
+def load_osm_world(client, osm_path):
+    data = read_osm_data(osm_path)
+    print('Converting OSM data to opendrive')
+    xodr_data = carla.Osm2Odr.convert(data)
+    print('load opendrive map.')
+    vertex_distance = 2.0  # in meters
+    max_road_length = 500.0 # in meters
+    wall_height = 0.0      # in meters
+    extra_width = 0.6      # in meters
+    return client.generate_opendrive_world(
+        xodr_data, carla.OpendriveGenerationParameters(
+            vertex_distance=vertex_distance,
+            max_road_length=max_road_length,
+            wall_height=wall_height,
+            additional_width=extra_width,
+            smooth_junctions=True,
+            enable_mesh_visibility=True))
 
 
 def find_weather_presets():
@@ -124,7 +180,8 @@ def main():
         help='set default settings')
     argparser.add_argument(
         '-m', '--map',
-        help='load a new map, use --list to see available maps')
+        help='load a new map, use --list to see available maps; an http(s) URL is '
+        'loaded as OpenStreetMap data (same as --osm-path)')
     argparser.add_argument(
         '-r', '--reload-map',
         action='store_true',
@@ -172,8 +229,10 @@ def main():
         help='load a new map with a minimum physical road representation of the provided OpenDRIVE')
     argparser.add_argument(
         '--osm-path',
-        metavar='OSM_FILE_PATH',
-        help='load a new map with a minimum physical road representation of the provided OpenStreetMaps')
+        metavar='OSM_FILE_PATH_OR_URL',
+        help='load a new map with a minimum physical road representation of the provided OpenStreetMaps, '
+        'either a local file or a download URL such as '
+        'https://overpass-api.de/api/map?bbox=MIN_LON,MIN_LAT,MAX_LON,MAX_LAT')
     argparser.add_argument(
         '--tile-stream-distance',
         metavar='N',
@@ -199,7 +258,9 @@ def main():
         args.weather = 'Default'
         args.no_sync = True
 
-    if args.map is not None:
+    if args.map is not None and is_url(args.map):
+        world = load_osm_world(client, args.map)
+    elif args.map is not None:
         print('load map %r.' % args.map)
         world = client.load_world(args.map)
     elif args.reload_map:
@@ -229,30 +290,7 @@ def main():
         else:
             print('file not found.')
     elif args.osm_path is not None:
-        if os.path.exists(args.osm_path):
-            with open(args.osm_path, encoding='utf-8') as od_file:
-                try:
-                    data = od_file.read()
-                except OSError:
-                    print('file could not be readed.')
-                    sys.exit()
-            print('Converting OSM data to opendrive')
-            xodr_data = carla.Osm2Odr.convert(data)
-            print('load opendrive map.')
-            vertex_distance = 2.0  # in meters
-            max_road_length = 500.0 # in meters
-            wall_height = 0.0      # in meters
-            extra_width = 0.6      # in meters
-            world = client.generate_opendrive_world(
-                xodr_data, carla.OpendriveGenerationParameters(
-                    vertex_distance=vertex_distance,
-                    max_road_length=max_road_length,
-                    wall_height=wall_height,
-                    additional_width=extra_width,
-                    smooth_junctions=True,
-                    enable_mesh_visibility=True))
-        else:
-            print('file not found.')
+        world = load_osm_world(client, args.osm_path)
 
     else:
         world = client.get_world()

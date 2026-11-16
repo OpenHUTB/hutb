@@ -171,7 +171,7 @@ set exe_dir=%BUILD_FOLDER:\=/%WindowsNoEditor/%
 set exe_path=%BUILD_FOLDER:/=\%WindowsNoEditor\CarlaUE4.exe
 
 rem If exist CarlaUE4.exe process, kill it
-for /f "tokens=5" %%a in ('netstat -ano ^| findstr :3654') do taskkill /F /PID %%a
+call :stop_test_service
 :: use command "start" to launch a new service process. Otherwise stuck
 if exist %exe_path% (
     :: prevent to Choose Vehicle when launching the service, which will cause the service to be stuck and fail to run smoke tests.
@@ -265,8 +265,13 @@ if %PYTHON_API%==true (
         echo Current Pip path:
         where pip
         cd %ROOT_PATH:/=\%PythonAPI\test\unit\
-        python -m nose2 test_transform
-        python -m nose2 test_vehicle
+        for %%t in (test_transform test_vehicle) do (
+            python -m nose2 %%t
+            if !errorlevel! neq 0 (
+                echo Python API unit test failed: %%t for Python 3.%%i.
+                goto bad_exit
+            )
+        )
     )
 
     if %XML_OUTPUT%==true (
@@ -301,6 +306,10 @@ if %SMOKE_TESTS%==true (
         where python
         echo python -m nose2 -v %smoke_list%
         python -m nose2 -v %smoke_list%
+        if !errorlevel! neq 0 (
+            echo Smoke tests failed for Python 3.%%i.
+            goto bad_exit
+        )
     )
 )
 
@@ -329,12 +338,16 @@ if %VR_TESTS%==true (
         timeout /t 10 /nobreak > NUL
         echo Switch to VR mode...
         python ../util/config.py -p 3654 --map Town10HD?GAME=VR
+        if !errorlevel! neq 0 (
+            echo Switching to VR mode failed with errorlevel !errorlevel! for Python 3.%%i.
+            goto bad_exit
+        )
         python ./function/test_VR_diagram_mode.py
-        rem 判断是否正常退出
-        if %errorlevel% equ 0 (
+        rem 判断是否正常退出（块内必须用 !errorlevel!，原因见 Carla-Air 测试段）
+        if !errorlevel! equ 0 (
             echo VR test passed.
         ) else (
-            echo VR test failed with errorlevel %errorlevel%.
+            echo VR test failed with errorlevel !errorlevel! for Python 3.%%i.
             goto bad_exit
         )
     )
@@ -345,15 +358,20 @@ if %PYTHON_TESTS%==true (
     echo Testing Python packaging... 
     echo Current directory: %cd%
 
-    set PYTHON_PATH=%exe_dir%Python\python.exe
-    echo %FILE_N% Checking if Python is packaged...
-    %PYTHON_PATH% --version
-    %PYTHON_PATH% -m pip list
-
-    if %errorlevel% equ 0 (
+    rem 块内 set 的变量和 errorlevel 都必须用 !...! 读取：%...% 在解析期就已被替换，
+    rem 读到的是进入本段之前的旧值（PYTHON_PATH 为空，errorlevel 恒为 0）。
+    set PYTHON_PATH=%BUILD_FOLDER:/=\%WindowsNoEditor\Python\python.exe
+    echo %FILE_N% Checking if Python is packaged: !PYTHON_PATH!
+    "!PYTHON_PATH!" --version
+    if !errorlevel! neq 0 (
+        echo Python packaging test failed: packaged Python could not be run, errorlevel !errorlevel!.
+        goto bad_exit
+    )
+    "!PYTHON_PATH!" -m pip list
+    if !errorlevel! equ 0 (
         echo Python packaging test passed.
     ) else (
-        echo Python packaging test failed with level %errorlevel%.
+        echo Python packaging test failed with level !errorlevel!.
         goto bad_exit
     )
 )
@@ -370,7 +388,7 @@ rem ============================================================================
 :: pause 5 seconds to wait for the service to be ready, otherwise the service process will be not killed with no test task.
 timeout /t 10 /nobreak > NUL
 echo Killing Unreal service process after test...
-for /f "tokens=5" %%a in ('netstat -ano ^| findstr :3654') do taskkill /F /PID %%a
+call :stop_test_service
 
 
 call :get_current_time_in_seconds T_END_OVERALL
@@ -391,6 +409,11 @@ rem ============================================================================
     for /f %%a in ('powershell -command "[int]((Get-Date -UFormat '%%s') -split ',.')[0]"') do set %1=%%a
     goto :eof
 
+rem Kill the Unreal service listening on the test port (3654).
+:stop_test_service
+    for /f "tokens=5" %%a in ('netstat -ano ^| findstr :3654') do taskkill /F /PID %%a
+    goto :eof
+
 
 rem ============================================================================
 rem -- Messages and Errors -----------------------------------------------------
@@ -405,5 +428,9 @@ rem ============================================================================
     exit /b 0
 
 :bad_exit
+    rem 测试失败时也要结束服务进程，否则模拟器会一直留在自托管的 runner 上，
+    rem 占用 3654 端口并锁住工作区中的发行包文件。
+    echo Killing Unreal service process after failed test...
+    call :stop_test_service
     endlocal
     exit /b 1
