@@ -317,6 +317,15 @@ python3 config.py -x=/path/to/xodr/file
 python3 config.py --osm-path=/path/to/OSM/file
 </code></pre>
 <p><a href="../python_api/#carla.OpendriveGenerationParameters">Default parameters</a> will be used.</p>
+<p>Instead of exporting the <code>.osm</code> file manually, you can also pass a URL that returns OpenStreetMap data, for example a bounding box query to the <a href="https://wiki.openstreetmap.org/wiki/Overpass_API">Overpass API</a>. The bounding box is given as <code>min_lon,min_lat,max_lon,max_lat</code>. <code>config.py</code> downloads the data and loads it in the same way as a local <code>.osm</code> file. A URL passed to <code>-m</code>/<code>--map</code> is handled like <code>--osm-path</code>:</p>
+<pre><code class="language-sh">cd PythonAPI/util
+
+python3 config.py -m &quot;https://overpass-api.de/api/map?bbox=112.90778,28.21581,112.92336,28.22943&quot;
+</code></pre>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Keep the bounding box small. Large areas take a long time to download and convert, and the public Overpass API may time out or reply that it is busy. If the download fails, <code>config.py</code> prints the error returned by the server and exits without changing the map.</p>
+</div>
 <p>Regardless of the method used, the map will be ingested into CARLA and the result should be similar to the image below:</p>
 <p><img alt="opendrive_meshissue" src="../img/tuto_g_osm_carla.jpg" /></p>
 <div style="text-align: right"><i>Outcome of the CARLA map generation using OpenStreetMap.</i></div>
