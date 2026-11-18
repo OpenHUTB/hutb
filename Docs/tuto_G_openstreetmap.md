@@ -195,6 +195,17 @@ python3 config.py --osm-path=/path/to/OSM/file
 
 [Default parameters](python_api.md#carla.OpendriveGenerationParameters) will be used.
 
+Instead of exporting the `.osm` file manually, you can also pass a URL that returns OpenStreetMap data, for example a bounding box query to the [Overpass API](https://wiki.openstreetmap.org/wiki/Overpass_API). The bounding box is given as `min_lon,min_lat,max_lon,max_lat`. `config.py` downloads the data and loads it in the same way as a local `.osm` file. A URL passed to `-m`/`--map` is handled like `--osm-path`:
+
+```sh
+cd PythonAPI/util
+
+python3 config.py -m "https://overpass-api.de/api/map?bbox=112.90778,28.21581,112.92336,28.22943"
+```
+
+!!! Note
+    Keep the bounding box small. Large areas take a long time to download and convert, and the public Overpass API may time out or reply that it is busy. If the download fails, `config.py` prints the error returned by the server and exits without changing the map.
+
 
 Regardless of the method used, the map will be ingested into CARLA and the result should be similar to the image below:
 
