@@ -96,8 +96,9 @@ if exist "%ProgramW6432%\Microsoft Visual Studio\2022\Community\VC\Auxiliary\Bui
 )
 
 
-rem If is not set, set the number of parallel jobs to the number of CPU threads
-if "%NUMBER_OF_ASYNC_JOBS%" == "" set NUMBER_OF_ASYNC_JOBS=%NUMBER_OF_PROCESSORS%
+rem If is not set, leave some CPU threads free while compiling: use 85 percent of them (at least 1)
+if "%NUMBER_OF_ASYNC_JOBS%" == "" set /a NUMBER_OF_ASYNC_JOBS=NUMBER_OF_PROCESSORS * 85 / 100
+if %NUMBER_OF_ASYNC_JOBS% lss 1 set NUMBER_OF_ASYNC_JOBS=1
 
 rem ============================================================================
 rem -- Basic info and setup ----------------------------------------------------
@@ -580,7 +581,7 @@ rem ============================================================================
     echo.
     echo  Commands:
     echo     -h, --help          -^> Shows this dialog.
-    echo     -j ^<N^>            -^> N is the integer number of async jobs while compiling (default=1).
+    echo     -j ^<N^>            -^> N is the integer number of async jobs while compiling (default=85 percent of the CPU threads).
     echo     --boost-toolset [T] -^> Toolset corresponding to your compiler ^(default=^*^):
     echo                               Visual Studio 2013 -^> msvc-12.0
     echo                               Visual Studio 2015 -^> msvc-14.0
