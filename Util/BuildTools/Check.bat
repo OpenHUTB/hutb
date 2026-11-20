@@ -351,6 +351,29 @@ if %VR_TESTS%==true (
             goto bad_exit
         )
     )
+
+    echo Checking packaged DReyeVR launcher and HandPose files...
+    for %%f in (
+        "StartPimaxVR.ps1"
+        "StartDrivingStudy.ps1"
+        "StartDrivingStudy.cmd"
+        "Util\HandPose\README.md"
+        "Util\HandPose\record_hands.py"
+        "Util\HandPose\replay_arms.py"
+    ) do (
+        if not exist "%exe_dir:/=%%%~f" (
+            echo Error: Missing packaged VR/HandPose file: %exe_dir:/=%%%~f
+            goto bad_exit
+        )
+    )
+    powershell.exe -NoProfile -ExecutionPolicy Bypass -File "%ROOT_PATH:/=\%Util\Tests\TestPimaxLauncher.ps1"
+    if !errorlevel! neq 0 goto bad_exit
+    powershell.exe -NoProfile -STA -ExecutionPolicy Bypass -File "%ROOT_PATH:/=\%StartDrivingStudy.ps1" -ValidateOnly
+    if !errorlevel! neq 0 goto bad_exit
+    powershell.exe -NoProfile -STA -ExecutionPolicy Bypass -File "%exe_dir:/=\%StartDrivingStudy.ps1" -ValidateOnly
+    if !errorlevel! neq 0 goto bad_exit
+    python -m py_compile "%ROOT_PATH:/=\%Util\HandPose\record_hands.py" "%ROOT_PATH:/=\%Util\HandPose\replay_arms.py"
+    if !errorlevel! neq 0 goto bad_exit
 )
 
 
@@ -389,6 +412,16 @@ rem ============================================================================
 timeout /t 10 /nobreak > NUL
 echo Killing Unreal service process after test...
 call :stop_test_service
+
+if %VR_TESTS%==true if exist "%ROOT_PATH:/=\%Unreal\CarlaUE4\Binaries\Win64\UE4Editor-CarlaUE4.dll" (
+    echo Running Unreal C++ automation tests ^(HUTB.*^)...
+    if exist "%ROOT_PATH:/=\%Build\engine\Engine\Binaries\Win64\UE4Editor-Cmd.exe" (
+        powershell.exe -NoProfile -ExecutionPolicy Bypass -File "%ROOT_PATH:/=\%Util\Tests\RunPimaxTests.ps1" -UE4Root "%ROOT_PATH:/=\%Build\engine"
+    ) else (
+        powershell.exe -NoProfile -ExecutionPolicy Bypass -File "%ROOT_PATH:/=\%Util\Tests\RunPimaxTests.ps1"
+    )
+    if !errorlevel! neq 0 goto bad_exit
+)
 
 
 call :get_current_time_in_seconds T_END_OVERALL
