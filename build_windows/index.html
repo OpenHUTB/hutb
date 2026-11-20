@@ -342,6 +342,10 @@ python3 -m pip install --user wheel
 <p>The CARLA client library is provideed as a Python wheel package. Running the command above will automatically install the wheel in your target Python environment. You can also find the wheel file in the <code>PythonAPI\carla\dist</code> directory.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
+<p>LibCarla and Boost are compiled with 85% of the CPU threads by default, so that the computer stays responsive during the build. To choose the number of parallel compile jobs yourself, pass <code>-j &lt;N&gt;</code>, for example <code>make PythonAPI ARGS="-j 8"</code>. It also works with the other commands that build LibCarla, such as <code>make LibCarla</code>.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
 <p><strong>NumPy 2 error</strong>: If the Python installation or environment that you are using to build CARLA has <em>numpy&gt;=2.0.0</em> installed, this will cause an error during the build process due to conflicting dependencies. This should be the first thing to check when encountering errors related to Boost. Check your NumPy version using <code>python3 -m pip show numpy</code>.</p>
 </div>
 <p><strong>2.</strong> <strong>Compile the server</strong>:</p>
