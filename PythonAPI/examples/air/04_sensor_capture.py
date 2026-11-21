@@ -55,10 +55,10 @@ for i in range(5):
         img = img_queue.get(timeout=2)
         arr = np.frombuffer(img.raw_data, dtype=np.uint8)
         frame = arr.reshape(img.height, img.width, 4)[:, :, :3]
-        cv2.imwrite(f'/tmp/carla_frame_{i}.png', frame)
+        cv2.imwrite(f'./carla_frame_{i}.png', frame)
         print(f"  Save Frame {i}: {img.width}x{img.height}")
     except queue.Empty:
         print(f"  Frame {i}: Timeout")
 
 camera.stop(); camera.destroy(); vehicle.destroy()
-print(f"Capture completed! Images: /tmp/carla_frame_*.png")
+print(f"Capture completed! Images: ./carla_frame_*.png")
