@@ -2,7 +2,20 @@ name: hubt Linux CI/CD
 
 on:
    pull_request:
+   push:
+      branches: [hutb]
    workflow_dispatch:
+      inputs:
+         mode:
+            description: "fast=复用依赖增量构建；full=清空依赖与构建产物后重建（仅 24.04 job 使用）"
+            type: choice
+            options: [fast, full]
+            default: fast
+         upload:
+            description: "全部 check 通过后，是否上传发行包到腾讯工蜂大文件仓库"
+            type: choice
+            options: ["false", "true"]
+            default: "false"
 
 
 jobs:
@@ -99,4 +112,161 @@ jobs:
                        make check.upload
                     shell: bash
 
+  # ----------------------------------------------------------------------
+    linux-dev-2404:
+      name: Linux CI/CD (Ubuntu 24.04)
+      timeout-minutes: 1440
+      runs-on: [self-hosted, ubuntu-hutb-2404]
+      env:
+        UE4_ROOT: /home/yxkj/UnrealEngine_4.26
+        MODE: ${{ github.event_name == 'schedule' && 'full' || inputs.mode || 'fast' }}
+        UPLOAD: ${{ inputs.upload || 'false' }}
+        PY_VER: "3.10"
+        # wheel 链接用 UE4 自带 clang++ + ld.lld（旧 ld 读不了新版 glibc 的 .relr.dyn）
+        LDSHARED: "/home/yxkj/UnrealEngine_4.26/Engine/Extras/ThirdPartyNotUE/SDKs/HostLinux/Linux_x64/v17_clang-10.0.1-centos7/x86_64-unknown-linux-gnu/bin/clang++ -shared -fuse-ld=lld"
+        LDCXXSHARED: "/home/yxkj/UnrealEngine_4.26/Engine/Extras/ThirdPartyNotUE/SDKs/HostLinux/Linux_x64/v17_clang-10.0.1-centos7/x86_64-unknown-linux-gnu/bin/clang++ -shared -fuse-ld=lld"
+        LIBCARLA_INSTALL_SERVER_FOLDER: ${{ github.workspace }}/Unreal/CarlaUE4/Plugins/Carla/CarlaDependencies
+        LIBCARLA_INSTALL_CLIENT_FOLDER: ${{ github.workspace }}/PythonAPI/carla/dependencies
+      steps:
+        - name: Checkout repository
+          uses: actions/checkout@v5
+          with:
+            fetch-depth: 0
 
+        - name: Show files
+          run: |
+            pwd
+            uname -a
+            nproc; free -g | head -2; df -h "$GITHUB_WORKSPACE" | tail -1
+            ls -al
+
+        - name: 24.04 工具链适配
+          run: bash .github/scripts/ci_2404_shim.sh
+          shell: bash
+
+        - name: 依赖与资源（full 时清空重建）
+          run: |
+            set -e
+            if [ "$MODE" = "full" ]; then
+              echo "[full] 清空依赖与构建产物"
+              rm -rf Build/dependencies Build/AirSim Build/LibCarla Build/UE4Carla
+              rm -rf Build/*-source Build/*-src
+              rm -rf Unreal/CarlaUE4/Intermediate
+              rm -rf "$UE4_ROOT/Engine/Intermediate/Build/Linux/B4D820EA"
+            else
+              echo "[fast] 复用已有依赖与构建产物"
+              rm -rf Build/*-source Build/*-src 2>/dev/null || true
+            fi
+            # 如果这台 runner 上已经有共享 Content 缓存，直接复用，避免匿名拉腾讯私有仓库 404
+            CI_CONTENT=/home/yxkj/ci-assets/Content
+            if [ -d "$CI_CONTENT/.git" ] && [ "$(readlink -f Unreal/CarlaUE4/Content 2>/dev/null)" != "$CI_CONTENT" ]; then
+              rm -rf Unreal/CarlaUE4/Content
+              ln -sfn "$CI_CONTENT" Unreal/CarlaUE4/Content
+              echo "Content -> $CI_CONTENT"
+            fi
+          shell: bash
+
+        - name: setup
+          run: |
+            set -o pipefail
+            # 24.04 上不 source setEnv64.sh：里面写死了 /home/ubuntu 的 UE4_ROOT，
+            # 路径统一由 workflow env 提供
+            git update-index --skip-worktree Unreal/CarlaUE4/CarlaUE4.uproject || true
+            ./setup.sh 2>&1 | tee /tmp/ci_setup_sh.log
+            make setup ARGS="--chrono" 2>&1 | tee /tmp/ci_setup.log
+          shell: bash
+
+        # make plugins 不执行：仓库里的 Plugins.sh 未 source Environment.sh，log 未定义必然失败；
+        # 其功能已由 make setup 的 downloadplugins 覆盖
+        - name: retrieve content
+          run: |
+            set -o pipefail
+            if [ -x Update.sh ]; then ./Update.sh 2>&1 | tee /tmp/ci_update.log; else echo "无 Update.sh，跳过"; fi
+          shell: bash
+
+        # 与 20.04 的 "Fix Windows Compiler Flags and Clean Cache" 对应：
+        # /wd4103 由 shim 里的 clang 包装丢弃，这里只清引擎中间缓存。
+        # 不删除 UnrealBuildTool.exe：这台引擎上 GenerateProjectFiles 的产物只落在 obj/ 下，
+        # 不会回填 Binaries/DotNET，删除后 UBT 直接不可用。
+        - name: 清理引擎中间缓存
+          run: |
+            set -e
+            rm -rf "$UE4_ROOT/Engine/Intermediate/Build/Linux/B4D820EA"
+            rm -rf "$GITHUB_WORKSPACE/Unreal/CarlaUE4/Intermediate"
+            if [ ! -f "$UE4_ROOT/Engine/Binaries/DotNET/UnrealBuildTool.exe" ]; then
+              UBT_OBJ="$UE4_ROOT/Engine/Source/Programs/UnrealBuildTool/obj/Development/UnrealBuildTool.exe"
+              [ -f "$UBT_OBJ" ] && cp -f "$UBT_OBJ" "$UE4_ROOT/Engine/Binaries/DotNET/"
+            fi
+            df -h "$GITHUB_WORKSPACE" | tail -1
+          shell: bash
+
+        - name: CarlaUE4Editor
+          run: |
+            set -o pipefail
+            # osm2odr 需要 zlib 头；用了 UE4 sysroot 后系统 /usr/include 不可见，单独拷一份用 CPATH 注入
+            mkdir -p Build/zlib-include
+            cp -f /usr/include/zlib.h /usr/include/zconf.h Build/zlib-include/ 2>/dev/null || true
+            export CPATH="$PWD/Build/zlib-include${CPATH:+:$CPATH}"
+            rm -rf Build/LibCarla Build/LibCppToolChain.cmake
+            make CarlaUE4Editor ARGS="--chrono" 2>&1 | tee /tmp/ci_editor.log
+          shell: bash
+
+        - name: 构建 PythonAPI wheel
+          run: |
+            set -o pipefail
+            make PythonAPI.wheel ARGS="--python-version=${PY_VER}" 2>&1 | tee /tmp/ci_wheel.log
+            ls -lh PythonAPI/carla/dist/
+          shell: bash
+
+        - name: package
+          run: |
+            set -o pipefail
+            # Shipping 编译拆 Unity 后很吃内存，限 6 核防 OOM；只有要上传时才生成压缩包
+            if [ "$UPLOAD" = "true" ]; then
+              taskset -c 0-5 make package ARGS="--chrono" 2>&1 | tee /tmp/ci_package.log
+            else
+              taskset -c 0-5 bash Util/BuildTools/Package.sh --no-zip 2>&1 | tee /tmp/ci_package.log
+            fi
+          shell: bash
+
+        - name: check
+          run: |
+            set -o pipefail
+            cleanup_sim() {
+              pkill -f "CarlaUE4-Linux-Shipping" 2>/dev/null || true
+              sleep 2
+              fuser -k 2000/tcp 3654/tcp 2>/dev/null || true
+              sleep 1
+            }
+            cleanup_sim
+            make check.PythonAPI ARGS="--python-version=${PY_VER}" 2>&1 | tee /tmp/ci_check_pythonapi.log
+            cleanup_sim
+            make check.smoke ARGS="--python-version=${PY_VER}" 2>&1 | tee /tmp/ci_check_smoke.log
+            cleanup_sim
+            make check.vr ARGS="--python-version=${PY_VER}" 2>&1 | tee /tmp/ci_check_vr.log
+            cleanup_sim
+            make check.air ARGS="--python-version=${PY_VER}" 2>&1 | tee /tmp/ci_check_air.log
+          shell: bash
+
+        # 上传默认关闭；打开时也只推 release_u（脚本暂不支持指定测试分支，见 PR 说明）
+        - name: upload
+          if: env.UPLOAD == 'true'
+          run: |
+            set -o pipefail
+            ls -lh Build/UE4Carla/*.tar.gz Build/UE4Carla/*.zip 2>/dev/null || {
+              echo "Build/UE4Carla 下没有压缩包，UPLOAD=true 时打包必须带压缩"; exit 1; }
+            python3 -c "import git" 2>/dev/null || python3 -m pip install -q gitpython
+            ( cd Util && python3 ./download_from_git.py -u release ) 2>&1 | tee /tmp/ci_upload.log
+          shell: bash
+
+        - name: 汇总产物
+          if: always()
+          run: |
+            echo "==== 产物目录 ===="
+            ls -lh Build/UE4Carla/ | tail -5 || true
+            echo "==== wheel ===="
+            ls -lh PythonAPI/carla/dist/ || true
+            echo "==== 日志 ===="
+            ls -lh /tmp/ci_*.log 2>/dev/null || true
+            df -h "$GITHUB_WORKSPACE" | tail -1
+          shell: bash
