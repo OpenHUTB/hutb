@@ -1,6 +1,8 @@
 name: hubt Linux CI/CD
 
 on:
+   push:
+      branches: [hutb]
    pull_request:
    workflow_dispatch:
       inputs:
