@@ -147,8 +147,9 @@ inc = (anchor + '\n'
        'export LLVM_LIBPATH="${UE4_ROOT}/Engine/Source/ThirdParty/Linux/LibCxx/lib/Linux/x86_64-unknown-linux-gnu"\n'
        'export UNREAL_HOSTED_CFLAGS="--sysroot=${UE4_ROOT}/Engine/Extras/ThirdPartyNotUE/SDKs/HostLinux/Linux_x64/v17_clang-10.0.1-centos7/x86_64-unknown-linux-gnu"\n'
        '# [hutb-ci] 全局 CXXFLAGS/LDFLAGS 补上 libc++ 头与 sysroot；否则 patchelf 等 autotools 构建会退到系统 libc++18\n'
+       '# 注意：LDFLAGS 不能带 --sysroot，否则 libpng 之类 C 库找不到系统的 zlib\n'
        'export CXXFLAGS="${CXXFLAGS} -isystem ${LLVM_INCLUDE} -L${LLVM_LIBPATH} ${UNREAL_HOSTED_CFLAGS}"\n'
-       'export LDFLAGS="${LDFLAGS} -L${LLVM_LIBPATH} ${UNREAL_HOSTED_CFLAGS} -lpthread"')
+       'export LDFLAGS="${LDFLAGS} -L${LLVM_LIBPATH} -lpthread"')
 if '[hutb-ci] libc++/sysroot' in s:
     print('libc++/sysroot 已就绪，跳过')
 elif anchor in s:
