@@ -140,21 +140,100 @@ python3 - Util/BuildTools/Setup.sh <<'PY'
 import io
 p = 'Util/BuildTools/Setup.sh'
 s = io.open(p, encoding='utf-8').read()
-inc = ('# [hutb-ci] libc++ 指向 UE4\n'
+anchor = 'export LDFLAGS="-stdlib=libc++"'
+inc = (anchor + '\n'
+       '# [hutb-ci] libc++/sysroot 指向 UE4 自带版本（本版本没有 unset，只能显式补）\n'
        'export LLVM_INCLUDE="${UE4_ROOT}/Engine/Source/ThirdParty/Linux/LibCxx/include/c++/v1"\n'
        'export LLVM_LIBPATH="${UE4_ROOT}/Engine/Source/ThirdParty/Linux/LibCxx/lib/Linux/x86_64-unknown-linux-gnu"\n'
-       'export UNREAL_HOSTED_CFLAGS="--sysroot=${UE4_ROOT}/Engine/Extras/ThirdPartyNotUE/SDKs/HostLinux/Linux_x64/v17_clang-10.0.1-centos7/x86_64-unknown-linux-gnu"')
-changed = False
-if '[hutb-ci] libc++' not in s:
-    for key in ('UNREAL_HOSTED_CFLAGS', 'LLVM_INCLUDE', 'LLVM_LIBPATH'):
-        if ('unset ' + key) in s:
-            s = s.replace('unset ' + key, inc if key == 'UNREAL_HOSTED_CFLAGS' else '# [hutb-ci] ' + key, 1)
-            changed = True
-if changed:
-    io.open(p, 'w', encoding='utf-8').write(s)
-    print('Setup.sh libc++/sysroot 已就绪')
-else:
+       'export UNREAL_HOSTED_CFLAGS="--sysroot=${UE4_ROOT}/Engine/Extras/ThirdPartyNotUE/SDKs/HostLinux/Linux_x64/v17_clang-10.0.1-centos7/x86_64-unknown-linux-gnu"\n'
+       '# [hutb-ci] 全局 CXXFLAGS/LDFLAGS 补上 libc++ 头与 sysroot；否则 patchelf 等 autotools 构建会退到系统 libc++18\n'
+       'export CXXFLAGS="${CXXFLAGS} -isystem ${LLVM_INCLUDE} -L${LLVM_LIBPATH} ${UNREAL_HOSTED_CFLAGS}"\n'
+       'export LDFLAGS="${LDFLAGS} -L${LLVM_LIBPATH} ${UNREAL_HOSTED_CFLAGS} -lpthread"')
+if '[hutb-ci] libc++/sysroot' in s:
     print('libc++/sysroot 已就绪，跳过')
+elif anchor in s:
+    io.open(p, 'w', encoding='utf-8').write(s.replace(anchor, inc, 1))
+    print('Setup.sh 已注入 LLVM_INCLUDE / LLVM_LIBPATH / sysroot')
+else:
+    print('警告：Setup.sh 的 LDFLAGS 锚点未命中')
+PY
+
+# Recast 的 cmake 行写死了 -stdlib=libc++ 但没给头文件/sysroot；
+# 24.04 系统 libc++ 是 18 版，clang10 编不过，必须显式指向 UE4 自带的 libc++10
+python3 - Util/BuildTools/Setup.sh <<'PY'
+import io
+p = 'Util/BuildTools/Setup.sh'
+s = io.open(p, encoding='utf-8').read()
+if '[hutb-ci] recast' in s:
+    print('Recast libc++ 参数已存在，跳过')
+else:
+    old = '-DCMAKE_CXX_FLAGS="-std=c++14 -stdlib=libc++ -fPIC"'
+    new = ('-DCMAKE_CXX_FLAGS="-std=c++14 -stdlib=libc++ -fPIC '  # [hutb-ci] recast
+           '-isystem %s/include/c++/v1 '
+           '-L%s/lib/Linux/x86_64-unknown-linux-gnu '
+           '--sysroot=%s/Engine/Extras/ThirdPartyNotUE/SDKs/HostLinux/Linux_x64/'
+           'v17_clang-10.0.1-centos7/x86_64-unknown-linux-gnu -lpthread"'
+           % ('${UE4_ROOT}/Engine/Source/ThirdParty/Linux/LibCxx',
+              '${UE4_ROOT}/Engine/Source/ThirdParty/Linux/LibCxx',
+              '${UE4_ROOT}'))
+    if old in s:
+        io.open(p, 'w', encoding='utf-8').write(s.replace(old, new, 1))
+        print('Recast libc++/sysroot 参数已写入')
+    else:
+        print('警告：Recast cmake 锚点未命中')
+PY
+
+# xerces 的 server 变体单独写死了 libc++ 参数、没有带 LLVM_INCLUDE，24.04 上会退到系统 libc++18
+python3 - Util/BuildTools/Setup.sh <<'PY'
+import io
+p = 'Util/BuildTools/Setup.sh'
+s = io.open(p, encoding='utf-8').read()
+if '[hutb-ci] xerces-server' in s:
+    print('xerces server libc++ 参数已存在，跳过')
+else:
+    old = '-DCMAKE_CXX_FLAGS="-std=c++14 -stdlib=libc++ -fPIC -w"'
+    new = ('-DCMAKE_CXX_FLAGS="-std=c++14 -stdlib=libc++ -fPIC -w '  # [hutb-ci] xerces-server
+           '-I${LLVM_INCLUDE} -L${LLVM_LIBPATH} ${UNREAL_HOSTED_CFLAGS} -lpthread"')
+    old_ld = '-DCMAKE_EXE_LINKER_FLAGS="-stdlib=libc++ -lc++ -lc++abi"'
+    new_ld = ('-DCMAKE_EXE_LINKER_FLAGS="-stdlib=libc++ -lc++ -lc++abi -L${LLVM_LIBPATH} '
+              '${UNREAL_HOSTED_CFLAGS} -lpthread"')
+    if old in s:
+        s = s.replace(old, new, 1)
+        s = s.replace(old_ld, new_ld, 1)
+        io.open(p, 'w', encoding='utf-8').write(s)
+        print('xerces server libc++ 参数已写入')
+    else:
+        print('警告：xerces server cmake 锚点未命中')
+PY
+
+# proj 7.2.1 的源码没有显式 include <cstdint>，20.04 上靠 libstdc++ 的间接包含能过；
+# 24.04 的 libstdc++13 不再间接带出 std::int64_t，clang10 直接报 "no type named int64_t"
+python3 - Util/BuildTools/Setup.sh <<'PY'
+import io
+p = 'Util/BuildTools/Setup.sh'
+s = io.open(p, encoding='utf-8').read()
+if '[hutb-ci] proj' in s:
+    print('proj cstdint 参数已存在，跳过')
+else:
+    old_client = ('-DCMAKE_CXX_FLAGS="-std=c++14 -fPIC" \\\n'
+                  '      -DSQLITE3_INCLUDE_DIR')
+    new_client = ('-DCMAKE_CXX_FLAGS="-std=c++14 -fPIC -include cstdint" \\\n'  # [hutb-ci] proj
+                  '      -DSQLITE3_INCLUDE_DIR')
+    old_server = '-DCMAKE_CXX_FLAGS="-std=c++14 -fPIC -stdlib=libc++ -I${LLVM_INCLUDE} -Wl,-L${LLVM_LIBPATH}"'
+    new_server = ('-DCMAKE_CXX_FLAGS="-std=c++14 -fPIC -stdlib=libc++ -I${LLVM_INCLUDE} '
+                  '-L${LLVM_LIBPATH} ${UNREAL_HOSTED_CFLAGS} -lpthread -include cstdint"')
+    ok = False
+    if old_client in s:
+        s = s.replace(old_client, new_client, 1)
+        ok = True
+    if old_server in s:
+        s = s.replace(old_server, new_server, 1)
+        ok = True
+    if ok:
+        io.open(p, 'w', encoding='utf-8').write(s)
+        print('proj 编译参数已写入')
+    else:
+        print('警告：proj cmake 锚点未命中')
 PY
 
 # ---------------------------------------------------------------------------
