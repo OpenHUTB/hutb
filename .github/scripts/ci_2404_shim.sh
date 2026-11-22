@@ -29,6 +29,39 @@ set_env() {
   fi
 }
 
+# AirSim 由 setup.sh 克隆，首次执行 shim 时还不存在；单独暴露函数，供 setup 之后补跑
+patch_airsim_buildcs() {
+  p="Unreal/CarlaUE4/Plugins/AirSim/Source/AirSim.Build.cs"
+  if [ ! -f "$p" ]; then
+    echo "[skip] AirSim 尚未 checkout（setup.sh 会克隆），稍后用 --after-setup 补跑"
+    return 0
+  fi
+  python3 - "$p" <<'PY'
+import io, sys
+p = sys.argv[1]
+s = io.open(p, encoding='utf-8').read()
+if 'hutb-ci] rpclib' in s:
+    print('rpclib 去重补丁已存在，跳过')
+else:
+    old = ('                LoadAirSimDependency(Target, "rpclib", "rpc");\n'
+           '                break;\n\n            case CompileMode.CppCompileNoRpc:')
+    new = ('                // [hutb-ci] rpclib 由 CarlaDependencies 提供（libc++ 版），避免两份 librpc.a 重复符号\n'
+           '                // LoadAirSimDependency(Target, "rpclib", "rpc");\n'
+           '                break;\n\n            case CompileMode.CppCompileNoRpc:')
+    if old in s:
+        io.open(p, 'w', encoding='utf-8').write(s.replace(old, new, 1))
+        print('rpclib 去重补丁已写入')
+    else:
+        print('警告：AirSim.Build.cs 锚点未命中')
+PY
+}
+
+if [ "${1:-}" = "--after-setup" ]; then
+  echo "== 仅补 AirSim（setup 克隆之后）=="
+  patch_airsim_buildcs
+  exit 0
+fi
+
 # ---------------------------------------------------------------------------
 echo "== 1/9 Mono：依赖库 > 引擎自带 > 系统 =="
 ENGINE_MONO="$UE4_ROOT/Engine/Binaries/ThirdParty/Mono/Linux"
@@ -250,24 +283,7 @@ PY
 
 # ---------------------------------------------------------------------------
 echo "== 8/9 AirSim.Build.cs：去掉重复的 librpc.a =="
-python3 - Unreal/CarlaUE4/Plugins/AirSim/Source/AirSim.Build.cs <<'PY'
-import io, sys
-p = sys.argv[1]
-s = io.open(p, encoding='utf-8').read()
-if 'hutb-ci] rpclib' in s:
-    print('rpclib 去重补丁已存在，跳过')
-else:
-    old = ('                LoadAirSimDependency(Target, "rpclib", "rpc");\n'
-           '                break;\n\n            case CompileMode.CppCompileNoRpc:')
-    new = ('                // [hutb-ci] rpclib 由 CarlaDependencies 提供（libc++ 版），避免两份 librpc.a 重复符号\n'
-           '                // LoadAirSimDependency(Target, "rpclib", "rpc");\n'
-           '                break;\n\n            case CompileMode.CppCompileNoRpc:')
-    if old in s:
-        io.open(p, 'w', encoding='utf-8').write(s.replace(old, new, 1))
-        print('rpclib 去重补丁已写入')
-    else:
-        print('警告：AirSim.Build.cs 锚点未命中')
-PY
+patch_airsim_buildcs
 
 # ---------------------------------------------------------------------------
 echo "== 9/9 Check.sh：无头环境用 -opengl + 等待 RPC 就绪 =="

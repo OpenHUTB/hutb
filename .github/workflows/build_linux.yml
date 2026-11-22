@@ -176,6 +176,11 @@ jobs:
             make setup ARGS="--chrono" 2>&1 | tee /tmp/ci_setup.log
           shell: bash
 
+        # AirSim 由 setup.sh 克隆，此时目录才存在，补上 AirSim.Build.cs 的去重补丁
+        - name: AirSim 适配（setup 之后）
+          run: bash .github/scripts/ci_2404_shim.sh --after-setup
+          shell: bash
+
         # make plugins 不执行：仓库里的 Plugins.sh 未 source Environment.sh，log 未定义必然失败；
         # 其功能已由 make setup 的 downloadplugins 覆盖
         - name: retrieve content
