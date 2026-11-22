@@ -98,9 +98,10 @@ make_wrapper() {
   fi
   cat > "$UE4_BIN/$name" <<EOF
 #!/bin/bash
-# hutb-ci wrapper v2
+# hutb-ci wrapper v3
 # UBT 通过 @rsp 传参，/wd4103 会粘在 -MF 参数尾部（...cpp.d/wd4103），
 # 所以既要过滤命令行参数，也要清洗响应文件
+# 另外：24.04 的 glibc 用 .relr.dyn，引擎自带旧 ld 读不了，链接统一改用 lld
 args=()
 for a in "\$@"; do
   case "\$a" in
@@ -120,12 +121,19 @@ for a in "\$@"; do
     *) args+=("\$a") ;;
   esac
 done
+link=1
+for a in "\${args[@]}"; do
+  case "\$a" in
+    -c|-E|-S|-M|-MM|-MMD|-MD) link=0 ;;
+  esac
+done
+[ "\$link" = 1 ] && args+=("-fuse-ld=lld")
 exec -a "$name" "$real" "\${args[@]}"
 EOF
   chmod +x "$UE4_BIN/$name"
 }
 for c in clang clang++; do
-  if grep -q 'hutb-ci wrapper v2' "$UE4_BIN/$c" 2>/dev/null; then
+  if grep -q 'hutb-ci wrapper v3' "$UE4_BIN/$c" 2>/dev/null; then
     echo "[wrap] $c 已是 CI 包装，跳过"
   else
     make_wrapper "$c"
