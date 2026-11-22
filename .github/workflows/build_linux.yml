@@ -119,7 +119,7 @@ jobs:
       runs-on: [self-hosted, ubuntu-hutb-2404]
       env:
         UE4_ROOT: /home/yxkj/UnrealEngine_4.26
-        MODE: ${{ github.event_name == 'schedule' && 'full' || inputs.mode || 'fast' }}
+        MODE: ${{ inputs.mode || 'fast' }}
         UPLOAD: ${{ inputs.upload || 'false' }}
         PY_VER: "3.10"
         # wheel 链接用 UE4 自带 clang++ + ld.lld（旧 ld 读不了新版 glibc 的 .relr.dyn）
