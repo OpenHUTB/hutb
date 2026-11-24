@@ -281,21 +281,40 @@ EXE_PATH="${EXE_DIR}/CarlaUE4.sh"
 # -- Launch CarlaUE4 service for tests -----------------------------------------
 # ==============================================================================
 
-# 杀掉占用 3654 端口的旧服务进程（对应 bat：netstat + taskkill）
-fuser -k 3654/tcp 2>/dev/null || pkill -f "CarlaUE4.sh" 2>/dev/null || true
+# 模拟器日志落到工作区外（Build/ 会被 CI 的 git clean 删掉），失败时可直接查看。
+CHECK_LOG_DIR="${CHECK_LOG_DIR:-${HOME:-/tmp}/hutb_check_logs}"
+mkdir -p "${CHECK_LOG_DIR}" 2>/dev/null || true
+SERVER_LOG="${CHECK_LOG_DIR}/CarlaUE4_smoke_test_$(date +%Y%m%d_%H%M%S).log"
+# 只保留最近 20 份，避免长期运行占满磁盘
+ls -1t "${CHECK_LOG_DIR}"/CarlaUE4_smoke_test_*.log 2>/dev/null | tail -n +21 | xargs -r rm -f || true
 
+# 重启模拟器（杀掉旧的再起新的）。smoke 每个 Python 版本前都调用一次。
 # 用后台方式启动服务，否则会卡住（对应 bat 的 start）。
 # 防止启动时弹出 Choose Vehicle 导致服务卡住、smoke 测试失败（对应 bat 注释）。
-if [[ -f "${EXE_PATH}" ]] ; then
+function restart_unreal_service {
+  # 杀掉占用 3654 端口的旧服务进程（对应 bat：netstat + taskkill）
+  fuser -k 3654/tcp 2>/dev/null || pkill -f "CarlaUE4.sh" 2>/dev/null || true
+  sleep 5
   pushd "${EXE_DIR}" >/dev/null
     if ! ${IS_DEBUG} ; then
       log "Unreal service is launching with command: ${EXE_PATH} -RenderOffscreen --carla-rpc-port=3654 --carla-streaming-port=0 -nosound"
-      nohup ${EXE_PATH} -RenderOffscreen --carla-rpc-port=3654 --carla-streaming-port=0 -nosound >/dev/null 2>&1 &
+      nohup ${EXE_PATH} -RenderOffscreen --carla-rpc-port=3654 --carla-streaming-port=0 -nosound >>"${SERVER_LOG}" 2>&1 &
     else
       log "Unreal service is launching with command: ${EXE_PATH} --carla-rpc-port=3654 --carla-streaming-port=0 -nosound"
-      nohup ${EXE_PATH} --carla-rpc-port=3654 --carla-streaming-port=0 -nosound >/dev/null 2>&1 &
+      nohup ${EXE_PATH} --carla-rpc-port=3654 --carla-streaming-port=0 -nosound >>"${SERVER_LOG}" 2>&1 &
     fi
   popd >/dev/null
+  # 等 RPC 端口就绪再开跑（对应 bat 的 timeout /t 10）
+  for _ in $(seq 1 60) ; do
+    # 谁占着 TCP 3654 端口。有进程占用 → 返回 0；没有 → 返回 1。
+    fuser -n tcp 3654 >/dev/null 2>&1 && break
+    sleep 2
+  done
+  sleep 5
+}
+
+if [[ -f "${EXE_PATH}" ]] ; then
+  restart_unreal_service
 else
   fatal_error "CarlaUE4.sh not found (looked under Build/UE4Carla/${CARLA_VERSION}, Util/dist/hutb/UE4Carla/${CARLA_VERSION} and Dist/CARLA_${CARLA_VERSION}). Build and package first, or set INSTALLATION_DIR."
 fi
@@ -411,6 +430,8 @@ if ${SMOKE_TESTS} ; then
     # 与单元测试一致：用 carla wheel 所在的 conda 环境 python 运行。
     # 测试依赖已在上方 Install Python packages 段统一安装（同 Check.bat）。
     CONDA_PY=$(get_conda_env_python ${PY_VERSION})
+    # 每个版本都用全新的模拟器进程
+    restart_unreal_service
     ${CONDA_PY} -m nose2 -v ${smoke_list}
   done
 fi
