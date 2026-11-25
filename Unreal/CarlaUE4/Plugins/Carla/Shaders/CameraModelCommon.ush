@@ -26,10 +26,11 @@
 #define CAMERA_TYPE_EQUISOLID 3			// r = f * sin(Theta / 2) * 2
 #define CAMERA_TYPE_ORTHOGONAL 4		// r = f * sin(Theta)
 #define CAMERA_TYPE_CUSTOM 5			// r = <custom power series using Theta>
+#define CAMERA_TYPE_BROWN_CONRADY 6		// r = f * (tan(Theta) + k1 tan^3 + k2 tan^5 + k3 tan^7)
 
 
 
-#if CAMERA_TYPE == CAMERA_TYPE_CUSTOM
+#if CAMERA_TYPE == CAMERA_TYPE_CUSTOM || CAMERA_TYPE == CAMERA_TYPE_BROWN_CONRADY
 	StructuredBuffer<float> Coefficients;
 #endif
 
@@ -99,6 +100,48 @@ float2 PixelCoordinateToUV(uint2 PixelCoordinate, uint2 ImageShape)
 
 
 
+#if CAMERA_TYPE == CAMERA_TYPE_BROWN_CONRADY
+
+	float3 ComputeBrownConradyRadialCoefficients()
+	{
+		uint CoefficientCount = 0;
+		uint Stride = 0;
+		Coefficients.GetDimensions(CoefficientCount, Stride);
+
+		float K1 = CoefficientCount > 0 ? Coefficients[0] : 0.0F;
+		float K2 = CoefficientCount > 1 ? Coefficients[1] : 0.0F;
+		float K3 = CoefficientCount > 2 ? Coefficients[2] : 0.0F;
+
+		return float3(K1, K2, K3);
+	}
+
+	float ComputeCameraPolynomialBrownConrady(float Theta)
+	{
+		float3 K = ComputeBrownConradyRadialCoefficients();
+		float RU = tan(Theta);
+		float RU2 = RU * RU;
+		float RU4 = RU2 * RU2;
+		float RU6 = RU4 * RU2;
+
+		return RU + K.x * RU * RU2 + K.y * RU * RU4 + K.z * RU * RU6;
+	}
+
+	float ComputeCameraPolynomialBrownConradyDerivative(float Theta)
+	{
+		float3 K = ComputeBrownConradyRadialCoefficients();
+		float RU = tan(Theta);
+		float RU2 = RU * RU;
+		float RU4 = RU2 * RU2;
+		float RU6 = RU4 * RU2;
+		float Sec2 = 1.0F + RU2;
+
+		return Sec2 * (1.0F + 3.0F * K.x * RU2 + 5.0F * K.y * RU4 + 7.0F * K.z * RU6);
+	}
+
+#endif
+
+
+
 // R(theta)
 
 float ComputeDistancePerspective(float Angle)
@@ -138,6 +181,10 @@ float ComputeDistance(float Angle)
 #if CAMERA_TYPE == CAMERA_TYPE_CUSTOM
 
 	return ComputeCameraPolynomial(Angle);
+
+#elif CAMERA_TYPE == CAMERA_TYPE_BROWN_CONRADY
+
+	return ComputeCameraPolynomialBrownConrady(Angle);
 
 #elif CAMERA_TYPE == CAMERA_TYPE_PERSPECTIVE
 
@@ -212,6 +259,18 @@ float ComputeAngle(float Distance)
 	}
 	return Theta;
 	
+#elif CAMERA_TYPE == CAMERA_TYPE_BROWN_CONRADY
+
+	float Theta = atan(Distance);
+	UNROLL
+	for (uint i = 0; i != KANNALA_BRANDT_SOLVER_ITERATIONS; ++i) // Using Newton-Raphson
+	{
+		float N = Distance - ComputeCameraPolynomialBrownConrady(Theta);
+		float D = -ComputeCameraPolynomialBrownConradyDerivative(Theta);
+		Theta -= N / D;
+	}
+	return Theta;
+
 #elif CAMERA_TYPE == CAMERA_TYPE_PERSPECTIVE
 
 	return ComputeAnglePerspective(Distance);

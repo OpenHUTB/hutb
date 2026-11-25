@@ -23,6 +23,7 @@ enum class ECameraModel : uint8
     Equisolid,
     Orthographic,
     KannalaBrandt,
+    BrownConrady,
     MaxEnum,
     Default = Perspective
 };
@@ -61,6 +62,20 @@ namespace CameraModelUtil
 
     namespace KannalaBrandt
     {
+        float ComputeCameraPolynomial(
+            float Theta,
+            TArrayView<const float> Coefficients);
+
+        float ComputeCameraPolynomialDerivative(
+            float Theta,
+            TArrayView<const float> Coefficients);
+    }
+
+
+
+    namespace BrownConrady
+    {
+        /// Forward radial model, r = tan(theta) * (1 + k1 tan^2 + k2 tan^4 + k3 tan^6).
         float ComputeCameraPolynomial(
             float Theta,
             TArrayView<const float> Coefficients);
