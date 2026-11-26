@@ -7,10 +7,10 @@ on:
    workflow_dispatch:
       inputs:
          mode:
-            description: "fast=复用依赖增量构建；full=清空依赖与构建产物后重建（仅 24.04 job 使用）"
+            description: "auto=首次 full、之后 fast（仅 24.04 job 使用）"
             type: choice
-            options: [fast, full]
-            default: fast
+            options: [auto, fast, full]
+            default: auto
          upload:
             description: "全部 check 通过后，是否上传发行包到腾讯工蜂大文件仓库"
             type: choice
@@ -119,7 +119,6 @@ jobs:
       runs-on: [self-hosted, ubuntu-hutb-2404]
       env:
         UE4_ROOT: /home/yxkj/UnrealEngine_4.26
-        MODE: ${{ inputs.mode || 'fast' }}
         UPLOAD: ${{ inputs.upload || 'false' }}
         PY_VER: "3.10"
         # wheel 链接用 UE4 自带 clang++ + ld.lld（旧 ld 读不了新版 glibc 的 .relr.dyn）
@@ -144,25 +143,52 @@ jobs:
           run: bash .github/scripts/ci_2404_shim.sh
           shell: bash
 
+        # mode 自动判断：workflow_dispatch 的输入优先；否则看工作区是否有上次的
+        # 依赖产物和本机 Content 缓存——没有就 full（从零重建），有就 fast（增量复用）。
+        # 目的：PR 触发拿不到 inputs，若固定默认 full 则每次 PR 都要 3h45 + 重下 88G。
+        - name: 决定 mode
+          run: |
+            set -e
+            CI_CONTENT=/home/yxkj/ci-assets/Content
+            REQ="${{ inputs.mode }}"
+            if [ -n "$REQ" ] && [ "$REQ" != "auto" ]; then
+              MODE="$REQ"
+              echo "[mode] 手动指定：$MODE"
+            elif [ -d Build/dependencies ] && [ -d Build/UE4Carla ] && [ -d "$CI_CONTENT/.git" ]; then
+              MODE=fast
+              echo "[mode] 已有 Build/dependencies + Build/UE4Carla 且 Content 缓存在 -> fast"
+            else
+              MODE=full
+              echo "[mode] 缺少成功产物（需 Build/dependencies + Build/UE4Carla + Content 缓存）-> full"
+            fi
+            ls -d Build/dependencies Build/UE4Carla 2>/dev/null || true
+            [ -d "$CI_CONTENT/.git" ] && echo "  Content 缓存在：$CI_CONTENT" || echo "  Content 缓存缺失：$CI_CONTENT"
+            echo "MODE=$MODE" >> "$GITHUB_ENV"
+          shell: bash
+
         - name: 依赖与资源（full 时清空重建）
           run: |
             set -e
             if [ "$MODE" = "full" ]; then
-              echo "[full] 清空依赖与构建产物"
+              echo "[full] 清空依赖、构建产物与地图资源，全部重建"
               rm -rf Build/dependencies Build/AirSim Build/LibCarla Build/UE4Carla
-              rm -rf Build/*-source Build/*-src
+              rm -rf Build/*-source Build/*-src Build/*-install Build/*-install-server
               rm -rf Unreal/CarlaUE4/Intermediate
               rm -rf "$UE4_ROOT/Engine/Intermediate/Build/Linux/B4D820EA"
+              # full 要求资源也重新下载：只删软链，不动共享缓存本体；
+              # 由后面的 Update.sh 重新拉取 88G Content
+              rm -f Unreal/CarlaUE4/Content
+              echo "[full] Content 将由 Update.sh 重新下载"
             else
               echo "[fast] 复用已有依赖与构建产物"
               rm -rf Build/*-source Build/*-src 2>/dev/null || true
-            fi
-            # 如果这台 runner 上已经有共享 Content 缓存，直接复用，避免匿名拉腾讯私有仓库 404
-            CI_CONTENT=/home/yxkj/ci-assets/Content
-            if [ -d "$CI_CONTENT/.git" ] && [ "$(readlink -f Unreal/CarlaUE4/Content 2>/dev/null)" != "$CI_CONTENT" ]; then
-              rm -rf Unreal/CarlaUE4/Content
-              ln -sfn "$CI_CONTENT" Unreal/CarlaUE4/Content
-              echo "Content -> $CI_CONTENT"
+              # fast 复用本机共享 Content 缓存，避免匿名拉腾讯私有仓库 404
+              CI_CONTENT=/home/yxkj/ci-assets/Content
+              if [ -d "$CI_CONTENT/.git" ] && [ "$(readlink -f Unreal/CarlaUE4/Content 2>/dev/null)" != "$CI_CONTENT" ]; then
+                rm -rf Unreal/CarlaUE4/Content
+                ln -sfn "$CI_CONTENT" Unreal/CarlaUE4/Content
+                echo "Content -> $CI_CONTENT"
+              fi
             fi
           shell: bash
 

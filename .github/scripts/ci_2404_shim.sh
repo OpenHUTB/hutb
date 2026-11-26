@@ -53,7 +53,29 @@ else:
         print('rpclib 去重补丁已写入')
     else:
         print('警告：AirSim.Build.cs 锚点未命中')
+
+# Ubuntu 24.04：AirSim 在 Linux 分支强制 -lstdc++ -lsupc++，会把系统 libstdc++ 的
+# __cxa_throw/__cxa_rethrow 抢先绑定到 exe，而引擎其余代码用自带 libc++abi →
+# 两套异常运行时混用，Cesium 抛异常时 rethrow_exception 拿到空指针 → std::terminate
+# （表现为加载 baidutest2test 地图段错误）。去掉这两项后 __cxa_* 由 libc++abi.a 静态解析。
+if 'hutb-ci 24.04] AirSim libc++' in s:
+    print('AirSim stdc++ 补丁已存在，跳过')
+else:
+    old2 = ('\t\t\t// needed when packaging\n'
+            '\t\t\tPublicAdditionalLibraries.Add("stdc++");\n'
+            '\t\t\tPublicAdditionalLibraries.Add("supc++");\n')
+    new2 = ('\t\t\t// [hutb-ci 24.04] AirSim libc++：不再链接系统 libstdc++/libsupc++，\n'
+            '\t\t\t// 统一使用引擎自带 libc++abi，避免异常运行时混用导致 std::terminate\n')
+    if old2 in s:
+        s = s.replace(old2, new2, 1)
+        io.open(p, 'w', encoding='utf-8').write(s)
+        print('AirSim stdc++/supc++ 补丁已写入')
+    else:
+        print('警告：AirSim stdc++/supc++ 锚点未命中')
 PY
+
+  # UBT 会把链接命令缓存进 Makefile.bin，删掉它才能按新 Build.cs 重新生成链接动作
+  find Unreal/CarlaUE4/Intermediate/Build/Linux -name 'Makefile.bin' -delete 2>/dev/null || true
 }
 
 if [ "${1:-}" = "--after-setup" ]; then
@@ -98,10 +120,11 @@ make_wrapper() {
   fi
   cat > "$UE4_BIN/$name" <<EOF
 #!/bin/bash
-# hutb-ci wrapper v3
+# hutb-ci wrapper v4
 # UBT 通过 @rsp 传参，/wd4103 会粘在 -MF 参数尾部（...cpp.d/wd4103），
-# 所以既要过滤命令行参数，也要清洗响应文件
-# 另外：24.04 的 glibc 用 .relr.dyn，引擎自带旧 ld 读不了，链接统一改用 lld
+# 所以既要过滤命令行参数，也要清洗响应文件。
+# 注意：不要在这里加 -fuse-ld=lld —— UBT 编译时带 -Werror，
+# 未链接的编译命令会因 "argument unused" 直接失败；UBT 自己链接时已用 lld。
 args=()
 for a in "\$@"; do
   case "\$a" in
@@ -121,25 +144,29 @@ for a in "\$@"; do
     *) args+=("\$a") ;;
   esac
 done
-link=1
-for a in "\${args[@]}"; do
-  case "\$a" in
-    -c|-E|-S|-M|-MM|-MMD|-MD) link=0 ;;
-  esac
-done
-[ "\$link" = 1 ] && args+=("-fuse-ld=lld")
 exec -a "$name" "$real" "\${args[@]}"
 EOF
   chmod +x "$UE4_BIN/$name"
 }
 for c in clang clang++; do
-  if grep -q 'hutb-ci wrapper v3' "$UE4_BIN/$c" 2>/dev/null; then
+  if grep -q 'hutb-ci wrapper v4' "$UE4_BIN/$c" 2>/dev/null; then
     echo "[wrap] $c 已是 CI 包装，跳过"
   else
     make_wrapper "$c"
     echo "[wrap] $c 已替换为包装"
   fi
 done
+
+# 3.2 引擎自带的 ld（bfd 2.30）读不了 Ubuntu 24.04 glibc 的 .relr.dyn，
+# 直接把引擎目录里的 ld 换成它自带的 lld。这样所有用引擎 clang 的链接都走 lld，
+# 不必在每个构建脚本里单独加 -fuse-ld=lld（UBT 编译带 -Werror，加错地方会直接失败）。
+if [ ! -e "$UE4_BIN/x86_64-unknown-linux-gnu-ld.bfd.real" ]; then
+  cp -f "$UE4_BIN/x86_64-unknown-linux-gnu-ld" "$UE4_BIN/x86_64-unknown-linux-gnu-ld.bfd.real" 2>/dev/null || true
+  ln -sfn "$UE4_BIN/ld.lld" "$UE4_BIN/x86_64-unknown-linux-gnu-ld"
+  echo "[ld] 引擎 ld -> ld.lld"
+else
+  echo "[ld] 已是 ld.lld，跳过"
+fi
 "$UE4_BIN/clang++" --version | head -1
 
 # ---------------------------------------------------------------------------
