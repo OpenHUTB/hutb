@@ -281,6 +281,53 @@ grep -n 'export CC=\|export CXX=' "$API_SH" | head -2
 
 # ---------------------------------------------------------------------------
 echo "== 5/9 BuildUE4Plugins.sh：Content 守卫 / MavLinkTest / AirSim 工具链 =="
+
+# StreetMap 插件：BuildUE4Plugins.sh 在 editor/wheel 的 downloadplugins 阶段都会对它
+# 执行 git fetch。服务器出口对 github.com 有 DNS 劫持（假 IP 57.155.223.240），
+# 时通时断，一断就 GnuTLS -110 / curl 28，整 job 失败。
+# 插件 commit 是固定的，目录已存在且 HEAD 匹配时根本不需要联网 —— 直接跳过 fetch；
+# 不匹配时才走重试。
+python3 - Util/BuildTools/BuildUE4Plugins.sh <<'PY'
+import io
+p = 'Util/BuildTools/BuildUE4Plugins.sh'
+s = io.open(p, encoding='utf-8').read()
+marker = '[hutb-ci] streetmap skip-fetch'
+new = """    cd ${CARLAUE4_STREETMAP_FOLDER}
+    # [hutb-ci] streetmap skip-fetch：HEAD 已在目标 commit 就不联网；否则重试 3 次
+    if [ "$(git rev-parse HEAD 2>/dev/null)" = "${CURRENT_STREETMAP_COMMIT}" ]; then
+      echo "  [hutb-ci] StreetMap 已在目标 commit，跳过 fetch"
+    else
+      git fetch || { sleep 10; git fetch; } || { sleep 30; git fetch; } || true
+      git checkout ${CURRENT_STREETMAP_COMMIT} || true
+    fi"""
+if marker in s:
+    print('StreetMap 跳过逻辑已存在，跳过')
+else:
+    old_markers = [
+        """    cd ${CARLAUE4_STREETMAP_FOLDER}
+    git fetch
+    git checkout ${CURRENT_STREETMAP_COMMIT}""",
+        """    cd ${CARLAUE4_STREETMAP_FOLDER}
+    # [hutb-ci] streetmap retry：GitHub 偶发 TLS 中断，最多重试 3 次；已存在则失败也继续
+    git fetch || { sleep 10; git fetch; } || { sleep 30; git fetch; } || true
+    git checkout ${CURRENT_STREETMAP_COMMIT} || true""",
+    ]
+    done = False
+    for old in old_markers:
+        if old in s:
+            s = s.replace(old, new, 1)
+            io.open(p, 'w', encoding='utf-8').write(s)
+            print('StreetMap skip-fetch 补丁已注入')
+            done = True
+            break
+    if not done:
+        print('警告：未找到 StreetMap fetch 锚点')
+PY
+
+# git 全局网络参数：低于 1KB/s 持续 30s 即中断重试，避免 curl 默认死等 134s
+git config --global http.lowSpeedLimit 1000
+git config --global http.lowSpeedTime 30
+echo "[hutb-ci] git lowSpeedLimit=1000 lowSpeedTime=30"
 python3 - Util/BuildTools/BuildUE4Plugins.sh <<'PY'
 import io
 p = 'Util/BuildTools/BuildUE4Plugins.sh'
