@@ -551,12 +551,9 @@ if __name__ == "__main__":
                 commit_msg = f"{latest_file_name} - upload chunk {idx}/{total_chunks}"
                 repo.repo.git.commit("-m", commit_msg)
                 
-                # 3. 执行推送。结合上文可能有 reset_hard，首个包强制覆盖，后续包常规追加
+                # 3. 执行推送。
                 try:
-                    if idx == 1:
-                        repo.repo.git.push(force=True)
-                    else:
-                        repo.repo.git.push()
+                    repo.repo.git.push()
                     print(f"Chunk {idx} successfully pushed.")
                 except Exception as e:
                     print(f"Failed to push chunk {idx}. Error: {e}")

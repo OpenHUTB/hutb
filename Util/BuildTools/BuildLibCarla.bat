@@ -16,7 +16,7 @@ rem -- Parse arguments ---------------------------------------------------------
 rem ============================================================================
 
 set DOC_STRING=Build LibCarla.
-set USAGE_STRING=Usage: %FILE_N% [-h^|--help] [--rebuild] [--server] [--client] [--clean]
+set USAGE_STRING=Usage: %FILE_N% [-h^|--help] [--rebuild] [--server] [--client] [--clean] [-j N]
 
 set GENERATOR=""
 set REMOVE_INTERMEDIATE=false
@@ -45,6 +45,10 @@ if not "%1"=="" (
     )
     if "%1"=="--generator" (
         set GENERATOR=%2
+        shift
+    )
+    if "%1"=="-j" (
+        set NUMBER_OF_ASYNC_JOBS=%2
         shift
     )
     if "%1"=="-h" (
@@ -95,6 +99,10 @@ if exist "%ProgramW6432%\Microsoft Visual Studio\2022\Community\VC\Auxiliary\Bui
 )
 echo %FILE_N% Using generator: %GENERATOR%
 
+rem If is not set, leave some CPU threads free while compiling: use 85 percent of them (at least 1)
+if "%NUMBER_OF_ASYNC_JOBS%" == "" set /a NUMBER_OF_ASYNC_JOBS=NUMBER_OF_PROCESSORS * 85 / 100
+if %NUMBER_OF_ASYNC_JOBS% lss 1 set NUMBER_OF_ASYNC_JOBS=1
+echo %FILE_N% Asynchronous jobs: %NUMBER_OF_ASYNC_JOBS% (of %NUMBER_OF_PROCESSORS% CPU threads)
 
 set LIBCARLA_SERVER_INSTALL_PATH=%ROOT_PATH:/=\%Unreal\CarlaUE4\Plugins\Carla\CarlaDependencies\
 set LIBCARLA_CLIENT_INSTALL_PATH=%ROOT_PATH:/=\%PythonAPI\carla\dependencies\
@@ -130,8 +138,12 @@ if not exist "%LIBCARLA_VSPROJECT_PATH%" mkdir "%LIBCARLA_VSPROJECT_PATH%"
 echo %FILE_N% cd "%LIBCARLA_VSPROJECT_PATH%"
 cd "%LIBCARLA_VSPROJECT_PATH%"
 
+rem Visual Studio builds the projects one by one and /MP limits the compile jobs of each project,
+rem other generators (e.g. Ninja) ignore /MP and need the number of parallel jobs to be passed to the build.
+set BUILD_PARALLEL=--parallel %NUMBER_OF_ASYNC_JOBS%
 echo.%GENERATOR% | findstr /C:"Visual Studio" >nul && (
     set PLATFORM=-A x64
+    set BUILD_PARALLEL=
 ) || (
     set PLATFORM=
 )
@@ -145,29 +157,29 @@ rem
 if %BUILD_SERVER% == true (
     if %IS_DEBUG% == true (
         echo %FILE_N% Building libcarla server in debug mode...
-        echo cmake -G %GENERATOR% %PLATFORM%  -DCMAKE_BUILD_TYPE=Server  -DCMAKE_CXX_FLAGS_RELEASE="/MD /MP"  -DCMAKE_INSTALL_PREFIX="%LIBCARLA_SERVER_INSTALL_PATH:\=/%"  "%ROOT_PATH%"
+        echo cmake -G %GENERATOR% %PLATFORM%  -DCMAKE_BUILD_TYPE=Server  -DCMAKE_CXX_FLAGS_RELEASE="/MD /MP%NUMBER_OF_ASYNC_JOBS%"  -DCMAKE_INSTALL_PREFIX="%LIBCARLA_SERVER_INSTALL_PATH:\=/%"  "%ROOT_PATH%"
         cmake -G %GENERATOR% %PLATFORM%^
         -DCMAKE_BUILD_TYPE=Server^
-        -DCMAKE_CXX_FLAGS_DEBUG="/MDd /MP"^
+        -DCMAKE_CXX_FLAGS_DEBUG="/MDd /MP%NUMBER_OF_ASYNC_JOBS%"^
         -DCMAKE_INSTALL_PREFIX="%LIBCARLA_SERVER_INSTALL_PATH:\=/%"^
         "%ROOT_PATH%"
 
         if %errorlevel% neq 0 goto error_cmake
 
-        cmake --build . --config Debug --target install | findstr /V "Up-to-date:"
+        cmake --build . --config Debug --target install %BUILD_PARALLEL% | findstr /V "Up-to-date:"
         if %errorlevel% neq 0 goto error_install
         echo %FILE_N% Building libcarla server in debug mode... done.
     ) else (
-        echo %FILE_N% Building libcarla server in release mode: cmake -G %GENERATOR% %PLATFORM% -DCMAKE_BUILD_TYPE=Server -DCMAKE_CXX_FLAGS_RELEASE="/MD /MP" -DCMAKE_INSTALL_PREFIX="%LIBCARLA_SERVER_INSTALL_PATH:\=/%" "%ROOT_PATH%"
+        echo %FILE_N% Building libcarla server in release mode: cmake -G %GENERATOR% %PLATFORM% -DCMAKE_BUILD_TYPE=Server -DCMAKE_CXX_FLAGS_RELEASE="/MD /MP%NUMBER_OF_ASYNC_JOBS%" -DCMAKE_INSTALL_PREFIX="%LIBCARLA_SERVER_INSTALL_PATH:\=/%" "%ROOT_PATH%"
         cmake -G %GENERATOR% %PLATFORM%^
         -DCMAKE_BUILD_TYPE=Server^
-        -DCMAKE_CXX_FLAGS_RELEASE="/MD /MP"^
+        -DCMAKE_CXX_FLAGS_RELEASE="/MD /MP%NUMBER_OF_ASYNC_JOBS%"^
         -DCMAKE_INSTALL_PREFIX="%LIBCARLA_SERVER_INSTALL_PATH:\=/%"^
         "%ROOT_PATH%"
 
         if %errorlevel% neq 0 goto error_cmake
 
-        cmake --build . --config Release --target install | findstr /V "Up-to-date:"
+        cmake --build . --config Release --target install %BUILD_PARALLEL% | findstr /V "Up-to-date:"
         if %errorlevel% neq 0 goto error_install
         echo %FILE_N% Build libcarla server in release mode... done.
     )
@@ -181,24 +193,24 @@ if %BUILD_CLIENT% == true (
         echo %FILE_N% Building libcarla client in debug mode...
         cmake -G %GENERATOR% %PLATFORM%^
         -DCMAKE_BUILD_TYPE=Client^
-        -DCMAKE_CXX_FLAGS_DEBUG="/MDd /MP"^
+        -DCMAKE_CXX_FLAGS_DEBUG="/MDd /MP%NUMBER_OF_ASYNC_JOBS%"^
         -DCMAKE_INSTALL_PREFIX="%LIBCARLA_CLIENT_INSTALL_PATH:\=/%"^
         "%ROOT_PATH%"
         if %errorlevel% neq 0 goto error_cmake
 
-        cmake --build . --config Debug --target install | findstr /V "Up-to-date:" >nul
+        cmake --build . --config Debug --target install %BUILD_PARALLEL% | findstr /V "Up-to-date:" >nul
         if %errorlevel% neq 0 goto error_install
         echo %FILE_N% Building libcarla client in debug mode... done.
     ) else (
         echo %FILE_N% Building libcarla client in release mode...
         cmake -G %GENERATOR% %PLATFORM%^
         -DCMAKE_BUILD_TYPE=Client^
-        -DCMAKE_CXX_FLAGS_RELEASE="/MD /MP"^
+        -DCMAKE_CXX_FLAGS_RELEASE="/MD /MP%NUMBER_OF_ASYNC_JOBS%"^
         -DCMAKE_INSTALL_PREFIX="%LIBCARLA_CLIENT_INSTALL_PATH:\=/%"^
         "%ROOT_PATH%"
         if %errorlevel% neq 0 goto error_cmake
 
-        cmake --build . --config Release --target install | findstr /V "Up-to-date:" >nul
+        cmake --build . --config Release --target install %BUILD_PARALLEL% | findstr /V "Up-to-date:" >nul
         if %errorlevel% neq 0 goto error_install
         echo %FILE_N% Building libcarla client in release mode... done.
     )
