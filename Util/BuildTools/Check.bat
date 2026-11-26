@@ -361,8 +361,8 @@ if %VR_TESTS%==true (
         "Util\HandPose\record_hands.py"
         "Util\HandPose\replay_arms.py"
     ) do (
-        if not exist "%exe_dir:/=%%%~f" (
-            echo Error: Missing packaged VR/HandPose file: %exe_dir:/=%%%~f
+        if not exist "%exe_dir:/=\%%%~f" (
+            echo Error: Missing packaged VR/HandPose file: %exe_dir:/=\%%%~f
             goto bad_exit
         )
     )
