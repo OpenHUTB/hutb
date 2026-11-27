@@ -176,7 +176,7 @@ jobs:
             rm -rf "$UE4_ROOT/Engine/Intermediate/Build/Linux/B4D820EA"
             # full 要求资源也重新下载：只删软链，不动共享缓存本体；
             # 由后面的 Update.sh 重新拉取 88G Content
-            rm -f Unreal/CarlaUE4/Content
+            rm -rf Unreal/CarlaUE4/Content
             echo "[full] Content 将由 Update.sh 重新下载"
           else
             echo "[fast] 复用已有依赖与构建产物"
