@@ -83,6 +83,20 @@ try {
     } else {
         $projectDir = Join-Path $PSScriptRoot 'Unreal\CarlaUE4'
         $project = Require-File (Join-Path $projectDir 'CarlaUE4.uproject') 'Run the launcher from the HUTB source root.'
+        if (-not $PSBoundParameters.ContainsKey('UE4Root') -and
+            (-not $UE4Root -or -not (Test-Path -LiteralPath (Join-Path $UE4Root 'Engine\Binaries\Win64\UE4Editor.exe') -PathType Leaf))) {
+            $localEngine = Join-Path $PSScriptRoot 'Build\engine'
+            if (Test-Path -LiteralPath (Join-Path $localEngine 'Engine\Binaries\Win64\UE4Editor.exe') -PathType Leaf) {
+                $UE4Root = $localEngine
+            } else {
+                $parent = Split-Path $PSScriptRoot
+                foreach ($dir in @(Get-ChildItem -LiteralPath $parent -Directory -ErrorAction SilentlyContinue)) {
+                    if (Test-Path -LiteralPath (Join-Path $dir.FullName 'Engine\Binaries\Win64\UE4Editor.exe') -PathType Leaf) {
+                        $UE4Root = $dir.FullName; break
+                    }
+                }
+            }
+        }
         if (-not $UE4Root) { throw 'Specify -UE4Root or set UE4_ROOT to the built Unreal Engine directory.' }
         $exe = Require-File (Join-Path $UE4Root 'Engine\Binaries\Win64\UE4Editor.exe') 'Build UE4 first; UE4Editor.exe is missing.'
         $null = Require-File (Join-Path $projectDir 'Binaries\Win64\UE4Editor-CarlaUE4.dll') 'Build CarlaUE4Editor Win64 Development first.'
