@@ -34,16 +34,20 @@
   📖 <a href="https://openhutb.github.io/"><b>中文文档</b></a>
 </p>
 
-## 相对 CARLA 的增强功能
+## 相对 Carla 的增强功能
 
-本分支基于 [CARLA 模拟器](https://github.com/carla-simulator/carla) ，并针对国产化场景和教学演示做了以下增强：
+本分支继承 [Carla 模拟器](https://github.com/carla-simulator/carla) 不再维护的分支，并针对国产化场景和通用机器人做了以下增强：
 
 | 功能 | 说明 | 入口 |
 |:-----|:-----|:-----|
-| VR 驾驶舱模式 | 支持 VR 头显下的驾驶舱视角，可使用罗技方向盘或键盘 `W`、`A`、`S`、`D` 控制，`Z` 为倒档 | `python PythonAPI/util/config.py --map Town10HD?GAME=VR` |
-| 鱼眼相机 | 提供鱼眼相机的手动驾驶示例，用于验证广角感知算法 | `python PythonAPI/examples/manual_control_fisheye.py` |
-| 一键编译并启动编辑器 | 一条命令完成依赖下载、编译并直接打开带插件的虚幻编辑器 | `setup.bat -l`（Windows）、`./setup.sh -l`（Ubuntu） |
-| 中文文档 | 全站中文文档，包含构建、场景制作和各模块说明 | <https://openhutb.github.io/> |
+| VR 驾驶舱模式 | 支持 VR 头显下的驾驶舱视角 | [config.py --m Town10HD?GAME=VR](https://openhutb.github.io/doc/interbehavior/) |
+| 无人机模式 | 提供与 AirSim 、Carla 都兼容的空地一体仿真功能 | [CarlaUE4.exe](https://openhutb.github.io/air_doc/dev/Carla_Air/) |
+| 水下机器人模式 | 提供与 HoloOcean 兼容的功能 | [HoloOcean 文档](https://openhutb.github.io/mujoco_plugin/underwater/) |
+| 通用机器人插件 | 提供与 Mujoco 协同仿真的插件 | [Mujoco 插件](https://openhutb.github.io/mujoco_plugin/) |
+| 自定义资产 | 中国的城市地图和载具资产 | [地图](https://openhutb.github.io/doc/core_map/)、[国产车](https://openhutb.github.io/doc/catalogue_vehicles/) |
+| Cesium 插件 | 倾斜摄影生成模拟器场景 | [3D GIS 引入虚幻引擎](https://openhutb.github.io/doc/modules/air_3d/) |
+| 一键启动编辑器 | 一条命令完成依赖下载、编译并打开带插件的虚幻编辑器 | `setup.bat -l` |
+| 中文文档 | 全站中文文档，包含构建、场景制作和各模块说明 | [文档链接](https://openhutb.github.io) |
 
 各功能的详细说明见 [中文文档](https://openhutb.github.io/) 。
 

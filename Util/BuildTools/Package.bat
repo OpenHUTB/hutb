@@ -269,6 +269,11 @@ if %DO_COPY_FILES%==true (
     if errorlevel 1 goto bad_exit
     echo d | xcopy /y /s "!XCOPY_FROM!Unreal\CarlaUE4\Config\SteamVRBindings\*.json" "!XCOPY_TO!CarlaUE4\Config\SteamVRBindings"
     if errorlevel 1 goto bad_exit
+    if not exist "!XCOPY_TO!Util\HandPose" mkdir "!XCOPY_TO!Util\HandPose"
+    copy /y "!XCOPY_FROM!Util\HandPose\README.md" "!XCOPY_TO!Util\HandPose\" >nul
+    if errorlevel 1 goto bad_exit
+    copy /y "!XCOPY_FROM!Util\HandPose\*.py" "!XCOPY_TO!Util\HandPose\" >nul
+    if errorlevel 1 goto bad_exit
 
     echo f | xcopy /y "!XCOPY_FROM!LICENSE"                                         "!XCOPY_TO!LICENSE"
     echo f | xcopy /y "!XCOPY_FROM!CHANGELOG.md"                                    "!XCOPY_TO!CHANGELOG"
@@ -282,7 +287,11 @@ if %DO_COPY_FILES%==true (
     echo f | xcopy /y "!XCOPY_FROM!PythonAPI\examples\*.py"                         "!XCOPY_TO!PythonAPI\examples\"
     echo f | xcopy /y "!XCOPY_FROM!PythonAPI\examples\requirements.txt"             "!XCOPY_TO!PythonAPI\examples\"
     echo f | xcopy /y "!XCOPY_FROM!PythonAPI\examples\cosmos_aov.yaml"              "!XCOPY_TO!PythonAPI\examples\"
+    echo d | xcopy /y /s "!XCOPY_FROM!PythonAPI\examples\air"                       "!XCOPY_TO!PythonAPI\examples\air"
+    echo d | xcopy /y /s "!XCOPY_FROM!PythonAPI\examples\holoocean"                 "!XCOPY_TO!PythonAPI\examples\holoocean"
     echo d | xcopy /y /s "!XCOPY_FROM!PythonAPI\examples\nvidia"                    "!XCOPY_TO!PythonAPI\examples\nvidia"
+    echo d | xcopy /y /s "!XCOPY_FROM!PythonAPI\examples\ros2"                      "!XCOPY_TO!PythonAPI\examples\ros2"
+    echo d | xcopy /y /s "!XCOPY_FROM!PythonAPI\examples\rss"                       "!XCOPY_TO!PythonAPI\examples\rss"
     echo f | xcopy /y "!XCOPY_FROM!PythonAPI\util\*.py"                             "!XCOPY_TO!PythonAPI\util\"
     echo d | xcopy /y /s "!XCOPY_FROM!PythonAPI\util\opendrive"                     "!XCOPY_TO!PythonAPI\util\opendrive"
     echo f | xcopy /y "!XCOPY_FROM!PythonAPI\util\requirements.txt"                 "!XCOPY_TO!PythonAPI\util\"
