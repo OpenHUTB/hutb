@@ -272,6 +272,30 @@ else:
         print('警告：proj cmake 锚点未命中')
 PY
 
+# download.osgeo.org 经常限速到 20KB/s 并截断，导致 tar 解压报 "unexpected end of file"；
+# 优先用 ci-assets 里预置的完整包，缺失时才回退网络下载
+python3 - Util/BuildTools/Setup.sh <<'PY'
+import io
+p = 'Util/BuildTools/Setup.sh'
+s = io.open(p, encoding='utf-8').read()
+if '[hutb-ci] proj-cache' in s:
+    print('proj 本地缓存逻辑已存在，跳过')
+else:
+    old = '  wget ${PROJ_REPO}\n'
+    new = ('  # [hutb-ci] proj-cache\n'
+           '  PROJ_CACHE_DIR=${PROJ_CACHE_DIR:-/home/yxkj/ci-assets}\n'
+           '  if [ -f "${PROJ_CACHE_DIR}/${PROJ_TAR}" ]; then\n'
+           '    cp -f "${PROJ_CACHE_DIR}/${PROJ_TAR}" .\n'
+           '  else\n'
+           '    wget ${PROJ_REPO}\n'
+           '  fi\n')
+    if old in s:
+        io.open(p, 'w', encoding='utf-8').write(s.replace(old, new, 1))
+        print('proj 本地缓存逻辑已写入')
+    else:
+        print('警告：proj wget 锚点未命中')
+PY
+
 # ---------------------------------------------------------------------------
 echo "== 4/9 BuildPythonAPI.sh：CC/CXX 指向引擎 clang =="
 API_SH=Util/BuildTools/BuildPythonAPI.sh
