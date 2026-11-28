@@ -199,6 +199,9 @@ make PythonAPI
 The CARLA client library is provideed as a Python wheel package. Running the command above will automatically install the wheel in your target Python environment. You can also find the wheel file in the `PythonAPI\carla\dist` directory.
 
 !!! note
+    LibCarla and Boost are compiled with 85% of the CPU threads by default, so that the computer stays responsive during the build. To choose the number of parallel compile jobs yourself, pass `-j <N>`, for example `make PythonAPI ARGS="-j 8"`. It also works with the other commands that build LibCarla, such as `make LibCarla`.
+
+!!! note
     **NumPy 2 error**: If the Python installation or environment that you are using to build CARLA has *numpy>=2.0.0* installed, this will cause an error during the build process due to conflicting dependencies. This should be the first thing to check when encountering errors related to Boost. Check your NumPy version using `python3 -m pip show numpy`.
 
 __2.__ __Compile the server__:

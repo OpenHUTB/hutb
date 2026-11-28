@@ -34,6 +34,10 @@ class FDrivingRecorder
 
     ~FDrivingRecorder() { Close(); }
     void Start();
+    /// Append one driving row. With -DReyeVRHandPose the row gains 18 hand columns
+    /// (9 per controller: valid,x,y,z,pitch,yaw,roll,trigger,grip) taken from the
+    /// OpenVR standing tracking space in metres; without it those 18 fields stay
+    /// empty so the row width always matches the header.
     void Record(AEgoVehicle &Vehicle, const DReyeVR::AggregateData &Data,
                 const DReyeVR::FocusInfo &Focus, const FString &EyeSource);
     /// Append every gaze sample produced since the previous call, oldest first. Samples
@@ -67,6 +71,9 @@ class FDrivingRecorder
     double StartHost = 0.0, LastSample = -1.0, NextSample = 0.0, LastFlush = 0.0, LastGazeFlush = 0.0;
     double Interval = 0.05;
     float LastYaw = 0.f;
+    // Opt-in (-DReyeVRHandPose): the 18 hand-pose columns are always in the header, but
+    // only sampled when the flag is set; otherwise they are written empty.
+    bool bRecordHandPose = false;
 
     // --- Saccade detection (I-VT: Identification by Velocity Threshold) ---
     enum class ESaccadeState : uint8 { Fixation, Saccade };

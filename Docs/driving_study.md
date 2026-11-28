@@ -3,16 +3,17 @@
 ## Quick Start
 
 1. Connect the headset, enable eye tracking in Pimax Play, and complete calibration. When using a Logitech G29 / G920 / G923 racing wheel, confirm that Logitech G HUB detects the wheel and that steering and pedal axes respond in Windows `joy.cpl`, then close the test dialog.
-2. Double-click `StartDrivingStudy.cmd` in the repository or package root.
-3. Choose **Pimax Controller** or **Logitech Racing Wheel**. On a source checkout, enter the UE4 engine root directory; installed maps and ego vehicle profiles are discovered automatically from the project.
+2. Double-click `StartDrivingStudy.cmd` in the repository root (for source checkouts built via `setup.bat -l`, `Build\engine` and sibling engine folders are auto-detected even if `UE4_ROOT` is unset or stale) or in the `setup.bat -p` package root (`WindowsNoEditor`).
+3. Choose **Pimax Controller** or **Logitech Racing Wheel**. On a source checkout, verify or adjust the **UE4 engine directory** (auto-populated when `setup.bat -l` or a sibling engine exists; not needed in packaged builds); installed maps and ego vehicle profiles are discovered automatically from the project.
 4. To record a trial, check **Record driving data**. The default target rate is **120 Hz** (set to **20 Hz** for lightweight classroom sessions) and enter or select a participant ID and output directory. Optional switches:
    - **Record viewport screenshots** (default **20 Hz**, 640x480 JPEG; optionally check **Async screenshots** so GPU readback and JPEG encoding do not block the game thread).
    - **120 Hz eye-tracking thread** (polls the eye tracker on a dedicated background thread and runs the online I-VT saccade detector at 120 Hz).
+   - **Record controller poses** (opt-in; appends 18 hand-pose columns for both controllers, used by the upper-limb musculoskeletal replay below).
    - **Render quality downgrade** (explicitly sets `sg.ShadowQuality 0`, `sg.EffectsQuality 0`, `sg.PostProcessQuality 0`; off by default so normal launches preserve existing scalability settings).
 5. Click **Check Settings**, then click **Start VR** once preflight succeeds. The launcher starts Pimax Play, SteamVR, and the simulator in order.
 6. When driving with a racing wheel, press and release the throttle and brake pedals once before starting the trial to calibrate pedal travel. After exiting the simulator, click **Open Data Directory** to inspect the generated CSV files.
 
-Recording is off by default. Each recorded run creates a new `<session>.csv` (71 columns) and `<session>_gaze.csv` (18 columns) without overwriting previous sessions. The default output root is `Unreal/CarlaUE4/Saved/DrivingStudy/` in a source build or `CarlaUE4/Saved/DrivingStudy/` in a packaged build; when a valid participant name is provided and recording or screenshots are enabled, files are placed under `<OutputDir>/<Participant>/`. Reloading the map or respawning the ego vehicle starts a new session file.
+Recording is off by default. Each recorded run creates a new `<session>.csv` (71 columns, or 89 with hand pose enabled) and `<session>_gaze.csv` (18 columns) without overwriting previous sessions. The default output root is `Unreal/CarlaUE4/Saved/DrivingStudy/` in a source build or `CarlaUE4/Saved/DrivingStudy/` in a packaged build; when a valid participant name is provided and recording or screenshots are enabled, files are placed under `<OutputDir>/<Participant>/`. Reloading the map or respawning the ego vehicle starts a new session file.
 
 When the racing wheel input mode is selected, VR controllers and the keyboard no longer drive steering, throttle, brake, gear shift, or turn signals (controllers still adjust camera/seat pose). When the controller input mode is selected, racing wheel driving axes are ignored and standard keyboard shortcuts remain available. If the racing wheel disconnects or read fails during wheel mode, full brake is applied and reconnection is retried every 2 seconds.
 
@@ -29,19 +30,19 @@ powershell -NoProfile -ExecutionPolicy Bypass -File .\StartPimaxVR.ps1 -UE4Root 
 
 - Use `-InputDevice controller` for VR controller mode; omit `-RecordDriving` when recording is not needed.
 - Pass `-RecordHz 20` for lightweight 20 Hz logging, or `-RecordDirectory <local absolute path>` to customize the output directory.
-- Optional flags: `-ScreenshotDriving -ScreenshotHz 20` (also honors `-RecordDirectory` when used standalone), `-AsyncScreenshot`, `-EyeThreadHz 120`, and `-PerfDowngrade`.
+- Optional flags: `-ScreenshotDriving -ScreenshotHz 20` (also honors `-RecordDirectory` when used standalone), `-AsyncScreenshot`, `-EyeThreadHz 120`, `-HandPose`, and `-PerfDowngrade`.
 
 Building from source requires `LogitechWheelPlugin` and `SteamVR` enabled in `CarlaUE4.uproject`.
 
 ## CSV Schema
 
-### 1. Primary Driving Table `<session>.csv` (71 Columns)
+### 1. Primary Driving Table `<session>.csv` (71 Columns, 89 with Hand Pose)
 
 Each row represents one game-thread sample combining current eye-tracking state, focus raycast hit, head pose, online saccade metrics, vehicle kinematics, control inputs, OpenDRIVE road location, and affecting traffic light state.
 
 | Column | Description |
 | --- | --- |
-| `schema_version` | CSV schema version (`2`) |
+| `schema_version` | CSV schema version (`3`; was `2` before the hand-pose columns existed) |
 | `ue_frame`, `sim_time_s`, `host_elapsed_s` | Unreal frame number, simulation timestamp (s), wall-clock elapsed time since recording started (s) |
 | `eye_device_timestamp_ms` | Eye-tracker device timestamp (ms); uses the device clock rather than simulation time |
 | `input_mode`, `wheel_connected`, `autopilot` | Selected input mode (`controller` / `wheel`), wheel connection state, autopilot state |
@@ -66,6 +67,25 @@ Each row represents one game-thread sample combining current eye-tracking state,
 | `gaze_velocity_deg_s`, `saccade_state`, `saccade_onset_s`, `saccade_amplitude_deg`, `saccade_peak_velocity_deg_s` | Angular gaze velocity (deg/s) and online I-VT saccade state (`fixation` / `saccade`), onset simulation time (s), amplitude (deg), and peak velocity (deg/s) |
 | `sample_dt_ms` | Simulation time delta from the previous recorded row (ms) |
 
+#### Optional Hand-Pose Columns (18, `-HandPose` / **Record controller poses**)
+
+Inserted before `sample_dt_ms` and filled only when `-DReyeVRHandPose` reaches the engine (launcher: `-HandPose`, GUI: **记录手柄位姿**). With the option off the 18 columns are still present but empty, so the column count never changes at read time; the number of *filled* columns does.
+
+| Column | Description |
+| --- | --- |
+| `hand_l_valid`, `hand_r_valid` | `1` when the runtime reported a valid tracked pose for that controller this frame, otherwise `0` |
+| `hand_l_x_m`, `hand_l_y_m`, `hand_l_z_m`, `hand_r_x_m`, `hand_r_y_m`, `hand_r_z_m` | Controller (grip) frame origin, **OpenVR standing tracking space, metres** |
+| `hand_l_pitch_deg`, `hand_l_yaw_deg`, `hand_l_roll_deg`, `hand_r_pitch_deg`, `hand_r_yaw_deg`, `hand_r_roll_deg` | Controller orientation decomposed directly from the right-handed OpenVR column-basis matrix as intrinsic `Y(yaw)-X(pitch)-Z(roll)` Euler angles (deg) |
+| `hand_l_trigger`, `hand_r_trigger` | Trigger axis from the legacy OpenVR `rAxis[0]`, nominally `0..1` |
+| `hand_l_grip`, `hand_r_grip` | Grip/squeeze axis from `rAxis[1]`, nominally `0..1` |
+
+Honest limits, read before analysing:
+
+- Poses are in the **OpenVR standing tracking space in metres**, not UE/CARLA world space. They are not comparable with `head_*_m`, `vehicle_*_m`, or any `focus_*_m` column without an explicit transform; the same trial re-centred in SteamVR (or a different play-space) yields different numbers for identical hand motion.
+- `trigger`/`grip` come from the legacy OpenVR axis array (`rAxis[0]`, `rAxis[1]`). On Pimax Dream Air under SteamVR they currently read `0.000`, while unpopulated axes (< `-0.5`) are written empty; verify axis variation before treating `0.000` as "not pressed".
+- **No finger joints are recorded.** A controller only exposes a rigid 6-DoF pose plus two scalar axes; there is no per-finger curl. Finger posture must be assumed (see the replay notes below).
+- Columns stay empty when `hand_*_valid=0`, when the option is off, or outside VR.
+
 ### 2. High-Frequency Gaze Stream `<session>_gaze.csv` (18 Columns)
 
 Recorded on the eye tracker's native sample grid with closed-event saccade verdicts:
@@ -78,7 +98,11 @@ Recorded on the eye tracker's native sample grid with closed-event saccade verdi
 | `gaze_vel_deg_s`, `saccade_state` | Instantaneous gaze angular velocity (deg/s) and closed-event verdict (`fixation`, `saccade`, `rejected`, or `saccade_open`) |
 | `saccade_onset_s`, `saccade_amp_deg`, `saccade_peak_deg_s`, `saccade_samples` | Closed saccade event onset time (s), amplitude (deg), peak velocity (deg/s), and sample count (identical across all rows of a closed event) |
 
-Coordinates use the UE/CARLA left-handed coordinate system (X forward, Y right, Z up) with large-map origin offset support. When `gaze_valid=0`, vehicle and road columns are still written while gaze and focus coordinates remain empty.
+Coordinates use the UE/CARLA left-handed coordinate system (X forward, Y right, Z up) with large-map origin offset support. The only exception is the optional `hand_*` block, which is raw OpenVR tracking space in metres. When `gaze_valid=0`, vehicle and road columns are still written while gaze and focus coordinates remain empty.
+
+## Musculoskeletal Replay
+
+A recorded `hand_*` block can drive an upper-limb digital human offline: `Util/HandPose/record_hands.py` captures controller + HMD poses directly (no simulator needed) and `Util/HandPose/replay_arms.py` replays a CSV through MuJoCo's MS-Human-700 model with coupled anatomical IK, steering-wheel geometry/rotation (`steer_input`), controller-housing rim offset compensation, and inverse-dynamics muscle activation coloring, writing an MP4 plus first/mid/last stills (`setup.bat -p` packages also include `Util/HandPose/`). Both the live VR pawn (`ADReyeVRPawn`) and `replay_arms.py` share a one-shot auto-calibrator (`FDReyeVRAutoCalibrator`: `>= 5 s` continuous head stillness within `5 cm / 6 deg` followed by steering wheel rotation `>= 0.015`, ~`6.8 deg` on a `900 deg` wheel) so drivers do not need to trigger manual VR recentering or hand calibration. Set-up, exact commands (`--start`, `--fit`, `--raw-hands`, `--no-muscle`), and honest limits (static pre-curled fingers, static seated legs, model-inferred muscle activations rather than EMG, controller-shell offset compensation vs `--raw-hands`, and reach-sphere clamping) are in [`Util/HandPose/README.md`](../Util/HandPose/README.md).
 
 ## Example Filter Queries
 
@@ -90,10 +114,12 @@ Coordinates use the UE/CARLA left-handed coordinate system (X forward, Y right, 
 - `<session>.csv` defaults to **120 Hz** target sampling (at most once per rendered frame; no synthetic interpolation on low-FPS frames; configurable down to **20 Hz**). When `-EyeThreadHz 120` is enabled, `<session>_gaze.csv` polls the tracker on a dedicated 120 Hz background thread and runs the calibrated I-VT detector (onset 120 deg/s, offset 60 deg/s, minimum duration 20 ms). No samples are written while the simulation is paused.
 - CSV writers use buffered I/O flushed once per second and on session close. If a disk write fails, recording stops and logs `Driving study: write failed`.
 
-Developer test commands (run from the repository root):
+Developer test commands (run from the repository root; `-UE4Root` is optional when `Build\engine` from `setup.bat -l` or a valid `UE4_ROOT` exists):
 
 ```powershell
-powershell -NoProfile -ExecutionPolicy Bypass -File .\Util\Tests\RunPimaxTests.ps1 -UE4Root '<UE4 source engine root>'
+powershell -NoProfile -ExecutionPolicy Bypass -File .\Util\Tests\RunPimaxTests.ps1
 powershell -NoProfile -ExecutionPolicy Bypass -File .\Util\Tests\TestPimaxLauncher.ps1
 powershell -NoProfile -STA -ExecutionPolicy Bypass -File .\StartDrivingStudy.ps1 -ValidateOnly
 ```
+
+On Windows, `make check.vr` (`Util\BuildTools\Check.bat --vr`) also runs the preflight suite, source and packaged `-ValidateOnly` UI checks, `Util\HandPose\*.py` bytecode checks, and `RunPimaxTests.ps1`.

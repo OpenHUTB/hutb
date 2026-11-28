@@ -30,6 +30,19 @@ The OpenHUTB (Open source Human-vehicle Twin Build) is a photorealistic-quality 
   📖 <a href="https://openhutb.github.io/hutb/"><b>Docs</b></a>
 </p>
 
+## Enhancements over CARLA
+
+This branch is based on the [CARLA simulator](https://github.com/carla-simulator/carla) and adds the following features for domestic scenarios and teaching demos:
+
+| Feature | Description | Entry point |
+|:--------|:------------|:------------|
+| VR cockpit mode | Cockpit view for VR headsets, driven by a Logitech wheel or the `W`, `A`, `S`, `D` keys, `Z` for reverse | `python PythonAPI/util/config.py --map Town10HD?GAME=VR` |
+| Fisheye camera | Manual driving example with a fisheye camera for wide angle perception | `python PythonAPI/examples/manual_control_fisheye.py` |
+| One command build and launch | Downloads the dependencies, builds and opens the Unreal Editor with the plugins already loaded | `setup.bat -l` (Windows), `./setup.sh -l` (Ubuntu) |
+| Chinese documentation | Full documentation site covering build, content authoring and modules | <https://openhutb.github.io/> |
+
+See the [documentation](https://openhutb.github.io/) for the details of each feature.
+
 
 ## Usage example
 1. Run the following command in the terminal to download the simulator:

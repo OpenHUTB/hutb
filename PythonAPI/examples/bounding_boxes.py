@@ -281,6 +281,10 @@ def main():
         metavar='WIDTHxHEIGHT',
         default='1280x720',
         help='window resolution (default: 1280x720)')
+    argparser.add_argument(
+        '--show-occluded',
+        action='store_true',
+        help='also visualize and record actors that are completely occluded by other objects')
     args = argparser.parse_args()
 
     args.width, args.height = [int(x) for x in args.res.split('x')]
@@ -411,9 +415,17 @@ def main():
                         inter_vehicle_vec = npc.get_transform().location - camera.get_transform().location
 
                         if forward_vec.dot(inter_vehicle_vec) > 0:
-                            
-                            # Generate 2D and 2D bounding boxes for each actor
+
+                            # Generate the 2D bounding box from the instance segmentation image,
+                            # it is None when no pixel of the actor is visible to the camera
                             npc_bbox_2d = bbox_2d_for_actor(npc, actor_ids, semantic_labels)
+
+                            # Skip actors completely occluded by other objects (e.g. buildings),
+                            # otherwise their 3D bounding boxes are drawn through the occluders
+                            if npc_bbox_2d is None and not args.show_occluded:
+                                continue
+
+                            # Generate the 3D bounding box from the actor's bounding box
                             npc_bbox_3d = bbox_3d_for_actor(npc, ego_vehicle, camera_bp, camera)
 
                             frame_bboxes.append({'3d': npc_bbox_3d, '2d': npc_bbox_2d})

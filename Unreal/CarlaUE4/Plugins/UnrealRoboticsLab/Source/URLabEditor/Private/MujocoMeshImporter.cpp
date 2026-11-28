@@ -205,6 +205,13 @@ UStaticMesh* UMujocoGenerationAction::AttemptMeshImport(const FString& SourcePat
     {
         if (Obj) ImportedAssets.Add(Obj);
     }
+    for (const FString& ObjectPath : ImportTask->ImportedObjectPaths)
+    {
+        if (UObject* ImportedObject = LoadObject<UObject>(nullptr, *ObjectPath))
+        {
+            ImportedAssets.AddUnique(ImportedObject);
+        }
+    }
 
     // 记录所有导入的资产以进行调试
     UE_LOG(LogURLabEditor, Log, TEXT("[ImportSingleMesh] Import returned %d objects:"), ImportedAssets.Num());

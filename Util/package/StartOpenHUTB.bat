@@ -44,6 +44,15 @@ if !found!==1 (
 
 echo Microsoft Visual C++ 2022 check finished.
 
+:: Stop simulator processes left over from a previous run. A leftover process keeps
+:: the RPC port (2000 by default) occupied, so clients cannot connect to the newly
+:: launched simulator.
+echo.
+echo Stopping leftover OpenHUTB processes...
+for %%p in (CarlaUE4.exe CarlaUE4-Win64-Shipping.exe) do (
+    taskkill /F /IM %%p >nul 2>&1 && echo Stopped leftover process %%p.
+)
+
 start "" "CarlaUE4.exe"
 echo OpenHUTB launched.
 
