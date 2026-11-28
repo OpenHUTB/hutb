@@ -28,16 +28,16 @@ done
 # -- Get Plugins ---------------------------------------------------------------
 # ==============================================================================
 
-# source $(dirname "$0")/Environment.sh
+source "$(dirname "$0")/Environment.sh"
 
 log "Retrieving Plugins"
 
-if [[ -d "${CARLA_ROOT_FOLDER}Plugins" ]] ; then
+if [[ -d "${CARLA_ROOT_FOLDER}/Plugins" ]] ; then
   log "Plugins already installed."
 else
   if ${RELEASE} ; then
-    git clone --depth=1 --recursive https://github.com/carla-simulator/carla-plugins.git "${CARLA_ROOT_FOLDER}Plugins"
+    git clone --depth=1 --recursive https://github.com/carla-simulator/carla-plugins.git "${CARLA_ROOT_FOLDER}/Plugins"
   else
-    git clone --recursive https://github.com/carla-simulator/carla-plugins.git "${CARLA_ROOT_FOLDER}Plugins"
+    git clone --recursive https://github.com/carla-simulator/carla-plugins.git "${CARLA_ROOT_FOLDER}/Plugins"
   fi
 fi
