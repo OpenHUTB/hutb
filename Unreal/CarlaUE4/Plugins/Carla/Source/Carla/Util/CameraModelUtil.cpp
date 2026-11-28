@@ -80,6 +80,29 @@ struct FWideAngleLensShaderBase<ECameraModel::KannalaBrandt>
 
 
 
+template <>
+struct FWideAngleLensShaderBase<ECameraModel::BrownConrady>
+{
+    BEGIN_SHADER_PARAMETER_STRUCT(FParameters, )
+        SHADER_PARAMETER_RDG_TEXTURE_UAV(RWTexture2D<float4>, OutImage)
+        SHADER_PARAMETER_RDG_TEXTURE_SRV(Texture2D, CubeFront)
+        SHADER_PARAMETER_RDG_TEXTURE_SRV(Texture2D, CubeBack)
+        SHADER_PARAMETER_RDG_TEXTURE_SRV(Texture2D, CubeRight)
+        SHADER_PARAMETER_RDG_TEXTURE_SRV(Texture2D, CubeLeft)
+        SHADER_PARAMETER_RDG_TEXTURE_SRV(Texture2D, CubeTop)
+        SHADER_PARAMETER_RDG_TEXTURE_SRV(Texture2D, CubeBottom)
+        SHADER_PARAMETER_SAMPLER(SamplerState, FaceSampler)
+        SHADER_PARAMETER(float, YFOVAngle)
+        SHADER_PARAMETER(FVector4, CameraParams)
+        SHADER_PARAMETER(uint32, Flags)
+        SHADER_PARAMETER(float, LongitudeOffset)
+        SHADER_PARAMETER(float, FOVFadeSize)
+        SHADER_PARAMETER_RDG_BUFFER_SRV(StructuredBuffer<float>, Coefficients)
+    END_SHADER_PARAMETER_STRUCT()
+};
+
+
+
 template <ECameraModel>
 struct FToPerspectiveShaderBase
 {
@@ -94,6 +117,19 @@ struct FToPerspectiveShaderBase
 
 template <>
 struct FToPerspectiveShaderBase<ECameraModel::KannalaBrandt>
+{
+    BEGIN_SHADER_PARAMETER_STRUCT(FParameters, )
+        SHADER_PARAMETER_RDG_TEXTURE_UAV(RWTexture2D<float4>, Destination)
+        SHADER_PARAMETER_RDG_TEXTURE_SRV(Texture2D, Source)
+        SHADER_PARAMETER_SAMPLER(SamplerState, SourceSampler)
+        SHADER_PARAMETER(FVector4, DestinationCameraParams)
+        SHADER_PARAMETER(FVector4, SourceCameraParams)
+        SHADER_PARAMETER_RDG_BUFFER_SRV(StructuredBuffer<float>, Coefficients)
+    END_SHADER_PARAMETER_STRUCT()
+};
+
+template <>
+struct FToPerspectiveShaderBase<ECameraModel::BrownConrady>
 {
     BEGIN_SHADER_PARAMETER_STRUCT(FParameters, )
         SHADER_PARAMETER_RDG_TEXTURE_UAV(RWTexture2D<float4>, Destination)
@@ -170,6 +206,7 @@ DECLARE_WIDE_ANGLE_LENS_SHADER(FWideAngleLensShader_Equidistance, ECameraModel::
 DECLARE_WIDE_ANGLE_LENS_SHADER(FWideAngleLensShader_Equisolid, ECameraModel::Equisolid);
 DECLARE_WIDE_ANGLE_LENS_SHADER(FWideAngleLensShader_Orthogonal, ECameraModel::Orthographic);
 DECLARE_WIDE_ANGLE_LENS_SHADER(FWideAngleLensShader_Custom, ECameraModel::KannalaBrandt);
+DECLARE_WIDE_ANGLE_LENS_SHADER(FWideAngleLensShader_BrownConrady, ECameraModel::BrownConrady);
 
 DECLARE_PERSPECTIVE_SHADER(FToPerspectiveShader_Perspective, ECameraModel::Perspective);
 DECLARE_PERSPECTIVE_SHADER(FToPerspectiveShader_Stereographic, ECameraModel::Stereographic);
@@ -177,6 +214,7 @@ DECLARE_PERSPECTIVE_SHADER(FToPerspectiveShader_Equidistance, ECameraModel::Equi
 DECLARE_PERSPECTIVE_SHADER(FToPerspectiveShader_Equisolid, ECameraModel::Equisolid);
 DECLARE_PERSPECTIVE_SHADER(FToPerspectiveShader_Orthogonal, ECameraModel::Orthographic);
 DECLARE_PERSPECTIVE_SHADER(FToPerspectiveShader_Custom, ECameraModel::KannalaBrandt);
+DECLARE_PERSPECTIVE_SHADER(FToPerspectiveShader_BrownConrady, ECameraModel::BrownConrady);
 
 
 
@@ -263,6 +301,7 @@ static void ApplyDistortion(
         });
 }
 
+template <typename FShaderType>
 static void ApplyDistortion(
     FRDGBuilder& GraphBuilder,
     FRDGTextureRef Destination,
@@ -275,10 +314,8 @@ static void ApplyDistortion(
     float FOVFadeSize,
     bool RenderEquirectangular,
     bool FovMaskEnable,
-    TArrayView<const float> KannalaBrandtCoefficients)
+    TArrayView<const float> Coefficients)
 {
-    using FShaderType = FWideAngleLensShader_Custom;
-
     auto Parameters = CreateDistortionParameters<FShaderType>(
         GraphBuilder,
         Destination,
@@ -296,9 +333,9 @@ static void ApplyDistortion(
         GraphBuilder,
         TEXT("CoefficientBuffer"),
         sizeof(float),
-        KannalaBrandtCoefficients.Num(),
-        KannalaBrandtCoefficients.GetData(),
-        KannalaBrandtCoefficients.Num() * sizeof(float),
+        Coefficients.Num(),
+        Coefficients.GetData(),
+        Coefficients.Num() * sizeof(float),
         ERDGInitialDataFlags::None);
 
     Parameters->Coefficients = GraphBuilder.CreateSRV(FRDGBufferSRVDesc(CoefficientBuffer, PF_R32_FLOAT));
@@ -355,6 +392,7 @@ static void ToPerspective(
         });
 }
 
+template <typename FShaderType>
 static void ToPerspective(
     FRDGBuilder& GraphBuilder,
     FRDGTextureRef Destination,
@@ -364,19 +402,17 @@ static void ToPerspective(
     float DestinationFocalDistance,
     float SourceFocalDistance,
     FIntPoint Size,
-    TArrayView<const float> KannalaBrandtCoefficients)
+    TArrayView<const float> Coefficients)
 {
-    using FShaderType = FToPerspectiveShader_Custom;
-
     const auto Center = Size / 2;
 
     auto CoefficientBuffer = CreateStructuredBuffer(
         GraphBuilder,
         TEXT("CoefficientBuffer"),
         sizeof(float),
-        KannalaBrandtCoefficients.Num(),
-        KannalaBrandtCoefficients.GetData(),
-        KannalaBrandtCoefficients.Num() * sizeof(float),
+        Coefficients.Num(),
+        Coefficients.GetData(),
+        Coefficients.Num() * sizeof(float),
         ERDGInitialDataFlags::None);
 
     auto Parameters = GraphBuilder.AllocParameters<typename FShaderType::FParameters>();
@@ -447,6 +483,48 @@ namespace CameraModelUtil
 
     }
 
+    namespace BrownConrady
+    {
+        // Raster path uses the radial terms only, ordered as k1, k2, k3.
+        static void GetRadialCoefficients(
+            TArrayView<const float> Coefficients,
+            float& OutK1,
+            float& OutK2,
+            float& OutK3)
+        {
+            OutK1 = Coefficients.Num() > 0 ? Coefficients[0] : 0.0F;
+            OutK2 = Coefficients.Num() > 1 ? Coefficients[1] : 0.0F;
+            OutK3 = Coefficients.Num() > 2 ? Coefficients[2] : 0.0F;
+        }
+
+        float ComputeCameraPolynomial(
+            float Theta,
+            TArrayView<const float> Coefficients)
+        {
+            float K1, K2, K3;
+            GetRadialCoefficients(Coefficients, K1, K2, K3);
+
+            const auto RU = std::tan(Theta);
+            const auto RU2 = RU * RU;
+
+            return RU * (1.0F + K1 * RU2 + K2 * RU2 * RU2 + K3 * RU2 * RU2 * RU2);
+        }
+
+        float ComputeCameraPolynomialDerivative(
+            float Theta,
+            TArrayView<const float> Coefficients)
+        {
+            float K1, K2, K3;
+            GetRadialCoefficients(Coefficients, K1, K2, K3);
+
+            const auto RU = std::tan(Theta);
+            const auto RU2 = RU * RU;
+            const auto Sec2 = 1.0F + RU2;
+
+            return Sec2 * (1.0F + 3.0F * K1 * RU2 + 5.0F * K2 * RU2 * RU2 + 7.0F * K3 * RU2 * RU2 * RU2);
+        }
+    }
+
     float ComputeAngle(
         ECameraModel CameraModel,
         float Distance,
@@ -471,6 +549,17 @@ namespace CameraModelUtil
             {
                 float N = Distance - KannalaBrandt::ComputeCameraPolynomial(Theta, Coefficients);
                 float D = -KannalaBrandt::ComputeCameraPolynomialDerivative(Theta, Coefficients);
+                Theta -= N / D;
+            }
+            return Theta;
+        }
+        case ECameraModel::BrownConrady:
+        {
+            float Theta = std::atan(Distance);
+            for (uint8 i = 0; i != KannalaBrandtSolverIterations; ++i)
+            {
+                float N = Distance - BrownConrady::ComputeCameraPolynomial(Theta, Coefficients);
+                float D = -BrownConrady::ComputeCameraPolynomialDerivative(Theta, Coefficients);
                 Theta -= N / D;
             }
             return Theta;
@@ -511,6 +600,9 @@ namespace CameraModelUtil
             break;
         case ECameraModel::KannalaBrandt:
             F = R / KannalaBrandt::ComputeCameraPolynomial(Angle, Coefficients);
+            break;
+        case ECameraModel::BrownConrady:
+            F = R / BrownConrady::ComputeCameraPolynomial(Angle, Coefficients);
             break;
         default:
             check(false);
@@ -612,7 +704,22 @@ namespace CameraModelUtil
                 Options.bFOVMaskEnable);
             break;
         case ECameraModel::KannalaBrandt:
-            ApplyDistortion(
+            ApplyDistortion<FWideAngleLensShader_Custom>(
+                GraphBuilder,
+                DistortedTexture,
+                CubeTextures,
+                Sampler,
+                Options.YFOVAngle,
+                Options.YFocalLength,
+                Size,
+                Options.LongitudeOffset,
+                Options.FOVFadeSize,
+                Options.bRenderEquirectangular,
+                Options.bFOVMaskEnable,
+                Options.KannalaBrandtCoefficients);
+            break;
+        case ECameraModel::BrownConrady:
+            ApplyDistortion<FWideAngleLensShader_BrownConrady>(
                 GraphBuilder,
                 DistortedTexture,
                 CubeTextures,
@@ -705,7 +812,19 @@ namespace CameraModelUtil
                     Size);
                 break;
             case ECameraModel::KannalaBrandt:
-                ToPerspective(
+                ToPerspective<FToPerspectiveShader_Custom>(
+                    GraphBuilder,
+                    PerspectiveTexture,
+                    DistortedTexture,
+                    Sampler,
+                    Options.YFOVAngle,
+                    Options.YFocalLength,
+                    FocalDistancePerspective,
+                    Size,
+                    Options.KannalaBrandtCoefficients);
+                break;
+            case ECameraModel::BrownConrady:
+                ToPerspective<FToPerspectiveShader_BrownConrady>(
                     GraphBuilder,
                     PerspectiveTexture,
                     DistortedTexture,
@@ -848,6 +967,12 @@ IMPLEMENT_SHADER_TYPE(,
     TEXT("MainCS"),
     SF_Compute);
 
+IMPLEMENT_SHADER_TYPE(,
+    FWideAngleLensShader_BrownConrady,
+    TEXT("/Plugin/Carla/WideAngleLens.usf"),
+    TEXT("MainCS"),
+    SF_Compute);
+
 
 
 IMPLEMENT_SHADER_TYPE(,
@@ -882,6 +1007,12 @@ IMPLEMENT_SHADER_TYPE(,
 
 IMPLEMENT_SHADER_TYPE(,
     FToPerspectiveShader_Custom,
+    TEXT("/Plugin/Carla/ToPerspective.usf"),
+    TEXT("MainCS"),
+    SF_Compute);
+
+IMPLEMENT_SHADER_TYPE(,
+    FToPerspectiveShader_BrownConrady,
     TEXT("/Plugin/Carla/ToPerspective.usf"),
     TEXT("MainCS"),
     SF_Compute);

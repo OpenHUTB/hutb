@@ -518,6 +518,7 @@ void ASceneCaptureSensor_WideAngleLens::CaptureSceneExtended()
             TEXT("Equisolid"),
             TEXT("Orthographic"),
             TEXT("KannalaBrandt"),
+            TEXT("BrownConrady"),
         };
 
         auto CameraTypeName = Names[(uint8)CameraModel];

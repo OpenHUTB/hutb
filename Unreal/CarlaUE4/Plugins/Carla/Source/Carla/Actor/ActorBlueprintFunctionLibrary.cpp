@@ -27,6 +27,26 @@ static constexpr float DefaultKannalaBrandtCoefficients[] =
     0.0008542188930970716f
 };
 
+/// Parses a comma separated list of floating point values, e.g. "0.1, -0.02, 0.0, 0.0, 0.001".
+static bool ParseCameraDistortionCoefficients(
+    const FString &Text,
+    TArray<float> &OutCoefficients)
+{
+  OutCoefficients.Reset();
+
+  TArray<FString> Values;
+  Text.ParseIntoArray(Values, TEXT(","), true);
+
+  for (const auto &Value : Values)
+  {
+    const auto Trimmed = Value.TrimStartAndEnd();
+    if (!Trimmed.IsEmpty())
+        OutCoefficients.Add(FCString::Atof(*Trimmed));
+  }
+
+  return OutCoefficients.Num() != 0;
+}
+
 /// Checks validity of FActorDefinition.
 class FActorDefinitionValidator
 {
@@ -712,6 +732,14 @@ void UActorBlueprintFunctionLibrary::AddCommonWideAngleLensCameraParameters(
   K3.RecommendedValues = { FString::SanitizeFloat(DefaultKannalaBrandtCoefficients[3]) };
   K3.bRestrictToRecommended = false;
 
+  // Distortion coefficients, comma separated. Kannala-Brandt: k1, k2, k3, k4.
+  // Brown-Conrady: k1, k2, k3, p1, p2 (radial terms only are applied by the raster path).
+  FActorVariation DistortionCoeffs;
+  DistortionCoeffs.Id = TEXT("distortion_coeffs");
+  DistortionCoeffs.Type = EActorAttributeType::String;
+  DistortionCoeffs.RecommendedValues = { TEXT("") };
+  DistortionCoeffs.bRestrictToRecommended = false;
+
   // Focal Length
   FActorVariation FocalLength;
   FocalLength.Id = TEXT("focal_length");
@@ -752,6 +780,7 @@ void UActorBlueprintFunctionLibrary::AddCommonWideAngleLensCameraParameters(
   Definition.Variations.Append({
       CameraModel,
       K0, K1, K2, K3,
+      DistortionCoeffs,
       FocalLength,
       Equirectangular,
       FOVMask,
@@ -2020,8 +2049,11 @@ void UActorBlueprintFunctionLibrary::SetCamera(
 
   const auto& Variations = Desc.Variations;
 
-  const auto CameraModelName = RetrieveActorAttributeToString(
+  auto CameraModelName = RetrieveActorAttributeToString(
       "camera_model", Variations, "perspective");
+
+  // Accept both "brown-conrady" and the upstream "brown_conrady" spelling.
+  CameraModelName.ReplaceInline(TEXT("_"), TEXT("-"));
 
   static const FString Lookup[] =
   {
@@ -2030,7 +2062,8 @@ void UActorBlueprintFunctionLibrary::SetCamera(
     TEXT("equidistant"),
     TEXT("equisolid"),
     TEXT("orthographic"),
-    TEXT("kannala-brandt")
+    TEXT("kannala-brandt"),
+    TEXT("brown-conrady")
   };
 
   using I = std::underlying_type_t<ECameraModel>;
@@ -2055,7 +2088,14 @@ void UActorBlueprintFunctionLibrary::SetCamera(
 
   Camera->SetCameraModel(CameraModel);
 
-  if (CameraModel == ECameraModel::KannalaBrandt)
+  TArray<float> DistortionCoefficients;
+  if (ParseCameraDistortionCoefficients(
+          RetrieveActorAttributeToString("distortion_coeffs", Variations, ""),
+          DistortionCoefficients))
+  {
+      Camera->SetCameraCoefficients(DistortionCoefficients);
+  }
+  else if (CameraModel == ECameraModel::KannalaBrandt)
   {
       const float Coefficients[] =
       {
@@ -2067,6 +2107,13 @@ void UActorBlueprintFunctionLibrary::SetCamera(
 
       Camera->SetCameraCoefficients(
           TArrayView<const float>(Coefficients, 4));
+  }
+  else if (CameraModel == ECameraModel::BrownConrady)
+  {
+      const float Coefficients[] = { 0.0f, 0.0f, 0.0f, 0.0f, 0.0f };
+
+      Camera->SetCameraCoefficients(
+          TArrayView<const float>(Coefficients, 5));
   }
 
   const auto FOV = RetrieveActorAttributeToFloat("fov", Variations, 90.0f);

@@ -570,13 +570,16 @@ Since these effects are provided by UE, please make sure to check their document
 * __Blueprint instance segmentation:__ sensor.camera.instance_segmentation.wide_angle_lens
 * __Output:__ [carla.Image](python_api.md#carla.Image) per step (unless `sensor_tick` says otherwise)..
 
-The wide-angle camera models multiple types of specialized cameras such as standard wide-angle, 360 degree cameras and fisheye lenses. The wide-angle camera model offers standard RGB output along with depth, semantic segmentation and instance segmentation. There are numerous projection models available, including perspective, stereographic, equidistant, equisolid, orthographic and Kannala-Brandt.
+The wide-angle camera models multiple types of specialized cameras such as standard wide-angle, 360 degree cameras and fisheye lenses. The wide-angle camera model offers standard RGB output along with depth, semantic segmentation and instance segmentation. There are numerous projection models available, including perspective, stereographic, equidistant, equisolid, orthographic, Kannala-Brandt and Brown-Conrady.
 
 The [Kannala-Brandt](https://www.researchgate.net/publication/6899685_A_Generic_Camera_Model_and_Calibration_Method_for_Conventional_Wide-Angle_and_Fish-Eye_Lenses) model used matches the [implementation used in OpenCV](https://docs.opencv.org/3.4/db/d58/group__calib3d__fisheye.html).
 
+!!! Note
+    The `brown-conrady` model is the projection used by the ray-traced lens camera (`sensor.camera.rt_lens`) of the UE5 version. In this raster implementation only the radial terms (`k1`, `k2`, `k3`) are applied; the tangential terms (`p1`, `p2`) are accepted but ignored.
+
 | Blueprint attribute  | Type     | Default  | Description          |
 | ----------------------------------------------------- | ----------------------------------------------------- | ----------------------------------------------------- | ----------------------------------------------------- |
-| `camera_model`       | str     | `perspective`   | Options: <br>`perspective`,<br>`stereographic`,<br>`equidistant`,<br>`equisolid`,<br>`orthographic`,<br>`kannala-brandt`|
+| `camera_model`       | str     | `perspective`   | Options: <br>`perspective`,<br>`stereographic`,<br>`equidistant`,<br>`equisolid`,<br>`orthographic`,<br>`kannala-brandt`,<br>`brown-conrady`|
 | `fov`    | float    | 90\.0    | Horizontal field of view in degrees.   |
 | `image_size_x`       | int      | 800      | Image width in pixels.           |
 | `image_size_y`       | int      | 600      | Image height in pixels.          |
@@ -584,6 +587,7 @@ The [Kannala-Brandt](https://www.researchgate.net/publication/6899685_A_Generic_
 | `k1`       | float      | 0.0111      | Kannala-Brandt K1 parameter.          |
 | `k2`       | float      | 0.00858      | Kannala-Brandt K2 parameter.          |
 | `k3`       | float      | 0.000854      | Kannala-Brandt K3 parameter.          |
+| `distortion_coeffs`  | str      | ``       | Comma separated coefficients overriding `k0`-`k3`. Kannala-Brandt: `k1,k2,k3,k4`. Brown-Conrady: `k1,k2,k3,p1,p2`. |
 | `sensor_tick`        | float    | 0\.0     | Simulation seconds between sensor captures (ticks).  |
 | `fov_mask`       | bool     | false      | Masks out pixels outside of the FOV.         |
 | `fov_fade_size`       | float     | 0.0      | Amount of blur of the edge of the `fov_mask`.        |
