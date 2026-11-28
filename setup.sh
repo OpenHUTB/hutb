@@ -359,6 +359,26 @@ if [ -d "$DEPENDENCIES_DIR" ]; then
         log "glTFForUE4 Plugin already exists."
     fi
 
+    # --- OceanPlugin（第三方 234 MB，不入库，按需下载）---
+    # CarlaUE4.uproject 以 Enabled 引用了该插件，缺失时 UBT 会直接报
+    # "Unable to find plugin 'OceanPlugin'" 并中断 CarlaUE4Editor 构建。
+    if [ ! -f "$PLUGINS_DIR/OceanPlugin/OceanPlugin.uplugin" ]; then
+        log "Downloading OceanPlugin ..."
+        OCEAN_TMP=$(mktemp -d)
+        if curl -L --retry 3 --connect-timeout 30 -o "$OCEAN_TMP/ocean.zip" \
+            "https://codeload.github.com/UE4-OceanProject/OceanPlugin/zip/refs/heads/master" \
+            && unzip -q "$OCEAN_TMP/ocean.zip" -d "$OCEAN_TMP/x"; then
+            mkdir -p "$PLUGINS_DIR/OceanPlugin"
+            cp -a "$OCEAN_TMP"/x/OceanPlugin-master/. "$PLUGINS_DIR/OceanPlugin/"
+            log "OceanPlugin installed."
+        else
+            warn "  OceanPlugin 下载失败，CarlaUE4Editor 构建会因缺少插件而失败"
+        fi
+        rm -rf "$OCEAN_TMP"
+    else
+        log "OceanPlugin already exists."
+    fi
+
     # --- UnrealRoboticsLab 第三方依赖 ---
     log "Initial UnrealRoboticsLab dependencies..."
     if [ ! -d "$URLAB_THIRD_PARTY" ]; then

@@ -378,9 +378,16 @@ void UMjPhysicsEngine::RunMujocoAsync()
                     }
                 }
 
-                for (const FPhysicsCallback& Cb : PreStepCallbacks)
+                // 回调执行期间可能注册/清空回调，直接 ranged-for 会触发
+                // "Array has changed during ranged-for iteration"，这里先记下数量再按下标取。
+                const int32 NumPreStep = PreStepCallbacks.Num();
+                for (int32 i = 0; i < NumPreStep; ++i)
                 {
-                    Cb(m_model, m_data);
+                    if (!PreStepCallbacks.IsValidIndex(i))
+                    {
+                        break;
+                    }
+                    PreStepCallbacks[i](m_model, m_data);
                 }
 
                 for (AMjArticulation* Art : m_articulations)
@@ -396,9 +403,14 @@ void UMjPhysicsEngine::RunMujocoAsync()
                         mj_step(m_model, m_data);
                 }
 
-                for (const FPhysicsCallback& Cb : PostStepCallbacks)
+                const int32 NumPostStep = PostStepCallbacks.Num();
+                for (int32 i = 0; i < NumPostStep; ++i)
                 {
-                    Cb(m_model, m_data);
+                    if (!PostStepCallbacks.IsValidIndex(i))
+                    {
+                        break;
+                    }
+                    PostStepCallbacks[i](m_model, m_data);
                 }
 
                 if (OnPostStep)
@@ -407,12 +419,20 @@ void UMjPhysicsEngine::RunMujocoAsync()
                 }
             } // FScopeLock 在这里释放
 
-            // 在小时间步长下自旋等待精确计时
+            // 在小时间步长下等待精确计时
+            //
+            // OpenHUTB 修改（2026-11-05）：原来是 Sleep(0) 纯自旋，2ms 步长下会
+            // 吃满一个 CPU 核。改为「先睡掉剩余时间的 60%，再短自旋收尾」，
+            // 兼顾计时精度与 CPU 占用。
             const float SpeedFactor = FMath::Clamp(SimSpeedPercent, 5.0f, 100.0f) / 100.0f;
             const double TargetTime = LoopStartTime + (TargetInterval / SpeedFactor);
+            double Remaining = TargetTime - FPlatformTime::Seconds();
+            if (Remaining > 0.002) {
+                // 留 2ms 给自旋收尾，其余时间真正休眠
+                FPlatformProcess::Sleep(static_cast<float>(Remaining - 0.002));
+            }
             while (FPlatformTime::Seconds() < TargetTime)
             {
-                // FPlatformProcess::YieldThread();
                 FPlatformProcess::Sleep(0.0f);
             }
         }

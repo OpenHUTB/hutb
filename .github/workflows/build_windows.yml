@@ -55,6 +55,7 @@ jobs:
           make check.smoke || exit /b 1
           make check.air || exit /b 1
           make check.vr || exit /b 1
+          make check.water || exit /b 1
           make check.python || exit /b 1
         shell: cmd
 
