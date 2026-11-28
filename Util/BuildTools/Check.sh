@@ -233,7 +233,7 @@ if ${UPLOAD_DOWNLOAD} ; then
   # 必须在 Util 下运行 —— cwd/.. 才是仓库根，扫到 ${INSTALLATION_DIR}/UE4Carla。
   pushd "${CARLA_UTIL_FOLDER}" >/dev/null
     log "Uploading distribution package..."
-    ${DOWNLOADER_PY} "${DOWNLOADER}" -u release
+    ${DOWNLOADER_PY} "${DOWNLOADER}" -u release_ubuntu
   popd >/dev/null
 
 fi
